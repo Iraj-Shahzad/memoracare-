@@ -83,15 +83,15 @@ export default function AboutPage() {
       {/* ==================== WHAT WE OFFER ==================== */}
       <section className="bg-white px-[60px] py-[80px]">
         <div className="max-w-[1200px] mx-auto">
-          <div className="text-center mb-14">
+          <div className="text-center mb-14 reveal">
             <span className="inline-block bg-[#e6f7f5] text-[#0d9488] text-[13px] font-semibold px-4 py-1.5 rounded-full mb-4">What We Offer</span>
             <h2 className="text-[32px] font-bold text-[#1a3c34] mb-3">A Complete Care Ecosystem</h2>
             <p className="text-[15px] text-[#64748b] max-w-[550px] mx-auto">MemoryCare serves three key user roles, each with tailored features for their specific needs.</p>
           </div>
 
-          <div className="grid grid-cols-3 gap-8">
+          <div className="grid grid-cols-3 gap-8 stagger">
             {/* Patients */}
-            <div className="bg-[#f5f6f5] rounded-2xl border border-[#e2e8f0] p-8 text-center">
+            <div className="bg-[#f5f6f5] rounded-2xl border border-[#e2e8f0] p-8 text-center reveal">
               <div className="w-[60px] h-[60px] rounded-2xl bg-[linear-gradient(135deg,#0d9488,#14b8a6)] flex items-center justify-center mx-auto mb-5">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
@@ -105,7 +105,7 @@ export default function AboutPage() {
             </div>
 
             {/* Caregivers */}
-            <div className="bg-[#f5f6f5] rounded-2xl border border-[#e2e8f0] p-8 text-center">
+            <div className="bg-[#f5f6f5] rounded-2xl border border-[#e2e8f0] p-8 text-center reveal">
               <div className="w-[60px] h-[60px] rounded-2xl bg-[linear-gradient(135deg,#0d9488,#14b8a6)] flex items-center justify-center mx-auto mb-5">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
@@ -121,7 +121,7 @@ export default function AboutPage() {
             </div>
 
             {/* Admin */}
-            <div className="bg-[#f5f6f5] rounded-2xl border border-[#e2e8f0] p-8 text-center">
+            <div className="bg-[#f5f6f5] rounded-2xl border border-[#e2e8f0] p-8 text-center reveal">
               <div className="w-[60px] h-[60px] rounded-2xl bg-[linear-gradient(135deg,#0d9488,#14b8a6)] flex items-center justify-center mx-auto mb-5">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="3" />
@@ -140,20 +140,20 @@ export default function AboutPage() {
       {/* ==================== TECH STACK ==================== */}
       <section className="bg-[#f5f6f5] px-[60px] py-[80px]">
         <div className="max-w-[1200px] mx-auto">
-          <div className="text-center mb-14">
+          <div className="text-center mb-14 reveal">
             <span className="inline-block bg-[#e6f7f5] text-[#0d9488] text-[13px] font-semibold px-4 py-1.5 rounded-full mb-4">Technology</span>
             <h2 className="text-[32px] font-bold text-[#1a3c34] mb-3">Built With Modern Technology</h2>
             <p className="text-[15px] text-[#64748b] max-w-[550px] mx-auto">MemoryCare leverages cutting-edge frameworks and AI models to deliver a reliable, fast, and intelligent platform.</p>
           </div>
 
-          <div className="grid grid-cols-4 gap-6">
+          <div className="grid grid-cols-4 gap-6 stagger">
             {[
               { title: 'Next.js', desc: 'React framework for a fast, modern frontend experience' },
               { title: 'Node.js + Express', desc: 'Robust backend API with real-time Socket.io support' },
               { title: 'MongoDB', desc: 'Flexible NoSQL database for patient records and care data' },
               { title: 'TensorFlow / Keras', desc: 'AI models for NLP chatbot and Siamese face recognition' },
             ].map((item) => (
-              <div key={item.title} className="bg-white rounded-2xl border border-[#e2e8f0] p-6 text-center hover:shadow-md transition">
+              <div key={item.title} className="bg-white rounded-2xl border border-[#e2e8f0] p-6 text-center hover:shadow-md transition reveal">
                 <div className="w-[48px] h-[48px] rounded-xl bg-[#1a3c34] flex items-center justify-center mx-auto mb-4">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5eead4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="16 18 22 12 16 6" />

@@ -1,38 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Logo from '@/components/icons/Logo';
 
 export default function LandingPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  // Scroll reveal: fade + rise elements in as they scroll into view.
-  // Classes are removed once revealed so the cards' hover transforms keep working.
-  useEffect(() => {
-    const els = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
-    const show = (el: Element) => {
-      el.classList.add('in');
-      window.setTimeout(() => el.classList.remove('reveal', 'in'), 1200);
-    };
-    if (!('IntersectionObserver' in window)) {
-      els.forEach(show);
-      return;
-    }
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((en) => {
-          if (en.isIntersecting) {
-            show(en.target);
-            io.unobserve(en.target);
-          }
-        });
-      },
-      { threshold: 0.15, rootMargin: '0px 0px -8% 0px' }
-    );
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, []);
 
   return (
     <div className="min-h-screen">
