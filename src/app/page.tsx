@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Logo from '@/components/icons/Logo';
 
 export default function LandingPage() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   // Scroll reveal: fade + rise elements in as they scroll into view.
   // Classes are removed once revealed so the cards' hover transforms keep working.
   useEffect(() => {
@@ -35,8 +37,8 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen">
       {/* ==================== NAVBAR ==================== */}
-      <nav className="sticky top-0 z-50 bg-[#1a3c34] h-[72px] px-[60px] flex items-center">
-        <div className="w-full max-w-[1200px] mx-auto flex items-center justify-between">
+      <nav className="sticky top-0 z-50 bg-[#1a3c34] px-5 md:px-[60px]">
+        <div className="w-full max-w-[1200px] mx-auto h-[72px] flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5">
             <Logo className="w-9 h-9" />
@@ -45,8 +47,8 @@ export default function LandingPage() {
             </span>
           </Link>
 
-          {/* Center Nav */}
-          <div className="flex items-center gap-1 bg-[rgba(255,255,255,0.07)] rounded-full px-2 py-1.5">
+          {/* Center Nav (desktop) */}
+          <div className="hidden lg:flex items-center gap-1 bg-[rgba(255,255,255,0.07)] rounded-full px-2 py-1.5">
             <Link href="/" className="px-5 py-2 rounded-full bg-[rgba(255,255,255,0.12)] text-white text-[14px] font-medium">
               Home
             </Link>
@@ -61,8 +63,8 @@ export default function LandingPage() {
             </Link>
           </div>
 
-          {/* Right */}
-          <div className="flex items-center gap-3">
+          {/* Right (desktop) */}
+          <div className="hidden lg:flex items-center gap-3">
             <Link href="/auth" className="text-[#94a3b8] hover:text-white text-[14px] font-medium px-5 py-2.5 rounded-lg transition">
               Login
             </Link>
@@ -70,7 +72,45 @@ export default function LandingPage() {
               Sign Up
             </Link>
           </div>
+
+          {/* Hamburger (mobile) */}
+          <button
+            type="button"
+            onClick={() => setMobileOpen((v) => !v)}
+            className="lg:hidden text-white p-2 -mr-2"
+            aria-label="Toggle menu"
+            aria-expanded={mobileOpen}
+          >
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              {mobileOpen ? (
+                <>
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </>
+              ) : (
+                <>
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <line x1="3" y1="12" x2="21" y2="12" />
+                  <line x1="3" y1="18" x2="21" y2="18" />
+                </>
+              )}
+            </svg>
+          </button>
         </div>
+
+        {/* Mobile menu */}
+        {mobileOpen && (
+          <div className="lg:hidden pb-4 flex flex-col gap-1 max-w-[1200px] mx-auto">
+            <Link href="/" onClick={() => setMobileOpen(false)} className="px-4 py-3 rounded-lg text-white text-[15px] font-medium bg-[rgba(255,255,255,0.08)]">Home</Link>
+            <Link href="#features" onClick={() => setMobileOpen(false)} className="px-4 py-3 rounded-lg text-[#cbd5e1] text-[15px] font-medium hover:bg-[rgba(255,255,255,0.06)]">Features</Link>
+            <Link href="/about" onClick={() => setMobileOpen(false)} className="px-4 py-3 rounded-lg text-[#cbd5e1] text-[15px] font-medium hover:bg-[rgba(255,255,255,0.06)]">About</Link>
+            <Link href="/contact" onClick={() => setMobileOpen(false)} className="px-4 py-3 rounded-lg text-[#cbd5e1] text-[15px] font-medium hover:bg-[rgba(255,255,255,0.06)]">Contact</Link>
+            <div className="flex gap-3 mt-2">
+              <Link href="/auth" onClick={() => setMobileOpen(false)} className="flex-1 text-center border border-[rgba(255,255,255,0.2)] text-white text-[14px] font-medium px-4 py-2.5 rounded-lg">Login</Link>
+              <Link href="/auth" onClick={() => setMobileOpen(false)} className="flex-1 text-center bg-[#0d9488] text-white text-[14px] font-semibold px-4 py-2.5 rounded-lg">Sign Up</Link>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* ==================== HERO ==================== */}
@@ -79,15 +119,15 @@ export default function LandingPage() {
         <img
           src="/images/hero2.jfif"
           alt="An elderly couple sharing memories together in a garden"
-          className="absolute inset-0 w-full h-full object-cover object-[72%_38%] hero-ken"
+          className="absolute inset-0 w-full h-full object-cover object-[72%_22%] hero-ken"
         />
         {/* Readability scrim — darker on the left, behind the text, fading to reveal the photo on the right */}
         <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(100deg,rgba(13,27,23,0.9)_0%,rgba(15,43,37,0.62)_28%,rgba(26,60,52,0.18)_52%,rgba(26,60,52,0)_72%)]" />
 
         {/* Content — text left, over the photo */}
-        <div className="relative z-10 w-full max-w-[1200px] mx-auto px-[60px]">
+        <div className="relative z-10 w-full max-w-[1200px] mx-auto px-6 md:px-[60px]">
           <div className="max-w-[600px] animate-fade-in-up">
-            <h1 className="text-[52px] font-bold leading-[1.12] text-white mb-6 [text-shadow:0_2px_24px_rgba(0,0,0,0.45)]">
+            <h1 className="text-[34px] sm:text-[44px] md:text-[52px] font-bold leading-[1.12] text-white mb-6 [text-shadow:0_2px_24px_rgba(0,0,0,0.45)]">
               Every Memory Matters.<br />
               <span className="text-[#5eead4]">We Help You Keep Them.</span>
             </h1>
@@ -109,17 +149,17 @@ export default function LandingPage() {
       </section>
 
       {/* ==================== FEATURES ==================== */}
-      <section id="features" className="bg-[#f5f6f5] px-[60px] py-[100px]">
+      <section id="features" className="bg-[#f5f6f5] px-6 md:px-[60px] py-16 md:py-[100px]">
         <div className="max-w-[1200px] mx-auto">
           {/* Header */}
           <div className="text-center mb-16 reveal">
             <span className="inline-block bg-[#e6f7f5] text-[#0d9488] text-[13px] font-semibold px-4 py-1.5 rounded-full mb-4">+ Core Features</span>
-            <h2 className="text-[38px] font-bold text-[#1a3c34] mb-4">Your Care, Your Way. Delivered Every Day.</h2>
+            <h2 className="text-[28px] md:text-[38px] font-bold text-[#1a3c34] mb-4">Your Care, Your Way. Delivered Every Day.</h2>
             <p className="text-[17px] text-[#64748b] max-w-[600px] mx-auto">Everything patients and caregivers need to manage cognitive care with compassion and intelligence.</p>
           </div>
 
           {/* 3x2 Grid */}
-          <div className="grid grid-cols-3 gap-7 stagger">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7 stagger">
             {/* 1 - Medication Reminders */}
             <div className="bg-white rounded-2xl border border-[#e2e8f0] p-[32px] hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group reveal">
               <div className="w-[52px] h-[52px] rounded-[14px] bg-[linear-gradient(135deg,#0d9488,#14b8a6)] flex items-center justify-center mb-5">
@@ -209,16 +249,16 @@ export default function LandingPage() {
       </section>
 
       {/* ==================== HOW IT WORKS ==================== */}
-      <section id="how-it-works" className="bg-[#f5f6f5] px-[60px] py-[100px]">
+      <section id="how-it-works" className="bg-[#f5f6f5] px-6 md:px-[60px] py-16 md:py-[100px]">
         <div className="max-w-[1200px] mx-auto">
           {/* Header */}
           <div className="text-center mb-16 reveal">
             <span className="inline-block bg-[#e6f7f5] text-[#0d9488] text-[13px] font-semibold px-4 py-1.5 rounded-full mb-4">+ How It Works</span>
-            <h2 className="text-[38px] font-bold text-[#1a3c34] mb-4">Get Started in 3 Simple Steps</h2>
+            <h2 className="text-[28px] md:text-[38px] font-bold text-[#1a3c34] mb-4">Get Started in 3 Simple Steps</h2>
           </div>
 
           {/* Steps */}
-          <div className="flex items-start justify-center gap-0">
+          <div className="flex flex-col md:flex-row items-center md:items-start justify-center gap-10 md:gap-0">
             {/* Step 1 */}
             <div className="flex flex-col items-center text-center max-w-[300px]">
               <div className="w-[72px] h-[72px] bg-[#1a3c34] rounded-2xl flex items-center justify-center mb-6">
@@ -229,7 +269,7 @@ export default function LandingPage() {
             </div>
 
             {/* Connector */}
-            <div className="flex-1 border-t-2 border-dashed border-[#d1d5db] mt-9 mx-4" />
+            <div className="hidden md:block flex-1 border-t-2 border-dashed border-[#d1d5db] mt-9 mx-4" />
 
             {/* Step 2 */}
             <div className="flex flex-col items-center text-center max-w-[300px]">
@@ -241,7 +281,7 @@ export default function LandingPage() {
             </div>
 
             {/* Connector */}
-            <div className="flex-1 border-t-2 border-dashed border-[#d1d5db] mt-9 mx-4" />
+            <div className="hidden md:block flex-1 border-t-2 border-dashed border-[#d1d5db] mt-9 mx-4" />
 
             {/* Step 3 */}
             <div className="flex flex-col items-center text-center max-w-[300px]">
@@ -256,9 +296,9 @@ export default function LandingPage() {
       </section>
 
       {/* ==================== CTA ==================== */}
-      <section className="bg-[linear-gradient(160deg,#1a3c34,#0f2b25)] px-[60px] py-[100px]">
+      <section className="bg-[linear-gradient(160deg,#1a3c34,#0f2b25)] px-6 md:px-[60px] py-16 md:py-[100px]">
         <div className="max-w-[700px] mx-auto text-center">
-          <h2 className="text-[38px] font-bold text-white mb-5">
+          <h2 className="text-[30px] md:text-[38px] font-bold text-white mb-5">
             Start Caring <span className="text-[#5eead4]">Today</span>
           </h2>
           <p className="text-[17px] text-[#94a3b8] mb-10 leading-relaxed">
@@ -271,10 +311,10 @@ export default function LandingPage() {
       </section>
 
       {/* ==================== FOOTER ==================== */}
-      <footer id="contact" className="bg-[#0f1f1b] px-[60px] py-[60px]">
+      <footer id="contact" className="bg-[#0f1f1b] px-6 md:px-[60px] py-14 md:py-[60px]">
         <div className="max-w-[1200px] mx-auto">
           {/* 4-Column Grid */}
-          <div className="grid grid-cols-4 gap-10 mb-14">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-14">
             {/* Brand */}
             <div>
               <div className="flex items-center gap-2.5 mb-4">
@@ -380,7 +420,7 @@ export default function LandingPage() {
           </div>
 
           {/* Footer Bottom */}
-          <div className="border-t border-[rgba(255,255,255,0.08)] pt-8 flex items-center justify-between">
+          <div className="border-t border-[rgba(255,255,255,0.08)] pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-center">
             <p className="text-[#64748b] text-[14px]">&copy; 2026 MemoryCare. Made in Pakistan with care.</p>
             <div className="flex items-center gap-6">
               <Link href="#" className="text-[#64748b] text-[14px] hover:text-[#94a3b8] transition">Privacy Policy</Link>
