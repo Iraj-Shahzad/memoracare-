@@ -1,5 +1,5 @@
 /**
- * MemoraCare Database Seed Script
+ * MemoryCare Database Seed Script
  *
  * Usage: node seed.js
  *
@@ -425,7 +425,7 @@ const seed = async () => {
         patient: patient2._id,
         mode: 'text',
         query: 'Hello',
-        response: 'Hello, Nasreen! I\'m your MemoraCare assistant. How can I help you today?',
+        response: 'Hello, Nasreen! I\'m your MemoryCare assistant. How can I help you today?',
         intent: 'greeting',
         confidence: 0.95,
       },

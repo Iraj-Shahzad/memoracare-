@@ -150,7 +150,7 @@ export default function AuthPage() {
         <Link href="/" className="flex items-center gap-2.5 mb-12 relative z-10">
           <Logo className="w-[42px] h-[42px]" />
           <span className="text-white text-[22px] font-bold">
-            Memora<span className="text-[#5eead4]">Care</span>
+            Memory<span className="text-[#5eead4]">Care</span>
           </span>
         </Link>
 
@@ -159,11 +159,11 @@ export default function AuthPage() {
           {activeTab === "login" ? (
             <>
               Welcome Back<br />
-              to <span className="text-[#5eead4]">MemoraCare</span>
+              to <span className="text-[#5eead4]">MemoryCare</span>
             </>
           ) : (
             <>
-              Join <span className="text-[#5eead4]">MemoraCare</span><br />
+              Join <span className="text-[#5eead4]">MemoryCare</span><br />
               Today
             </>
           )}

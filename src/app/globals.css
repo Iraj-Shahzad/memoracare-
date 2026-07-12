@@ -47,3 +47,28 @@ body {
   0%, 60%, 100% { transform: translateY(0); }
   30% { transform: translateY(-6px); }
 }
+
+/* Hero background slow zoom (Ken Burns) */
+.hero-ken { animation: heroKen 20s ease-in-out infinite alternate; will-change: transform; }
+@keyframes heroKen {
+  0%   { transform: scale(1.05); }
+  100% { transform: scale(1.16) translate(-2%, -2%); }
+}
+
+/* Scroll reveal — elements rise + fade in as they enter the viewport.
+   JS adds `.in`, then removes both classes after the animation so hover
+   transforms on the element keep working normally. */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s cubic-bezier(.2,.7,.3,1), transform .7s cubic-bezier(.2,.7,.3,1); }
+.reveal.in { opacity: 1; transform: none; }
+
+/* Light stagger for a group of revealed cards */
+.stagger > .reveal:nth-child(2) { transition-delay: .07s; }
+.stagger > .reveal:nth-child(3) { transition-delay: .14s; }
+.stagger > .reveal:nth-child(4) { transition-delay: .07s; }
+.stagger > .reveal:nth-child(5) { transition-delay: .14s; }
+.stagger > .reveal:nth-child(6) { transition-delay: .21s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-ken { animation: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+}

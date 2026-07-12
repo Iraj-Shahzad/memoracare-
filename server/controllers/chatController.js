@@ -82,7 +82,7 @@ function generatePlaceholderResponse(query) {
     return { response: 'If this is an emergency, please use the SOS button or contact your caregiver immediately. I\'m here to help with general questions.', intent: 'emergency', confidence: 0.90 };
   }
   if (lowerQuery.includes('hello') || lowerQuery.includes('hi') || lowerQuery.includes('hey')) {
-    return { response: 'Hello! I\'m your MemoraCare assistant. How can I help you today?', intent: 'greeting', confidence: 0.95 };
+    return { response: 'Hello! I\'m your MemoryCare assistant. How can I help you today?', intent: 'greeting', confidence: 0.95 };
   }
 
   return { response: 'I understand your question. Let me help you with that. You can ask me about your medications, routines, or any concerns you have.', intent: 'general', confidence: 0.60 };

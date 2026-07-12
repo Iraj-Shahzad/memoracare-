@@ -248,7 +248,7 @@ export default function SettingsPage() {
                 <div className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
                   <div>
                     <p className="font-semibold text-slate-900">Data Collection</p>
-                    <p className="text-sm text-slate-600">Allow MemoraCare to collect usage analytics</p>
+                    <p className="text-sm text-slate-600">Allow MemoryCare to collect usage analytics</p>
                   </div>
                   <button
                     onClick={() => togglePrivacy("dataCollection")}

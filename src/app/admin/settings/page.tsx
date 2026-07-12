@@ -12,8 +12,8 @@ export default function SettingsPage() {
   void user;
 
   const [settings, setSettings] = useState({
-    systemName: "MemoraCare",
-    adminEmail: "admin@memoracare.com",
+    systemName: "MemoryCare",
+    adminEmail: "admin@memorycare.pk",
     maintenanceMode: false,
     maxLoginAttempts: 5,
     sessionTimeout: 30,

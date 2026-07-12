@@ -5,7 +5,7 @@ export default function Logo({ className = "w-9 h-9" }: { className?: string }) 
     >
       <img
         src="/images/memoracare.png"
-        alt="MemoraCare"
+        alt="MemoryCare"
         className="w-full h-full object-contain"
       />
     </div>

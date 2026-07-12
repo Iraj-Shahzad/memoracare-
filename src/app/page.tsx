@@ -1,9 +1,37 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
 import Logo from '@/components/icons/Logo';
 
 export default function LandingPage() {
+  // Scroll reveal: fade + rise elements in as they scroll into view.
+  // Classes are removed once revealed so the cards' hover transforms keep working.
+  useEffect(() => {
+    const els = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
+    const show = (el: Element) => {
+      el.classList.add('in');
+      window.setTimeout(() => el.classList.remove('reveal', 'in'), 1200);
+    };
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(show);
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((en) => {
+          if (en.isIntersecting) {
+            show(en.target);
+            io.unobserve(en.target);
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -8% 0px' }
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+
   return (
     <div className="min-h-screen">
       {/* ==================== NAVBAR ==================== */}
@@ -13,7 +41,7 @@ export default function LandingPage() {
           <Link href="/" className="flex items-center gap-2.5">
             <Logo className="w-9 h-9" />
             <span className="text-white font-bold text-[20px]">
-              Memora<span className="text-[#5eead4]">Care</span>
+              Memory<span className="text-[#5eead4]">Care</span>
             </span>
           </Link>
 
@@ -46,20 +74,25 @@ export default function LandingPage() {
       </nav>
 
       {/* ==================== HERO ==================== */}
-      <section className="relative bg-[linear-gradient(160deg,#1a3c34,#122a24,#0d3d35)] px-[60px] py-[80px] pb-[100px] overflow-hidden">
-        {/* Decorative radial gradients */}
-        <div className="absolute top-[-200px] left-[-100px] w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(94,234,212,0.08),transparent_70%)] pointer-events-none" />
-        <div className="absolute bottom-[-150px] right-[-50px] w-[500px] h-[500px] rounded-full bg-[radial-gradient(circle,rgba(13,148,136,0.1),transparent_70%)] pointer-events-none" />
+      <section className="relative overflow-hidden min-h-[560px] lg:min-h-[calc(100vh-72px)] flex items-center">
+        {/* Full-bleed background photo with a slow zoom (Ken Burns) */}
+        <img
+          src="/images/hero2.jfif"
+          alt="An elderly couple sharing memories together in a garden"
+          className="absolute inset-0 w-full h-full object-cover object-[72%_38%] hero-ken"
+        />
+        {/* Readability scrim — darker on the left, behind the text, fading to reveal the photo on the right */}
+        <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(100deg,rgba(13,27,23,0.9)_0%,rgba(15,43,37,0.62)_28%,rgba(26,60,52,0.18)_52%,rgba(26,60,52,0)_72%)]" />
 
-        <div className="relative z-10 max-w-[1200px] mx-auto flex items-center justify-between gap-16">
-          {/* Left */}
-          <div className="max-w-[560px]">
-            <h1 className="text-[52px] font-bold leading-[1.15] text-white mb-6">
+        {/* Content — text left, over the photo */}
+        <div className="relative z-10 w-full max-w-[1200px] mx-auto px-[60px]">
+          <div className="max-w-[600px] animate-fade-in-up">
+            <h1 className="text-[52px] font-bold leading-[1.12] text-white mb-6 [text-shadow:0_2px_24px_rgba(0,0,0,0.45)]">
               Every Memory Matters.<br />
               <span className="text-[#5eead4]">We Help You Keep Them.</span>
             </h1>
 
-            <p className="text-[17px] leading-[1.7] text-[#94a3b8] mb-10">
+            <p className="text-[17px] leading-[1.7] text-[#e2e8f0] mb-10 max-w-[520px] [text-shadow:0_1px_16px_rgba(0,0,0,0.4)]">
               AI-powered memory care for Alzheimer&apos;s &amp; dementia patients. Medication reminders, daily routines, face recognition, and 24/7 emergency support — all in one place.
             </p>
 
@@ -67,21 +100,9 @@ export default function LandingPage() {
               <Link href="/auth" className="bg-[#0d9488] hover:bg-[#0f766e] text-white font-semibold px-8 py-3.5 rounded-xl text-[15px] transition">
                 Get Started &rarr;
               </Link>
-              <button className="border border-[rgba(255,255,255,0.2)] text-white font-semibold px-8 py-3.5 rounded-xl text-[15px] hover:bg-[rgba(255,255,255,0.05)] transition bg-transparent">
+              <button className="border border-[rgba(255,255,255,0.35)] text-white font-semibold px-8 py-3.5 rounded-xl text-[15px] hover:bg-[rgba(255,255,255,0.08)] transition bg-transparent">
                 Learn More
               </button>
-            </div>
-          </div>
-
-          {/* Right - Hero Image with Effect: Fade-in + Zoom + Overlay Reveal */}
-          <div className="max-w-[580px] w-full animate-fade-in-up">
-            <div className="group relative rounded-[24px] overflow-hidden min-h-[520px]">
-              {/* Image container — zoom on hover */}
-              <div className="w-full min-h-[520px] transition-transform duration-500 ease-out group-hover:scale-105 relative">
-                <img src="/images/hero2.jfif" alt="Elderly couple sharing memories together in a garden" className="w-full h-full object-cover object-[50%_50%] absolute inset-0 rounded-[24px]" />
-              </div>
-              {/* Warm overlay — fades out on hover */}
-              <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(26,60,52,0.2),rgba(0,0,0,0.1))] rounded-[24px] transition-opacity duration-500 ease-out group-hover:opacity-0 pointer-events-none" />
             </div>
           </div>
         </div>
@@ -91,16 +112,16 @@ export default function LandingPage() {
       <section id="features" className="bg-[#f5f6f5] px-[60px] py-[100px]">
         <div className="max-w-[1200px] mx-auto">
           {/* Header */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-16 reveal">
             <span className="inline-block bg-[#e6f7f5] text-[#0d9488] text-[13px] font-semibold px-4 py-1.5 rounded-full mb-4">+ Core Features</span>
             <h2 className="text-[38px] font-bold text-[#1a3c34] mb-4">Your Care, Your Way. Delivered Every Day.</h2>
             <p className="text-[17px] text-[#64748b] max-w-[600px] mx-auto">Everything patients and caregivers need to manage cognitive care with compassion and intelligence.</p>
           </div>
 
           {/* 3x2 Grid */}
-          <div className="grid grid-cols-3 gap-7">
+          <div className="grid grid-cols-3 gap-7 stagger">
             {/* 1 - Medication Reminders */}
-            <div className="bg-white rounded-2xl border border-[#e2e8f0] p-[32px] hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group">
+            <div className="bg-white rounded-2xl border border-[#e2e8f0] p-[32px] hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group reveal">
               <div className="w-[52px] h-[52px] rounded-[14px] bg-[linear-gradient(135deg,#0d9488,#14b8a6)] flex items-center justify-center mb-5">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M10.5 1.5H13.5C14.33 1.5 15 2.17 15 3V4.5H9V3C9 2.17 9.67 1.5 10.5 1.5Z" />
@@ -115,7 +136,7 @@ export default function LandingPage() {
             </div>
 
             {/* 2 - Daily Routines */}
-            <div className="bg-white rounded-2xl border border-[#e2e8f0] p-[32px] hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group">
+            <div className="bg-white rounded-2xl border border-[#e2e8f0] p-[32px] hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group reveal">
               <div className="w-[52px] h-[52px] rounded-[14px] bg-[linear-gradient(135deg,#0d9488,#14b8a6)] flex items-center justify-center mb-5">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
@@ -130,7 +151,7 @@ export default function LandingPage() {
             </div>
 
             {/* 3 - Face Recognition */}
-            <div className="bg-white rounded-2xl border border-[#e2e8f0] p-[32px] hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group">
+            <div className="bg-white rounded-2xl border border-[#e2e8f0] p-[32px] hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group reveal">
               <div className="w-[52px] h-[52px] rounded-[14px] bg-[linear-gradient(135deg,#0d9488,#14b8a6)] flex items-center justify-center mb-5">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
@@ -143,7 +164,7 @@ export default function LandingPage() {
             </div>
 
             {/* 4 - Activity Tracking */}
-            <div className="bg-white rounded-2xl border border-[#e2e8f0] p-[32px] hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group">
+            <div className="bg-white rounded-2xl border border-[#e2e8f0] p-[32px] hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group reveal">
               <div className="w-[52px] h-[52px] rounded-[14px] bg-[linear-gradient(135deg,#0d9488,#14b8a6)] flex items-center justify-center mb-5">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
@@ -155,7 +176,7 @@ export default function LandingPage() {
             </div>
 
             {/* 5 - AI Chatbot */}
-            <div className="bg-white rounded-2xl border border-[#e2e8f0] p-[32px] hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group">
+            <div className="bg-white rounded-2xl border border-[#e2e8f0] p-[32px] hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group reveal">
               <div className="w-[52px] h-[52px] rounded-[14px] bg-[linear-gradient(135deg,#0d9488,#14b8a6)] flex items-center justify-center mb-5">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
@@ -170,7 +191,7 @@ export default function LandingPage() {
             </div>
 
             {/* 6 - Caregiver Dashboard */}
-            <div className="bg-white rounded-2xl border border-[#e2e8f0] p-[32px] hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group">
+            <div className="bg-white rounded-2xl border border-[#e2e8f0] p-[32px] hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group reveal">
               <div className="w-[52px] h-[52px] rounded-[14px] bg-[linear-gradient(135deg,#0d9488,#14b8a6)] flex items-center justify-center mb-5">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
@@ -191,7 +212,7 @@ export default function LandingPage() {
       <section id="how-it-works" className="bg-[#f5f6f5] px-[60px] py-[100px]">
         <div className="max-w-[1200px] mx-auto">
           {/* Header */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-16 reveal">
             <span className="inline-block bg-[#e6f7f5] text-[#0d9488] text-[13px] font-semibold px-4 py-1.5 rounded-full mb-4">+ How It Works</span>
             <h2 className="text-[38px] font-bold text-[#1a3c34] mb-4">Get Started in 3 Simple Steps</h2>
           </div>
@@ -241,7 +262,7 @@ export default function LandingPage() {
             Start Caring <span className="text-[#5eead4]">Today</span>
           </h2>
           <p className="text-[17px] text-[#94a3b8] mb-10 leading-relaxed">
-            Join hundreds of Pakistani families who trust MemoraCare to support their loved ones with compassion and intelligence.
+            Join hundreds of Pakistani families who trust MemoryCare to support their loved ones with compassion and intelligence.
           </p>
           <Link href="/auth" className="inline-block bg-[#0d9488] hover:bg-[#0f766e] text-white font-semibold px-10 py-4 rounded-xl text-[16px] transition">
             Get Started Free &rarr;
@@ -259,7 +280,7 @@ export default function LandingPage() {
               <div className="flex items-center gap-2.5 mb-4">
                 <Logo className="w-9 h-9" />
                 <span className="text-white font-bold text-[18px]">
-                  Memora<span className="text-[#5eead4]">Care</span>
+                  Memory<span className="text-[#5eead4]">Care</span>
                 </span>
               </div>
               <p className="text-[#94a3b8] text-[14px] leading-relaxed mb-6">
@@ -336,12 +357,12 @@ export default function LandingPage() {
                   </a>
                 </li>
                 <li>
-                  <a href="mailto:support@memoracare.pk" className="flex items-center gap-2 text-[#94a3b8] text-[14px] hover:text-[#5eead4] transition">
+                  <a href="mailto:support@memorycare.pk" className="flex items-center gap-2 text-[#94a3b8] text-[14px] hover:text-[#5eead4] transition">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                       <polyline points="22,6 12,13 2,6" />
                     </svg>
-                    support@memoracare.pk
+                    support@memorycare.pk
                   </a>
                 </li>
                 <li>
@@ -360,7 +381,7 @@ export default function LandingPage() {
 
           {/* Footer Bottom */}
           <div className="border-t border-[rgba(255,255,255,0.08)] pt-8 flex items-center justify-between">
-            <p className="text-[#64748b] text-[14px]">&copy; 2026 MemoraCare. Made in Pakistan with care.</p>
+            <p className="text-[#64748b] text-[14px]">&copy; 2026 MemoryCare. Made in Pakistan with care.</p>
             <div className="flex items-center gap-6">
               <Link href="#" className="text-[#64748b] text-[14px] hover:text-[#94a3b8] transition">Privacy Policy</Link>
               <Link href="#" className="text-[#64748b] text-[14px] hover:text-[#94a3b8] transition">Terms of Service</Link>

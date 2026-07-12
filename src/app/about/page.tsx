@@ -12,7 +12,7 @@ export default function AboutPage() {
           <Link href="/" className="flex items-center gap-2.5">
             <Logo className="w-9 h-9" />
             <span className="text-white font-bold text-[20px]">
-              Memora<span className="text-[#5eead4]">Care</span>
+              Memory<span className="text-[#5eead4]">Care</span>
             </span>
           </Link>
 
@@ -49,7 +49,7 @@ export default function AboutPage() {
         <div className="relative z-10 max-w-[600px] mx-auto">
           <span className="inline-block bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.08)] text-[#5eead4] text-[13px] font-semibold px-4 py-1.5 rounded-full mb-5">About Us</span>
           <h1 className="text-[42px] font-bold text-white mb-4">Our Mission is Memory Care</h1>
-          <p className="text-[17px] text-[#94a3b8] leading-relaxed">MemoraCare is built with one purpose: to help families navigate the challenges of cognitive disorders with technology, compassion, and dignity.</p>
+          <p className="text-[17px] text-[#94a3b8] leading-relaxed">MemoryCare is built with one purpose: to help families navigate the challenges of cognitive disorders with technology, compassion, and dignity.</p>
         </div>
       </section>
 
@@ -66,12 +66,12 @@ export default function AboutPage() {
           {/* Right: Story */}
           <div>
             <span className="inline-block bg-[#e6f7f5] text-[#0d9488] text-[13px] font-semibold px-4 py-1.5 rounded-full mb-4">Our Story</span>
-            <h2 className="text-[32px] font-bold text-[#1a3c34] mb-5">Why We Built MemoraCare</h2>
+            <h2 className="text-[32px] font-bold text-[#1a3c34] mb-5">Why We Built MemoryCare</h2>
             <p className="text-[15px] text-[#64748b] leading-[1.8] mb-4">
               In Pakistan, over 1.5 million people are affected by Alzheimer&apos;s and other cognitive disorders. Families often struggle to manage daily care without proper tools or support systems.
             </p>
             <p className="text-[15px] text-[#64748b] leading-[1.8] mb-4">
-              MemoraCare was born as a Final Year Project with the vision of bridging this gap. We combine AI technology with human-centered design to create a platform that genuinely helps patients maintain their daily routines, stay connected with loved ones, and live with dignity.
+              MemoryCare was born as a Final Year Project with the vision of bridging this gap. We combine AI technology with human-centered design to create a platform that genuinely helps patients maintain their daily routines, stay connected with loved ones, and live with dignity.
             </p>
             <p className="text-[15px] text-[#64748b] leading-[1.8]">
               From medication reminders to face recognition, every feature is designed with empathy and built with the latest in machine learning and web technologies.
@@ -86,7 +86,7 @@ export default function AboutPage() {
           <div className="text-center mb-14">
             <span className="inline-block bg-[#e6f7f5] text-[#0d9488] text-[13px] font-semibold px-4 py-1.5 rounded-full mb-4">What We Offer</span>
             <h2 className="text-[32px] font-bold text-[#1a3c34] mb-3">A Complete Care Ecosystem</h2>
-            <p className="text-[15px] text-[#64748b] max-w-[550px] mx-auto">MemoraCare serves three key user roles, each with tailored features for their specific needs.</p>
+            <p className="text-[15px] text-[#64748b] max-w-[550px] mx-auto">MemoryCare serves three key user roles, each with tailored features for their specific needs.</p>
           </div>
 
           <div className="grid grid-cols-3 gap-8">
@@ -143,7 +143,7 @@ export default function AboutPage() {
           <div className="text-center mb-14">
             <span className="inline-block bg-[#e6f7f5] text-[#0d9488] text-[13px] font-semibold px-4 py-1.5 rounded-full mb-4">Technology</span>
             <h2 className="text-[32px] font-bold text-[#1a3c34] mb-3">Built With Modern Technology</h2>
-            <p className="text-[15px] text-[#64748b] max-w-[550px] mx-auto">MemoraCare leverages cutting-edge frameworks and AI models to deliver a reliable, fast, and intelligent platform.</p>
+            <p className="text-[15px] text-[#64748b] max-w-[550px] mx-auto">MemoryCare leverages cutting-edge frameworks and AI models to deliver a reliable, fast, and intelligent platform.</p>
           </div>
 
           <div className="grid grid-cols-4 gap-6">
@@ -175,7 +175,7 @@ export default function AboutPage() {
             Ready to Get <span className="text-[#5eead4]">Started?</span>
           </h2>
           <p className="text-[17px] text-[#94a3b8] mb-8 leading-relaxed">
-            Join MemoraCare today and give your loved ones the care they deserve.
+            Join MemoryCare today and give your loved ones the care they deserve.
           </p>
           <div className="flex items-center justify-center gap-4">
             <Link href="/auth" className="bg-[#0d9488] hover:bg-[#0f766e] text-white font-semibold px-10 py-4 rounded-xl text-[15px] transition">
@@ -197,7 +197,7 @@ export default function AboutPage() {
               <div className="flex items-center gap-2.5 mb-4">
                 <Logo className="w-9 h-9" />
                 <span className="text-white font-bold text-[18px]">
-                  Memora<span className="text-[#5eead4]">Care</span>
+                  Memory<span className="text-[#5eead4]">Care</span>
                 </span>
               </div>
               <p className="text-[#94a3b8] text-[14px] leading-relaxed mb-6">
@@ -256,9 +256,9 @@ export default function AboutPage() {
                   </a>
                 </li>
                 <li>
-                  <a href="mailto:support@memoracare.pk" className="flex items-center gap-2 text-[#94a3b8] text-[14px] hover:text-[#5eead4] transition">
+                  <a href="mailto:support@memorycare.pk" className="flex items-center gap-2 text-[#94a3b8] text-[14px] hover:text-[#5eead4] transition">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
-                    support@memoracare.pk
+                    support@memorycare.pk
                   </a>
                 </li>
               </ul>
@@ -266,7 +266,7 @@ export default function AboutPage() {
           </div>
 
           <div className="border-t border-[rgba(255,255,255,0.08)] pt-8 flex items-center justify-between">
-            <p className="text-[#64748b] text-[14px]">&copy; 2026 MemoraCare. Made in Pakistan with care.</p>
+            <p className="text-[#64748b] text-[14px]">&copy; 2026 MemoryCare. Made in Pakistan with care.</p>
             <div className="flex items-center gap-6">
               <Link href="#" className="text-[#64748b] text-[14px] hover:text-[#94a3b8] transition">Privacy Policy</Link>
               <Link href="#" className="text-[#64748b] text-[14px] hover:text-[#94a3b8] transition">Terms of Service</Link>

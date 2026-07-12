@@ -32,7 +32,7 @@ export default function ChatbotPage() {
       id: "1",
       type: "bot",
       content:
-        `Assalam o Alaikum, ${userName}! I'm your MemoraCare assistant. I can help you with your medications, routines, family information, and more. How can I help you today?`,
+        `Assalam o Alaikum, ${userName}! I'm your MemoryCare assistant. I can help you with your medications, routines, family information, and more. How can I help you today?`,
       timestamp: "1:10 PM",
     },
   ]);
@@ -454,7 +454,7 @@ export default function ChatbotPage() {
                       color: "#1a3c34",
                     }}
                   >
-                    MemoraCare Assistant
+                    MemoryCare Assistant
                   </div>
                   <div
                     style={{
@@ -760,7 +760,7 @@ export default function ChatbotPage() {
                   marginTop: 8,
                 }}
               >
-                MemoraCare AI provides helpful reminders but is not a substitute
+                MemoryCare AI provides helpful reminders but is not a substitute
                 for medical advice.
               </div>
             </div>

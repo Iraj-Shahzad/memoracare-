@@ -85,7 +85,7 @@ app.use('/api/contact', require('./routes/contactRoutes'));
 app.get('/health', (req, res) => {
   res.status(200).json({
     success: true,
-    message: 'MemoraCare server is running',
+    message: 'MemoryCare server is running',
     timestamp: new Date().toISOString(),
   });
 });
@@ -104,7 +104,7 @@ app.use(errorHandler);
 // Start server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
-  console.log(`MemoraCare server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
+  console.log(`MemoryCare server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
 });
 
 // Handle unhandled promise rejections

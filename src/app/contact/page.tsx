@@ -32,7 +32,7 @@ export default function ContactPage() {
           <Link href="/" className="flex items-center gap-2.5">
             <Logo className="w-9 h-9" />
             <span className="text-white font-bold text-[20px]">
-              Memora<span className="text-[#5eead4]">Care</span>
+              Memory<span className="text-[#5eead4]">Care</span>
             </span>
           </Link>
 
@@ -69,7 +69,7 @@ export default function ContactPage() {
         <div className="relative z-10 max-w-[600px] mx-auto">
           <span className="inline-block bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.08)] text-[#5eead4] text-[13px] font-semibold px-4 py-1.5 rounded-full mb-5">Get In Touch</span>
           <h1 className="text-[42px] font-bold text-white mb-4">We&apos;d Love to Hear From You</h1>
-          <p className="text-[17px] text-[#94a3b8] leading-relaxed">Have questions about MemoraCare? Need help getting started? Our team is here to support you every step of the way.</p>
+          <p className="text-[17px] text-[#94a3b8] leading-relaxed">Have questions about MemoryCare? Need help getting started? Our team is here to support you every step of the way.</p>
         </div>
       </section>
 
@@ -119,7 +119,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="text-[16px] font-semibold text-[#1a3c34] mb-1">Email</h3>
-                  <a href="mailto:support@memoracare.pk" className="text-[14px] text-[#0d9488] hover:underline">support@memoracare.pk</a>
+                  <a href="mailto:support@memorycare.pk" className="text-[14px] text-[#0d9488] hover:underline">support@memorycare.pk</a>
                 </div>
               </div>
 
@@ -284,7 +284,7 @@ export default function ContactPage() {
               <div className="flex items-center gap-2.5 mb-4">
                 <Logo className="w-9 h-9" />
                 <span className="text-white font-bold text-[18px]">
-                  Memora<span className="text-[#5eead4]">Care</span>
+                  Memory<span className="text-[#5eead4]">Care</span>
                 </span>
               </div>
               <p className="text-[#94a3b8] text-[14px] leading-relaxed mb-6">
@@ -343,9 +343,9 @@ export default function ContactPage() {
                   </a>
                 </li>
                 <li>
-                  <a href="mailto:support@memoracare.pk" className="flex items-center gap-2 text-[#94a3b8] text-[14px] hover:text-[#5eead4] transition">
+                  <a href="mailto:support@memorycare.pk" className="flex items-center gap-2 text-[#94a3b8] text-[14px] hover:text-[#5eead4] transition">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
-                    support@memoracare.pk
+                    support@memorycare.pk
                   </a>
                 </li>
               </ul>
@@ -353,7 +353,7 @@ export default function ContactPage() {
           </div>
 
           <div className="border-t border-[rgba(255,255,255,0.08)] pt-8 flex items-center justify-between">
-            <p className="text-[#64748b] text-[14px]">&copy; 2026 MemoraCare. Made in Pakistan with care.</p>
+            <p className="text-[#64748b] text-[14px]">&copy; 2026 MemoryCare. Made in Pakistan with care.</p>
             <div className="flex items-center gap-6">
               <Link href="#" className="text-[#64748b] text-[14px] hover:text-[#94a3b8] transition">Privacy Policy</Link>
               <Link href="#" className="text-[#64748b] text-[14px] hover:text-[#94a3b8] transition">Terms of Service</Link>

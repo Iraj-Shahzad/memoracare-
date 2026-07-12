@@ -3,7 +3,7 @@ import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata: Metadata = {
-  title: "MemoraCare",
+  title: "MemoryCare",
   description: "AI-powered memory assistant system for Alzheimer's, Dementia, and MCI patients",
   icons: {
     icon: "/images/memoracare.png",

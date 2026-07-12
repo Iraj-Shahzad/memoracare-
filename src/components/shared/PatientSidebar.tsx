@@ -113,7 +113,7 @@ export default function PatientSidebar() {
       {/* Logo */}
       <Link href="/" className="flex items-center gap-3 px-6 pt-6 pb-8">
         <Logo />
-        <span className="text-white text-xl font-bold">MemoraCare</span>
+        <span className="text-white text-xl font-bold">MemoryCare</span>
       </Link>
 
       {/* Nav Items */}
