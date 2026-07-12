@@ -1,91 +1,13 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
-import Logo from '@/components/icons/Logo';
+import SiteNav from '@/components/shared/SiteNav';
 import Footer from '@/components/shared/Footer';
 
 export default function LandingPage() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-
   return (
     <div className="min-h-screen">
-      {/* ==================== NAVBAR ==================== */}
-      <nav className="sticky top-0 z-50 bg-[#1a3c34] px-5 md:px-[60px]">
-        <div className="w-full max-w-[1200px] mx-auto h-[72px] flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5">
-            <Logo className="w-9 h-9" />
-            <span className="text-white font-bold text-[20px]">
-              Memory<span className="text-[#5eead4]">Care</span>
-            </span>
-          </Link>
-
-          {/* Center Nav (desktop) */}
-          <div className="hidden lg:flex items-center gap-1 bg-[rgba(255,255,255,0.07)] rounded-full px-2 py-1.5">
-            <Link href="/" className="px-5 py-2 rounded-full bg-[rgba(255,255,255,0.12)] text-white text-[14px] font-medium">
-              Home
-            </Link>
-            <Link href="#features" className="px-5 py-2 rounded-full text-[#94a3b8] text-[14px] font-medium hover:text-white transition">
-              Features
-            </Link>
-            <Link href="/about" className="px-5 py-2 rounded-full text-[#94a3b8] text-[14px] font-medium hover:text-white transition">
-              About
-            </Link>
-            <Link href="/contact" className="px-5 py-2 rounded-full text-[#94a3b8] text-[14px] font-medium hover:text-white transition">
-              Contact
-            </Link>
-          </div>
-
-          {/* Right (desktop) */}
-          <div className="hidden lg:flex items-center gap-3">
-            <Link href="/auth" className="text-[#94a3b8] hover:text-white text-[14px] font-medium px-5 py-2.5 rounded-lg transition">
-              Login
-            </Link>
-            <Link href="/auth" className="bg-[#0d9488] hover:bg-[#0f766e] text-white text-[14px] font-semibold px-6 py-2.5 rounded-lg transition">
-              Sign Up
-            </Link>
-          </div>
-
-          {/* Hamburger (mobile) */}
-          <button
-            type="button"
-            onClick={() => setMobileOpen((v) => !v)}
-            className="lg:hidden text-white p-2 -mr-2"
-            aria-label="Toggle menu"
-            aria-expanded={mobileOpen}
-          >
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              {mobileOpen ? (
-                <>
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </>
-              ) : (
-                <>
-                  <line x1="3" y1="6" x2="21" y2="6" />
-                  <line x1="3" y1="12" x2="21" y2="12" />
-                  <line x1="3" y1="18" x2="21" y2="18" />
-                </>
-              )}
-            </svg>
-          </button>
-        </div>
-
-        {/* Mobile menu */}
-        {mobileOpen && (
-          <div className="lg:hidden pb-4 flex flex-col gap-1 max-w-[1200px] mx-auto">
-            <Link href="/" onClick={() => setMobileOpen(false)} className="px-4 py-3 rounded-lg text-white text-[15px] font-medium bg-[rgba(255,255,255,0.08)]">Home</Link>
-            <Link href="#features" onClick={() => setMobileOpen(false)} className="px-4 py-3 rounded-lg text-[#cbd5e1] text-[15px] font-medium hover:bg-[rgba(255,255,255,0.06)]">Features</Link>
-            <Link href="/about" onClick={() => setMobileOpen(false)} className="px-4 py-3 rounded-lg text-[#cbd5e1] text-[15px] font-medium hover:bg-[rgba(255,255,255,0.06)]">About</Link>
-            <Link href="/contact" onClick={() => setMobileOpen(false)} className="px-4 py-3 rounded-lg text-[#cbd5e1] text-[15px] font-medium hover:bg-[rgba(255,255,255,0.06)]">Contact</Link>
-            <div className="flex gap-3 mt-2">
-              <Link href="/auth" onClick={() => setMobileOpen(false)} className="flex-1 text-center border border-[rgba(255,255,255,0.2)] text-white text-[14px] font-medium px-4 py-2.5 rounded-lg">Login</Link>
-              <Link href="/auth" onClick={() => setMobileOpen(false)} className="flex-1 text-center bg-[#0d9488] text-white text-[14px] font-semibold px-4 py-2.5 rounded-lg">Sign Up</Link>
-            </div>
-          </div>
-        )}
-      </nav>
+      <SiteNav />
 
       {/* ==================== HERO ==================== */}
       <section className="relative overflow-hidden min-h-[560px] lg:min-h-[calc(100vh-72px)] flex items-center">

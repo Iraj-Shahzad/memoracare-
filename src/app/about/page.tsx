@@ -1,47 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import Logo from '@/components/icons/Logo';
+import SiteNav from '@/components/shared/SiteNav';
 import Footer from '@/components/shared/Footer';
 
 export default function AboutPage() {
   return (
     <div className="min-h-screen">
-      {/* ==================== NAVBAR ==================== */}
-      <nav className="sticky top-0 z-50 bg-[#1a3c34] h-[72px] px-[60px] flex items-center">
-        <div className="w-full max-w-[1200px] mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
-            <Logo className="w-9 h-9" />
-            <span className="text-white font-bold text-[20px]">
-              Memory<span className="text-[#5eead4]">Care</span>
-            </span>
-          </Link>
-
-          <div className="flex items-center gap-1 bg-[rgba(255,255,255,0.07)] rounded-full px-2 py-1.5">
-            <Link href="/" className="px-5 py-2 rounded-full text-[#94a3b8] text-[14px] font-medium hover:text-white transition">
-              Home
-            </Link>
-            <Link href="/#features" className="px-5 py-2 rounded-full text-[#94a3b8] text-[14px] font-medium hover:text-white transition" scroll={false}>
-              Features
-            </Link>
-            <Link href="/about" className="px-5 py-2 rounded-full bg-[rgba(255,255,255,0.12)] text-white text-[14px] font-medium">
-              About
-            </Link>
-            <Link href="/contact" className="px-5 py-2 rounded-full text-[#94a3b8] text-[14px] font-medium hover:text-white transition">
-              Contact
-            </Link>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <Link href="/auth" className="text-[#94a3b8] hover:text-white text-[14px] font-medium px-5 py-2.5 rounded-lg transition">
-              Login
-            </Link>
-            <Link href="/auth" className="bg-[#0d9488] hover:bg-[#0f766e] text-white text-[14px] font-semibold px-6 py-2.5 rounded-lg transition">
-              Sign Up
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <SiteNav />
 
       {/* ==================== HERO BANNER ==================== */}
       <section className="bg-[linear-gradient(160deg,#1a3c34,#122a24,#0d3d35)] px-[60px] py-[60px] text-center relative overflow-hidden">
