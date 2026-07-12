@@ -53,12 +53,29 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* ==================== STATS STRIP ==================== */}
+      <section className="bg-[#122a24] px-[60px] py-6">
+        <div className="max-w-[1200px] mx-auto flex flex-wrap items-center justify-center gap-x-16 gap-y-6">
+          {[
+            { n: '1.5M+', l: 'affected in Pakistan' },
+            { n: '3', l: 'user roles' },
+            { n: '6', l: 'core care features' },
+            { n: '24/7', l: 'support' },
+          ].map((s) => (
+            <div key={s.l} className="text-center reveal">
+              <div className="text-[#5eead4] text-[26px] font-extrabold">{s.n}</div>
+              <div className="text-[#94a3b8] text-[13px]">{s.l}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* ==================== OUR STORY ==================== */}
       <section className="bg-[#f5f6f5] px-[60px] py-[80px]">
         <div className="max-w-[1200px] mx-auto grid grid-cols-2 gap-16 items-center">
           {/* Left: About Image with Effect: Grayscale to Color on hover */}
           <div className="group rounded-2xl overflow-hidden">
-            <div className="h-[480px] grayscale transition-[filter] duration-700 ease-out group-hover:grayscale-0 rounded-2xl overflow-hidden">
+            <div className="h-[480px] [@media(hover:hover)]:grayscale transition-[filter] duration-700 ease-out group-hover:grayscale-0 rounded-2xl overflow-hidden">
               <img src="/images/about1.jfif" alt="Caring hands" className="w-full h-full object-cover object-[50%_0%]" />
             </div>
           </div>
