@@ -1,16 +1,23 @@
 const RecognitionLog = require('../models/RecognitionLog');
-const Patient = require('../models/Patient');
+const KnownFace = require('../models/KnownFace');
+const Alert = require('../models/Alert');
+const { canAccessPatient } = require('../utils/access');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 
-// Configure multer for image uploads
+// Ensure the upload folder exists.
+const facesDir = path.join(__dirname, '../uploads/faces');
+try {
+  fs.mkdirSync(facesDir, { recursive: true });
+} catch {
+  /* already exists */
+}
+
+// Configure multer for optional reference-image uploads.
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../uploads/faces'));
-  },
-  filename: (req, file, cb) => {
-    cb(null, `face_${Date.now()}${path.extname(file.originalname)}`);
-  },
+  destination: (req, file, cb) => cb(null, facesDir),
+  filename: (req, file, cb) => cb(null, `face_${Date.now()}${path.extname(file.originalname)}`),
 });
 
 exports.upload = multer({
@@ -25,41 +32,69 @@ exports.upload = multer({
   },
 }).single('image');
 
-// @desc Recognize a face
+// Parse a descriptor that may arrive as a JSON string (multipart) or array (JSON body).
+function parseDescriptor(raw) {
+  if (!raw) return null;
+  let arr = raw;
+  if (typeof raw === 'string') {
+    try {
+      arr = JSON.parse(raw);
+    } catch {
+      return null;
+    }
+  }
+  if (!Array.isArray(arr) || arr.length !== 128) return null;
+  return arr.map(Number);
+}
+
+// @desc Log a recognition result (matching is done in the browser)
 // @route POST /api/face-recognition/recognize
 exports.recognizeFace = async (req, res, next) => {
   try {
-    const { patientId } = req.body;
-    const imageUrl = req.file ? `/uploads/faces/${req.file.filename}` : null;
+    const patientId = req.body.patientId || req.body.patient;
+    if (!patientId) {
+      return res.status(400).json({ success: false, message: 'Please provide a patient' });
+    }
+    const allowed = await canAccessPatient(req.user, patientId);
+    if (!allowed) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
+    }
 
-    // TODO: In Phase 4B, this will call the Siamese Network via Flask API
-    // For now, return a placeholder response
-    const recognitionResult = {
-      result: 'recognized',
-      recognizedPerson: { name: 'Dr. Ahmed Khan', relationship: 'Doctor' },
-      confidence: 0.92,
-    };
+    const { result, name, relationship, confidence, knownFaceId } = req.body;
+    const imageUrl = req.file ? `/uploads/faces/${req.file.filename}` : null;
+    const finalResult = result === 'unknown' ? 'unknown' : 'recognized';
 
     const log = await RecognitionLog.create({
       patient: patientId,
       imageUrl,
-      result: recognitionResult.result,
-      recognizedPerson: recognitionResult.recognizedPerson,
-      confidence: recognitionResult.confidence,
+      result: finalResult,
+      recognizedPerson: finalResult === 'recognized' ? { name, relationship } : undefined,
+      confidence: confidence != null ? Number(confidence) : undefined,
     });
 
-    // If unknown face, create an alert
-    if (recognitionResult.result === 'unknown') {
-      const Alert = require('../models/Alert');
+    // Update the matched known face's stats.
+    if (finalResult === 'recognized' && knownFaceId) {
+      await KnownFace.findByIdAndUpdate(knownFaceId, {
+        $inc: { recognitionCount: 1 },
+        lastSeen: new Date(),
+      }).catch(() => {});
+    }
+
+    // Unknown face → raise an alert for the caregiver.
+    if (finalResult === 'unknown') {
       await Alert.create({
         patient: patientId,
         type: 'face_unknown',
         severity: 'warning',
         message: 'An unrecognized face was detected',
       });
-
       if (req.io) {
-        req.io.to(patientId).emit('alert', { type: 'face_unknown', message: 'Unrecognized face detected' });
+        req.io.to(patientId.toString()).emit('alert', {
+          type: 'face_unknown',
+          severity: 'warning',
+          patient: patientId,
+          message: 'Unrecognized face detected',
+        });
       }
     }
 
@@ -76,6 +111,11 @@ exports.getRecognitionLogs = async (req, res, next) => {
     const { patientId } = req.params;
     const { page = 1, limit = 20 } = req.query;
 
+    const allowed = await canAccessPatient(req.user, patientId);
+    if (!allowed) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
+    }
+
     const total = await RecognitionLog.countDocuments({ patient: patientId });
     const logs = await RecognitionLog.find({ patient: patientId })
       .sort({ createdAt: -1 })
@@ -88,58 +128,77 @@ exports.getRecognitionLogs = async (req, res, next) => {
   }
 };
 
-// @desc Add a known face (for training)
+// @desc Enroll a known face (stores the face descriptor)
 // @route POST /api/face-recognition/known-faces
 exports.addKnownFace = async (req, res, next) => {
   try {
-    const { patientId, name, relationship } = req.body;
+    const patientId = req.body.patientId || req.body.patient;
+    const { name, relationship, phone } = req.body;
+
+    if (!patientId || !name) {
+      return res.status(400).json({ success: false, message: 'Patient and name are required' });
+    }
+    const allowed = await canAccessPatient(req.user, patientId);
+    if (!allowed) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
+    }
+
+    const descriptor = parseDescriptor(req.body.descriptor);
+    if (!descriptor) {
+      return res.status(400).json({ success: false, message: 'A valid 128-value face descriptor is required. Make sure a clear face is visible.' });
+    }
+
     const imageUrl = req.file ? `/uploads/faces/${req.file.filename}` : null;
 
-    // TODO: In Phase 4B, this will store the face embedding via Flask API
-    // For now, store a recognition log entry as a reference
-    const entry = await RecognitionLog.create({
+    const face = await KnownFace.create({
       patient: patientId,
+      name,
+      relationship,
+      phone,
+      descriptor,
       imageUrl,
-      result: 'recognized',
-      recognizedPerson: { name, relationship },
-      confidence: 1.0,
+      addedBy: req.user.id || req.user._id,
     });
 
-    res.status(201).json({ success: true, message: 'Known face added successfully', entry });
+    res.status(201).json({ success: true, message: 'Known face added successfully', face });
   } catch (err) {
     next(err);
   }
 };
 
-// @desc Get known faces for a patient
+// @desc Get known faces for a patient (includes descriptors for matching)
 // @route GET /api/face-recognition/patient/:patientId/known-faces
 exports.getKnownFaces = async (req, res, next) => {
   try {
     const { patientId } = req.params;
 
-    // Get distinct recognized persons from logs
-    const logs = await RecognitionLog.find({
-      patient: patientId,
-      result: 'recognized',
-      'recognizedPerson.name': { $exists: true, $ne: null },
-    }).sort({ createdAt: -1 });
-
-    // Deduplicate by person name
-    const seenNames = new Set();
-    const knownFaces = [];
-    for (const log of logs) {
-      if (log.recognizedPerson?.name && !seenNames.has(log.recognizedPerson.name)) {
-        seenNames.add(log.recognizedPerson.name);
-        knownFaces.push({
-          name: log.recognizedPerson.name,
-          relationship: log.recognizedPerson.relationship,
-          imageUrl: log.imageUrl,
-          lastSeen: log.createdAt,
-        });
-      }
+    const allowed = await canAccessPatient(req.user, patientId);
+    if (!allowed) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
     }
 
+    const knownFaces = await KnownFace.find({ patient: patientId }).sort({ createdAt: -1 });
+
     res.status(200).json({ success: true, count: knownFaces.length, knownFaces });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc Delete a known face
+// @route DELETE /api/face-recognition/known-faces/:id
+exports.deleteKnownFace = async (req, res, next) => {
+  try {
+    const face = await KnownFace.findById(req.params.id);
+    if (!face) {
+      return res.status(404).json({ success: false, message: 'Known face not found' });
+    }
+    const allowed = await canAccessPatient(req.user, face.patient.toString());
+    if (!allowed) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
+    }
+    await face.deleteOne();
+    res.status(200).json({ success: true, message: 'Known face deleted' });
   } catch (err) {
     next(err);
   }

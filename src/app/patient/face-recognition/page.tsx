@@ -1,141 +1,234 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import PatientSidebar from "@/components/shared/PatientSidebar";
 import Topbar from "@/components/shared/Topbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPost, api } from "@/lib/api";
+import { loadFaceApi, getDescriptor, findBestMatch, type KnownFaceLite } from "@/lib/faceApi";
+
+interface RecognitionResult {
+  name: string;
+  relationship: string;
+  initials: string;
+  confidence: number;
+  unknown: boolean;
+}
+
+function toInitials(name: string) {
+  return (name || "?").split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
+}
 
 export default function FaceRecognitionPage() {
   const { user } = useAuth();
   const patientId = (user?.profile as any)?._id || user?.id;
 
-  const [cameraActive] = useState(true);
-  const [showResult] = useState(true);
+  const GRADIENTS = [
+    "linear-gradient(135deg, #0d9488, #1a3c34)",
+    "linear-gradient(135deg, #3b82f6, #1e40af)",
+    "linear-gradient(135deg, #8b5cf6, #5b21b6)",
+    "linear-gradient(135deg, #ec4899, #9d174d)",
+    "linear-gradient(135deg, #f59e0b, #b45309)",
+  ];
+
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const knownRef = useRef<KnownFaceLite[]>([]);
+
   const [loading, setLoading] = useState(true);
+  const [modelStatus, setModelStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [cameraActive, setCameraActive] = useState(false);
+  const [scanning, setScanning] = useState(false);
+  const [result, setResult] = useState<RecognitionResult | null>(null);
 
-  const [recentRecognitions, setRecentRecognitions] = useState([
-    {
-      name: "Sarah Ahmed",
-      initials: "SA",
-      relation: "Daughter",
-      time: "Today, 1:30 PM",
-      confidence: 97,
-      confidenceLevel: "high" as const,
-      gradient: "linear-gradient(135deg, #0d9488, #1a3c34)",
-    },
-    {
-      name: "Ali Khan",
-      initials: "AK",
-      relation: "Son",
-      time: "Today, 11:00 AM",
-      confidence: 94,
-      confidenceLevel: "high" as const,
-      gradient: "linear-gradient(135deg, #3b82f6, #1e40af)",
-    },
-    {
-      name: "Dr. Amna Khalid",
-      initials: "FK",
-      relation: "Doctor",
-      time: "Yesterday, 3:15 PM",
-      confidence: 91,
-      confidenceLevel: "high" as const,
-      gradient: "linear-gradient(135deg, #8b5cf6, #5b21b6)",
-    },
-    {
-      name: "Zainab Ahmed",
-      initials: "ZA",
-      relation: "Granddaughter",
-      time: "Apr 10, 2026",
-      confidence: 82,
-      confidenceLevel: "medium" as const,
-      gradient: "linear-gradient(135deg, #ec4899, #9d174d)",
-    },
-  ]);
+  const [recentRecognitions, setRecentRecognitions] = useState<
+    { name: string; initials: string; relation: string; time: string; confidence: number; confidenceLevel: "high" | "medium"; gradient: string }[]
+  >([]);
+  const [knownFaces, setKnownFaces] = useState<
+    { id: string; name: string; initials: string; relation: string; scans: number; gradient: string }[]
+  >([]);
 
-  const [knownFaces, setKnownFaces] = useState([
-    {
-      name: "Sarah Ahmed",
-      initials: "SA",
-      relation: "Daughter",
-      scans: 127,
-      gradient: "linear-gradient(135deg, #0d9488, #1a3c34)",
-    },
-    {
-      name: "Ali Khan",
-      initials: "AK",
-      relation: "Son",
-      scans: 89,
-      gradient: "linear-gradient(135deg, #3b82f6, #1e40af)",
-    },
-    {
-      name: "Dr. Amna Khalid",
-      initials: "AK",
-      relation: "Doctor",
-      scans: 34,
-      gradient: "linear-gradient(135deg, #8b5cf6, #5b21b6)",
-    },
-    {
-      name: "Zainab Ahmed",
-      initials: "ZA",
-      relation: "Granddaughter",
-      scans: 56,
-      gradient: "linear-gradient(135deg, #ec4899, #9d174d)",
-    },
-    {
-      name: "Hassan Ali",
-      initials: "HA",
-      relation: "Neighbor",
-      scans: 12,
-      gradient: "linear-gradient(135deg, #f59e0b, #b45309)",
-    },
-  ]);
-
-  useEffect(() => {
+  // Load enrolled faces from the backend (with their descriptors for matching).
+  const fetchKnownFaces = async () => {
     if (!patientId) return;
-    const fetchKnownFaces = async () => {
-      try {
-        setLoading(true);
-        const res = await apiGet(`/face-recognition/patient/${patientId}/known-faces`).catch(() => null);
-        if (res?.data && Array.isArray(res.data) && res.data.length > 0) {
-          const mapped = res.data.map((face: any) => ({
-            name: face.name || "Unknown",
-            initials: (face.name || "U").split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase(),
-            relation: face.relation || face.relationship || "",
-            scans: face.scans || face.recognitionCount || 0,
-            gradient: "linear-gradient(135deg, #0d9488, #1a3c34)",
-          }));
-          setKnownFaces(mapped);
-        }
-      } catch (err) {
-        console.error("Known faces fetch error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchKnownFaces();
-  }, [patientId]);
-
-  const handleCapture = async () => {
-    // In a real implementation, this would capture from the camera
-    // and send to the face recognition API
     try {
-      // Placeholder - would use FormData with actual image
-      console.log("Capture triggered - would send to /face-recognition/recognize");
+      const res = await apiGet(`/face-recognition/patient/${patientId}/known-faces`).catch(() => null);
+      const faces = res?.knownFaces;
+      if (Array.isArray(faces)) {
+        knownRef.current = faces.map((f: any) => ({
+          _id: f._id,
+          name: f.name,
+          relationship: f.relationship,
+          descriptor: f.descriptor,
+        }));
+        setKnownFaces(
+          faces.map((f: any, i: number) => ({
+            id: f._id,
+            name: f.name || "Unknown",
+            initials: toInitials(f.name),
+            relation: f.relationship || "",
+            scans: f.recognitionCount || 0,
+            gradient: GRADIENTS[i % GRADIENTS.length],
+          }))
+        );
+      }
     } catch (err) {
-      console.error("Face recognition error:", err);
+      console.error("Known faces fetch error:", err);
     }
   };
 
-  const handleAddFace = async () => {
-    // In a real implementation, this would open a file picker
-    // and send the image with name to the API
+  // Load recent recognition logs.
+  const fetchLogs = async () => {
+    if (!patientId) return;
     try {
-      console.log("Add face triggered - would send to /face-recognition/known-faces");
+      const res = await apiGet(`/face-recognition/patient/${patientId}/logs`).catch(() => null);
+      const logs = res?.logs;
+      if (Array.isArray(logs)) {
+        setRecentRecognitions(
+          logs.slice(0, 8).map((log: any, i: number) => {
+            const name = log.recognizedPerson?.name || "Unknown Person";
+            const conf = Math.round((log.confidence || 0) * 1); // confidence stored as 0-100
+            return {
+              name,
+              initials: toInitials(name),
+              relation: log.recognizedPerson?.relationship || (log.result === "unknown" ? "Unrecognized" : ""),
+              time: log.createdAt ? new Date(log.createdAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "",
+              confidence: conf,
+              confidenceLevel: conf >= 85 ? ("high" as const) : ("medium" as const),
+              gradient: log.result === "unknown" ? "linear-gradient(135deg, #64748b, #334155)" : GRADIENTS[i % GRADIENTS.length],
+            };
+          })
+        );
+      }
+    } catch (err) {
+      console.error("Logs fetch error:", err);
+    }
+  };
+
+  // Initialise: load the face-api models, start the webcam, load data.
+  useEffect(() => {
+    if (!patientId) return;
+    let stream: MediaStream | null = null;
+    let cancelled = false;
+
+    const init = async () => {
+      setLoading(true);
+      await Promise.all([fetchKnownFaces(), fetchLogs()]);
+      setLoading(false);
+
+      try {
+        await loadFaceApi();
+        if (cancelled) return;
+        setModelStatus("ready");
+      } catch (err) {
+        console.error("Model load error:", err);
+        setModelStatus("error");
+        return;
+      }
+
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+        if (cancelled) {
+          stream.getTracks().forEach((t) => t.stop());
+          return;
+        }
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          await videoRef.current.play().catch(() => {});
+          setCameraActive(true);
+        }
+      } catch (err) {
+        console.error("Camera error:", err);
+      }
+    };
+
+    init();
+    return () => {
+      cancelled = true;
+      if (stream) stream.getTracks().forEach((t) => t.stop());
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [patientId]);
+
+  // Capture the current frame, compute its descriptor, and match it.
+  const handleCapture = async () => {
+    if (!videoRef.current || modelStatus !== "ready" || scanning) return;
+    setScanning(true);
+    setResult(null);
+    try {
+      const probe = await getDescriptor(videoRef.current);
+      if (!probe) {
+        setResult({ name: "No face detected", relationship: "Please look at the camera", initials: "!", confidence: 0, unknown: true });
+        return;
+      }
+
+      const match = findBestMatch(probe, knownRef.current);
+      if (match) {
+        setResult({ name: match.name, relationship: match.relationship || "Recognized", initials: toInitials(match.name), confidence: match.confidence, unknown: false });
+        await apiPost("/face-recognition/recognize", {
+          patientId,
+          result: "recognized",
+          name: match.name,
+          relationship: match.relationship,
+          confidence: match.confidence,
+          knownFaceId: match.knownFaceId,
+        }).catch(() => {});
+      } else {
+        setResult({ name: "Unknown Person", relationship: "Not in your known faces", initials: "?", confidence: 0, unknown: true });
+        await apiPost("/face-recognition/recognize", { patientId, result: "unknown", confidence: 0 }).catch(() => {});
+      }
+      fetchLogs();
+      fetchKnownFaces();
+    } catch (err) {
+      console.error("Recognition error:", err);
+    } finally {
+      setScanning(false);
+    }
+  };
+
+  // Enroll a new face from a photo file.
+  const handleAddFace = () => {
+    if (modelStatus !== "ready") {
+      window.alert("The face model is still loading. Please wait a moment and try again.");
+      return;
+    }
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // allow re-selecting the same file later
+    if (!file) return;
+
+    const name = window.prompt("Who is this person? (full name)")?.trim();
+    if (!name) return;
+    const relationship = window.prompt("Relationship? (e.g. Daughter, Doctor)")?.trim() || "";
+
+    try {
+      const img = document.createElement("img");
+      img.src = URL.createObjectURL(file);
+      await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
+      const descriptor = await getDescriptor(img);
+      URL.revokeObjectURL(img.src);
+
+      if (!descriptor) {
+        window.alert("Couldn't find a clear face in that photo. Try another one with a well-lit, front-facing face.");
+        return;
+      }
+
+      await apiPost("/face-recognition/known-faces", {
+        patientId,
+        name,
+        relationship,
+        descriptor: Array.from(descriptor),
+      });
+      window.alert(`${name} was added to known faces.`);
+      fetchKnownFaces();
     } catch (err) {
       console.error("Add face error:", err);
+      window.alert("Could not add this face. Please try again.");
     }
   };
 
@@ -195,6 +288,59 @@ export default function FaceRecognitionPage() {
                     "radial-gradient(ellipse at center, #1e293b 0%, #0f172a 100%)",
                 }}
               />
+
+              {/* Live webcam feed */}
+              <video
+                ref={videoRef}
+                autoPlay
+                muted
+                playsInline
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  transform: "scaleX(-1)", // mirror like a selfie camera
+                }}
+              />
+
+              {/* Hidden file input for enrolling a face from a photo */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png,image/jpeg"
+                onChange={handleFileSelected}
+                style={{ display: "none" }}
+              />
+
+              {/* Model-loading / camera overlay */}
+              {(modelStatus !== "ready" || !cameraActive) && (
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 12,
+                    color: "#fff",
+                    zIndex: 5,
+                    textAlign: "center",
+                    padding: 24,
+                  }}
+                >
+                  <div className="w-8 h-8 border-4 border-[#0d9488] border-t-transparent rounded-full animate-spin" />
+                  <span style={{ fontSize: 14, opacity: 0.9 }}>
+                    {modelStatus === "error"
+                      ? "Could not load the face model. Check that model files are in /public/models."
+                      : modelStatus !== "ready"
+                      ? "Loading face recognition model…"
+                      : "Starting camera… please allow camera access."}
+                  </span>
+                </div>
+              )}
 
               {/* Scan Line */}
               {cameraActive && (
@@ -341,38 +487,41 @@ export default function FaceRecognitionPage() {
               </div>
 
               {/* Confidence Badge */}
-              <div
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(70px, -140px)",
-                  background: "rgba(13, 148, 136, 0.9)",
-                  color: "#fff",
-                  padding: "6px 14px",
-                  borderRadius: 8,
-                  fontSize: 13,
-                  fontWeight: 700,
-                  backdropFilter: "blur(8px)",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 6,
-                }}
-              >
-                <svg
-                  viewBox="0 0 24 24"
+              {result && !result.unknown && (
+                <div
                   style={{
-                    width: 14,
-                    height: 14,
-                    stroke: "#fff",
-                    fill: "none",
-                    strokeWidth: 2,
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(70px, -140px)",
+                    background: "rgba(13, 148, 136, 0.9)",
+                    color: "#fff",
+                    padding: "6px 14px",
+                    borderRadius: 8,
+                    fontSize: 13,
+                    fontWeight: 700,
+                    backdropFilter: "blur(8px)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    zIndex: 6,
                   }}
                 >
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-                97.4% Match
-              </div>
+                  <svg
+                    viewBox="0 0 24 24"
+                    style={{
+                      width: 14,
+                      height: 14,
+                      stroke: "#fff",
+                      fill: "none",
+                      strokeWidth: 2,
+                    }}
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  {result.confidence}% Match
+                </div>
+              )}
 
               {/* Camera Status */}
               <div
@@ -468,7 +617,7 @@ export default function FaceRecognitionPage() {
                   >
                     <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
                   </svg>
-                  Siamese Network
+                  Neural Embeddings
                 </div>
               </div>
 
@@ -575,7 +724,7 @@ export default function FaceRecognitionPage() {
               </div>
 
               {/* Slide-up Result Panel */}
-              {showResult && (
+              {result && (
                 <div
                   style={{
                     position: "absolute",
@@ -587,6 +736,7 @@ export default function FaceRecognitionPage() {
                     borderRadius: "20px 20px 0 0",
                     padding: "24px 28px",
                     boxShadow: "0 -4px 20px rgba(0,0,0,0.15)",
+                    zIndex: 7,
                   }}
                 >
                   {/* Handle */}
@@ -612,7 +762,9 @@ export default function FaceRecognitionPage() {
                         width: 72,
                         height: 72,
                         borderRadius: 16,
-                        background: "linear-gradient(135deg, #0d9488, #1a3c34)",
+                        background: result.unknown
+                          ? "linear-gradient(135deg, #64748b, #334155)"
+                          : "linear-gradient(135deg, #0d9488, #1a3c34)",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -626,7 +778,7 @@ export default function FaceRecognitionPage() {
                           fontWeight: 800,
                         }}
                       >
-                        SA
+                        {result.initials}
                       </span>
                     </div>
                     {/* Info */}
@@ -638,25 +790,19 @@ export default function FaceRecognitionPage() {
                           color: "#1a3c34",
                         }}
                       >
-                        Sarah Ahmed
+                        {result.name}
                       </div>
                       <div
                         style={{
                           fontSize: 14,
-                          color: "#0d9488",
+                          color: result.unknown ? "#64748b" : "#0d9488",
                           fontWeight: 600,
                           marginTop: 2,
                         }}
                       >
-                        Daughter - Primary Caregiver
+                        {result.relationship}
                       </div>
-                      <div
-                        style={{
-                          display: "flex",
-                          gap: 20,
-                          marginTop: 8,
-                        }}
-                      >
+                      {!result.unknown && (
                         <div
                           style={{
                             display: "flex",
@@ -664,6 +810,7 @@ export default function FaceRecognitionPage() {
                             gap: 6,
                             fontSize: 13,
                             color: "#64748b",
+                            marginTop: 8,
                           }}
                         >
                           <svg
@@ -671,70 +818,16 @@ export default function FaceRecognitionPage() {
                             style={{
                               width: 14,
                               height: 14,
-                              stroke: "#94a3b8",
+                              stroke: "#16a34a",
                               fill: "none",
                               strokeWidth: 2,
-                              strokeLinecap: "round",
-                              strokeLinejoin: "round",
                             }}
                           >
-                            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
+                            <polyline points="20 6 9 17 4 12" />
                           </svg>
-                          +92 312 9876543
+                          {result.confidence}% confidence match
                         </div>
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 6,
-                            fontSize: 13,
-                            color: "#64748b",
-                          }}
-                        >
-                          <svg
-                            viewBox="0 0 24 24"
-                            style={{
-                              width: 14,
-                              height: 14,
-                              stroke: "#94a3b8",
-                              fill: "none",
-                              strokeWidth: 2,
-                              strokeLinecap: "round",
-                              strokeLinejoin: "round",
-                            }}
-                          >
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
-                            <circle cx="12" cy="10" r="3" />
-                          </svg>
-                          Islamabad
-                        </div>
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 6,
-                            fontSize: 13,
-                            color: "#64748b",
-                          }}
-                        >
-                          <svg
-                            viewBox="0 0 24 24"
-                            style={{
-                              width: 14,
-                              height: 14,
-                              stroke: "#94a3b8",
-                              fill: "none",
-                              strokeWidth: 2,
-                              strokeLinecap: "round",
-                              strokeLinejoin: "round",
-                            }}
-                          >
-                            <circle cx="12" cy="12" r="10" />
-                            <polyline points="12 6 12 12 16 14" />
-                          </svg>
-                          Last seen: 2 hours ago
-                        </div>
-                      </div>
+                      )}
                     </div>
                     {/* Actions */}
                     <div
@@ -745,38 +838,25 @@ export default function FaceRecognitionPage() {
                       }}
                     >
                       <button
+                        onClick={handleCapture}
+                        disabled={scanning}
                         style={{
                           padding: "10px 20px",
                           borderRadius: 10,
                           fontFamily: "inherit",
                           fontSize: 13,
                           fontWeight: 600,
-                          cursor: "pointer",
+                          cursor: scanning ? "not-allowed" : "pointer",
                           border: "none",
                           background: "#0d9488",
                           color: "#fff",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 6,
+                          opacity: scanning ? 0.6 : 1,
                         }}
                       >
-                        <svg
-                          viewBox="0 0 24 24"
-                          style={{
-                            width: 16,
-                            height: 16,
-                            fill: "none",
-                            stroke: "#fff",
-                            strokeWidth: 2,
-                            strokeLinecap: "round",
-                            strokeLinejoin: "round",
-                          }}
-                        >
-                          <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
-                        </svg>
-                        Call
+                        {scanning ? "Scanning…" : "Scan Again"}
                       </button>
                       <button
+                        onClick={() => setResult(null)}
                         style={{
                           padding: "10px 20px",
                           borderRadius: 10,
@@ -787,28 +867,9 @@ export default function FaceRecognitionPage() {
                           border: "none",
                           background: "#f1f5f9",
                           color: "#1a3c34",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 6,
                         }}
                       >
-                        <svg
-                          viewBox="0 0 24 24"
-                          style={{
-                            width: 16,
-                            height: 16,
-                            fill: "none",
-                            stroke: "#1a3c34",
-                            strokeWidth: 2,
-                            strokeLinecap: "round",
-                            strokeLinejoin: "round",
-                          }}
-                        >
-                          <circle cx="12" cy="12" r="10" />
-                          <line x1="12" y1="16" x2="12" y2="12" />
-                          <line x1="12" y1="8" x2="12.01" y2="8" />
-                        </svg>
-                        More Info
+                        Dismiss
                       </button>
                     </div>
                   </div>

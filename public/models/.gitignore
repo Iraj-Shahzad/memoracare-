@@ -1,0 +1,5 @@
+# Face-api weight files are large binaries copied from node_modules (see README).
+# Ignore everything here except the docs.
+*
+!README.md
+!.gitignore
