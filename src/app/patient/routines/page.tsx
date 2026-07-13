@@ -253,7 +253,6 @@ export default function RoutinesPage() {
           title="Daily Routines"
           subtitle="Saturday, April 12, 2026"
           showSOS={true}
-          showAddButton={{ label: "Add Routine" }}
         />
 
         <div style={{ padding: "24px 32px" }}>

@@ -51,109 +51,7 @@ export default function MedicationsPage() {
     </>
   );
 
-  const [medications, setMedications] = useState<Medication[]>([
-    {
-      id: "1",
-      name: "Aricept (Donepezil)",
-      genericName: "Donepezil",
-      dosage: "10mg",
-      type: "Tablet",
-      purpose: "Memory Enhancement",
-      frequency: "Twice Daily",
-      schedules: [
-        { time: "8:00 AM", status: "done" },
-        { time: "2:00 PM", status: "active" },
-      ],
-      prescribedBy: "Dr. Amna Khalid",
-      compliance: 92,
-      complianceLevel: "high",
-      status: "upcoming",
-      iconBg: "#dbeafe",
-      iconStroke: "#3b82f6",
-      iconPath: defaultIconPath,
-    },
-    {
-      id: "2",
-      name: "Namenda (Memantine)",
-      genericName: "Memantine",
-      dosage: "5mg",
-      type: "Capsule",
-      purpose: "Cognitive Function",
-      frequency: "Once Daily",
-      schedules: [{ time: "9:00 AM", status: "done" }],
-      prescribedBy: "Dr. Amna Khalid",
-      compliance: 95,
-      complianceLevel: "high",
-      status: "taken",
-      iconBg: "#fce7f3",
-      iconStroke: "#ec4899",
-      iconPath: (
-        <>
-          <rect x="6" y="2" width="12" height="20" rx="6" />
-          <line x1="6" y1="12" x2="18" y2="12" />
-        </>
-      ),
-    },
-    {
-      id: "3",
-      name: "Vitamin E",
-      genericName: "Vitamin E",
-      dosage: "400 IU",
-      type: "Softgel",
-      purpose: "Antioxidant Support",
-      frequency: "Once Daily",
-      schedules: [{ time: "8:00 AM", status: "done" }],
-      prescribedBy: "Dr. Farhan Malik",
-      compliance: 78,
-      complianceLevel: "med",
-      status: "taken",
-      iconBg: "#fef3c7",
-      iconStroke: "#f59e0b",
-      iconPath: (
-        <>
-          <path d="M8 2h8l2 10H6L8 2z" />
-          <rect x="5" y="12" width="14" height="10" rx="2" />
-        </>
-      ),
-    },
-    {
-      id: "4",
-      name: "Galantamine (Razadyne)",
-      genericName: "Razadyne",
-      dosage: "8mg",
-      type: "Tablet",
-      purpose: "Cholinesterase Inhibitor",
-      frequency: "Twice Daily",
-      schedules: [
-        { time: "7:00 AM", status: "missed" },
-        { time: "6:00 PM", status: "active" },
-      ],
-      prescribedBy: "Dr. Farhan Malik",
-      compliance: 62,
-      complianceLevel: "low",
-      status: "missed",
-      iconBg: "#dbeafe",
-      iconStroke: "#3b82f6",
-      iconPath: defaultIconPath,
-    },
-    {
-      id: "5",
-      name: "Melatonin",
-      genericName: "Melatonin",
-      dosage: "3mg",
-      type: "Tablet",
-      purpose: "Sleep Regulation",
-      frequency: "Once Daily",
-      schedules: [{ time: "9:30 PM", status: "upcoming" }],
-      prescribedBy: "Dr. Amna Khalid",
-      compliance: 88,
-      complianceLevel: "high",
-      status: "upcoming",
-      iconBg: "#ede9fe",
-      iconStroke: "#8b5cf6",
-      iconPath: defaultIconPath,
-    },
-  ]);
+  const [medications, setMedications] = useState<Medication[]>([]);
 
   useEffect(() => {
     if (!patientId) return;
@@ -309,7 +207,6 @@ export default function MedicationsPage() {
           title="Medications"
           subtitle="Manage and track all medication schedules"
           showSOS={true}
-          showAddButton={{ label: "Add Medication" }}
         />
 
         <div style={{ padding: "24px 32px" }}>
