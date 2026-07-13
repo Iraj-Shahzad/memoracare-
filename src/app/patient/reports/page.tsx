@@ -6,7 +6,7 @@ import PatientSidebar from "@/components/shared/PatientSidebar";
 import Topbar from "@/components/shared/Topbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
-import { apiGet } from "@/lib/api";
+import { apiGet, apiPost } from "@/lib/api";
 
 // SVG Icons as inline components
 const PDFIcon = () => (
@@ -194,6 +194,7 @@ export default function ReportsPage() {
   const [toDate, setToDate] = useState("2026-04-14");
   const [format, setFormat] = useState("PDF");
   const [loading, setLoading] = useState(true);
+  const [generating, setGenerating] = useState(false);
 
   useEffect(() => {
     if (!patientId) return;
@@ -233,8 +234,39 @@ export default function ReportsPage() {
           return report.type === activeTab;
         });
 
-  const handleGenerateReport = () => {
-    setShowGenerateModal(false);
+  const handleGenerateReport = async () => {
+    if (!patientId) return;
+    try {
+      setGenerating(true);
+      await apiPost("/reports/generate", {
+        patientId,
+        type: reportType.toLowerCase().replace(/\s+/g, "_"),
+        format: format.toLowerCase(),
+        from: fromDate,
+        to: toDate,
+      });
+      // Refresh the list so the new report shows up
+      const res = await apiGet(`/reports/patient/${patientId}`).catch(() => null);
+      if (res?.data && Array.isArray(res.data) && res.data.length > 0) {
+        const mapped = res.data.map((r: any) => ({
+          id: r._id || r.id,
+          title: r.title || "Report",
+          date: r.createdAt
+            ? new Date(r.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+            : new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+          type: r.type || "Summary",
+          format: r.format || "PDF",
+          status: r.status || "Ready",
+        }));
+        setReports(mapped);
+        setSelectedReport(mapped[0]);
+      }
+    } catch (err) {
+      console.error("Generate report error:", err);
+    } finally {
+      setGenerating(false);
+      setShowGenerateModal(false);
+    }
   };
 
   if (loading) {
@@ -541,9 +573,10 @@ export default function ReportsPage() {
                 </button>
                 <button
                   onClick={handleGenerateReport}
-                  className="flex-1 px-4 py-2 bg-[#0d9488] text-white rounded-lg font-semibold hover:bg-[#0d8975] transition-colors"
+                  disabled={generating}
+                  className="flex-1 px-4 py-2 bg-[#0d9488] text-white rounded-lg font-semibold hover:bg-[#0d8975] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  Generate
+                  {generating ? "Generating..." : "Generate"}
                 </button>
               </div>
             </div>

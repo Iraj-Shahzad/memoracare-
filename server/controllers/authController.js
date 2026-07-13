@@ -100,6 +100,7 @@ exports.getMe = async (req, res, next) => {
 // @route POST /api/auth/logout
 exports.logout = async (req, res, next) => {
   try {
+    res.clearCookie('token');
     res.status(200).json({ success: true, message: 'Logged out successfully' });
   } catch (err) {
     next(err);
