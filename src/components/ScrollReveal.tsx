@@ -19,37 +19,39 @@ export default function ScrollReveal() {
       typeof window.matchMedia === 'function' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    let io: IntersectionObserver | null = null;
-
     const reveal = (el: Element) => {
       el.classList.add('in');
       window.setTimeout(() => el.classList.remove('reveal', 'in'), 1200);
     };
 
-    // Wait a tick so the new page's DOM is present after navigation.
-    const timer = window.setTimeout(() => {
-      const els = Array.from(document.querySelectorAll<HTMLElement>('.reveal:not(.in)'));
-      if (reduce || !('IntersectionObserver' in window)) {
-        els.forEach(reveal);
-        return;
-      }
-      io = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              reveal(entry.target);
-              io?.unobserve(entry.target);
-            }
-          });
-        },
-        { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
-      );
-      els.forEach((el) => io?.observe(el));
-    }, 60);
+    // Reduced motion or no observer support: just show everything.
+    if (reduce || !('IntersectionObserver' in window)) {
+      document.querySelectorAll<HTMLElement>('.reveal:not(.in)').forEach(reveal);
+      return;
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            reveal(entry.target);
+            io.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
+    );
+
+    // Observe current + late-rendered elements (dashboards load data async, so
+    // cards can appear after the first scan). Re-scanning is safe — observing an
+    // element twice is a no-op, and revealed elements drop the `reveal` class.
+    const scan = () =>
+      document.querySelectorAll<HTMLElement>('.reveal:not(.in)').forEach((el) => io.observe(el));
+    const timers = [60, 400, 1000, 2000].map((d) => window.setTimeout(scan, d));
 
     return () => {
-      window.clearTimeout(timer);
-      io?.disconnect();
+      timers.forEach((t) => window.clearTimeout(t));
+      io.disconnect();
     };
   }, [pathname]);
 

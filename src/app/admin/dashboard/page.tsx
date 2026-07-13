@@ -94,7 +94,7 @@ export default function AdminDashboard() {
             {/* Stats Grid */}
             <div className="grid grid-cols-4 gap-4 mb-6">
               {/* Total Users */}
-              <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0]">
+              <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0] reveal">
                 <div className="flex items-center justify-between mb-3">
                   <div className="w-[42px] h-[42px] rounded-[10px] bg-[#dbeafe] flex items-center justify-center">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
@@ -116,7 +116,7 @@ export default function AdminDashboard() {
               </div>
 
               {/* Active Patients */}
-              <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0]">
+              <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0] reveal">
                 <div className="flex items-center justify-between mb-3">
                   <div className="w-[42px] h-[42px] rounded-[10px] bg-[#dcfce7] flex items-center justify-center">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
@@ -136,7 +136,7 @@ export default function AdminDashboard() {
               </div>
 
               {/* Active Caregivers */}
-              <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0]">
+              <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0] reveal">
                 <div className="flex items-center justify-between mb-3">
                   <div className="w-[42px] h-[42px] rounded-[10px] bg-[#ccfbf1] flex items-center justify-center">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#0d9488" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
@@ -156,7 +156,7 @@ export default function AdminDashboard() {
               </div>
 
               {/* Face Scans */}
-              <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0]">
+              <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0] reveal">
                 <div className="flex items-center justify-between mb-3">
                   <div className="w-[42px] h-[42px] rounded-[10px] bg-[#fef3c7] flex items-center justify-center">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
@@ -174,7 +174,7 @@ export default function AdminDashboard() {
             {/* Two Columns: Recent Users + System Health */}
             <div className="grid grid-cols-2 gap-6 mb-6">
               {/* Recent Users */}
-              <div className="bg-white rounded-2xl border border-[#e2e8f0] overflow-hidden">
+              <div className="bg-white rounded-2xl border border-[#e2e8f0] overflow-hidden reveal">
                 <div className="p-5 px-6 border-b border-[#e2e8f0] flex items-center justify-between">
                   <h3 className="text-base font-bold text-[#1a3c34]">Recent Users</h3>
                   <button
@@ -285,7 +285,7 @@ export default function AdminDashboard() {
               </div>
 
               {/* System Health */}
-              <div className="bg-white rounded-2xl border border-[#e2e8f0] overflow-hidden">
+              <div className="bg-white rounded-2xl border border-[#e2e8f0] overflow-hidden reveal">
                 <div className="p-5 px-6 border-b border-[#e2e8f0] flex items-center justify-between">
                   <h3 className="text-base font-bold text-[#1a3c34]">System Health</h3>
                   <button className="py-2 px-4 rounded-lg text-[13px] font-semibold border border-[#e2e8f0] bg-white text-[#64748b] cursor-pointer hover:border-[#0d9488] hover:text-[#0d9488] transition-colors">
@@ -370,7 +370,7 @@ export default function AdminDashboard() {
             {/* Two Columns: Recent Activity + Patient Compliance */}
             <div className="grid grid-cols-2 gap-6 mb-6">
               {/* Recent Activity */}
-              <div className="bg-white rounded-2xl border border-[#e2e8f0] overflow-hidden">
+              <div className="bg-white rounded-2xl border border-[#e2e8f0] overflow-hidden reveal">
                 <div className="p-5 px-6 border-b border-[#e2e8f0] flex items-center justify-between">
                   <h3 className="text-base font-bold text-[#1a3c34]">Recent Activity</h3>
                   <button className="py-2 px-4 rounded-lg text-[13px] font-semibold border border-[#e2e8f0] bg-white text-[#64748b] cursor-pointer hover:border-[#0d9488] hover:text-[#0d9488] transition-colors">
@@ -456,7 +456,7 @@ export default function AdminDashboard() {
               </div>
 
               {/* Patient Compliance */}
-              <div className="bg-white rounded-2xl border border-[#e2e8f0] overflow-hidden">
+              <div className="bg-white rounded-2xl border border-[#e2e8f0] overflow-hidden reveal">
                 <div className="p-5 px-6 border-b border-[#e2e8f0] flex items-center justify-between">
                   <h3 className="text-base font-bold text-[#1a3c34]">Patient Compliance</h3>
                   <button className="py-2 px-4 rounded-lg text-[13px] font-semibold border border-[#e2e8f0] bg-white text-[#64748b] cursor-pointer hover:border-[#0d9488] hover:text-[#0d9488] transition-colors">

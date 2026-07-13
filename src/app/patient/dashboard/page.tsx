@@ -96,7 +96,7 @@ export default function Dashboard() {
             {/* Stats Row */}
             <div className="grid grid-cols-4 gap-4">
               {/* Meds Taken */}
-              <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0]">
+              <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0] reveal">
                 <div className="w-10 h-10 rounded-xl bg-[#d1fae5] flex items-center justify-center mb-3">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="20 6 9 17 4 12" />
@@ -110,7 +110,7 @@ export default function Dashboard() {
               </div>
 
               {/* Routines Done */}
-              <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0]">
+              <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0] reveal">
                 <div className="w-10 h-10 rounded-xl bg-[#dbeafe] flex items-center justify-center mb-3">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="3" y="4" width="18" height="18" rx="2" />
@@ -126,7 +126,7 @@ export default function Dashboard() {
               </div>
 
               {/* Weekly Score */}
-              <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0]">
+              <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0] reveal">
                 <div className="w-10 h-10 rounded-xl bg-[#fef3c7] flex items-center justify-center mb-3">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
@@ -140,7 +140,7 @@ export default function Dashboard() {
               </div>
 
               {/* Streak */}
-              <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0]">
+              <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0] reveal">
                 <div className="w-10 h-10 rounded-xl bg-[#fce7f3] flex items-center justify-center mb-3">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#db2777" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
@@ -157,7 +157,7 @@ export default function Dashboard() {
             {/* Content Grid: Medications + Routines */}
             <div className="grid grid-cols-2 gap-5">
               {/* Upcoming Medications Panel */}
-              <div className="bg-white rounded-2xl p-6 border border-[#e2e8f0]">
+              <div className="bg-white rounded-2xl p-6 border border-[#e2e8f0] reveal">
                 <div className="flex justify-between items-center mb-5">
                   <div className="text-base font-bold text-[#1a3c34]">Upcoming Medications</div>
                   <a href="/patient/medications" className="text-[13px] font-semibold text-[#0d9488]">View all</a>
@@ -219,7 +219,7 @@ export default function Dashboard() {
               </div>
 
               {/* Today&apos;s Routine Panel */}
-              <div className="bg-white rounded-2xl p-6 border border-[#e2e8f0]">
+              <div className="bg-white rounded-2xl p-6 border border-[#e2e8f0] reveal">
                 <div className="flex justify-between items-center mb-5">
                   <div className="text-base font-bold text-[#1a3c34]">Today&apos;s Routine</div>
                   <a href="/patient/routines" className="text-[13px] font-semibold text-[#0d9488]">View all</a>
@@ -275,7 +275,7 @@ export default function Dashboard() {
               {/* Quick Actions - spans full width */}
               <div className="col-span-2 grid grid-cols-2 gap-3">
                 {/* Chat with AI */}
-                <a href="/patient/chatbot" className="flex items-center gap-3.5 p-[18px] bg-white rounded-[14px] border-[1.5px] border-[#e2e8f0] cursor-pointer transition-all hover:border-[#0d9488] hover:shadow-[0_4px_16px_rgba(13,148,136,0.08)]">
+                <a href="/patient/chatbot" className="flex items-center gap-3.5 p-[18px] reveal bg-white rounded-[14px] border-[1.5px] border-[#e2e8f0] cursor-pointer transition-all hover:border-[#0d9488] hover:shadow-[0_4px_16px_rgba(13,148,136,0.08)]">
                   <div className="w-11 h-11 rounded-xl bg-[#dbeafe] flex items-center justify-center flex-shrink-0">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" className="w-[22px] h-[22px]" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
@@ -288,7 +288,7 @@ export default function Dashboard() {
                 </a>
 
                 {/* Face Recognition */}
-                <a href="/patient/face-recognition" className="flex items-center gap-3.5 p-[18px] bg-white rounded-[14px] border-[1.5px] border-[#e2e8f0] cursor-pointer transition-all hover:border-[#0d9488] hover:shadow-[0_4px_16px_rgba(13,148,136,0.08)]">
+                <a href="/patient/face-recognition" className="flex items-center gap-3.5 p-[18px] reveal bg-white rounded-[14px] border-[1.5px] border-[#e2e8f0] cursor-pointer transition-all hover:border-[#0d9488] hover:shadow-[0_4px_16px_rgba(13,148,136,0.08)]">
                   <div className="w-11 h-11 rounded-xl bg-[#f3e8ff] flex items-center justify-center flex-shrink-0">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="2" className="w-[22px] h-[22px]" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
@@ -303,7 +303,7 @@ export default function Dashboard() {
               </div>
 
               {/* Caregiver Info Card - spans full width */}
-              <div className="col-span-2 bg-white rounded-2xl p-6 border border-[#e2e8f0]">
+              <div className="col-span-2 bg-white rounded-2xl p-6 border border-[#e2e8f0] reveal">
                 <div className="flex justify-between items-center mb-4">
                   <div className="text-base font-bold text-[#1a3c34]">My Caregiver</div>
                   <a href="#" className="text-[13px] font-semibold text-[#0d9488]">View details</a>

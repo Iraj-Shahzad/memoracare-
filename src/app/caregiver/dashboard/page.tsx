@@ -113,7 +113,7 @@ export default function CaregiverDashboard() {
             {/* Stats Row */}
             <div className="grid grid-cols-4 gap-4 mb-7">
               {/* Total Patients */}
-              <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0]">
+              <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0] reveal">
                 <div className="w-10 h-10 rounded-xl bg-[#dbeafe] flex items-center justify-center mb-3">
                   <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" className="w-5 h-5">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -128,7 +128,7 @@ export default function CaregiverDashboard() {
               </div>
 
               {/* Meds Compliance */}
-              <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0]">
+              <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0] reveal">
                 <div className="w-10 h-10 rounded-xl bg-[#d1fae5] flex items-center justify-center mb-3">
                   <svg viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2" className="w-5 h-5">
                     <polyline points="20 6 9 17 4 12" />
@@ -140,7 +140,7 @@ export default function CaregiverDashboard() {
               </div>
 
               {/* Missed Alerts */}
-              <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0]">
+              <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0] reveal">
                 <div className="w-10 h-10 rounded-xl bg-[#fee2e2] flex items-center justify-center mb-3">
                   <svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2" className="w-5 h-5">
                     <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
@@ -154,7 +154,7 @@ export default function CaregiverDashboard() {
               </div>
 
               {/* Routines Today */}
-              <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0]">
+              <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0] reveal">
                 <div className="w-10 h-10 rounded-xl bg-[#fef3c7] flex items-center justify-center mb-3">
                   <svg viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2" className="w-5 h-5">
                     <rect x="3" y="4" width="18" height="18" rx="2" />
@@ -172,7 +172,7 @@ export default function CaregiverDashboard() {
             {/* Content Grid */}
             <div className="grid grid-cols-2 gap-5 mb-5">
               {/* My Patients Panel */}
-              <div className="bg-white rounded-2xl p-6 border border-[#e2e8f0]">
+              <div className="bg-white rounded-2xl p-6 border border-[#e2e8f0] reveal">
                 <div className="flex justify-between items-center mb-5">
                   <div className="text-base font-bold text-[#1a3c34]">My Patients</div>
                   <span className="text-[#0d9488] text-[13px] font-semibold cursor-pointer">View all</span>
@@ -194,7 +194,7 @@ export default function CaregiverDashboard() {
               </div>
 
               {/* Recent Alerts Panel */}
-              <div className="bg-white rounded-2xl p-6 border border-[#e2e8f0]">
+              <div className="bg-white rounded-2xl p-6 border border-[#e2e8f0] reveal">
                 <div className="flex justify-between items-center mb-5">
                   <div className="text-base font-bold text-[#1a3c34]">Recent Alerts</div>
                   <span className="text-[#0d9488] text-[13px] font-semibold cursor-pointer">View all</span>
@@ -234,7 +234,7 @@ export default function CaregiverDashboard() {
               </div>
 
               {/* Medication Compliance Overview - Full Width */}
-              <div className="col-span-2 bg-white rounded-2xl p-6 border border-[#e2e8f0]">
+              <div className="col-span-2 bg-white rounded-2xl p-6 border border-[#e2e8f0] reveal">
                 <div className="flex justify-between items-center mb-5">
                   <div className="text-base font-bold text-[#1a3c34]">Medication Compliance Overview</div>
                   <span className="text-[#0d9488] text-[13px] font-semibold cursor-pointer">Export report</span>
@@ -288,7 +288,7 @@ export default function CaregiverDashboard() {
               </div>
 
               {/* Caregiver Notes - Full Width */}
-              <div className="col-span-2 bg-white rounded-2xl p-6 border border-[#e2e8f0]">
+              <div className="col-span-2 bg-white rounded-2xl p-6 border border-[#e2e8f0] reveal">
                 <div className="flex justify-between items-center mb-5">
                   <div className="text-base font-bold text-[#1a3c34]">Caregiver Notes</div>
                   <span className="text-[#0d9488] text-[13px] font-semibold cursor-pointer">All notes</span>
