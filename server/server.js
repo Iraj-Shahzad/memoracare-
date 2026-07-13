@@ -105,6 +105,8 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`MemoryCare server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
+  // Start the reminder / missed-dose scheduler (node-cron)
+  require('./services/reminderScheduler').start(io);
 });
 
 // Handle unhandled promise rejections

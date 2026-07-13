@@ -1,8 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { apiPost } from "@/lib/api";
+import { getSocket, joinPatientRoom, leavePatientRoom } from "@/lib/socket";
+
+interface ReminderToast {
+  id: number;
+  kind: "medication" | "routine" | "alert";
+  message: string;
+}
 
 interface TopbarProps {
   title: string;
@@ -25,10 +32,59 @@ export default function Topbar({
 }: TopbarProps) {
   const { user } = useAuth();
   const [sosSending, setSosSending] = useState(false);
+  const [toasts, setToasts] = useState<ReminderToast[]>([]);
   const initials = avatar || (user?.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U');
 
+  const patientId = (user?.profile as Record<string, unknown> | undefined)?._id as string | undefined;
+
+  // Real-time reminders / missed-dose alerts pushed by the backend scheduler.
+  useEffect(() => {
+    if (user?.role !== 'patient' || !patientId) return;
+
+    const socket = getSocket();
+    const join = () => joinPatientRoom(patientId);
+    join();
+    socket.on('connect', join);
+
+    let counter = 0;
+    const pushToast = (kind: ReminderToast["kind"], message: string) => {
+      const id = ++counter + Date.now();
+      setToasts((prev) => [...prev, { id, kind, message }]);
+      setTimeout(() => {
+        setToasts((prev) => prev.filter((t) => t.id !== id));
+      }, 8000);
+      // Best-effort desktop notification (only if the user already granted it).
+      if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+        try { new Notification('MemoryCare', { body: message }); } catch { /* ignore */ }
+      }
+    };
+
+    const onReminder = (data: { kind?: string; message?: string }) => {
+      pushToast(data.kind === 'routine' ? 'routine' : 'medication', data.message || 'You have a reminder.');
+    };
+    const onAlert = (data: { message?: string }) => {
+      pushToast('alert', data.message || 'New alert.');
+    };
+
+    socket.on('reminder', onReminder);
+    socket.on('alert', onAlert);
+
+    // Ask once for desktop-notification permission.
+    if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission().catch(() => {});
+    }
+
+    return () => {
+      socket.off('connect', join);
+      socket.off('reminder', onReminder);
+      socket.off('alert', onAlert);
+      leavePatientRoom(patientId);
+    };
+  }, [user?.role, patientId]);
+
+  const dismissToast = (id: number) => setToasts((prev) => prev.filter((t) => t.id !== id));
+
   const handleSOS = async () => {
-    const patientId = (user?.profile as Record<string, unknown> | undefined)?._id as string | undefined;
     if (user?.role !== 'patient' || !patientId) {
       window.alert('SOS is available for patient accounts.');
       return;
@@ -97,6 +153,41 @@ export default function Topbar({
           {initials}
         </div>
       </div>
+
+      {/* Real-time reminder / alert toasts */}
+      {toasts.length > 0 && (
+        <div className="fixed top-20 right-6 z-[100] flex flex-col gap-3 w-[320px]">
+          {toasts.map((t) => (
+            <div
+              key={t.id}
+              className={`flex items-start gap-3 p-4 rounded-[12px] shadow-lg border bg-white animate-[fadeIn_0.2s_ease-out] ${
+                t.kind === 'alert' ? 'border-red-200' : 'border-teal-200'
+              }`}
+            >
+              <div
+                className={`w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0 ${
+                  t.kind === 'alert' ? 'bg-red-100 text-red-600' : 'bg-teal-100 text-teal-600'
+                }`}
+              >
+                {t.kind === 'medication' ? '💊' : t.kind === 'routine' ? '🗓️' : '⚠️'}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] font-bold text-[#1a3c34]">
+                  {t.kind === 'alert' ? 'Alert' : 'Reminder'}
+                </p>
+                <p className="text-[13px] text-slate-600 mt-0.5 break-words">{t.message}</p>
+              </div>
+              <button
+                onClick={() => dismissToast(t.id)}
+                className="text-slate-400 hover:text-slate-600 text-lg leading-none"
+                aria-label="Dismiss"
+              >
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
