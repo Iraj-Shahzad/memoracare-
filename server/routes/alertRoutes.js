@@ -14,7 +14,7 @@ router.use(protect); // All routes protected
 router.get('/', authorize('admin', 'caregiver'), getAllAlerts);
 router.get('/patient/:patientId', getPatientAlerts);
 router.post('/', createAlert);
-router.put('/:id/resolve', resolveAlert);
-router.delete('/:id', deleteAlert);
+router.put('/:id/resolve', authorize('admin', 'caregiver'), resolveAlert);
+router.delete('/:id', authorize('admin', 'caregiver'), deleteAlert);
 
 module.exports = router;

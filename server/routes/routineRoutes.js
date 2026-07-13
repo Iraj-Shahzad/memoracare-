@@ -9,16 +9,16 @@ const {
   getRoutineLogs,
   getTodayRoutines,
 } = require('../controllers/routineController');
-const { protect } = require('../middleware/auth');
+const { protect, authorize } = require('../middleware/auth');
 
 router.use(protect); // All routes protected
 
 router.get('/patient/:patientId', getRoutinesByPatient);
 router.get('/patient/:patientId/logs', getRoutineLogs);
 router.get('/patient/:patientId/today', getTodayRoutines);
-router.post('/', createRoutine);
-router.put('/:id', updateRoutine);
-router.delete('/:id', deleteRoutine);
+router.post('/', authorize('caregiver', 'admin'), createRoutine);
+router.put('/:id', authorize('caregiver', 'admin'), updateRoutine);
+router.delete('/:id', authorize('caregiver', 'admin'), deleteRoutine);
 router.post('/:id/log', logRoutineCompletion);
 
 module.exports = router;

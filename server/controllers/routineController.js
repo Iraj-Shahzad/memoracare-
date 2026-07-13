@@ -1,11 +1,15 @@
 const Routine = require('../models/Routine');
 const RoutineLog = require('../models/RoutineLog');
+const { canAccessPatient } = require('../utils/access');
 
 // @desc Get routines for a patient
 // @route GET /api/routines/patient/:patientId
 exports.getRoutinesByPatient = async (req, res, next) => {
   try {
     const { patientId } = req.params;
+    if (!(await canAccessPatient(req.user, patientId))) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
+    }
     const { active } = req.query;
     const query = { patient: patientId };
     if (active !== undefined) query.isActive = active === 'true';
@@ -25,6 +29,10 @@ exports.getRoutinesByPatient = async (req, res, next) => {
 exports.createRoutine = async (req, res, next) => {
   try {
     const { patient, activityName, description, startTime, endTime, days, priority } = req.body;
+
+    if (!(await canAccessPatient(req.user, patient))) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
+    }
 
     const routine = await Routine.create({
       patient,
@@ -47,6 +55,14 @@ exports.createRoutine = async (req, res, next) => {
 // @route PUT /api/routines/:id
 exports.updateRoutine = async (req, res, next) => {
   try {
+    const existing = await Routine.findById(req.params.id);
+    if (!existing) {
+      return res.status(404).json({ success: false, message: 'Routine not found' });
+    }
+    if (!(await canAccessPatient(req.user, existing.patient))) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
+    }
+
     const allowedFields = ['activityName', 'description', 'startTime', 'endTime', 'days', 'priority', 'isActive'];
     const updateData = {};
     allowedFields.forEach((field) => {
@@ -54,9 +70,6 @@ exports.updateRoutine = async (req, res, next) => {
     });
 
     const routine = await Routine.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
-    if (!routine) {
-      return res.status(404).json({ success: false, message: 'Routine not found' });
-    }
 
     res.status(200).json({ success: true, routine });
   } catch (err) {
@@ -68,10 +81,14 @@ exports.updateRoutine = async (req, res, next) => {
 // @route DELETE /api/routines/:id
 exports.deleteRoutine = async (req, res, next) => {
   try {
-    const routine = await Routine.findByIdAndDelete(req.params.id);
+    const routine = await Routine.findById(req.params.id);
     if (!routine) {
       return res.status(404).json({ success: false, message: 'Routine not found' });
     }
+    if (!(await canAccessPatient(req.user, routine.patient))) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
+    }
+    await routine.deleteOne();
     res.status(200).json({ success: true, message: 'Routine deleted' });
   } catch (err) {
     next(err);
@@ -86,6 +103,9 @@ exports.logRoutineCompletion = async (req, res, next) => {
     const routine = await Routine.findById(req.params.id);
     if (!routine) {
       return res.status(404).json({ success: false, message: 'Routine not found' });
+    }
+    if (!(await canAccessPatient(req.user, routine.patient))) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
     }
 
     const logData = {
@@ -117,6 +137,9 @@ exports.logRoutineCompletion = async (req, res, next) => {
 exports.getRoutineLogs = async (req, res, next) => {
   try {
     const { patientId } = req.params;
+    if (!(await canAccessPatient(req.user, patientId))) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
+    }
     const { from, to, page = 1, limit = 50 } = req.query;
     const query = { patient: patientId };
 
@@ -144,6 +167,9 @@ exports.getRoutineLogs = async (req, res, next) => {
 exports.getTodayRoutines = async (req, res, next) => {
   try {
     const { patientId } = req.params;
+    if (!(await canAccessPatient(req.user, patientId))) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
+    }
     const today = new Date();
     const dayName = today.toLocaleDateString('en-US', { weekday: 'long' });
 

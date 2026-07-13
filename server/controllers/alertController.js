@@ -1,6 +1,7 @@
 const Alert = require('../models/Alert');
 const Patient = require('../models/Patient');
 const Caregiver = require('../models/Caregiver');
+const { canAccessPatient } = require('../utils/access');
 
 // @desc Get all alerts (admin/caregiver)
 // @route GET /api/alerts
@@ -43,6 +44,9 @@ exports.getAllAlerts = async (req, res, next) => {
 exports.getPatientAlerts = async (req, res, next) => {
   try {
     const { patientId } = req.params;
+    if (!(await canAccessPatient(req.user, patientId))) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
+    }
     const { resolved } = req.query;
     const query = { patient: patientId };
     if (resolved !== undefined) query.isResolved = resolved === 'true';
@@ -62,6 +66,10 @@ exports.getPatientAlerts = async (req, res, next) => {
 exports.createAlert = async (req, res, next) => {
   try {
     const { patient, type, severity, message } = req.body;
+
+    if (!(await canAccessPatient(req.user, patient))) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
+    }
 
     const alert = await Alert.create({
       patient,
@@ -86,15 +94,19 @@ exports.createAlert = async (req, res, next) => {
 // @route PUT /api/alerts/:id/resolve
 exports.resolveAlert = async (req, res, next) => {
   try {
+    const existing = await Alert.findById(req.params.id);
+    if (!existing) {
+      return res.status(404).json({ success: false, message: 'Alert not found' });
+    }
+    if (!(await canAccessPatient(req.user, existing.patient))) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
+    }
+
     const alert = await Alert.findByIdAndUpdate(
       req.params.id,
       { isResolved: true, resolvedBy: req.user.id, resolvedAt: new Date() },
       { new: true }
     );
-
-    if (!alert) {
-      return res.status(404).json({ success: false, message: 'Alert not found' });
-    }
 
     res.status(200).json({ success: true, alert });
   } catch (err) {
@@ -106,10 +118,14 @@ exports.resolveAlert = async (req, res, next) => {
 // @route DELETE /api/alerts/:id
 exports.deleteAlert = async (req, res, next) => {
   try {
-    const alert = await Alert.findByIdAndDelete(req.params.id);
+    const alert = await Alert.findById(req.params.id);
     if (!alert) {
       return res.status(404).json({ success: false, message: 'Alert not found' });
     }
+    if (!(await canAccessPatient(req.user, alert.patient))) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
+    }
+    await alert.deleteOne();
     res.status(200).json({ success: true, message: 'Alert deleted' });
   } catch (err) {
     next(err);
