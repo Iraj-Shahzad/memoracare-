@@ -15,7 +15,7 @@ export default function LandingPage() {
         <img
           src="/images/hero2.jfif"
           alt="An elderly couple sharing memories together in a garden"
-          className="absolute inset-0 w-full h-full object-cover object-[72%_22%] hero-ken"
+          className="absolute inset-0 w-full h-full object-cover object-[72%_60%] hero-ken"
         />
         {/* Readability scrim — darker on the left, behind the text, fading to reveal the photo on the right */}
         <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(100deg,rgba(13,27,23,0.9)_0%,rgba(15,43,37,0.62)_28%,rgba(26,60,52,0.18)_52%,rgba(26,60,52,0)_72%)]" />
