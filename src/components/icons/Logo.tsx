@@ -6,7 +6,7 @@ export default function Logo({ className = "w-9 h-9" }: { className?: string }) 
       <img
         src="/images/memoracare.png"
         alt="MemoryCare"
-        className="w-full h-full object-contain scale-[1.45] [filter:brightness(0)_invert(1)]"
+        className="w-full h-full object-contain scale-[1.2] [filter:brightness(0)_invert(1)]"
       />
     </div>
   );
