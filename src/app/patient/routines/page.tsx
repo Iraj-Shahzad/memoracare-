@@ -159,13 +159,46 @@ export default function RoutinesPage() {
 
   useEffect(() => {
     if (!patientId) return;
+
+    const sectionForHour = (h: number) =>
+      h < 12 ? "morning" : h < 17 ? "afternoon" : h < 21 ? "evening" : "night";
+    const parseHour = (t: string): number => {
+      if (!t) return 9;
+      const m = /(\d{1,2}):?(\d{2})?\s*(AM|PM)?/i.exec(t);
+      if (!m) return 9;
+      let h = parseInt(m[1], 10);
+      const ap = (m[3] || "").toUpperCase();
+      if (ap === "PM" && h < 12) h += 12;
+      if (ap === "AM" && h === 12) h = 0;
+      return h;
+    };
+    const mapStatus = (s: string): RoutineStatus =>
+      s === "completed" ? "done" : s === "missed" ? "missed" : s === "active" ? "active" : "upcoming";
+
     const fetchRoutines = async () => {
       try {
         setLoading(true);
         const res = await apiGet(`/routines/patient/${patientId}/today`).catch(() => null);
-        if (res?.data && Array.isArray(res.data) && res.data.length > 0) {
-          // API data available - could map it to timeSections structure
-          // For now, keep the hardcoded structure as fallback
+        if (res?.routines && Array.isArray(res.routines)) {
+          const grouped: Record<string, Routine[]> = { morning: [], afternoon: [], evening: [], night: [] };
+          res.routines.forEach((r: any) => {
+            const key = sectionForHour(parseHour(r.startTime));
+            grouped[key].push({
+              id: r._id || r.id,
+              name: r.activityName || "Routine",
+              description: r.description || "",
+              time: r.startTime || "",
+              status: mapStatus(r.todayStatus),
+            });
+          });
+          setTimeSections((prev) =>
+            prev.map((section) => ({
+              ...section,
+              routines: grouped[section.key] || [],
+              total: (grouped[section.key] || []).length,
+              completed: (grouped[section.key] || []).filter((r) => r.status === "done").length,
+            }))
+          );
         }
       } catch (err) {
         console.error("Routines fetch error:", err);

@@ -62,8 +62,8 @@ export default function MedicationsPage() {
           apiGet(`/medications/patient/${patientId}`).catch(() => null),
           apiGet(`/medications/patient/${patientId}/compliance`).catch(() => null),
         ]);
-        if (medRes?.data && Array.isArray(medRes.data) && medRes.data.length > 0) {
-          const mapped = medRes.data.map((m: any) => ({
+        if (medRes?.medications && Array.isArray(medRes.medications) && medRes.medications.length > 0) {
+          const mapped = medRes.medications.map((m: any) => ({
             id: m._id || m.id,
             name: m.name || m.brandName || "Unknown",
             genericName: m.genericName || m.name || "",
@@ -82,7 +82,7 @@ export default function MedicationsPage() {
           }));
           setMedications(mapped);
         }
-        if (compRes?.data) setComplianceStats(compRes.data);
+        if (compRes?.stats) setComplianceStats(compRes.stats);
       } catch (err) {
         console.error("Medications fetch error:", err);
       } finally {

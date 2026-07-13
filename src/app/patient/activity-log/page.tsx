@@ -184,8 +184,8 @@ export default function ActivityLog() {
       try {
         setLoading(true);
         const res = await apiGet(`/patients/${patientId}/activity-log`).catch(() => null);
-        if (res?.data && Array.isArray(res.data) && res.data.length > 0) {
-          const mapped = res.data.map((a: any, idx: number) => ({
+        if (res?.activities && Array.isArray(res.activities) && res.activities.length > 0) {
+          const mapped = res.activities.map((a: any, idx: number) => ({
             id: a._id || a.id || String(idx + 1),
             date: a.date ? a.date.split("T")[0] : new Date().toISOString().split("T")[0],
             time: a.time || new Date(a.date || a.createdAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),

@@ -202,8 +202,8 @@ export default function ReportsPage() {
       try {
         setLoading(true);
         const res = await apiGet(`/reports/patient/${patientId}`).catch(() => null);
-        if (res?.data && Array.isArray(res.data) && res.data.length > 0) {
-          const mapped = res.data.map((r: any) => ({
+        if (res?.reports && Array.isArray(res.reports) && res.reports.length > 0) {
+          const mapped = res.reports.map((r: any) => ({
             id: r._id || r.id,
             title: r.title || "Report",
             date: r.date ? new Date(r.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "",
@@ -247,8 +247,8 @@ export default function ReportsPage() {
       });
       // Refresh the list so the new report shows up
       const res = await apiGet(`/reports/patient/${patientId}`).catch(() => null);
-      if (res?.data && Array.isArray(res.data) && res.data.length > 0) {
-        const mapped = res.data.map((r: any) => ({
+      if (res?.reports && Array.isArray(res.reports) && res.reports.length > 0) {
+        const mapped = res.reports.map((r: any) => ({
           id: r._id || r.id,
           title: r.title || "Report",
           date: r.createdAt

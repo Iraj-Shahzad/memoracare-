@@ -33,7 +33,7 @@ export default function Dashboard() {
       try {
         setLoading(true);
         const dashRes = await apiGet(`/patients/${patientId}/dashboard`).catch(() => null);
-        if (dashRes?.data) setDashboardData(dashRes.data);
+        if (dashRes?.dashboard) setDashboardData(dashRes.dashboard);
       } catch (err) {
         console.error("Dashboard fetch error:", err);
       } finally {
@@ -43,14 +43,14 @@ export default function Dashboard() {
     fetchData();
   }, [patientId]);
 
-  const medsTaken = dashboardData?.medsTaken ?? 1;
-  const medsTotal = dashboardData?.medsTotal ?? 3;
-  const nextMedTime = dashboardData?.nextMedTime ?? "2:00 PM";
-  const routinesDone = dashboardData?.routinesDone ?? 2;
-  const routinesTotal = dashboardData?.routinesTotal ?? 4;
-  const nextRoutine = dashboardData?.nextRoutine ?? "Lunch";
-  const weeklyScore = dashboardData?.weeklyScore ?? 87;
-  const streak = dashboardData?.streak ?? 5;
+  const medsTaken = dashboardData?.medications?.taken ?? 0;
+  const medsTotal = dashboardData?.medications?.total ?? 0;
+  const nextMedTime = dashboardData?.nextMedTime ?? "—";
+  const routinesDone = dashboardData?.routines?.completed ?? 0;
+  const routinesTotal = dashboardData?.routines?.total ?? 0;
+  const nextRoutine = dashboardData?.nextRoutine ?? "—";
+  const weeklyScore = dashboardData?.weeklyScore ?? (medsTotal > 0 ? Math.round((medsTaken / medsTotal) * 100) : 0);
+  const streak = dashboardData?.streak ?? 0;
 
   const today = new Date();
   const dayName = today.toLocaleDateString("en-US", { weekday: "long" });

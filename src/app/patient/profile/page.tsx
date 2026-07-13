@@ -56,8 +56,8 @@ export default function ProfilePage() {
       try {
         setLoading(true);
         const res = await apiGet(`/patients/${patientId}`).catch(() => null);
-        if (res?.data) {
-          const p = res.data;
+        if (res?.patient) {
+          const p = res.patient;
           if (p.name) setFullName(p.name);
           if (p.dateOfBirth) setDateOfBirth(p.dateOfBirth.split("T")[0]);
           if (p.gender) setGender(p.gender);
