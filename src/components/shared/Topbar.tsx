@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { apiPost } from "@/lib/api";
 
 interface TopbarProps {
   title: string;
@@ -22,7 +24,31 @@ export default function Topbar({
   children,
 }: TopbarProps) {
   const { user } = useAuth();
+  const [sosSending, setSosSending] = useState(false);
   const initials = avatar || (user?.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U');
+
+  const handleSOS = async () => {
+    const patientId = (user?.profile as Record<string, unknown> | undefined)?._id as string | undefined;
+    if (user?.role !== 'patient' || !patientId) {
+      window.alert('SOS is available for patient accounts.');
+      return;
+    }
+    if (!window.confirm('Send an emergency SOS alert to your caregiver?')) return;
+    try {
+      setSosSending(true);
+      await apiPost('/alerts', {
+        patient: patientId,
+        type: 'sos',
+        severity: 'critical',
+        message: `SOS: ${user.name || 'Patient'} needs immediate help.`,
+      });
+      window.alert('SOS sent — your caregiver has been alerted.');
+    } catch {
+      window.alert('Could not send SOS. Please contact your caregiver directly.');
+    } finally {
+      setSosSending(false);
+    }
+  };
   return (
     <div className="bg-white px-8 py-4 flex items-center justify-between border-b border-slate-200 sticky top-0 z-40">
       <div>
@@ -45,13 +71,17 @@ export default function Topbar({
           </button>
         )}
         {showSOS && (
-          <button className="flex items-center gap-2 px-5 py-2.5 bg-red-500 text-white rounded-[10px] text-[13px] font-bold">
+          <button
+            onClick={handleSOS}
+            disabled={sosSending}
+            className="flex items-center gap-2 px-5 py-2.5 bg-red-500 text-white rounded-[10px] text-[13px] font-bold hover:bg-red-600 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+          >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px]">
               <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
               <line x1="12" y1="9" x2="12" y2="13" />
               <line x1="12" y1="17" x2="12.01" y2="17" />
             </svg>
-            SOS
+            {sosSending ? 'Sending…' : 'SOS'}
           </button>
         )}
         {/* Notification Bell */}

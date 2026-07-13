@@ -47,6 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser({
           ...userData,
           id: userData.id || userData._id,
+          profile: res.profile ?? userData.profile,
         });
       }
     } catch {
@@ -76,6 +77,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       id: res.user.id || res.user._id,
     };
     setUser(userData);
+    // Load the role profile (e.g. Patient._id) so pages/actions have it
+    refreshUser();
     return userData;
   };
 
@@ -90,6 +93,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       id: res.user.id || res.user._id,
     };
     setUser(userData);
+    // Load the role profile (e.g. Patient._id) so pages/actions have it
+    refreshUser();
     return userData;
   };
 
