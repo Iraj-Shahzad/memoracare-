@@ -83,14 +83,20 @@ export default function ChatbotPage() {
       try {
         setLoadingHistory(true);
         const res = await apiGet(`/chat/patient/${patientId}/history`).catch(() => null);
-        if (res?.data && Array.isArray(res.data) && res.data.length > 0) {
-          const mapped = res.data.map((msg: any, idx: number) => ({
-            id: String(idx + 1),
-            type: msg.role === "assistant" ? "bot" : "user",
-            content: msg.content || msg.message || "",
-            timestamp: msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "",
-          }));
-          setMessages(mapped);
+        const history = res?.history;
+        if (Array.isArray(history) && history.length > 0) {
+          const fmt = (d?: string) =>
+            d ? new Date(d).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "";
+          const mapped: ChatMessage[] = [];
+          history.forEach((entry: any, idx: number) => {
+            if (entry.query) {
+              mapped.push({ id: `${idx}-u`, type: "user", content: entry.query, timestamp: fmt(entry.createdAt) });
+            }
+            if (entry.response) {
+              mapped.push({ id: `${idx}-b`, type: "bot", content: entry.response, timestamp: fmt(entry.createdAt) });
+            }
+          });
+          if (mapped.length > 0) setMessages(mapped);
         }
       } catch (err) {
         console.error("Chat history error:", err);
@@ -100,6 +106,17 @@ export default function ChatbotPage() {
     };
     fetchHistory();
   }, [patientId]);
+
+  const handleClearChat = () => {
+    setMessages([
+      {
+        id: "1",
+        type: "bot",
+        content: `Assalam o Alaikum, ${userName}! I'm your MemoryCare assistant. How can I help you today?`,
+        timestamp: new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+      },
+    ]);
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -129,14 +146,15 @@ export default function ChatbotPage() {
 
     try {
       const res = await apiPost("/chat/message", {
-        message: messageText,
-        patient: patientId,
+        patientId,
+        query: messageText,
+        mode: "text",
       });
 
       const botResponse: ChatMessage = {
         id: String(messages.length + 2),
         type: "bot",
-        content: res?.data?.response || "I understand. Let me help you with that. How else can I assist you today?",
+        content: res?.chat?.response || "I understand. Let me help you with that. How else can I assist you today?",
         timestamp: new Date().toLocaleTimeString("en-US", {
           hour: "numeric",
           minute: "2-digit",
@@ -513,6 +531,7 @@ export default function ChatbotPage() {
                 </button>
                 <button
                   title="Clear Chat"
+                  onClick={handleClearChat}
                   style={{
                     width: 38,
                     height: 38,

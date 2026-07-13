@@ -1,0 +1,174 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": [
+        "Hi", "Hello", "Hey", "Good morning", "Good afternoon", "Good evening",
+        "Assalam o Alaikum", "Salam", "Hi there", "Hello there", "Is anyone there",
+        "Are you there", "Hey assistant"
+      ],
+      "responses": [
+        "Hello! I'm your MemoryCare assistant. How can I help you today?",
+        "Hi there! It's good to see you. What can I do for you?",
+        "Assalam o Alaikum! I'm here to help. How are you feeling today?"
+      ]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": [
+        "Bye", "Goodbye", "See you later", "Talk to you later", "I am leaving",
+        "Good night", "That is all", "Nothing else", "Thanks bye", "Khuda hafiz"
+      ],
+      "responses": [
+        "Goodbye! Take care of yourself. I'm here whenever you need me.",
+        "See you soon. Remember, I'm always here to help.",
+        "Take care! Press the button anytime you want to talk."
+      ]
+    },
+    {
+      "tag": "thanks",
+      "patterns": [
+        "Thanks", "Thank you", "That is helpful", "Thanks a lot", "Thank you so much",
+        "That helped", "Appreciate it", "You are helpful", "Shukriya"
+      ],
+      "responses": [
+        "You're very welcome! I'm always happy to help.",
+        "Anytime! That's what I'm here for.",
+        "My pleasure. Let me know if you need anything else."
+      ]
+    },
+    {
+      "tag": "medication_query",
+      "patterns": [
+        "What medicine do I take", "What are my medications", "Which pills do I take",
+        "What medication do I need today", "Show me my medicines", "What tablets do I take",
+        "Tell me about my medicines", "Do I have any medicine today", "My medication list",
+        "What drugs am I taking", "What should I take today"
+      ],
+      "responses": [
+        "Let me check your medications for you.",
+        "Here is what I found about your medicines."
+      ]
+    },
+    {
+      "tag": "medication_time",
+      "patterns": [
+        "When do I take my medicine", "What time is my medication", "When is my next pill",
+        "When should I take my tablets", "What time do I take medicine",
+        "Is it time for my medicine", "When is my next dose", "Have I taken my medicine",
+        "Did I take my pills", "When is my medicine due"
+      ],
+      "responses": [
+        "Let me check the timing of your medicines.",
+        "Here are the times for your medication."
+      ]
+    },
+    {
+      "tag": "routine_query",
+      "patterns": [
+        "What is my routine", "What should I do today", "What are my activities",
+        "What is my schedule", "What do I have planned", "What is next on my schedule",
+        "Tell me my daily routine", "What activities do I have", "What is my plan for today",
+        "What should I do now", "What is on my schedule today"
+      ],
+      "responses": [
+        "Let me look at your routine for today.",
+        "Here is your schedule for today."
+      ]
+    },
+    {
+      "tag": "family_query",
+      "patterns": [
+        "Who is my family", "Tell me about my family", "Who are my children",
+        "Who is my daughter", "Who is my son", "Who is my caregiver",
+        "Who takes care of me", "Who can I call", "Who are my emergency contacts",
+        "Tell me about my daughter", "Who is my wife", "Who is my husband"
+      ],
+      "responses": [
+        "Let me tell you about your family and the people who care for you.",
+        "Here are the people close to you."
+      ]
+    },
+    {
+      "tag": "name_query",
+      "patterns": [
+        "What is my name", "Who am I", "Do you know my name", "Tell me my name",
+        "Say my name", "What am I called", "Remind me who I am"
+      ],
+      "responses": [
+        "Let me remind you of your name.",
+        "Of course, here is your name."
+      ]
+    },
+    {
+      "tag": "date_time",
+      "patterns": [
+        "What day is it", "What is today", "What is the date", "What time is it",
+        "What is the day today", "Tell me the date", "Tell me the time",
+        "What is today's date", "Is it morning or evening", "What month is it"
+      ],
+      "responses": [
+        "Let me tell you the current date and time.",
+        "Here is today's date and time."
+      ]
+    },
+    {
+      "tag": "location",
+      "patterns": [
+        "Where am I", "Where do I live", "What is my address", "Where is my home",
+        "How do I get home", "What city am I in", "Tell me where I live"
+      ],
+      "responses": [
+        "Let me help you with where you are.",
+        "Here is information about your home."
+      ]
+    },
+    {
+      "tag": "feeling",
+      "patterns": [
+        "I feel sad", "I am scared", "I feel lonely", "I am confused", "I am worried",
+        "I feel lost", "I am anxious", "I do not feel well", "I feel upset",
+        "I am frightened", "I feel nervous", "I am unhappy"
+      ],
+      "responses": [
+        "I'm sorry you're feeling this way. You are safe, and people who love you are nearby. Would you like me to contact your caregiver?",
+        "It's okay to feel this way. Take a slow, deep breath. I'm here with you, and your caregiver is close by.",
+        "You are not alone. I'm here to help you. If you'd like, press the SOS button and your caregiver will come."
+      ]
+    },
+    {
+      "tag": "emergency",
+      "patterns": [
+        "Help", "Emergency", "I need help", "Something is wrong", "I have fallen",
+        "I am hurt", "Call for help", "I need a doctor", "This is an emergency",
+        "I am in pain", "Help me please", "I cannot breathe"
+      ],
+      "responses": [
+        "This sounds urgent. Please press the red SOS button right away, or I can alert your caregiver immediately.",
+        "If you are in danger or hurt, press the SOS button now so your caregiver is alerted at once."
+      ]
+    },
+    {
+      "tag": "appointment",
+      "patterns": [
+        "When is my appointment", "Do I have a doctor appointment", "When is my next appointment",
+        "What appointments do I have", "When do I see the doctor", "Is there an appointment today"
+      ],
+      "responses": [
+        "Let me check your appointments.",
+        "Here is what I know about your appointments. For details, please check with your caregiver."
+      ]
+    },
+    {
+      "tag": "help",
+      "patterns": [
+        "What can you do", "How can you help me", "What are you", "Who are you",
+        "What can I ask you", "How do you work", "What is this app", "What is MemoryCare"
+      ],
+      "responses": [
+        "I'm your MemoryCare assistant. I can help you remember your medicines, your daily routine, your family, the date and time, and more. Just ask me!",
+        "I can remind you about your medications and routines, tell you about your family, and help you feel supported. What would you like to know?"
+      ]
+    }
+  ]
+}
