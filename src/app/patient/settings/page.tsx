@@ -6,6 +6,7 @@ import PatientSidebar from "@/components/shared/PatientSidebar";
 import Topbar from "@/components/shared/Topbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
+import { apiPut } from "@/lib/api";
 
 export default function SettingsPage() {
   const { user } = useAuth();
@@ -26,6 +27,42 @@ export default function SettingsPage() {
   // Privacy & Security Settings
   const [twoFactorAuth, setTwoFactorAuth] = useState(false);
   const [sessionTimeout, setSessionTimeout] = useState("30min");
+
+  // Change Password form
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [pwdSaving, setPwdSaving] = useState(false);
+  const [pwdMsg, setPwdMsg] = useState<{ type: "error" | "success"; text: string } | null>(null);
+
+  const handleChangePassword = async () => {
+    setPwdMsg(null);
+    if (!currentPassword || !newPassword) {
+      setPwdMsg({ type: "error", text: "Please fill in all fields." });
+      return;
+    }
+    if (newPassword.length < 6) {
+      setPwdMsg({ type: "error", text: "New password must be at least 6 characters." });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPwdMsg({ type: "error", text: "New passwords do not match." });
+      return;
+    }
+    try {
+      setPwdSaving(true);
+      await apiPut("/auth/change-password", { currentPassword, newPassword });
+      setPwdMsg({ type: "success", text: "Password changed successfully." });
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err) {
+      setPwdMsg({ type: "error", text: (err as Error).message || "Could not change password." });
+    } finally {
+      setPwdSaving(false);
+    }
+  };
 
   // Language & Region Settings
   const [language, setLanguage] = useState("english");
@@ -156,9 +193,48 @@ export default function SettingsPage() {
             </h2>
             <div className="divide-y divide-gray-200">
               <div className="py-4 border-b border-gray-200">
-                <button className="px-4 py-2 bg-[#0d9488] text-white rounded-lg font-medium hover:bg-[#0a7f73] transition">
-                  Change Password
+                <button
+                  onClick={() => { setShowPasswordForm((v) => !v); setPwdMsg(null); }}
+                  className="px-4 py-2 bg-[#0d9488] text-white rounded-lg font-medium hover:bg-[#0a7f73] transition"
+                >
+                  {showPasswordForm ? "Cancel" : "Change Password"}
                 </button>
+
+                {showPasswordForm && (
+                  <div className="mt-4 max-w-md space-y-3">
+                    <input
+                      type="password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      placeholder="Current password"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                    />
+                    <input
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="New password (min 6 characters)"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                    />
+                    <input
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Confirm new password"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                    />
+                    {pwdMsg && (
+                      <p className={`text-sm ${pwdMsg.type === "error" ? "text-red-600" : "text-green-600"}`}>{pwdMsg.text}</p>
+                    )}
+                    <button
+                      onClick={handleChangePassword}
+                      disabled={pwdSaving}
+                      className="px-4 py-2 bg-[#0d9488] text-white rounded-lg font-medium hover:bg-[#0a7f73] transition disabled:opacity-60 disabled:cursor-not-allowed"
+                    >
+                      {pwdSaving ? "Saving..." : "Update Password"}
+                    </button>
+                  </div>
+                )}
               </div>
               <SettingRow label="Two-Factor Authentication">
                 <ToggleSwitch
