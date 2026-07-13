@@ -37,27 +37,29 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ==================== OUR STORY ==================== */}
-      <section className="bg-[#f5f6f5] px-[60px] py-[80px]">
-        <div className="max-w-[1200px] mx-auto grid grid-cols-2 gap-16 items-center">
-          {/* Left: About Image with Effect: Grayscale to Color on hover */}
-          <div className="group rounded-2xl overflow-hidden">
-            <div className="h-[480px] [@media(hover:hover)]:grayscale transition-[filter] duration-700 ease-out group-hover:grayscale-0 rounded-2xl overflow-hidden">
-              <img src="/images/about1.jfif" alt="Caring hands" className="w-full h-full object-cover object-[50%_0%]" />
-            </div>
-          </div>
+      {/* ==================== OUR STORY (text over photo) ==================== */}
+      <section className="relative min-h-[520px] flex items-center overflow-hidden">
+        {/* Braid photo behind, black & white */}
+        <img
+          src="/images/about1.jfif"
+          alt="Caring hands"
+          className="absolute inset-0 w-full h-full object-cover object-[50%_22%] grayscale contrast-[1.05]"
+        />
+        {/* Readability scrim — darker on the left so the text stays crisp */}
+        <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(100deg,rgba(13,27,23,0.93)_0%,rgba(15,43,37,0.82)_42%,rgba(26,60,52,0.5)_72%,rgba(26,60,52,0.28)_100%)]" />
 
-          {/* Right: Story */}
-          <div>
-            <span className="inline-block bg-[#e6f7f5] text-[#0d9488] text-[13px] font-semibold px-4 py-1.5 rounded-full mb-4">Our Story</span>
-            <h2 className="text-[32px] font-bold text-[#1a3c34] mb-5">Why We Built MemoryCare</h2>
-            <p className="text-[15px] text-[#64748b] leading-[1.8] mb-4">
+        {/* Text over the photo */}
+        <div className="relative z-10 w-full max-w-[1200px] mx-auto px-6 md:px-[60px] py-[72px]">
+          <div className="max-w-[600px] reveal">
+            <span className="inline-block bg-[rgba(94,234,212,0.14)] border border-[rgba(94,234,212,0.3)] text-[#5eead4] text-[13px] font-semibold px-4 py-1.5 rounded-full mb-4">Our Story</span>
+            <h2 className="text-[32px] font-bold text-white mb-5 [text-shadow:0_2px_22px_rgba(0,0,0,0.5)]">Why We Built MemoryCare</h2>
+            <p className="text-[15px] text-[#e2e8f0] leading-[1.8] mb-4 [text-shadow:0_1px_14px_rgba(0,0,0,0.5)]">
               In Pakistan, over 1.5 million people are affected by Alzheimer&apos;s and other cognitive disorders. Families often struggle to manage daily care without proper tools or support systems.
             </p>
-            <p className="text-[15px] text-[#64748b] leading-[1.8] mb-4">
+            <p className="text-[15px] text-[#e2e8f0] leading-[1.8] mb-4 [text-shadow:0_1px_14px_rgba(0,0,0,0.5)]">
               MemoryCare was born as a Final Year Project with the vision of bridging this gap. We combine AI technology with human-centered design to create a platform that genuinely helps patients maintain their daily routines, stay connected with loved ones, and live with dignity.
             </p>
-            <p className="text-[15px] text-[#64748b] leading-[1.8]">
+            <p className="text-[15px] text-[#e2e8f0] leading-[1.8] [text-shadow:0_1px_14px_rgba(0,0,0,0.5)]">
               From medication reminders to face recognition, every feature is designed with empathy and built with the latest in machine learning and web technologies.
             </p>
           </div>
