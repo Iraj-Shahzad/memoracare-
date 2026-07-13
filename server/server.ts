@@ -28,6 +28,7 @@ import reportRoutes from './routes/reportRoutes';
 import adminRoutes from './routes/adminRoutes';
 import caregiverRoutes from './routes/caregiverRoutes';
 import contactRoutes from './routes/contactRoutes';
+import memoryRoutes from './routes/memoryRoutes';
 
 import { start as startReminderScheduler } from './services/reminderScheduler';
 
@@ -98,6 +99,7 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/caregiver', caregiverRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/memories', memoryRoutes);
 
 // Health check endpoint
 app.get('/health', (req: Request, res: Response) => {

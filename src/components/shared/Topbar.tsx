@@ -118,7 +118,10 @@ export default function Topbar({
       <div className="flex items-center gap-3">
         {children}
         {showAddButton && (
-          <button className="flex items-center gap-2 px-5 py-2.5 bg-[#0d9488] text-white rounded-[10px] text-sm font-semibold hover:bg-[#0f766e] transition-colors">
+          <button
+            onClick={showAddButton.onClick}
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#0d9488] text-white rounded-[10px] text-sm font-semibold hover:bg-[#0f766e] transition-colors"
+          >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-[18px] h-[18px]">
               <line x1="12" y1="5" x2="12" y2="19" />
               <line x1="5" y1="12" x2="19" y2="12" />

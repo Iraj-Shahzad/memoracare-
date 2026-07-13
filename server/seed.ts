@@ -30,6 +30,7 @@ import Alert from './models/Alert';
 import Note from './models/Note';
 import Report from './models/Report';
 import Contact from './models/Contact';
+import Memory from './models/Memory';
 
 import connectDB from './config/db';
 
@@ -52,6 +53,7 @@ const seed = async () => {
       Note.deleteMany({}),
       Report.deleteMany({}),
       Contact.deleteMany({}),
+      Memory.deleteMany({}),
     ]);
     console.log('Cleared all existing data.');
 
@@ -501,6 +503,40 @@ const seed = async () => {
 
     await Note.insertMany(notes);
     console.log(`Created ${notes.length} notes.`);
+
+    // ==================== MEMORIES (memory gallery) ====================
+    const memories = [
+      {
+        patient: patient1._id,
+        title: 'Eid gathering with the family',
+        people: ['Bilal Khan', 'Aisha Khan'],
+        location: 'Family home, Islamabad',
+        date: new Date('2025-04-10'),
+        description: 'The whole family came over for Eid. Ahmed spent the afternoon with his son Bilal and daughter Aisha in the garden.',
+        addedBy: caregiverUser1._id,
+      },
+      {
+        patient: patient1._id,
+        title: "Bilal's graduation",
+        people: ['Bilal Khan'],
+        location: 'NUST, Islamabad',
+        date: new Date('2019-11-20'),
+        description: 'Ahmed was very proud at his son Bilal\'s university graduation ceremony.',
+        addedBy: caregiverUser1._id,
+      },
+      {
+        patient: patient1._id,
+        title: 'Morning walks in the garden',
+        people: ['Sarah Malik'],
+        location: 'Home garden',
+        date: new Date('2026-06-01'),
+        description: 'Ahmed enjoys his daily morning walk. It keeps him calm and alert for the rest of the day.',
+        addedBy: caregiverUser1._id,
+      },
+    ];
+
+    await Memory.insertMany(memories);
+    console.log(`Created ${memories.length} memories.`);
 
     // ==================== SUMMARY ====================
     console.log('\n========================================');
