@@ -1,12 +1,16 @@
 const Medication = require('../models/Medication');
 const MedicationLog = require('../models/MedicationLog');
 const Patient = require('../models/Patient');
+const { canAccessPatient } = require('../utils/access');
 
 // @desc Get medications for a patient
 // @route GET /api/medications/patient/:patientId
 exports.getMedicationsByPatient = async (req, res, next) => {
   try {
     const { patientId } = req.params;
+    if (!(await canAccessPatient(req.user, patientId))) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
+    }
     const { active } = req.query;
     const query = { patient: patientId };
     if (active !== undefined) query.isActive = active === 'true';
@@ -26,6 +30,10 @@ exports.getMedicationsByPatient = async (req, res, next) => {
 exports.createMedication = async (req, res, next) => {
   try {
     const { patient, name, dosage, frequency, times, instructions, startDate, endDate } = req.body;
+
+    if (!(await canAccessPatient(req.user, patient))) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
+    }
 
     const medication = await Medication.create({
       patient,
@@ -49,6 +57,14 @@ exports.createMedication = async (req, res, next) => {
 // @route PUT /api/medications/:id
 exports.updateMedication = async (req, res, next) => {
   try {
+    const existing = await Medication.findById(req.params.id);
+    if (!existing) {
+      return res.status(404).json({ success: false, message: 'Medication not found' });
+    }
+    if (!(await canAccessPatient(req.user, existing.patient))) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
+    }
+
     const allowedFields = ['name', 'dosage', 'frequency', 'times', 'instructions', 'startDate', 'endDate', 'isActive'];
     const updateData = {};
     allowedFields.forEach((field) => {
@@ -56,9 +72,6 @@ exports.updateMedication = async (req, res, next) => {
     });
 
     const medication = await Medication.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
-    if (!medication) {
-      return res.status(404).json({ success: false, message: 'Medication not found' });
-    }
 
     res.status(200).json({ success: true, medication });
   } catch (err) {
@@ -70,10 +83,14 @@ exports.updateMedication = async (req, res, next) => {
 // @route DELETE /api/medications/:id
 exports.deleteMedication = async (req, res, next) => {
   try {
-    const medication = await Medication.findByIdAndDelete(req.params.id);
+    const medication = await Medication.findById(req.params.id);
     if (!medication) {
       return res.status(404).json({ success: false, message: 'Medication not found' });
     }
+    if (!(await canAccessPatient(req.user, medication.patient))) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
+    }
+    await medication.deleteOne();
     res.status(200).json({ success: true, message: 'Medication deleted' });
   } catch (err) {
     next(err);
@@ -88,6 +105,9 @@ exports.logMedicationStatus = async (req, res, next) => {
     const medication = await Medication.findById(req.params.id);
     if (!medication) {
       return res.status(404).json({ success: false, message: 'Medication not found' });
+    }
+    if (!(await canAccessPatient(req.user, medication.patient))) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
     }
 
     const logData = {
@@ -120,6 +140,9 @@ exports.logMedicationStatus = async (req, res, next) => {
 exports.getMedicationLogs = async (req, res, next) => {
   try {
     const { patientId } = req.params;
+    if (!(await canAccessPatient(req.user, patientId))) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
+    }
     const { from, to, page = 1, limit = 50 } = req.query;
     const query = { patient: patientId };
 
@@ -147,6 +170,9 @@ exports.getMedicationLogs = async (req, res, next) => {
 exports.getComplianceStats = async (req, res, next) => {
   try {
     const { patientId } = req.params;
+    if (!(await canAccessPatient(req.user, patientId))) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
+    }
     const { days = 30 } = req.query;
 
     const fromDate = new Date();

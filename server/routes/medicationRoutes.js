@@ -9,16 +9,16 @@ const {
   getMedicationLogs,
   getComplianceStats,
 } = require('../controllers/medicationController');
-const { protect } = require('../middleware/auth');
+const { protect, authorize } = require('../middleware/auth');
 
 router.use(protect); // All routes protected
 
 router.get('/patient/:patientId', getMedicationsByPatient);
 router.get('/patient/:patientId/logs', getMedicationLogs);
 router.get('/patient/:patientId/compliance', getComplianceStats);
-router.post('/', createMedication);
-router.put('/:id', updateMedication);
-router.delete('/:id', deleteMedication);
+router.post('/', authorize('caregiver', 'admin'), createMedication);
+router.put('/:id', authorize('caregiver', 'admin'), updateMedication);
+router.delete('/:id', authorize('caregiver', 'admin'), deleteMedication);
 router.post('/:id/log', logMedicationStatus);
 
 module.exports = router;
