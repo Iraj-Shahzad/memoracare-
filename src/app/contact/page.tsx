@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import SiteNav from '@/components/shared/SiteNav';
 import Footer from '@/components/shared/Footer';
+import { apiPost } from '@/lib/api';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -13,15 +14,25 @@ export default function ContactPage() {
     message: '',
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Connect to backend API in Phase 3
-    setSubmitted(true);
+    setError('');
+    setSubmitting(true);
+    try {
+      await apiPost('/contact', formData);
+      setSubmitted(true);
+    } catch (err) {
+      setError((err as Error).message || 'Could not send your message. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -145,7 +156,7 @@ export default function ContactPage() {
                 <h3 className="text-[24px] font-bold text-[#1a3c34] mb-3">Message Sent!</h3>
                 <p className="text-[15px] text-[#64748b] mb-8">Thank you for reaching out. Our team will get back to you within 24 hours.</p>
                 <button
-                  onClick={() => { setSubmitted(false); setFormData({ name: '', email: '', phone: '', subject: '', message: '' }); }}
+                  onClick={() => { setSubmitted(false); setError(''); setFormData({ name: '', email: '', phone: '', subject: '', message: '' }); }}
                   className="bg-[#0d9488] hover:bg-[#0f766e] text-white font-semibold px-8 py-3 rounded-xl text-[15px] transition"
                 >
                   Send Another Message
@@ -228,11 +239,16 @@ export default function ContactPage() {
                     />
                   </div>
 
+                  {error && (
+                    <p className="text-[13px] text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-2.5">{error}</p>
+                  )}
+
                   <button
                     type="submit"
-                    className="w-full bg-[#0d9488] hover:bg-[#0f766e] text-white font-semibold py-3.5 rounded-xl text-[15px] transition"
+                    disabled={submitting}
+                    className="w-full bg-[#0d9488] hover:bg-[#0f766e] text-white font-semibold py-3.5 rounded-xl text-[15px] transition disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    Send Message
+                    {submitting ? 'Sending...' : 'Send Message'}
                   </button>
                 </form>
               </>
