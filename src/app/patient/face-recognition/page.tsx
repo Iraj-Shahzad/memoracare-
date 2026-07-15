@@ -8,6 +8,31 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPost, api } from "@/lib/api";
 import { loadFaceApi, getDescriptor, findBestMatch, type KnownFaceLite } from "@/lib/faceApi";
+import { speak, getLang } from "@/lib/speech";
+
+// Common relationship words in Urdu for a natural spoken announcement.
+const REL_UR: Record<string, string> = {
+  daughter: "بیٹی", son: "بیٹا", wife: "بیوی", husband: "شوہر",
+  mother: "والدہ", father: "والد", brother: "بھائی", sister: "بہن",
+  doctor: "ڈاکٹر", caregiver: "نگہداشت کنندہ", nurse: "نرس",
+  neighbor: "پڑوسی", friend: "دوست", granddaughter: "پوتی", grandson: "پوتا",
+};
+
+// Speak a recognition result aloud in the current language.
+function announceFace(name: string, relationship: string | undefined, unknown: boolean) {
+  const lang = getLang();
+  if (unknown) {
+    speak(lang === "ur" ? "میں اس شخص کو نہیں پہچانتا۔" : "I don't recognize this person.", lang);
+    return;
+  }
+  const rel = (relationship || "").trim();
+  if (lang === "ur") {
+    const relUr = REL_UR[rel.toLowerCase()] || rel;
+    speak(`یہ ${name} ہیں${relUr ? `، آپ کے ${relUr}` : ""}۔`, lang);
+  } else {
+    speak(`This is ${name}${rel ? `, your ${rel}` : ""}.`, lang);
+  }
+}
 
 interface RecognitionResult {
   name: string;
@@ -161,12 +186,14 @@ export default function FaceRecognitionPage() {
       const probe = await getDescriptor(videoRef.current);
       if (!probe) {
         setResult({ name: "No face detected", relationship: "Please look at the camera", initials: "!", confidence: 0, unknown: true });
+        speak(getLang() === "ur" ? "کوئی چہرہ نظر نہیں آیا۔ براہ کرم کیمرے کی طرف دیکھیں۔" : "No face detected. Please look at the camera.", getLang());
         return;
       }
 
       const match = findBestMatch(probe, knownRef.current);
       if (match) {
         setResult({ name: match.name, relationship: match.relationship || "Recognized", initials: toInitials(match.name), confidence: match.confidence, unknown: false });
+        announceFace(match.name, match.relationship, false);
         await apiPost("/face-recognition/recognize", {
           patientId,
           result: "recognized",
@@ -177,6 +204,7 @@ export default function FaceRecognitionPage() {
         }).catch(() => {});
       } else {
         setResult({ name: "Unknown Person", relationship: "Not in your known faces", initials: "?", confidence: 0, unknown: true });
+        announceFace("", "", true);
         await apiPost("/face-recognition/recognize", { patientId, result: "unknown", confidence: 0 }).catch(() => {});
       }
       fetchLogs();
