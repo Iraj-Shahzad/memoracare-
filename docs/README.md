@@ -9,6 +9,7 @@ FYP documentation for the Memory Assistant System, aligned with the built app.
 | [TESTING.md](TESTING.md) | Chapter 4 (Software Testing) rewritten around the real Jest/Supertest suite + model evaluation |
 | [USER-MANUAL.md](USER-MANUAL.md) | Step-by-step user guide for patient / caregiver / admin |
 | [INTERFACES.md](INTERFACES.md) | Interfaces chapter — 12 screens with descriptions (insert screenshots) |
+| [DIAGRAM-ERD.md](DIAGRAM-ERD.md) | Entity-Relationship Diagram (Mermaid) generated from the 15 data models |
 
 ## Converting to Word (.docx)
 
