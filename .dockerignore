@@ -1,0 +1,8 @@
+node_modules
+.next
+out
+server
+ml-service
+.git
+*.log
+.env*.local

@@ -1,0 +1,52 @@
+# One-command local/self-host stack for MemoryCare.
+#   docker compose up --build
+# Then open http://localhost:3000
+#
+# Seed sample data once the stack is up:
+#   docker compose exec backend npm run seed
+
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+
+  ml-service:
+    build: ./ml-service
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+
+  backend:
+    build: ./server
+    restart: unless-stopped
+    depends_on:
+      - mongo
+      - ml-service
+    environment:
+      PORT: "5000"
+      NODE_ENV: production
+      MONGODB_URI: mongodb://mongo:27017/memoracare
+      JWT_SECRET: change-me-to-a-long-random-string
+      JWT_EXPIRE: 7d
+      ML_SERVICE_URL: http://ml-service:5001
+    ports:
+      - "5000:5000"
+
+  frontend:
+    build:
+      context: .
+      args:
+        # Baked into the browser bundle — must be reachable from the user's browser.
+        NEXT_PUBLIC_API_URL: http://localhost:5000/api
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+
+volumes:
+  mongo-data:
