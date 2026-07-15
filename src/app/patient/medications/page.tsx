@@ -186,7 +186,7 @@ export default function MedicationsPage() {
       <ProtectedRoute allowedRoles={["patient"]}>
         <div className="flex min-h-screen bg-[#f5f6f5]">
           <PatientSidebar />
-          <div className="ml-[260px] flex-1 flex items-center justify-center">
+          <div className="ml-0 md:ml-[260px] flex-1 flex items-center justify-center">
             <div className="text-center">
               <div className="w-8 h-8 border-4 border-[#0d9488] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
               <p className="text-[#64748b]">Loading medications...</p>
@@ -202,7 +202,7 @@ export default function MedicationsPage() {
     <div className="flex min-h-screen bg-[#f5f6f5]">
       <PatientSidebar />
 
-      <main className="flex-1 ml-[260px]">
+      <main className="flex-1 ml-0 md:ml-[260px]">
         <Topbar
           title="Medications"
           subtitle="Manage and track all medication schedules"

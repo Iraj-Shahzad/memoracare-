@@ -237,7 +237,7 @@ export default function FaceRecognitionPage() {
       <ProtectedRoute allowedRoles={["patient"]}>
         <div className="flex min-h-screen" style={{ background: "#f5f6f5" }}>
           <PatientSidebar />
-          <div className="ml-[260px] flex-1 flex items-center justify-center">
+          <div className="ml-0 md:ml-[260px] flex-1 flex items-center justify-center">
             <div className="text-center">
               <div className="w-8 h-8 border-4 border-[#0d9488] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
               <p className="text-[#64748b]">Loading face recognition...</p>
@@ -253,7 +253,7 @@ export default function FaceRecognitionPage() {
     <div className="flex min-h-screen" style={{ background: "#f5f6f5" }}>
       <PatientSidebar />
 
-      <div className="flex-1 ml-[260px] flex flex-col min-h-screen">
+      <div className="flex-1 ml-0 md:ml-[260px] flex flex-col min-h-screen">
         <Topbar title="Face Recognition" subtitle="Identify familiar faces with AI-powered recognition" />
 
         <div style={{ padding: "24px 32px", flex: 1 }}>

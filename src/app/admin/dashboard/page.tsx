@@ -69,7 +69,7 @@ export default function AdminDashboard() {
     <div className="flex min-h-screen bg-[#f5f6f5]">
       <AdminSidebar />
 
-      <div className="flex-1 ml-[260px] flex flex-col">
+      <div className="flex-1 ml-0 md:ml-[260px] flex flex-col">
         <Topbar
           title="Admin Dashboard"
           subtitle="System overview and management"

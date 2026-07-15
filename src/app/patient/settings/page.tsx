@@ -114,7 +114,7 @@ export default function SettingsPage() {
     <ProtectedRoute allowedRoles={["patient"]}>
     <div className="flex h-screen bg-[#f0fdf4]">
       <PatientSidebar />
-      <div className="flex-1 ml-[260px] flex flex-col">
+      <div className="flex-1 ml-0 md:ml-[260px] flex flex-col">
         <Topbar title="Settings" />
         <div className="flex-1 overflow-auto p-6">
           {/* Notification Settings Section */}

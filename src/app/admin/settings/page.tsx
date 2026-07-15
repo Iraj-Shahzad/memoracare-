@@ -60,7 +60,7 @@ export default function SettingsPage() {
     <div className="flex min-h-screen bg-[#f0fdf4]">
       <AdminSidebar />
 
-      <div className="flex-1 ml-[260px] flex flex-col">
+      <div className="flex-1 ml-0 md:ml-[260px] flex flex-col">
         <Topbar
           title="System Settings"
           subtitle="Configure system-wide settings"

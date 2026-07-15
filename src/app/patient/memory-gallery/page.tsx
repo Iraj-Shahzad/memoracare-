@@ -109,7 +109,7 @@ export default function MemoryGalleryPage() {
       <div className="flex min-h-screen" style={{ background: "#f5f6f5" }}>
         <PatientSidebar />
 
-        <div className="flex-1 ml-[260px] flex flex-col min-h-screen">
+        <div className="flex-1 ml-0 md:ml-[260px] flex flex-col min-h-screen">
           <Topbar
             title="Memory Gallery"
             subtitle="Photos of the people, places, and moments that matter"

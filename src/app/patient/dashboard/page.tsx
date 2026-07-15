@@ -61,7 +61,7 @@ export default function Dashboard() {
       <ProtectedRoute allowedRoles={["patient"]}>
         <div className="flex min-h-screen bg-[#f5f6f5]">
           <PatientSidebar />
-          <div className="ml-[260px] flex-1 flex items-center justify-center">
+          <div className="ml-0 md:ml-[260px] flex-1 flex items-center justify-center">
             <div className="text-center">
               <div className="w-8 h-8 border-4 border-[#0d9488] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
               <p className="text-[#64748b]">Loading dashboard...</p>
@@ -79,7 +79,7 @@ export default function Dashboard() {
       <PatientSidebar />
 
       {/* Main Content */}
-      <div className="ml-[260px] flex-1 flex flex-col">
+      <div className="ml-0 md:ml-[260px] flex-1 flex flex-col">
         {/* Topbar */}
         <Topbar
           title="Dashboard"

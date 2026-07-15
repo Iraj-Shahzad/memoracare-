@@ -106,7 +106,7 @@ export default function Topbar({
     }
   };
   return (
-    <div className="bg-white px-8 py-4 flex items-center justify-between border-b border-slate-200 sticky top-0 z-40">
+    <div className="bg-white pl-16 pr-4 md:px-8 py-4 flex items-center justify-between border-b border-slate-200 sticky top-0 z-40">
       <div>
         {greeting ? (
           <h1 className="text-2xl font-bold text-[#1a3c34]">{greeting}</h1>

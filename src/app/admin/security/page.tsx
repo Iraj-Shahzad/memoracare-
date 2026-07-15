@@ -216,7 +216,7 @@ export default function SecurityPage() {
     <div className="flex min-h-screen bg-[#f0fdf4]">
       <AdminSidebar />
 
-      <div className="flex-1 ml-[260px] flex flex-col">
+      <div className="flex-1 ml-0 md:ml-[260px] flex flex-col">
         <Topbar
           title="Security Dashboard"
           subtitle="System security overview and recommendations"

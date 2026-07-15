@@ -126,7 +126,7 @@ export default function ReportsPage() {
     <div className="flex min-h-screen bg-[#f0fdf4]">
       <CaregiverSidebar />
 
-      <div className="flex-1 ml-[260px] flex flex-col">
+      <div className="flex-1 ml-0 md:ml-[260px] flex flex-col">
         <Topbar
           title="Reports"
           subtitle="Generate and download patient reports"

@@ -164,7 +164,7 @@ export default function ReportsPage() {
       <ProtectedRoute allowedRoles={["patient"]}>
         <div className="flex min-h-screen bg-[#f0fdf4]">
           <PatientSidebar />
-          <div className="ml-[260px] flex-1 flex items-center justify-center">
+          <div className="ml-0 md:ml-[260px] flex-1 flex items-center justify-center">
             <div className="text-center">
               <div className="w-8 h-8 border-4 border-[#0d9488] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
               <p className="text-[#64748b]">Loading reports...</p>
@@ -183,7 +183,7 @@ export default function ReportsPage() {
       <div className="flex min-h-screen bg-[#f0fdf4]">
         <PatientSidebar />
 
-        <div className="flex-1 ml-[260px] flex flex-col">
+        <div className="flex-1 ml-0 md:ml-[260px] flex flex-col">
           <Topbar title="Medical Reports" subtitle="View and generate your health reports" />
 
           <div className="flex-1 p-6 overflow-hidden">

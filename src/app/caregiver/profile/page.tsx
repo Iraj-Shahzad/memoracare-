@@ -94,7 +94,7 @@ export default function ProfilePage() {
     <div className="flex min-h-screen bg-[#f0fdf4]">
       <CaregiverSidebar />
 
-      <div className="flex-1 ml-[260px] flex flex-col">
+      <div className="flex-1 ml-0 md:ml-[260px] flex flex-col">
         <Topbar
           title="My Profile"
           subtitle="Manage your caregiver information"

@@ -374,7 +374,7 @@ export default function ActivityLog() {
       <ProtectedRoute allowedRoles={["patient"]}>
         <div className="flex h-screen bg-white">
           <PatientSidebar />
-          <div className="ml-[260px] flex-1 flex items-center justify-center">
+          <div className="ml-0 md:ml-[260px] flex-1 flex items-center justify-center">
             <div className="text-center">
               <div className="w-8 h-8 border-4 border-[#0d9488] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
               <p className="text-[#64748b]">Loading activity log...</p>
@@ -392,7 +392,7 @@ export default function ActivityLog() {
       <PatientSidebar />
 
       {/* Main Content */}
-      <div className="flex-1 ml-[260px] flex flex-col overflow-hidden">
+      <div className="flex-1 ml-0 md:ml-[260px] flex flex-col overflow-hidden">
         {/* Topbar */}
         <Topbar title="Activity Log" subtitle="Track your health and daily activities" avatar={initials} showSOS={true} />
 

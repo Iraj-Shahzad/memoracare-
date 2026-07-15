@@ -287,7 +287,7 @@ export default function ChatbotPage() {
     <div className="flex" style={{ height: "100vh", background: "#f5f6f5" }}>
       <PatientSidebar />
 
-      <main className="flex-1 ml-[260px] flex flex-col" style={{ height: "100vh" }}>
+      <main className="flex-1 ml-0 md:ml-[260px] flex flex-col" style={{ height: "100vh" }}>
         <div className="flex flex-1 overflow-hidden">
           {/* Chat History Panel */}
           <div

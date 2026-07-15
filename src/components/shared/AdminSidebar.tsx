@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Logo from "@/components/icons/Logo";
@@ -14,6 +15,8 @@ interface AdminNavItem {
 
 export default function AdminSidebar() {
   const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+  const close = () => setOpen(false);
 
   const adminNavItems: AdminNavItem[] = [
     {
@@ -100,7 +103,30 @@ export default function AdminSidebar() {
   const { logout } = useAuth();
 
   return (
-    <aside className="w-[260px] bg-[#1a3c34] fixed top-0 left-0 bottom-0 overflow-y-auto z-50 flex flex-col">
+    <>
+      {/* Mobile hamburger (hidden on desktop) */}
+      <button
+        onClick={() => setOpen(true)}
+        aria-label="Open menu"
+        className="md:hidden fixed top-3 left-3 z-[54] w-11 h-11 rounded-xl bg-[#1a3c34] text-white flex items-center justify-center shadow-lg"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-6 h-6">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+
+      {/* Mobile overlay */}
+      {open && (
+        <div className="md:hidden fixed inset-0 bg-black/50 z-[55]" onClick={close} aria-hidden="true" />
+      )}
+
+    <aside
+      className={`w-[260px] bg-[#1a3c34] fixed top-0 left-0 bottom-0 overflow-y-auto z-[60] flex flex-col transition-transform duration-300 ${
+        open ? "translate-x-0" : "-translate-x-full"
+      } md:translate-x-0`}
+    >
       {/* Logo */}
       <Link href="/" className="flex items-center gap-3 px-6 pt-6 pb-8">
         <Logo />
@@ -127,6 +153,7 @@ export default function AdminSidebar() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
+                    onClick={close}
                     className={`flex items-center gap-3 px-6 py-3 text-sm font-medium transition-all relative ${
                       isActive
                         ? "text-white bg-[rgba(13,148,136,0.2)] border-r-[3px] border-[#0d9488]"
@@ -160,6 +187,7 @@ export default function AdminSidebar() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
+                    onClick={close}
                     className={`flex items-center gap-3 px-6 py-3 text-sm font-medium transition-all ${
                       isActive
                         ? "text-white bg-[rgba(13,148,136,0.2)] border-r-[3px] border-[#0d9488]"
@@ -174,7 +202,7 @@ export default function AdminSidebar() {
             })}
             <li>
               <button
-                onClick={logout}
+                onClick={() => { close(); logout(); }}
                 className="flex items-center gap-3 px-6 py-3 text-sm font-medium transition-all text-white/60 hover:text-white hover:bg-white/5 w-full text-left"
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
@@ -189,5 +217,6 @@ export default function AdminSidebar() {
         </div>
       </nav>
     </aside>
+    </>
   );
 }
