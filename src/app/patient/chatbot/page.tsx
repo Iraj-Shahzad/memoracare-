@@ -6,6 +6,7 @@ import PatientSidebar from "@/components/shared/PatientSidebar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPost } from "@/lib/api";
+import { getLang, setLang as persistLang, speak, listenOnce, speechRecognitionSupported, primeVoices, type Lang } from "@/lib/speech";
 
 interface ChatMessage {
   id: string;
@@ -42,7 +43,23 @@ export default function ChatbotPage() {
   const [searchValue, setSearchValue] = useState("");
   const [sending, setSending] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(true);
+  const [lang, setLangState] = useState<Lang>("en");
+  const [voiceReply, setVoiceReply] = useState(false);
+  const [listening, setListening] = useState(false);
+  const [micSupported, setMicSupported] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Load saved language + warm up speech voices (client only).
+  useEffect(() => {
+    setLangState(getLang());
+    setMicSupported(speechRecognitionSupported());
+    primeVoices();
+  }, []);
+
+  const changeLang = (l: Lang) => {
+    setLangState(l);
+    persistLang(l);
+  };
 
   const [conversations, setConversations] = useState<Conversation[]>([
     {
@@ -112,7 +129,10 @@ export default function ChatbotPage() {
       {
         id: "1",
         type: "bot",
-        content: `Assalam o Alaikum, ${userName}! I'm your MemoryCare assistant. How can I help you today?`,
+        content:
+          lang === "ur"
+            ? `السلام علیکم، ${userName}! میں آپ کا میموری کیئر اسسٹنٹ ہوں۔ میں آپ کی کیسے مدد کر سکتا ہوں؟`
+            : `Assalam o Alaikum, ${userName}! I'm your MemoryCare assistant. How can I help you today?`,
         timestamp: new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
       },
     ]);
@@ -126,21 +146,19 @@ export default function ChatbotPage() {
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = async () => {
-    if (!inputValue.trim() || sending) return;
+  const stamp = () => new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+
+  const sendText = async (text: string) => {
+    const messageText = (text || "").trim();
+    if (!messageText || sending) return;
 
     const newUserMessage: ChatMessage = {
-      id: String(messages.length + 1),
+      id: `${Date.now()}-u`,
       type: "user",
-      content: inputValue,
-      timestamp: new Date().toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-      }),
+      content: messageText,
+      timestamp: stamp(),
     };
-
-    setMessages([...messages, newUserMessage]);
-    const messageText = inputValue;
+    setMessages((prev) => [...prev, newUserMessage]);
     setInputValue("");
     setSending(true);
 
@@ -149,32 +167,42 @@ export default function ChatbotPage() {
         patientId,
         query: messageText,
         mode: "text",
+        lang,
       });
 
-      const botResponse: ChatMessage = {
-        id: String(messages.length + 2),
-        type: "bot",
-        content: res?.chat?.response || "I understand. Let me help you with that. How else can I assist you today?",
-        timestamp: new Date().toLocaleTimeString("en-US", {
-          hour: "numeric",
-          minute: "2-digit",
-        }),
-      };
-      setMessages((prev) => [...prev, botResponse]);
+      const reply =
+        res?.chat?.response ||
+        (lang === "ur"
+          ? "میں سمجھ گیا۔ میں آپ کی اور کیسے مدد کر سکتا ہوں؟"
+          : "I understand. Let me help you with that. How else can I assist you today?");
+
+      setMessages((prev) => [...prev, { id: `${Date.now()}-b`, type: "bot", content: reply, timestamp: stamp() }]);
+      if (voiceReply) speak(reply, lang);
     } catch (err) {
       console.error("Chat error:", err);
-      const botResponse: ChatMessage = {
-        id: String(messages.length + 2),
-        type: "bot",
-        content: "I'm sorry, I'm having trouble connecting right now. Please try again in a moment.",
-        timestamp: new Date().toLocaleTimeString("en-US", {
-          hour: "numeric",
-          minute: "2-digit",
-        }),
-      };
-      setMessages((prev) => [...prev, botResponse]);
+      const reply =
+        lang === "ur"
+          ? "معذرت، اس وقت رابطے میں دشواری ہو رہی ہے۔ براہ کرم تھوڑی دیر بعد دوبارہ کوشش کریں۔"
+          : "I'm sorry, I'm having trouble connecting right now. Please try again in a moment.";
+      setMessages((prev) => [...prev, { id: `${Date.now()}-e`, type: "bot", content: reply, timestamp: stamp() }]);
     } finally {
       setSending(false);
+    }
+  };
+
+  const handleSendMessage = () => sendText(inputValue);
+
+  // Voice input: listen in the chosen language, then send the transcript.
+  const handleMic = async () => {
+    if (!micSupported || listening || sending) return;
+    setListening(true);
+    try {
+      const transcript = await listenOnce(lang);
+      if (transcript) await sendText(transcript);
+    } catch (err) {
+      console.error("Mic error:", err);
+    } finally {
+      setListening(false);
     }
   };
 
@@ -496,66 +524,60 @@ export default function ChatbotPage() {
                   </div>
                 </div>
               </div>
-              <div style={{ display: "flex", gap: 8 }}>
-                <button
-                  title="Voice Input"
-                  style={{
-                    width: 38,
-                    height: 38,
-                    borderRadius: 8,
-                    border: "1px solid #e2e8f0",
-                    background: "#fff",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <svg
-                    viewBox="0 0 24 24"
-                    style={{
-                      width: 18,
-                      height: 18,
-                      stroke: "#64748b",
-                      fill: "none",
-                      strokeWidth: 2,
-                      strokeLinecap: "round",
-                      strokeLinejoin: "round",
-                    }}
+              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                {/* Language toggle */}
+                <div style={{ display: "flex", border: "1px solid #e2e8f0", borderRadius: 8, overflow: "hidden" }}>
+                  <button
+                    onClick={() => changeLang("en")}
+                    style={{ padding: "8px 10px", border: "none", cursor: "pointer", fontSize: 12, fontWeight: 700, fontFamily: "inherit", background: lang === "en" ? "#0d9488" : "#fff", color: lang === "en" ? "#fff" : "#64748b" }}
                   >
-                    <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
-                    <path d="M19 10v2a7 7 0 01-14 0v-2" />
-                    <line x1="12" y1="19" x2="12" y2="23" />
-                    <line x1="8" y1="23" x2="16" y2="23" />
+                    EN
+                  </button>
+                  <button
+                    onClick={() => changeLang("ur")}
+                    style={{ padding: "8px 10px", border: "none", cursor: "pointer", fontSize: 13, fontWeight: 700, fontFamily: "inherit", background: lang === "ur" ? "#0d9488" : "#fff", color: lang === "ur" ? "#fff" : "#64748b" }}
+                  >
+                    اردو
+                  </button>
+                </div>
+
+                {/* Speak replies toggle */}
+                <button
+                  title={voiceReply ? "Voice replies on" : "Voice replies off"}
+                  onClick={() => setVoiceReply((v) => !v)}
+                  style={{ width: 38, height: 38, borderRadius: 8, border: "1px solid #e2e8f0", background: voiceReply ? "#0d9488" : "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                >
+                  <svg viewBox="0 0 24 24" style={{ width: 18, height: 18, stroke: voiceReply ? "#fff" : "#64748b", fill: "none", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" }}>
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                    <path d="M15.54 8.46a5 5 0 010 7.07" />
+                    <path d="M19.07 4.93a10 10 0 010 14.14" />
                   </svg>
                 </button>
+
+                {/* Mic (voice input) */}
+                {micSupported && (
+                  <button
+                    title="Voice Input"
+                    onClick={handleMic}
+                    disabled={listening || sending}
+                    style={{ width: 38, height: 38, borderRadius: 8, border: "1px solid #e2e8f0", background: listening ? "#ef4444" : "#fff", cursor: listening ? "default" : "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                  >
+                    <svg viewBox="0 0 24 24" style={{ width: 18, height: 18, stroke: listening ? "#fff" : "#64748b", fill: "none", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" }}>
+                      <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
+                      <path d="M19 10v2a7 7 0 01-14 0v-2" />
+                      <line x1="12" y1="19" x2="12" y2="23" />
+                      <line x1="8" y1="23" x2="16" y2="23" />
+                    </svg>
+                  </button>
+                )}
+
+                {/* Clear Chat */}
                 <button
                   title="Clear Chat"
                   onClick={handleClearChat}
-                  style={{
-                    width: 38,
-                    height: 38,
-                    borderRadius: 8,
-                    border: "1px solid #e2e8f0",
-                    background: "#fff",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
+                  style={{ width: 38, height: 38, borderRadius: 8, border: "1px solid #e2e8f0", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
                 >
-                  <svg
-                    viewBox="0 0 24 24"
-                    style={{
-                      width: 18,
-                      height: 18,
-                      stroke: "#64748b",
-                      fill: "none",
-                      strokeWidth: 2,
-                      strokeLinecap: "round",
-                      strokeLinejoin: "round",
-                    }}
-                  >
+                  <svg viewBox="0 0 24 24" style={{ width: 18, height: 18, stroke: "#64748b", fill: "none", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" }}>
                     <polyline points="3 6 5 6 21 6" />
                     <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
                   </svg>
@@ -708,14 +730,16 @@ export default function ChatbotPage() {
                 <div style={{ display: "flex", gap: 6 }}>
                   <button
                     title="Voice Input"
+                    onClick={handleMic}
+                    disabled={!micSupported || listening || sending}
                     style={{
                       width: 38,
                       height: 38,
                       borderRadius: 10,
                       border: "none",
-                      background: "transparent",
-                      cursor: "pointer",
-                      display: "flex",
+                      background: listening ? "#fee2e2" : "transparent",
+                      cursor: micSupported ? "pointer" : "not-allowed",
+                      display: micSupported ? "flex" : "none",
                       alignItems: "center",
                       justifyContent: "center",
                     }}
@@ -725,7 +749,7 @@ export default function ChatbotPage() {
                       style={{
                         width: 20,
                         height: 20,
-                        stroke: "#64748b",
+                        stroke: listening ? "#ef4444" : "#64748b",
                         fill: "none",
                         strokeWidth: 2,
                         strokeLinecap: "round",

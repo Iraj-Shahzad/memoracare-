@@ -31,68 +31,105 @@ async function classifyIntent(message: any) {
   }
 }
 
-// Turn a classified intent into a personalized reply using the patient's real
-// data. `base` is the generic response the model returned for that intent.
-async function buildReply(intent: any, base: any, patientId: any) {
+// Urdu response templates for the conversational (non-data) intents.
+const STATIC_UR: Record<string, string> = {
+  greeting: 'السلام علیکم! میں آپ کا میموری کیئر اسسٹنٹ ہوں۔ میں آپ کی کیسے مدد کر سکتا ہوں؟',
+  goodbye: 'اللہ حافظ! اپنا خیال رکھیں۔ جب بھی ضرورت ہو میں یہاں موجود ہوں۔',
+  thanks: 'خوشی ہوئی کہ میں مدد کر سکا۔ کسی اور چیز کی ضرورت ہو تو بتائیں۔',
+  feeling: 'مجھے افسوس ہے کہ آپ ایسا محسوس کر رہے ہیں۔ آپ محفوظ ہیں اور آپ سے محبت کرنے والے قریب ہیں۔ کیا میں آپ کے نگہداشت کنندہ کو اطلاع دوں؟',
+  emergency: 'یہ ہنگامی صورت لگتی ہے۔ براہ کرم فوراً سرخ SOS بٹن دبائیں تاکہ آپ کے نگہداشت کنندہ کو اطلاع ہو جائے۔',
+  help: 'میں آپ کا میموری کیئر اسسٹنٹ ہوں۔ میں آپ کی دواؤں، معمولات، خاندان، اور تاریخ و وقت کے بارے میں مدد کر سکتا ہوں۔ بس پوچھیں!',
+  appointment: 'اپنی ملاقاتوں کی تفصیل کے لیے براہ کرم اپنے نگہداشت کنندہ سے رابطہ کریں۔',
+  fallback: 'معذرت، میں سمجھ نہیں سکا۔ آپ مجھ سے اپنی دوائیں، معمولات، خاندان، یا تاریخ و وقت کے بارے میں پوچھ سکتے ہیں۔',
+};
+
+// Turn a classified intent into a personalized reply in the requested language
+// using the patient's real data. `base` is the generic (English) response the
+// model returned; used for English static intents.
+async function buildReply(intent: any, base: any, patientId: any, lang: 'en' | 'ur' = 'en') {
   const now = new Date();
   const todayName = DAY_NAMES[now.getDay()];
+  const ur = lang === 'ur';
 
   switch (intent) {
     case 'medication_query':
     case 'medication_time': {
       const meds = await Medication.find({ patient: patientId, isActive: true }).select('name dosage times');
-      if (!meds.length) return "You don't have any medications on file right now. Please check with your caregiver.";
+      if (!meds.length) {
+        return ur
+          ? 'اس وقت آپ کی کوئی دوا درج نہیں ہے۔ براہ کرم اپنے نگہداشت کنندہ سے رابطہ کریں۔'
+          : "You don't have any medications on file right now. Please check with your caregiver.";
+      }
       const lines = meds.map((m) => {
-        const times = m.times && m.times.length ? ` at ${m.times.join(', ')}` : '';
+        const times = m.times && m.times.length ? `${ur ? ' — ' : ' at '}${m.times.join(', ')}` : '';
         const dose = m.dosage ? ` (${m.dosage})` : '';
         return `• ${m.name}${dose}${times}`;
       });
-      const lead = intent === 'medication_time'
-        ? 'Here are the times for your medicines:'
-        : 'Here are your medicines:';
+      if (ur) {
+        const lead = intent === 'medication_time' ? 'آپ کی دواؤں کے اوقات یہ ہیں:' : 'آپ کی دوائیں یہ ہیں:';
+        return `${lead}\n${lines.join('\n')}\n\nہر خوراک لینے کے بعد اپنے میڈیکیشن صفحے پر نشان لگانا نہ بھولیں۔`;
+      }
+      const lead = intent === 'medication_time' ? 'Here are the times for your medicines:' : 'Here are your medicines:';
       return `${lead}\n${lines.join('\n')}\n\nRemember to mark each one as taken on your Medications page.`;
     }
 
     case 'routine_query': {
       const routines = await Routine.find({ patient: patientId, isActive: true }).select('activityName startTime days');
       const today = routines.filter((r) => !r.days || r.days.length === 0 || r.days.includes(todayName));
-      if (!today.length) return "You don't have any routines scheduled for today. Enjoy your day!";
+      if (!today.length) {
+        return ur ? 'آج آپ کا کوئی معمول شیڈول نہیں ہے۔ اپنا دن اچھا گزاریں!' : "You don't have any routines scheduled for today. Enjoy your day!";
+      }
       const lines = today
         .sort((a, b) => (a.startTime || '').localeCompare(b.startTime || ''))
-        .map((r) => `• ${r.activityName}${r.startTime ? ` at ${r.startTime}` : ''}`);
-      return `Here is your routine for today:\n${lines.join('\n')}`;
+        .map((r) => `• ${r.activityName}${r.startTime ? `${ur ? ' — ' : ' at '}${r.startTime}` : ''}`);
+      return ur ? `آج کے لیے آپ کے معمولات:\n${lines.join('\n')}` : `Here is your routine for today:\n${lines.join('\n')}`;
     }
 
     case 'name_query': {
-      const patient = await Patient.findById(patientId).populate('user', 'name');
+      const patient: any = await Patient.findById(patientId).populate('user', 'name');
       const name = patient?.user?.name;
-      return name ? `Your name is ${name}. It's good to see you!` : base;
+      if (!name) return ur ? STATIC_UR.fallback : base;
+      return ur ? `آپ کا نام ${name} ہے۔ آپ سے مل کر خوشی ہوئی!` : `Your name is ${name}. It's good to see you!`;
     }
 
     case 'date_time': {
-      const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-      const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-      return `Today is ${dateStr}, and the time is ${timeStr}.`;
+      const locale = ur ? 'ur-PK' : 'en-US';
+      let dateStr: string;
+      let timeStr: string;
+      try {
+        dateStr = now.toLocaleDateString(locale, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        timeStr = now.toLocaleTimeString(locale, { hour: 'numeric', minute: '2-digit' });
+      } catch {
+        dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+      }
+      return ur ? `آج ${dateStr} ہے، اور وقت ${timeStr} ہے۔` : `Today is ${dateStr}, and the time is ${timeStr}.`;
     }
 
     case 'family_query': {
-      const patient = await Patient.findById(patientId).select('emergencyContacts');
+      const patient: any = await Patient.findById(patientId).select('emergencyContacts');
       const contacts = patient?.emergencyContacts || [];
-      if (!contacts.length) return 'I don\'t have your family details on file yet. Your caregiver can add them for you.';
-      const lines = contacts.map((c) => `• ${c.name}${c.relationship ? ` (${c.relationship})` : ''}${c.phone ? ` — ${c.phone}` : ''}`);
-      return `Here are the people close to you:\n${lines.join('\n')}`;
+      if (!contacts.length) {
+        return ur
+          ? 'مجھے ابھی آپ کے خاندان کی تفصیلات معلوم نہیں۔ آپ کا نگہداشت کنندہ انہیں شامل کر سکتا ہے۔'
+          : "I don't have your family details on file yet. Your caregiver can add them for you.";
+      }
+      const lines = contacts.map((c: any) => `• ${c.name}${c.relationship ? ` (${c.relationship})` : ''}${c.phone ? ` — ${c.phone}` : ''}`);
+      return ur ? `آپ کے قریبی لوگ یہ ہیں:\n${lines.join('\n')}` : `Here are the people close to you:\n${lines.join('\n')}`;
     }
 
     case 'location': {
-      const patient = await Patient.findById(patientId).select('address city');
+      const patient: any = await Patient.findById(patientId).select('address city');
       if (patient?.address || patient?.city) {
-        return `You live at ${[patient.address, patient.city].filter(Boolean).join(', ')}. You are safe.`;
+        const place = [patient.address, patient.city].filter(Boolean).join(', ');
+        return ur ? `آپ ${place} میں رہتے ہیں۔ آپ محفوظ ہیں۔` : `You live at ${place}. You are safe.`;
       }
-      return base;
+      return ur ? STATIC_UR.fallback : base;
     }
 
     default:
       // greeting, thanks, goodbye, feeling, emergency, help, appointment, fallback
+      if (ur) return STATIC_UR[intent] || STATIC_UR.fallback;
       return base;
   }
 }
@@ -105,6 +142,7 @@ export const sendMessage = async (req: Request, res: Response, next: NextFunctio
     const patientId = req.body.patientId || req.body.patient;
     const query = req.body.query || req.body.message;
     const mode = req.body.mode || 'text';
+    const lang: 'en' | 'ur' = req.body.lang === 'ur' ? 'ur' : 'en';
 
     if (!query) {
       return res.status(400).json({ success: false, message: 'Please provide a message' });
@@ -127,10 +165,10 @@ export const sendMessage = async (req: Request, res: Response, next: NextFunctio
     if (prediction && prediction.intent) {
       intent = prediction.intent;
       confidence = prediction.confidence ?? null;
-      responseText = await buildReply(intent, prediction.response, patientId);
+      responseText = await buildReply(intent, prediction.response, patientId, lang);
     } else {
       // ML service offline → rule-based fallback so the app still works.
-      const fallback = generateFallbackResponse(query);
+      const fallback = generateFallbackResponse(query, lang);
       responseText = fallback.response;
       intent = fallback.intent;
       confidence = fallback.confidence;
@@ -194,21 +232,38 @@ export const deleteChatEntry = async (req: Request, res: Response, next: NextFun
 };
 
 // Rule-based reply used only when the ML service is unreachable.
-function generateFallbackResponse(query: any) {
-  const lowerQuery = query.toLowerCase();
+function generateFallbackResponse(query: any, lang: 'en' | 'ur' = 'en') {
+  const q = (query || '').toLowerCase();
+  const ur = lang === 'ur';
 
-  if (lowerQuery.includes('medication') || lowerQuery.includes('medicine') || lowerQuery.includes('pill')) {
-    return { response: 'I can help you with your medications. Please check your Medications page for your current schedule.', intent: 'medication_query', confidence: 0.5 };
+  // Match English keywords, Roman-Urdu, and common Urdu words.
+  if (q.includes('medication') || q.includes('medicine') || q.includes('pill') || q.includes('dawa') || query.includes('دوا')) {
+    return {
+      response: ur ? 'میں آپ کی دواؤں میں مدد کر سکتا ہوں۔ براہ کرم اپنا میڈیکیشن صفحہ دیکھیں۔' : 'I can help you with your medications. Please check your Medications page for your current schedule.',
+      intent: 'medication_query', confidence: 0.5,
+    };
   }
-  if (lowerQuery.includes('routine') || lowerQuery.includes('schedule')) {
-    return { response: "Your daily routines help maintain a healthy lifestyle. Check your Routines page to see today's schedule.", intent: 'routine_query', confidence: 0.5 };
+  if (q.includes('routine') || q.includes('schedule') || query.includes('معمول')) {
+    return {
+      response: ur ? 'اپنے آج کے معمولات دیکھنے کے لیے براہ کرم روٹینز صفحہ کھولیں۔' : "Your daily routines help maintain a healthy lifestyle. Check your Routines page to see today's schedule.",
+      intent: 'routine_query', confidence: 0.5,
+    };
   }
-  if (lowerQuery.includes('help') || lowerQuery.includes('emergency')) {
-    return { response: "If this is an emergency, please press the red SOS button or contact your caregiver right away.", intent: 'emergency', confidence: 0.5 };
+  if (q.includes('help') || q.includes('emergency') || query.includes('مدد')) {
+    return {
+      response: ur ? 'اگر یہ ہنگامی صورت ہے تو براہ کرم فوراً سرخ SOS بٹن دبائیں یا اپنے نگہداشت کنندہ سے رابطہ کریں۔' : 'If this is an emergency, please press the red SOS button or contact your caregiver right away.',
+      intent: 'emergency', confidence: 0.5,
+    };
   }
-  if (lowerQuery.includes('hello') || lowerQuery.includes('hi') || lowerQuery.includes('hey')) {
-    return { response: "Hello! I'm your MemoryCare assistant. How can I help you today?", intent: 'greeting', confidence: 0.5 };
+  if (q.includes('hello') || q.includes('hi') || q.includes('hey') || q.includes('salam') || query.includes('سلام')) {
+    return {
+      response: ur ? 'السلام علیکم! میں آپ کا میموری کیئر اسسٹنٹ ہوں۔ میں آپ کی کیسے مدد کر سکتا ہوں؟' : "Hello! I'm your MemoryCare assistant. How can I help you today?",
+      intent: 'greeting', confidence: 0.5,
+    };
   }
 
-  return { response: 'I understand your question. You can ask me about your medications, your routines, or anything on your mind.', intent: 'general', confidence: 0.3 };
+  return {
+    response: ur ? 'میں آپ کا سوال سمجھنے کی کوشش کر رہا ہوں۔ آپ مجھ سے اپنی دوائیں، معمولات، یا کسی بھی بات کے بارے میں پوچھ سکتے ہیں۔' : 'I understand your question. You can ask me about your medications, your routines, or anything on your mind.',
+    intent: 'general', confidence: 0.3,
+  };
 }

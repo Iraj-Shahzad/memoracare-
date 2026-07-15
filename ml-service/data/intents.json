@@ -5,7 +5,8 @@
       "patterns": [
         "Hi", "Hello", "Hey", "Good morning", "Good afternoon", "Good evening",
         "Assalam o Alaikum", "Salam", "Hi there", "Hello there", "Is anyone there",
-        "Are you there", "Hey assistant"
+        "Are you there", "Hey assistant",
+        "السلام علیکم", "ہیلو", "سلام", "کیا آپ موجود ہیں", "آداب"
       ],
       "responses": [
         "Hello! I'm your MemoryCare assistant. How can I help you today?",
@@ -17,7 +18,8 @@
       "tag": "goodbye",
       "patterns": [
         "Bye", "Goodbye", "See you later", "Talk to you later", "I am leaving",
-        "Good night", "That is all", "Nothing else", "Thanks bye", "Khuda hafiz"
+        "Good night", "That is all", "Nothing else", "Thanks bye", "Khuda hafiz",
+        "خدا حافظ", "اللہ حافظ", "شب بخیر", "بس اتنا ہی", "پھر ملیں گے"
       ],
       "responses": [
         "Goodbye! Take care of yourself. I'm here whenever you need me.",
@@ -29,7 +31,8 @@
       "tag": "thanks",
       "patterns": [
         "Thanks", "Thank you", "That is helpful", "Thanks a lot", "Thank you so much",
-        "That helped", "Appreciate it", "You are helpful", "Shukriya"
+        "That helped", "Appreciate it", "You are helpful", "Shukriya",
+        "شکریہ", "بہت شکریہ", "آپ کا شکریہ", "مہربانی"
       ],
       "responses": [
         "You're very welcome! I'm always happy to help.",
@@ -43,7 +46,9 @@
         "What medicine do I take", "What are my medications", "Which pills do I take",
         "What medication do I need today", "Show me my medicines", "What tablets do I take",
         "Tell me about my medicines", "Do I have any medicine today", "My medication list",
-        "What drugs am I taking", "What should I take today"
+        "What drugs am I taking", "What should I take today",
+        "میں کون سی دوا لوں", "میری دوائیں کیا ہیں", "آج مجھے کون سی دوا لینی ہے",
+        "میری ادویات دکھائیں", "مجھے کیا دوا لینی ہے"
       ],
       "responses": [
         "Let me check your medications for you.",
@@ -56,7 +61,9 @@
         "When do I take my medicine", "What time is my medication", "When is my next pill",
         "When should I take my tablets", "What time do I take medicine",
         "Is it time for my medicine", "When is my next dose", "Have I taken my medicine",
-        "Did I take my pills", "When is my medicine due"
+        "Did I take my pills", "When is my medicine due",
+        "میں دوا کب لوں", "میری دوا کا وقت کیا ہے", "میری اگلی دوا کب ہے",
+        "کیا دوا کا وقت ہو گیا ہے", "دوا کب لینی ہے"
       ],
       "responses": [
         "Let me check the timing of your medicines.",
@@ -69,7 +76,9 @@
         "What is my routine", "What should I do today", "What are my activities",
         "What is my schedule", "What do I have planned", "What is next on my schedule",
         "Tell me my daily routine", "What activities do I have", "What is my plan for today",
-        "What should I do now", "What is on my schedule today"
+        "What should I do now", "What is on my schedule today",
+        "میرا معمول کیا ہے", "آج مجھے کیا کرنا ہے", "میرا شیڈول کیا ہے",
+        "آج کے کام کیا ہیں", "آج میرا کیا پروگرام ہے"
       ],
       "responses": [
         "Let me look at your routine for today.",
@@ -82,7 +91,9 @@
         "Who is my family", "Tell me about my family", "Who are my children",
         "Who is my daughter", "Who is my son", "Who is my caregiver",
         "Who takes care of me", "Who can I call", "Who are my emergency contacts",
-        "Tell me about my daughter", "Who is my wife", "Who is my husband"
+        "Tell me about my daughter", "Who is my wife", "Who is my husband",
+        "میرا خاندان کون ہے", "میرے خاندان کے بارے میں بتائیں", "میری بیٹی کون ہے",
+        "میرا بیٹا کون ہے", "میری دیکھ بھال کون کرتا ہے"
       ],
       "responses": [
         "Let me tell you about your family and the people who care for you.",
@@ -93,7 +104,8 @@
       "tag": "name_query",
       "patterns": [
         "What is my name", "Who am I", "Do you know my name", "Tell me my name",
-        "Say my name", "What am I called", "Remind me who I am"
+        "Say my name", "What am I called", "Remind me who I am",
+        "میرا نام کیا ہے", "میں کون ہوں", "میرا نام بتائیں", "مجھے میرا نام یاد دلائیں"
       ],
       "responses": [
         "Let me remind you of your name.",
@@ -105,7 +117,9 @@
       "patterns": [
         "What day is it", "What is today", "What is the date", "What time is it",
         "What is the day today", "Tell me the date", "Tell me the time",
-        "What is today's date", "Is it morning or evening", "What month is it"
+        "What is today's date", "Is it morning or evening", "What month is it",
+        "آج کون سا دن ہے", "آج کیا تاریخ ہے", "وقت کیا ہوا ہے",
+        "آج کی تاریخ کیا ہے", "ابھی کیا وقت ہے"
       ],
       "responses": [
         "Let me tell you the current date and time.",
@@ -116,7 +130,8 @@
       "tag": "location",
       "patterns": [
         "Where am I", "Where do I live", "What is my address", "Where is my home",
-        "How do I get home", "What city am I in", "Tell me where I live"
+        "How do I get home", "What city am I in", "Tell me where I live",
+        "میں کہاں ہوں", "میں کہاں رہتا ہوں", "میرا گھر کہاں ہے", "میرا پتہ کیا ہے"
       ],
       "responses": [
         "Let me help you with where you are.",
@@ -128,7 +143,9 @@
       "patterns": [
         "I feel sad", "I am scared", "I feel lonely", "I am confused", "I am worried",
         "I feel lost", "I am anxious", "I do not feel well", "I feel upset",
-        "I am frightened", "I feel nervous", "I am unhappy"
+        "I am frightened", "I feel nervous", "I am unhappy",
+        "میں اداس ہوں", "میں ڈرا ہوا ہوں", "میں اکیلا محسوس کرتا ہوں",
+        "میں پریشان ہوں", "مجھے اچھا نہیں لگ رہا"
       ],
       "responses": [
         "I'm sorry you're feeling this way. You are safe, and people who love you are nearby. Would you like me to contact your caregiver?",
@@ -141,7 +158,8 @@
       "patterns": [
         "Help", "Emergency", "I need help", "Something is wrong", "I have fallen",
         "I am hurt", "Call for help", "I need a doctor", "This is an emergency",
-        "I am in pain", "Help me please", "I cannot breathe"
+        "I am in pain", "Help me please", "I cannot breathe",
+        "مدد", "مجھے مدد چاہیے", "کچھ گڑبڑ ہے", "میں گر گیا ہوں", "مجھے ڈاکٹر چاہیے"
       ],
       "responses": [
         "This sounds urgent. Please press the red SOS button right away, or I can alert your caregiver immediately.",
@@ -152,7 +170,8 @@
       "tag": "appointment",
       "patterns": [
         "When is my appointment", "Do I have a doctor appointment", "When is my next appointment",
-        "What appointments do I have", "When do I see the doctor", "Is there an appointment today"
+        "What appointments do I have", "When do I see the doctor", "Is there an appointment today",
+        "میری ملاقات کب ہے", "میرا ڈاکٹر سے وقت کب ہے", "کیا آج کوئی اپائنٹمنٹ ہے"
       ],
       "responses": [
         "Let me check your appointments.",
@@ -163,7 +182,8 @@
       "tag": "help",
       "patterns": [
         "What can you do", "How can you help me", "What are you", "Who are you",
-        "What can I ask you", "How do you work", "What is this app", "What is MemoryCare"
+        "What can I ask you", "How do you work", "What is this app", "What is MemoryCare",
+        "تم کیا کر سکتے ہو", "تم کون ہو", "یہ ایپ کیا ہے", "میں کیا پوچھ سکتا ہوں"
       ],
       "responses": [
         "I'm your MemoryCare assistant. I can help you remember your medicines, your daily routine, your family, the date and time, and more. Just ask me!",

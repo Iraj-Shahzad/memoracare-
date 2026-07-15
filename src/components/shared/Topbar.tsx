@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { apiPost } from "@/lib/api";
 import { getSocket, joinPatientRoom, leavePatientRoom } from "@/lib/socket";
+import { speak, getLang, voiceRemindersOn, setVoiceReminders, primeVoices } from "@/lib/speech";
 
 interface ReminderToast {
   id: number;
@@ -33,9 +34,22 @@ export default function Topbar({
   const { user } = useAuth();
   const [sosSending, setSosSending] = useState(false);
   const [toasts, setToasts] = useState<ReminderToast[]>([]);
+  const [voiceRem, setVoiceRem] = useState(false);
   const initials = avatar || (user?.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U');
 
   const patientId = (user?.profile as Record<string, unknown> | undefined)?._id as string | undefined;
+
+  useEffect(() => {
+    setVoiceRem(voiceRemindersOn());
+    primeVoices();
+  }, []);
+
+  const toggleVoiceReminders = () => {
+    const next = !voiceRem;
+    setVoiceRem(next);
+    setVoiceReminders(next);
+    if (next) speak(getLang() === 'ur' ? 'صوتی یاد دہانیاں آن ہیں' : 'Voice reminders are on', getLang());
+  };
 
   // Real-time reminders / missed-dose alerts pushed by the backend scheduler.
   useEffect(() => {
@@ -59,8 +73,20 @@ export default function Topbar({
       }
     };
 
-    const onReminder = (data: { kind?: string; message?: string }) => {
+    const onReminder = (data: { kind?: string; name?: string; message?: string }) => {
       pushToast(data.kind === 'routine' ? 'routine' : 'medication', data.message || 'You have a reminder.');
+      // Speak the reminder aloud in the chosen language (if enabled).
+      if (voiceRemindersOn()) {
+        const lang = getLang();
+        const name = data.name || '';
+        let text = data.message || '';
+        if (lang === 'ur') {
+          text = data.kind === 'routine'
+            ? `${name} کا وقت ہو گیا ہے۔`
+            : `${name ? name + ' ' : ''}دوا لینے کا وقت ہو گیا ہے۔`;
+        }
+        speak(text, lang);
+      }
     };
     const onAlert = (data: { message?: string }) => {
       pushToast('alert', data.message || 'New alert.');
@@ -141,6 +167,32 @@ export default function Topbar({
               <line x1="12" y1="17" x2="12.01" y2="17" />
             </svg>
             {sosSending ? 'Sending…' : 'SOS'}
+          </button>
+        )}
+        {/* Voice reminders toggle (patient only) */}
+        {user?.role === 'patient' && (
+          <button
+            onClick={toggleVoiceReminders}
+            title={voiceRem ? 'Voice reminders on' : 'Voice reminders off'}
+            aria-label="Toggle voice reminders"
+            className={`w-[42px] h-[42px] rounded-[10px] border flex items-center justify-center transition-colors ${
+              voiceRem ? 'bg-[#0d9488] border-[#0d9488]' : 'bg-white border-slate-200'
+            }`}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke={voiceRem ? '#ffffff' : '#64748b'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+              {voiceRem ? (
+                <>
+                  <path d="M15.54 8.46a5 5 0 010 7.07" />
+                  <path d="M19.07 4.93a10 10 0 010 14.14" />
+                </>
+              ) : (
+                <>
+                  <line x1="23" y1="9" x2="17" y2="15" />
+                  <line x1="17" y1="9" x2="23" y2="15" />
+                </>
+              )}
+            </svg>
           </button>
         )}
         {/* Notification Bell */}
