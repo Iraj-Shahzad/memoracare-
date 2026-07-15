@@ -8,6 +8,7 @@ FYP documentation for the Memory Assistant System, aligned with the built app.
 | [CHATBOT-MODULE.md](CHATBOT-MODULE.md) | Module documentation for the custom-trained chatbot NLP model |
 | [TESTING.md](TESTING.md) | Chapter 4 (Software Testing) rewritten around the real Jest/Supertest suite + model evaluation |
 | [USER-MANUAL.md](USER-MANUAL.md) | Step-by-step user guide for patient / caregiver / admin |
+| [INTERFACES.md](INTERFACES.md) | Interfaces chapter — 12 screens with descriptions (insert screenshots) |
 
 ## Converting to Word (.docx)
 
