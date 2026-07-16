@@ -1,0 +1,23 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="SSD - Chat with Assistant">
+    <mxGraphModel dx="700" dy="430" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="700" pageHeight="430" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="frame" value="sd  Chat with Assistant" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="15" y="15" width="670" height="400" as="geometry" /></mxCell>
+
+        <mxCell id="actor" value="Patient" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1"><mxGeometry x="92" y="50" width="36" height="72" as="geometry" /></mxCell>
+        <mxCell id="ll_actor" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="110" y="152" as="sourcePoint" /><mxPoint x="110" y="405" as="targetPoint" /></mxGeometry></mxCell>
+
+        <mxCell id="sysbox" value=":System" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=5;" vertex="1" parent="1"><mxGeometry x="505" y="86" width="120" height="40" as="geometry" /></mxCell>
+        <mxCell id="ll_sys" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="126" as="sourcePoint" /><mxPoint x="565" y="405" as="targetPoint" /></mxGeometry></mxCell>
+
+        <mxCell id="loop" value="loop  [while patient is chatting]" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=8;spacingTop=3;fontSize=11;fillColor=none;" vertex="1" parent="1"><mxGeometry x="78" y="192" width="545" height="150" as="geometry" /></mxCell>
+
+        <mxCell id="m1" value="sendMessage(patientId, message, lang)" style="html=1;endArrow=block;fillColor=#000000;align=center;verticalAlign=bottom;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="110" y="255" as="sourcePoint" /><mxPoint x="560" y="255" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="act1" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="560" y="255" width="9" height="46" as="geometry" /></mxCell>
+        <mxCell id="m2" value="reply" style="html=1;endArrow=open;dashed=1;align=center;verticalAlign=bottom;fontStyle=2;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="560" y="301" as="sourcePoint" /><mxPoint x="110" y="301" as="targetPoint" /></mxGeometry></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
