@@ -1,0 +1,59 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Activity - Take Medication">
+    <mxGraphModel dx="720" dy="880" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="720" pageHeight="880" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- initial -->
+        <mxCell id="init" value="" style="ellipse;fillColor=#000000;strokeColor=#000000;html=1;" vertex="1" parent="1"><mxGeometry x="328" y="33" width="24" height="24" as="geometry" /></mxCell>
+
+        <!-- actions -->
+        <mxCell id="a2" value="Reminder time reached" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;" vertex="1" parent="1"><mxGeometry x="250" y="82" width="180" height="44" as="geometry" /></mxCell>
+        <mxCell id="a3" value="Send reminder to patient" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;" vertex="1" parent="1"><mxGeometry x="250" y="152" width="180" height="44" as="geometry" /></mxCell>
+        <mxCell id="a4" value="Patient opens reminder" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;" vertex="1" parent="1"><mxGeometry x="250" y="222" width="180" height="44" as="geometry" /></mxCell>
+
+        <!-- decision -->
+        <mxCell id="dec" value="Medication taken?" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="266" y="282" width="148" height="76" as="geometry" /></mxCell>
+
+        <!-- yes branch -->
+        <mxCell id="a5" value="Mark medication as Taken" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;" vertex="1" parent="1"><mxGeometry x="105" y="408" width="170" height="46" as="geometry" /></mxCell>
+        <mxCell id="a6" value="Log dose as taken" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;" vertex="1" parent="1"><mxGeometry x="115" y="483" width="150" height="46" as="geometry" /></mxCell>
+
+        <!-- no branch -->
+        <mxCell id="a7" value="Wait for grace period (30 min)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;" vertex="1" parent="1"><mxGeometry x="420" y="408" width="160" height="46" as="geometry" /></mxCell>
+        <mxCell id="fork" value="" style="rounded=0;fillColor=#000000;strokeColor=#000000;html=1;" vertex="1" parent="1"><mxGeometry x="410" y="493" width="180" height="8" as="geometry" /></mxCell>
+        <mxCell id="a8" value="Log dose as missed" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;" vertex="1" parent="1"><mxGeometry x="370" y="523" width="140" height="46" as="geometry" /></mxCell>
+        <mxCell id="a9" value="Notify caregiver" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;" vertex="1" parent="1"><mxGeometry x="490" y="523" width="140" height="46" as="geometry" /></mxCell>
+        <mxCell id="join" value="" style="rounded=0;fillColor=#000000;strokeColor=#000000;html=1;" vertex="1" parent="1"><mxGeometry x="410" y="603" width="180" height="8" as="geometry" /></mxCell>
+
+        <!-- merge -->
+        <mxCell id="merge" value="" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="278" y="648" width="124" height="64" as="geometry" /></mxCell>
+
+        <!-- final action + end -->
+        <mxCell id="a10" value="Update compliance record" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;" vertex="1" parent="1"><mxGeometry x="240" y="743" width="200" height="46" as="geometry" /></mxCell>
+        <mxCell id="fin_out" value="" style="ellipse;fillColor=none;strokeColor=#000000;html=1;" vertex="1" parent="1"><mxGeometry x="326" y="820" width="28" height="28" as="geometry" /></mxCell>
+        <mxCell id="fin_in" value="" style="ellipse;fillColor=#000000;strokeColor=#000000;html=1;" vertex="1" parent="1"><mxGeometry x="333" y="827" width="14" height="14" as="geometry" /></mxCell>
+
+        <!-- control flows -->
+        <mxCell id="f1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="init" target="a2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="a2" target="a3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="a3" target="a4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="a4" target="dec"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f5" value="[Yes]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="dec" target="a5"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="a5" target="a6"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="a6" target="merge"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f8" value="[No]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="dec" target="a7"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="a7" target="fork"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="fork" target="a8"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="fork" target="a9"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="a8" target="join"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="a9" target="join"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="join" target="merge"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="merge" target="a10"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="a10" target="fin_out"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
