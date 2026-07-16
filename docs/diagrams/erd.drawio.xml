@@ -1,0 +1,78 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="ERD">
+    <mxGraphModel dx="1240" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1240" pageHeight="820" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="User" value="&lt;b&gt;User&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;userId &#171;PK&#187;&lt;br&gt;name, email&lt;br&gt;role, isActive" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=6;spacingTop=2;" vertex="1" parent="1"><mxGeometry x="40" y="60" width="160" height="76" as="geometry" /></mxCell>
+        <mxCell id="Caregiver" value="&lt;b&gt;Caregiver&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;caregiverId &#171;PK&#187;&lt;br&gt;userId &#171;FK&#187;&lt;br&gt;specialization" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=6;spacingTop=2;" vertex="1" parent="1"><mxGeometry x="40" y="330" width="160" height="76" as="geometry" /></mxCell>
+        <mxCell id="Patient" value="&lt;b&gt;Patient&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;patientId &#171;PK&#187;&lt;br&gt;userId &#171;FK&#187;&lt;br&gt;diagnosis, city" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=6;spacingTop=2;fillColor=#dcece9;" vertex="1" parent="1"><mxGeometry x="320" y="180" width="160" height="76" as="geometry" /></mxCell>
+        <mxCell id="Medication" value="&lt;b&gt;Medication&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;medId &#171;PK&#187;&lt;br&gt;patientId &#171;FK&#187;&lt;br&gt;name, dosage, times" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=6;spacingTop=2;" vertex="1" parent="1"><mxGeometry x="600" y="50" width="160" height="76" as="geometry" /></mxCell>
+        <mxCell id="MedicationLog" value="&lt;b&gt;MedicationLog&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;logId &#171;PK&#187;&lt;br&gt;medId &#171;FK&#187;&lt;br&gt;status, scheduledTime" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=6;spacingTop=2;" vertex="1" parent="1"><mxGeometry x="880" y="50" width="170" height="76" as="geometry" /></mxCell>
+        <mxCell id="Routine" value="&lt;b&gt;Routine&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;routineId &#171;PK&#187;&lt;br&gt;patientId &#171;FK&#187;&lt;br&gt;activityName, startTime" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=6;spacingTop=2;" vertex="1" parent="1"><mxGeometry x="600" y="190" width="160" height="76" as="geometry" /></mxCell>
+        <mxCell id="RoutineLog" value="&lt;b&gt;RoutineLog&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;logId &#171;PK&#187;&lt;br&gt;routineId &#171;FK&#187;&lt;br&gt;status, scheduledDate" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=6;spacingTop=2;" vertex="1" parent="1"><mxGeometry x="880" y="190" width="170" height="76" as="geometry" /></mxCell>
+        <mxCell id="KnownFace" value="&lt;b&gt;KnownFace&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;faceId &#171;PK&#187;&lt;br&gt;patientId &#171;FK&#187;&lt;br&gt;name, relationship" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=6;spacingTop=2;" vertex="1" parent="1"><mxGeometry x="600" y="330" width="160" height="76" as="geometry" /></mxCell>
+        <mxCell id="Memory" value="&lt;b&gt;Memory&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;memoryId &#171;PK&#187;&lt;br&gt;patientId &#171;FK&#187;&lt;br&gt;title, date" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=6;spacingTop=2;" vertex="1" parent="1"><mxGeometry x="880" y="330" width="170" height="76" as="geometry" /></mxCell>
+        <mxCell id="Alert" value="&lt;b&gt;Alert&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;alertId &#171;PK&#187;&lt;br&gt;patientId &#171;FK&#187;&lt;br&gt;type, severity" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=6;spacingTop=2;" vertex="1" parent="1"><mxGeometry x="600" y="470" width="160" height="76" as="geometry" /></mxCell>
+        <mxCell id="ChatHistory" value="&lt;b&gt;ChatHistory&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;chatId &#171;PK&#187;&lt;br&gt;patientId &#171;FK&#187;&lt;br&gt;query, response" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=6;spacingTop=2;" vertex="1" parent="1"><mxGeometry x="880" y="470" width="170" height="76" as="geometry" /></mxCell>
+        <mxCell id="Report" value="&lt;b&gt;Report&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;reportId &#171;PK&#187;&lt;br&gt;patientId &#171;FK&#187;&lt;br&gt;type, format" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=6;spacingTop=2;" vertex="1" parent="1"><mxGeometry x="320" y="470" width="160" height="76" as="geometry" /></mxCell>
+        <mxCell id="Note" value="&lt;b&gt;Note&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;noteId &#171;PK&#187;&lt;br&gt;patientId &#171;FK&#187;&lt;br&gt;content" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=6;spacingTop=2;" vertex="1" parent="1"><mxGeometry x="40" y="590" width="160" height="76" as="geometry" /></mxCell>
+
+        <!-- relationships: value = name; child labels = multiplicity at each end -->
+        <mxCell id="r1" value="Has" style="endArrow=none;html=1;fontStyle=2;fontSize=10;" edge="1" parent="1" source="User" target="Patient"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r1a" value="1" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r1"><mxGeometry x="-0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+        <mxCell id="r1b" value="0..1" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r1"><mxGeometry x="0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+
+        <mxCell id="r2" value="Has" style="endArrow=none;html=1;fontStyle=2;fontSize=10;" edge="1" parent="1" source="User" target="Caregiver"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r2a" value="1" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r2"><mxGeometry x="-0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+        <mxCell id="r2b" value="0..1" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r2"><mxGeometry x="0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+
+        <mxCell id="r3" value="Manages" style="endArrow=none;html=1;fontStyle=2;fontSize=10;" edge="1" parent="1" source="Caregiver" target="Patient"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r3a" value="0..*" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r3"><mxGeometry x="-0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+        <mxCell id="r3b" value="0..*" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r3"><mxGeometry x="0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+
+        <mxCell id="r4" value="Takes" style="endArrow=none;html=1;fontStyle=2;fontSize=10;" edge="1" parent="1" source="Patient" target="Medication"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r4a" value="1" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r4"><mxGeometry x="-0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+        <mxCell id="r4b" value="0..*" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r4"><mxGeometry x="0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+
+        <mxCell id="r5" value="Logged in" style="endArrow=none;html=1;fontStyle=2;fontSize=10;" edge="1" parent="1" source="Medication" target="MedicationLog"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r5a" value="1" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r5"><mxGeometry x="-0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+        <mxCell id="r5b" value="0..*" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r5"><mxGeometry x="0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+
+        <mxCell id="r6" value="Follows" style="endArrow=none;html=1;fontStyle=2;fontSize=10;" edge="1" parent="1" source="Patient" target="Routine"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r6a" value="1" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r6"><mxGeometry x="-0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+        <mxCell id="r6b" value="0..*" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r6"><mxGeometry x="0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+
+        <mxCell id="r7" value="Logged in" style="endArrow=none;html=1;fontStyle=2;fontSize=10;" edge="1" parent="1" source="Routine" target="RoutineLog"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r7a" value="1" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r7"><mxGeometry x="-0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+        <mxCell id="r7b" value="0..*" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r7"><mxGeometry x="0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+
+        <mxCell id="r8" value="Has" style="endArrow=none;html=1;fontStyle=2;fontSize=10;" edge="1" parent="1" source="Patient" target="KnownFace"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r8a" value="1" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r8"><mxGeometry x="-0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+        <mxCell id="r8b" value="0..*" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r8"><mxGeometry x="0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+
+        <mxCell id="r9" value="Has" style="endArrow=none;html=1;fontStyle=2;fontSize=10;" edge="1" parent="1" source="Patient" target="Memory"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r9a" value="1" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r9"><mxGeometry x="-0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+        <mxCell id="r9b" value="0..*" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r9"><mxGeometry x="0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+
+        <mxCell id="r10" value="Raises" style="endArrow=none;html=1;fontStyle=2;fontSize=10;" edge="1" parent="1" source="Patient" target="Alert"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r10a" value="1" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r10"><mxGeometry x="-0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+        <mxCell id="r10b" value="0..*" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r10"><mxGeometry x="0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+
+        <mxCell id="r11" value="Has" style="endArrow=none;html=1;fontStyle=2;fontSize=10;" edge="1" parent="1" source="Patient" target="ChatHistory"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r11a" value="1" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r11"><mxGeometry x="-0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+        <mxCell id="r11b" value="0..*" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r11"><mxGeometry x="0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+
+        <mxCell id="r12" value="Has" style="endArrow=none;html=1;fontStyle=2;fontSize=10;" edge="1" parent="1" source="Patient" target="Report"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r12a" value="1" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r12"><mxGeometry x="-0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+        <mxCell id="r12b" value="0..*" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r12"><mxGeometry x="0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+
+        <mxCell id="r13" value="Has" style="endArrow=none;html=1;fontStyle=2;fontSize=10;" edge="1" parent="1" source="Patient" target="Note"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r13a" value="1" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r13"><mxGeometry x="-0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+        <mxCell id="r13b" value="0..*" style="edgeLabel;html=1;fontSize=10;" connectable="0" vertex="1" parent="r13"><mxGeometry x="0.7" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
