@@ -1,0 +1,39 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="System Architecture">
+    <mxGraphModel dx="760" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="760" pageHeight="700" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Client tier -->
+        <mxCell id="client" value="Client Tier — Web Browser (Next.js · React · TypeScript)" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fillColor=#f2f7f6;spacingTop=4;" vertex="1" parent="1"><mxGeometry x="30" y="38" width="700" height="150" as="geometry" /></mxCell>
+        <mxCell id="c1" value="Patient UI" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="45" y="80" width="122" height="90" as="geometry" /></mxCell>
+        <mxCell id="c2" value="Caregiver UI" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="178" y="80" width="122" height="90" as="geometry" /></mxCell>
+        <mxCell id="c3" value="Admin Panel" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="311" y="80" width="122" height="90" as="geometry" /></mxCell>
+        <mxCell id="c4" value="face-api.js&#10;(Face Recognition)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="444" y="80" width="132" height="90" as="geometry" /></mxCell>
+        <mxCell id="c5" value="Web Speech&#10;(Voice EN/UR)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="587" y="80" width="128" height="90" as="geometry" /></mxCell>
+
+        <!-- Application tier -->
+        <mxCell id="app" value="Application Tier — Express + Node.js (TypeScript)" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fillColor=#f2f7f6;spacingTop=4;" vertex="1" parent="1"><mxGeometry x="30" y="275" width="470" height="190" as="geometry" /></mxCell>
+        <mxCell id="a1" value="JWT Auth &amp; Role-Based Access" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="48" y="315" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="a2" value="REST Controllers (meds, routines, chat, face, alerts, reports)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="262" y="315" width="220" height="60" as="geometry" /></mxCell>
+        <mxCell id="a3" value="Socket.io Server" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="48" y="388" width="200" height="60" as="geometry" /></mxCell>
+        <mxCell id="a4" value="Reminder Scheduler (node-cron)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="262" y="388" width="220" height="60" as="geometry" /></mxCell>
+
+        <!-- AI tier -->
+        <mxCell id="ai" value="AI Services Layer — Flask (Python)" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fillColor=#f2f7f6;spacingTop=4;" vertex="1" parent="1"><mxGeometry x="540" y="300" width="195" height="120" as="geometry" /></mxCell>
+        <mxCell id="ai1" value="Custom Chatbot Model (Keras + NLTK)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="558" y="350" width="160" height="52" as="geometry" /></mxCell>
+
+        <!-- Data tier -->
+        <mxCell id="data" value="Data Tier — MongoDB (Mongoose ODM)" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fillColor=#f2f7f6;spacingTop=4;" vertex="1" parent="1"><mxGeometry x="30" y="550" width="470" height="120" as="geometry" /></mxCell>
+        <mxCell id="d1" value="Collections: Users · Patients · Caregivers · Medications · Routines · Logs · Alerts · KnownFaces · Memories · Reports · ChatHistory" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="48" y="588" width="434" height="66" as="geometry" /></mxCell>
+
+        <!-- connections -->
+        <mxCell id="e1" value="REST API (HTTPS/JSON) + Socket.io" style="endArrow=classic;startArrow=classic;html=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="270" y="188" as="sourcePoint" /><mxPoint x="270" y="275" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="e2" value="HTTP /predict" style="endArrow=classic;startArrow=classic;html=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="500" y="380" as="sourcePoint" /><mxPoint x="540" y="380" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="e3" value="Mongoose ODM" style="endArrow=classic;startArrow=classic;html=1;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="240" y="465" as="sourcePoint" /><mxPoint x="240" y="550" as="targetPoint" /></mxGeometry></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

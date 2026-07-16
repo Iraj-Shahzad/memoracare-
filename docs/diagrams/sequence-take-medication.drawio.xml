@@ -1,0 +1,43 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Sequence - Mark Medication as Taken">
+    <mxGraphModel dx="940" dy="560" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="940" pageHeight="560" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- actor + object heads -->
+        <mxCell id="actor" value="Patient" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1"><mxGeometry x="52" y="18" width="36" height="72" as="geometry" /></mxCell>
+        <mxCell id="pg" value=":MedicationsPage" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=5;" vertex="1" parent="1"><mxGeometry x="165" y="54" width="130" height="36" as="geometry" /></mxCell>
+        <mxCell id="ct" value=":MedicationController" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=5;" vertex="1" parent="1"><mxGeometry x="368" y="54" width="164" height="36" as="geometry" /></mxCell>
+        <mxCell id="lg" value=":MedicationLog" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=5;" vertex="1" parent="1"><mxGeometry x="595" y="54" width="130" height="36" as="geometry" /></mxCell>
+        <mxCell id="db" value=":MongoDB" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=5;" vertex="1" parent="1"><mxGeometry x="790" y="54" width="120" height="36" as="geometry" /></mxCell>
+
+        <!-- lifelines -->
+        <mxCell id="llp" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="70" y="106" as="sourcePoint" /><mxPoint x="70" y="530" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="llpg" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="230" y="90" as="sourcePoint" /><mxPoint x="230" y="530" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="llct" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="450" y="90" as="sourcePoint" /><mxPoint x="450" y="530" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="lllg" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="660" y="90" as="sourcePoint" /><mxPoint x="660" y="530" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="lldb" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="850" y="90" as="sourcePoint" /><mxPoint x="850" y="530" as="targetPoint" /></mxGeometry></mxCell>
+
+        <!-- activation bars -->
+        <mxCell id="ap" value="" style="rounded=0;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="225" y="150" width="10" height="318" as="geometry" /></mxCell>
+        <mxCell id="ac" value="" style="rounded=0;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="445" y="185" width="10" height="249" as="geometry" /></mxCell>
+        <mxCell id="al" value="" style="rounded=0;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="655" y="255" width="10" height="107" as="geometry" /></mxCell>
+        <mxCell id="ad" value="" style="rounded=0;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="845" y="292" width="10" height="36" as="geometry" /></mxCell>
+
+        <!-- messages -->
+        <mxCell id="m1" value="markAsTaken(medId)" style="html=1;endArrow=block;fillColor=#000000;align=center;verticalAlign=bottom;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="70" y="150" as="sourcePoint" /><mxPoint x="225" y="150" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="m2" value="POST /medications/{id}/log {status:&quot;taken&quot;}" style="html=1;endArrow=block;fillColor=#000000;align=center;verticalAlign=bottom;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="235" y="185" as="sourcePoint" /><mxPoint x="445" y="185" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="m3" value="verify JWT + canAccessPatient()" style="html=1;endArrow=block;fillColor=#000000;fontSize=10;verticalAlign=bottom;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="455" y="214" as="sourcePoint" /><mxPoint x="457" y="232" as="targetPoint" /><Array as="points"><mxPoint x="503" y="214" /><mxPoint x="503" y="232" /></Array></mxGeometry></mxCell>
+        <mxCell id="m4" value="create(medId, patientId, &quot;taken&quot;)" style="html=1;endArrow=block;fillColor=#000000;align=center;verticalAlign=bottom;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="455" y="255" as="sourcePoint" /><mxPoint x="655" y="255" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="m5" value="insert(log)" style="html=1;endArrow=block;fillColor=#000000;align=center;verticalAlign=bottom;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="665" y="292" as="sourcePoint" /><mxPoint x="845" y="292" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="r6" value="saved" style="html=1;endArrow=open;dashed=1;align=center;verticalAlign=bottom;fontStyle=2;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="845" y="328" as="sourcePoint" /><mxPoint x="665" y="328" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="r7" value="log" style="html=1;endArrow=open;dashed=1;align=center;verticalAlign=bottom;fontStyle=2;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="655" y="362" as="sourcePoint" /><mxPoint x="455" y="362" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="m8" value="emit &quot;medication_update&quot;" style="html=1;endArrow=block;fillColor=#000000;fontSize=10;verticalAlign=bottom;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="455" y="396" as="sourcePoint" /><mxPoint x="457" y="414" as="targetPoint" /><Array as="points"><mxPoint x="503" y="396" /><mxPoint x="503" y="414" /></Array></mxGeometry></mxCell>
+        <mxCell id="r9" value="201 { success, log }" style="html=1;endArrow=open;dashed=1;align=center;verticalAlign=bottom;fontStyle=2;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="445" y="434" as="sourcePoint" /><mxPoint x="235" y="434" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="r10" value="show status &quot;Taken&quot;" style="html=1;endArrow=open;dashed=1;align=center;verticalAlign=bottom;fontStyle=2;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="225" y="468" as="sourcePoint" /><mxPoint x="80" y="468" as="targetPoint" /></mxGeometry></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
