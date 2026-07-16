@@ -1,60 +1,64 @@
 <mxfile host="app.diagrams.net">
   <diagram name="Use Case Diagram">
-    <mxGraphModel dx="1240" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1240" pageHeight="820" math="0" shadow="0">
+    <mxGraphModel dx="1260" dy="790" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1260" pageHeight="790" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
 
-        <!-- System boundary -->
-        <mxCell id="sys" value="MemoryCare System" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fontSize=14;" vertex="1" parent="1"><mxGeometry x="220" y="30" width="760" height="760" as="geometry" /></mxCell>
+        <mxCell id="sys" value="MemoryCare System" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fontSize=14;" vertex="1" parent="1"><mxGeometry x="250" y="40" width="700" height="710" as="geometry" /></mxCell>
 
-        <!-- Human actors (left) -->
-        <mxCell id="a_pat" value="Patient" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" vertex="1" parent="1"><mxGeometry x="55" y="125" width="50" height="95" as="geometry" /></mxCell>
-        <mxCell id="a_care" value="Caregiver" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" vertex="1" parent="1"><mxGeometry x="55" y="355" width="50" height="95" as="geometry" /></mxCell>
-        <mxCell id="a_admin" value="Administrator" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" vertex="1" parent="1"><mxGeometry x="55" y="570" width="50" height="95" as="geometry" /></mxCell>
+        <!-- Human actors -->
+        <mxCell id="a_pat" value="Patient" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" vertex="1" parent="1"><mxGeometry x="50" y="120" width="50" height="95" as="geometry" /></mxCell>
+        <mxCell id="a_care" value="Caregiver" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" vertex="1" parent="1"><mxGeometry x="50" y="390" width="50" height="95" as="geometry" /></mxCell>
+        <mxCell id="a_admin" value="Administrator" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" vertex="1" parent="1"><mxGeometry x="50" y="620" width="50" height="95" as="geometry" /></mxCell>
 
-        <!-- System actors (right, «system» boxes) -->
-        <mxCell id="s_ai" value="&#171;system&#187;&lt;br&gt;&lt;b&gt;AI Chatbot&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="1"><mxGeometry x="1030" y="276" width="150" height="58" as="geometry" /></mxCell>
-        <mxCell id="s_face" value="&#171;system&#187;&lt;br&gt;&lt;b&gt;Face Recognition System&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="1"><mxGeometry x="1030" y="410" width="150" height="58" as="geometry" /></mxCell>
-        <mxCell id="s_rem" value="&#171;system&#187;&lt;br&gt;&lt;b&gt;Reminder Scheduler&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="1"><mxGeometry x="1030" y="535" width="150" height="58" as="geometry" /></mxCell>
+        <!-- System actors -->
+        <mxCell id="s_face" value="&#171;system&#187;&lt;br&gt;&lt;b&gt;Face Recognition System&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="1060" y="92" width="150" height="56" as="geometry" /></mxCell>
+        <mxCell id="s_ai" value="&#171;system&#187;&lt;br&gt;&lt;b&gt;AI Chatbot&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="1060" y="202" width="150" height="56" as="geometry" /></mxCell>
+        <mxCell id="s_rem" value="&#171;system&#187;&lt;br&gt;&lt;b&gt;Reminder Scheduler&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="1060" y="402" width="150" height="56" as="geometry" /></mxCell>
 
-        <!-- Use cases: Column 1 (Patient) -->
-        <mxCell id="uc_login" value="Login / Register" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="272" y="66" width="136" height="48" as="geometry" /></mxCell>
-        <mxCell id="uc_takemed" value="Take Medication" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="272" y="136" width="136" height="48" as="geometry" /></mxCell>
-        <mxCell id="uc_routine" value="Complete Routine" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="272" y="206" width="136" height="48" as="geometry" /></mxCell>
-        <mxCell id="uc_chat" value="Chat with Assistant" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="272" y="276" width="136" height="48" as="geometry" /></mxCell>
-        <mxCell id="uc_voice" value="Voice Interaction" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="280" y="343" width="120" height="44" as="geometry" /></mxCell>
-        <mxCell id="uc_face" value="Recognize Face" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="272" y="411" width="136" height="48" as="geometry" /></mxCell>
-        <mxCell id="uc_memory" value="View Memory Gallery" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="272" y="481" width="136" height="48" as="geometry" /></mxCell>
-        <mxCell id="uc_report" value="Generate &amp; Download Report" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="272" y="551" width="136" height="48" as="geometry" /></mxCell>
-        <mxCell id="uc_sos" value="Send SOS Alert" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="272" y="621" width="136" height="48" as="geometry" /></mxCell>
+        <!-- Shared -->
+        <mxCell id="uc_login" value="Login / Register" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="266" y="382" width="128" height="46" as="geometry" /></mxCell>
 
-        <!-- Use cases: Column 2 (Caregiver / Admin) -->
-        <mxCell id="uc_mmeds" value="Manage Medications" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="492" y="86" width="136" height="48" as="geometry" /></mxCell>
-        <mxCell id="uc_mroutines" value="Manage Routines" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="492" y="156" width="136" height="48" as="geometry" /></mxCell>
-        <mxCell id="uc_enroll" value="Enroll Known Faces" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="492" y="226" width="136" height="48" as="geometry" /></mxCell>
-        <mxCell id="uc_alerts" value="View &amp; Resolve Alerts" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="492" y="296" width="136" height="48" as="geometry" /></mxCell>
-        <mxCell id="uc_notes" value="Manage Care Notes" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="492" y="366" width="136" height="48" as="geometry" /></mxCell>
-        <mxCell id="uc_users" value="Manage Users" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="492" y="466" width="136" height="48" as="geometry" /></mxCell>
-        <mxCell id="uc_contacts" value="View Contact Messages" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="492" y="536" width="136" height="48" as="geometry" /></mxCell>
-        <mxCell id="uc_stats" value="View System Statistics" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="492" y="606" width="136" height="48" as="geometry" /></mxCell>
+        <!-- Patient col1 -->
+        <mxCell id="uc_takemed" value="Take Medication" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="406" y="72" width="128" height="46" as="geometry" /></mxCell>
+        <mxCell id="uc_routine" value="Complete Routine" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="406" y="137" width="128" height="46" as="geometry" /></mxCell>
+        <mxCell id="uc_memory" value="View Memory Gallery" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="406" y="202" width="128" height="46" as="geometry" /></mxCell>
+        <mxCell id="uc_report" value="Generate &amp; Download Report" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="406" y="267" width="128" height="46" as="geometry" /></mxCell>
+        <mxCell id="uc_sos" value="Send SOS Alert" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="406" y="332" width="128" height="46" as="geometry" /></mxCell>
 
-        <!-- Use cases: Column 3 (system-linked) -->
-        <mxCell id="uc_classify" value="Classify Intent" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="712" y="276" width="136" height="48" as="geometry" /></mxCell>
-        <mxCell id="uc_matchface" value="Match Face" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="712" y="411" width="136" height="48" as="geometry" /></mxCell>
-        <mxCell id="uc_sendrem" value="Send Reminder" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="712" y="536" width="136" height="48" as="geometry" /></mxCell>
+        <!-- Patient col2 -->
+        <mxCell id="uc_face" value="Recognize Face" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="586" y="97" width="128" height="46" as="geometry" /></mxCell>
+        <mxCell id="uc_chat" value="Chat with Assistant" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="586" y="207" width="128" height="46" as="geometry" /></mxCell>
+        <mxCell id="uc_voice" value="Voice Interaction" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="592" y="278" width="116" height="44" as="geometry" /></mxCell>
 
-        <!-- Patient associations -->
+        <!-- System-linked -->
+        <mxCell id="uc_matchface" value="Match Face" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="771" y="97" width="128" height="46" as="geometry" /></mxCell>
+        <mxCell id="uc_classify" value="Classify Intent" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="771" y="207" width="128" height="46" as="geometry" /></mxCell>
+        <mxCell id="uc_sendrem" value="Send Reminder" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="771" y="407" width="128" height="46" as="geometry" /></mxCell>
+
+        <!-- Caregiver -->
+        <mxCell id="uc_mmeds" value="Manage Medications" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="406" y="422" width="128" height="46" as="geometry" /></mxCell>
+        <mxCell id="uc_mroutines" value="Manage Routines" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="406" y="487" width="128" height="46" as="geometry" /></mxCell>
+        <mxCell id="uc_enroll" value="Enroll Known Faces" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="406" y="552" width="128" height="46" as="geometry" /></mxCell>
+        <mxCell id="uc_alerts" value="View &amp; Resolve Alerts" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="586" y="422" width="128" height="46" as="geometry" /></mxCell>
+        <mxCell id="uc_notes" value="Manage Care Notes" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="586" y="487" width="128" height="46" as="geometry" /></mxCell>
+
+        <!-- Admin -->
+        <mxCell id="uc_users" value="Manage Users" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="406" y="627" width="128" height="46" as="geometry" /></mxCell>
+        <mxCell id="uc_contacts" value="View Contact Messages" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="406" y="692" width="128" height="46" as="geometry" /></mxCell>
+        <mxCell id="uc_stats" value="View System Statistics" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="586" y="667" width="128" height="46" as="geometry" /></mxCell>
+
+        <!-- Associations (no arrowheads) -->
         <mxCell id="ep1" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_login"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="ep2" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_takemed"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="ep3" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_routine"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="ep4" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_chat"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="ep5" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_face"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="ep6" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_memory"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="ep7" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_report"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="ep8" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_sos"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ep4" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_memory"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ep5" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_report"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ep6" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_sos"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ep7" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_face"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ep8" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_chat"><mxGeometry relative="1" as="geometry" /></mxCell>
 
-        <!-- Caregiver associations -->
         <mxCell id="ec0" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_login"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="ec1" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_mmeds"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="ec2" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_mroutines"><mxGeometry relative="1" as="geometry" /></mxCell>
@@ -62,21 +66,20 @@
         <mxCell id="ec4" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_alerts"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="ec5" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_notes"><mxGeometry relative="1" as="geometry" /></mxCell>
 
-        <!-- Admin associations -->
         <mxCell id="ea0" style="endArrow=none;html=1;" edge="1" parent="1" source="a_admin" target="uc_login"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="ea1" style="endArrow=none;html=1;" edge="1" parent="1" source="a_admin" target="uc_users"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="ea2" style="endArrow=none;html=1;" edge="1" parent="1" source="a_admin" target="uc_contacts"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="ea3" style="endArrow=none;html=1;" edge="1" parent="1" source="a_admin" target="uc_stats"><mxGeometry relative="1" as="geometry" /></mxCell>
 
-        <!-- System actor associations -->
-        <mxCell id="es1" style="endArrow=none;html=1;" edge="1" parent="1" source="s_ai" target="uc_classify"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="es2" style="endArrow=none;html=1;" edge="1" parent="1" source="s_face" target="uc_matchface"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="es1" style="endArrow=none;html=1;" edge="1" parent="1" source="s_face" target="uc_matchface"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="es2" style="endArrow=none;html=1;" edge="1" parent="1" source="s_ai" target="uc_classify"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="es3" style="endArrow=none;html=1;" edge="1" parent="1" source="s_rem" target="uc_sendrem"><mxGeometry relative="1" as="geometry" /></mxCell>
 
-        <!-- include / extend -->
+        <!-- include: base -> included (arrow at included) -->
         <mxCell id="inc1" value="&#171;include&#187;" style="endArrow=open;dashed=1;html=1;fontSize=10;" edge="1" parent="1" source="uc_chat" target="uc_classify"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="inc2" value="&#171;include&#187;" style="endArrow=open;dashed=1;html=1;fontSize=10;" edge="1" parent="1" source="uc_face" target="uc_matchface"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="ext1" value="&#171;extend&#187;" style="endArrow=open;dashed=1;html=1;fontSize=10;" edge="1" parent="1" source="uc_chat" target="uc_voice"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <!-- extend: extension -> base (arrow at base) -->
+        <mxCell id="ext1" value="&#171;extend&#187;" style="endArrow=open;dashed=1;html=1;fontSize=10;" edge="1" parent="1" source="uc_voice" target="uc_chat"><mxGeometry relative="1" as="geometry" /></mxCell>
 
       </root>
     </mxGraphModel>
