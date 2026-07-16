@@ -1,0 +1,31 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="SSD - Recognize Face">
+    <mxGraphModel dx="700" dy="470" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="700" pageHeight="470" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="frame" value="sd  Recognize Face" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="15" y="15" width="670" height="440" as="geometry" /></mxCell>
+
+        <mxCell id="actor" value="Patient" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1"><mxGeometry x="92" y="50" width="36" height="72" as="geometry" /></mxCell>
+        <mxCell id="ll_actor" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="110" y="152" as="sourcePoint" /><mxPoint x="110" y="445" as="targetPoint" /></mxGeometry></mxCell>
+
+        <mxCell id="sysbox" value=":System" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=5;" vertex="1" parent="1"><mxGeometry x="505" y="86" width="120" height="40" as="geometry" /></mxCell>
+        <mxCell id="ll_sys" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="126" as="sourcePoint" /><mxPoint x="565" y="445" as="targetPoint" /></mxGeometry></mxCell>
+
+        <mxCell id="m1" value="captureFace(patientId, image)" style="html=1;endArrow=block;fillColor=#000000;align=center;verticalAlign=bottom;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="110" y="200" as="sourcePoint" /><mxPoint x="560" y="200" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="act1" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="560" y="200" width="9" height="205" as="geometry" /></mxCell>
+
+        <!-- alt frame -->
+        <mxCell id="alt" value="alt  [face recognized]" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=8;spacingTop=3;fontSize=11;fillColor=none;" vertex="1" parent="1"><mxGeometry x="78" y="235" width="545" height="185" as="geometry" /></mxCell>
+
+        <mxCell id="m2" value="personInfo(name, relationship, confidence)" style="html=1;endArrow=open;dashed=1;align=center;verticalAlign=bottom;fontStyle=2;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="560" y="305" as="sourcePoint" /><mxPoint x="110" y="305" as="targetPoint" /></mxGeometry></mxCell>
+
+        <!-- separator + second guard -->
+        <mxCell id="sep" style="endArrow=none;dashed=1;html=1;dashPattern=6 4;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="78" y="336" as="sourcePoint" /><mxPoint x="623" y="336" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="guard2" value="[unknown]" style="text;html=1;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1"><mxGeometry x="140" y="342" width="120" height="18" as="geometry" /></mxCell>
+
+        <mxCell id="m3" value="unknownPerson" style="html=1;endArrow=open;dashed=1;align=center;verticalAlign=bottom;fontStyle=2;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="560" y="398" as="sourcePoint" /><mxPoint x="110" y="398" as="targetPoint" /></mxGeometry></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
