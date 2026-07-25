@@ -171,7 +171,10 @@
       "patterns": [
         "When is my appointment", "Do I have a doctor appointment", "When is my next appointment",
         "What appointments do I have", "When do I see the doctor", "Is there an appointment today",
-        "میری ملاقات کب ہے", "میرا ڈاکٹر سے وقت کب ہے", "کیا آج کوئی اپائنٹمنٹ ہے"
+        "Do I have any appointment", "Remind me of my appointment", "When should I visit the doctor",
+        "Is my checkup today", "Any appointment this week", "When is my doctor visit",
+        "میری ملاقات کب ہے", "میرا ڈاکٹر سے وقت کب ہے", "کیا آج کوئی اپائنٹمنٹ ہے",
+        "میری اگلی ملاقات کب ہے", "ڈاکٹر کے پاس کب جانا ہے", "کیا اس ہفتے کوئی ملاقات ہے"
       ],
       "responses": [
         "Let me check your appointments.",

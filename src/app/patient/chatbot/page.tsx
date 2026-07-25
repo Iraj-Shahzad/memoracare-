@@ -61,38 +61,8 @@ export default function ChatbotPage() {
     persistLang(l);
   };
 
-  const [conversations, setConversations] = useState<Conversation[]>([
-    {
-      id: "today",
-      title: "Today's Medications",
-      preview: "What medications do I need to take today?",
-      date: "Today, 1:15 PM",
-    },
-    {
-      id: "family",
-      title: "Family Members",
-      preview: "Can you tell me about my daughter?",
-      date: "Today, 10:30 AM",
-    },
-    {
-      id: "morning",
-      title: "Morning Routine Help",
-      preview: "What should I do after breakfast?",
-      date: "Yesterday, 8:45 AM",
-    },
-    {
-      id: "doctor",
-      title: "Doctor Appointment",
-      preview: "When is my next appointment?",
-      date: "Apr 10, 2026",
-    },
-    {
-      id: "foods",
-      title: "Favorite Foods",
-      preview: "What are my favorite dishes?",
-      date: "Apr 9, 2026",
-    },
-  ]);
+  // Built from the patient's real chat history (see fetchHistory below).
+  const [conversations, setConversations] = useState<Conversation[]>([]);
 
   useEffect(() => {
     if (!patientId) return;
@@ -114,6 +84,21 @@ export default function ChatbotPage() {
             }
           });
           if (mapped.length > 0) setMessages(mapped);
+
+          // Build the "Chat History" sidebar from the real history (most recent first).
+          const convos: Conversation[] = history
+            .slice()
+            .reverse()
+            .slice(0, 6)
+            .map((entry: any, idx: number) => ({
+              id: entry._id || `c-${idx}`,
+              title: (entry.query || "Conversation").slice(0, 32),
+              preview: entry.query || "",
+              date: entry.createdAt
+                ? new Date(entry.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+                : "",
+            }));
+          setConversations(convos);
         }
       } catch (err) {
         console.error("Chat history error:", err);
