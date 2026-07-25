@@ -3,6 +3,8 @@ import PDFDocument from 'pdfkit';
 import ExcelJS from 'exceljs';
 import Report from '../models/Report';
 import Patient from '../models/Patient';
+import User from '../models/User';
+import Alert from '../models/Alert';
 import Caregiver from '../models/Caregiver';
 import Medication from '../models/Medication';
 import MedicationLog from '../models/MedicationLog';
@@ -70,6 +72,30 @@ export const getPatientReports = async (req: Request, res: Response, next: NextF
 export const generateReport = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { patientId, type, format, from, to } = req.body;
+
+    // System-wide report (admin): not tied to a single patient. This is what the
+    // admin "Generate Report" button produces.
+    if (type === 'system' || (!patientId && req.user.role === 'admin')) {
+      const [totalUsers, totalPatients, totalCaregivers, openAlerts] = await Promise.all([
+        User.countDocuments({}),
+        Patient.countDocuments({}),
+        User.countDocuments({ role: 'caregiver' }),
+        Alert.countDocuments({ isResolved: false }),
+      ]);
+      const sysReport = await Report.create({
+        generatedBy: req.user.id,
+        type: 'system',
+        title: 'System Usage Report',
+        period: {
+          from: from ? new Date(from) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+          to: to ? new Date(to) : new Date(),
+        },
+        format: format === 'xlsx' ? 'excel' : (format || 'pdf'),
+        status: 'ready',
+        data: { system: { totalUsers, totalPatients, totalCaregivers, openAlerts } },
+      });
+      return res.status(201).json({ success: true, report: sysReport });
+    }
 
     // Validate up front so a missing type does not crash later at type.replace(...)
     if (!patientId || !type) {
