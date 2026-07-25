@@ -7,6 +7,7 @@ import MedicationLog from '../models/MedicationLog';
 import RoutineLog from '../models/RoutineLog';
 import Alert from '../models/Alert';
 import Caregiver from '../models/Caregiver';
+import { canAccessPatient } from '../utils/access';
 
 // @desc Get all patients (admin/caregiver)
 // @route GET /api/patients
@@ -43,6 +44,10 @@ export const getAllPatients = async (req: Request, res: Response, next: NextFunc
 // @route GET /api/patients/:id
 export const getPatient = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    if (!(await canAccessPatient(req.user, req.params.id))) {
+      return res.status(403).json({ success: false, message: 'Not authorized to access this patient' });
+    }
+
     const patient = await Patient.findById(req.params.id)
       .populate('user', 'name email phone avatar isActive')
       .populate('assignedCaregivers', 'name email');
@@ -61,6 +66,10 @@ export const getPatient = async (req: Request, res: Response, next: NextFunction
 // @route PUT /api/patients/:id
 export const updatePatient = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    if (!(await canAccessPatient(req.user, req.params.id))) {
+      return res.status(403).json({ success: false, message: 'Not authorized to update this patient' });
+    }
+
     const allowedFields = [
       'dateOfBirth', 'gender', 'cnic', 'address', 'city', 'diagnosis',
       'doctor', 'bloodGroup', 'allergies', 'medicalHistory', 'emergencyContacts',
@@ -88,6 +97,10 @@ export const updatePatient = async (req: Request, res: Response, next: NextFunct
 export const getDashboard = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const patientId = req.params.id;
+    if (!(await canAccessPatient(req.user, patientId))) {
+      return res.status(403).json({ success: false, message: 'Not authorized to access this patient' });
+    }
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
@@ -130,6 +143,10 @@ export const getDashboard = async (req: Request, res: Response, next: NextFuncti
 export const getActivityLog = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const patientId = req.params.id;
+    if (!(await canAccessPatient(req.user, patientId))) {
+      return res.status(403).json({ success: false, message: 'Not authorized to access this patient' });
+    }
+
     const { page = 1, limit = 20 } = req.query;
 
     const [medLogs, routineLogs] = await Promise.all([
@@ -159,7 +176,7 @@ export const getActivityLog = async (req: Request, res: Response, next: NextFunc
         date: l.createdAt,
         details: l,
       })),
-    ].sort((a, b) => new Date(b.date) - new Date(a.date));
+    ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     const paginated = activities.slice((page - 1) * limit, page * limit);
 

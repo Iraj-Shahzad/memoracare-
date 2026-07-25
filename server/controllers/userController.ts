@@ -34,6 +34,12 @@ export const getAllUsers = async (req: Request, res: Response, next: NextFunctio
 // @route GET /api/users/:id
 export const getUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    // Only an admin, or the user themselves, may read a user record.
+    const requesterId = (req.user.id || req.user._id).toString();
+    if (req.user.role !== 'admin' && req.params.id !== requesterId) {
+      return res.status(403).json({ success: false, message: 'Not authorized to access this user' });
+    }
+
     const user = await User.findById(req.params.id);
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
@@ -48,12 +54,20 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
 // @route PUT /api/users/:id
 export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    // Only an admin, or the user themselves, may update a user record.
+    const requesterId = (req.user.id || req.user._id).toString();
+    const isAdmin = req.user.role === 'admin';
+    if (!isAdmin && req.params.id !== requesterId) {
+      return res.status(403).json({ success: false, message: 'Not authorized to update this user' });
+    }
+
     const { name, phone, avatar, isActive } = req.body;
     const updateData: any = {};
     if (name !== undefined) updateData.name = name;
     if (phone !== undefined) updateData.phone = phone;
     if (avatar !== undefined) updateData.avatar = avatar;
-    if (isActive !== undefined) updateData.isActive = isActive;
+    // Only an admin may activate/deactivate an account.
+    if (isActive !== undefined && isAdmin) updateData.isActive = isActive;
 
     const user = await User.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
     if (!user) {

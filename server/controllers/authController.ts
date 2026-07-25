@@ -22,13 +22,18 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
       return res.status(400).json({ success: false, message: 'Email already registered' });
     }
 
+    // SECURITY: public self-registration may only create a patient or caregiver.
+    // Admin accounts must be provisioned separately, never through this open route,
+    // otherwise anyone could register with role "admin".
+    const safeRole = role === 'caregiver' ? 'caregiver' : 'patient';
+
     // Create user
-    const user = await User.create({ name, email, password, phone, role });
+    const user = await User.create({ name, email, password, phone, role: safeRole });
 
     // Create role-specific profile
-    if (role === 'patient') {
+    if (safeRole === 'patient') {
       await Patient.create({ user: user._id });
-    } else if (role === 'caregiver') {
+    } else if (safeRole === 'caregiver') {
       await Caregiver.create({ user: user._id });
     }
 

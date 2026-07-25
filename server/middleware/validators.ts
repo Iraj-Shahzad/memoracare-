@@ -2,12 +2,14 @@ import { body, validationResult } from 'express-validator';
 import { Request, Response, NextFunction } from 'express';
 
 // Register validation rules
+// (phone and role are optional here; the controller safely defaults role to
+//  "patient"/"caregiver" so public sign-up can never create an admin.)
 export const registerValidation = [
   body('name', 'Name is required').trim().notEmpty(),
   body('email', 'Please include a valid email').isEmail(),
   body('password', 'Please provide a password with 6 or more characters').isLength({ min: 6 }),
-  body('phone', 'Phone number is required').trim().notEmpty(),
-  body('role', 'Role must be one of: patient, caregiver, admin').isIn(['patient', 'caregiver', 'admin']),
+  body('phone').optional().trim(),
+  body('role', 'Role must be one of: patient, caregiver, admin').optional().isIn(['patient', 'caregiver', 'admin']),
 ];
 
 // Login validation rules

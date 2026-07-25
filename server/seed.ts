@@ -15,7 +15,6 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
 
 // Models
 import User from './models/User';
@@ -58,12 +57,13 @@ const seed = async () => {
     console.log('Cleared all existing data.');
 
     // ==================== USERS ====================
-    const hashedPassword = await bcrypt.hash('password123', 10);
+    // NOTE: pass the PLAIN password. The User model's pre('save') hook hashes it.
+    // (Do NOT hash here, or it gets double-hashed and login fails.)
 
     const adminUser = await User.create({
       name: 'Admin User',
       email: 'admin@memoracare.pk',
-      password: hashedPassword,
+      password: 'password123',
       phone: '+92 321 1111111',
       role: 'admin',
       isActive: true,
@@ -72,7 +72,7 @@ const seed = async () => {
     const caregiverUser1 = await User.create({
       name: 'Sarah Malik',
       email: 'sarah@memoracare.pk',
-      password: hashedPassword,
+      password: 'password123',
       phone: '+92 300 2345678',
       role: 'caregiver',
       isActive: true,
@@ -81,7 +81,7 @@ const seed = async () => {
     const caregiverUser2 = await User.create({
       name: 'Dr. Fatima Noor',
       email: 'fatima@memoracare.pk',
-      password: hashedPassword,
+      password: 'password123',
       phone: '+92 333 9876543',
       role: 'caregiver',
       isActive: true,
@@ -90,7 +90,7 @@ const seed = async () => {
     const patientUser1 = await User.create({
       name: 'Ahmed Khan',
       email: 'ahmed@memoracare.pk',
-      password: hashedPassword,
+      password: 'password123',
       phone: '+92 300 1234567',
       role: 'patient',
       isActive: true,
@@ -99,7 +99,7 @@ const seed = async () => {
     const patientUser2 = await User.create({
       name: 'Nasreen Begum',
       email: 'nasreen@memoracare.pk',
-      password: hashedPassword,
+      password: 'password123',
       phone: '+92 312 5551234',
       role: 'patient',
       isActive: true,
@@ -108,7 +108,7 @@ const seed = async () => {
     const patientUser3 = await User.create({
       name: 'Tariq Mahmood',
       email: 'tariq@memoracare.pk',
-      password: hashedPassword,
+      password: 'password123',
       phone: '+92 345 7778899',
       role: 'patient',
       isActive: true,

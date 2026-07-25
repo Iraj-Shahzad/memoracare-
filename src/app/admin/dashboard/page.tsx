@@ -348,7 +348,7 @@ export default function AdminDashboard() {
                     <span className="py-1 px-3 rounded-full text-xs font-semibold bg-[#fef3c7] text-[#d97706]">{health?.[2]?.status || "Warning"}</span>
                   </div>
 
-                  {/* OpenAI API (Chatbot) */}
+                  {/* Custom NLP Model (Chatbot) */}
                   <div className="flex items-center justify-between py-3.5">
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-lg bg-[#dcfce7] flex items-center justify-center">
@@ -357,7 +357,7 @@ export default function AdminDashboard() {
                         </svg>
                       </div>
                       <div>
-                        <div className="text-sm font-semibold">OpenAI API (Chatbot)</div>
+                        <div className="text-sm font-semibold">Custom NLP Model (Chatbot)</div>
                         <div className="text-xs text-[#64748b]">Avg response: {health?.[3]?.detail || "1.2s"}</div>
                       </div>
                     </div>

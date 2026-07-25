@@ -25,9 +25,16 @@ import nltk
 from nltk.stem import WordNetLemmatizer
 
 # Keras / TensorFlow
+import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.optimizers import SGD
+
+# Fixed seeds so the reported accuracy is reproducible run to run.
+SEED = 42
+random.seed(SEED)
+np.random.seed(SEED)
+tf.random.set_seed(SEED)
 
 # Metrics for the thesis results chapter
 from sklearn.model_selection import train_test_split
