@@ -3,6 +3,7 @@ import User from '../models/User';
 import Patient from '../models/Patient';
 import Caregiver from '../models/Caregiver';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 
 const generateToken = (id: any) => {
   return jwt.sign({ id }, process.env.JWT_SECRET as string, {
@@ -76,6 +77,66 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
     const token = generateToken(user._id);
 
+    res.status(200).json({
+      success: true,
+      token,
+      user: { id: user._id, name: user.name, email: user.email, role: user.role, phone: user.phone, avatar: user.avatar },
+    });
+  } catch (err: any) {
+    next(err);
+  }
+};
+
+// @desc  Sign in / sign up with Google
+// @route POST /api/auth/google
+export const googleAuth = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { credential } = req.body;
+    if (!credential) {
+      return res.status(400).json({ success: false, message: 'Missing Google credential' });
+    }
+
+    // Verify the Google ID token with Google's public tokeninfo endpoint.
+    const resp = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`);
+    if (!resp.ok) {
+      return res.status(401).json({ success: false, message: 'Invalid Google token' });
+    }
+    const payload: any = await resp.json();
+
+    // Ensure the token was issued for THIS app (guards against token reuse).
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    if (clientId && payload.aud !== clientId) {
+      return res.status(401).json({ success: false, message: 'Google token audience mismatch' });
+    }
+    if (payload.email_verified === 'false') {
+      return res.status(401).json({ success: false, message: 'Google email is not verified' });
+    }
+
+    const email = (payload.email || '').toLowerCase();
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Google account has no email' });
+    }
+
+    // Find the user, or create one (new Google sign-ups become patients).
+    let user: any = await User.findOne({ email });
+    if (!user) {
+      const randomPassword = crypto.randomBytes(24).toString('hex');
+      user = await User.create({
+        name: payload.name || email.split('@')[0],
+        email,
+        password: randomPassword,
+        role: 'patient',
+        avatar: payload.picture,
+        isActive: true,
+      });
+      await Patient.create({ user: user._id });
+    }
+
+    if (!user.isActive) {
+      return res.status(403).json({ success: false, message: 'Account is deactivated' });
+    }
+
+    const token = generateToken(user._id);
     res.status(200).json({
       success: true,
       token,

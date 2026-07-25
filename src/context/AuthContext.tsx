@@ -19,6 +19,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<User>;
+  googleLogin: (credential: string) => Promise<User>;
   register: (data: RegisterData) => Promise<User>;
   logout: () => void;
   refreshUser: () => Promise<void>;
@@ -82,6 +83,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return userData;
   };
 
+  // Sign in with a Google ID token (the credential from Google Identity Services).
+  const googleLogin = async (credential: string): Promise<User> => {
+    const res = await api('/auth/google', {
+      method: 'POST',
+      body: { credential },
+    });
+    localStorage.setItem('token', res.token);
+    const userData: User = {
+      ...res.user,
+      id: res.user.id || res.user._id,
+    };
+    setUser(userData);
+    refreshUser();
+    return userData;
+  };
+
   const register = async (data: RegisterData): Promise<User> => {
     const res = await api('/auth/register', {
       method: 'POST',
@@ -105,7 +122,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, login, googleLogin, register, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );
