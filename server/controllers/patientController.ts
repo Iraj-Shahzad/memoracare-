@@ -107,7 +107,9 @@ export const getDashboard = async (req: Request, res: Response, next: NextFuncti
     tomorrow.setDate(tomorrow.getDate() + 1);
 
     const [patient, medications, routines, todayMedLogs, todayRoutineLogs, recentAlerts] = await Promise.all([
-      Patient.findById(patientId).populate('user', 'name email avatar'),
+      Patient.findById(patientId)
+        .populate('user', 'name email avatar')
+        .populate('assignedCaregivers', 'name phone avatar'),
       Medication.find({ patient: patientId, isActive: true }),
       Routine.find({ patient: patientId, isActive: true }),
       MedicationLog.find({ patient: patientId, scheduledTime: { $gte: today, $lt: tomorrow } }),

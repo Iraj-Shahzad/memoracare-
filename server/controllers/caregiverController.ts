@@ -44,12 +44,14 @@ export const assignPatient = async (req: Request, res: Response, next: NextFunct
       return res.status(404).json({ success: false, message: 'Caregiver profile not found' });
     }
 
-    // Add to both sides of the relationship
-    if (!caregiver.assignedPatients.includes(patientId)) {
-      caregiver.assignedPatients.push(patientId);
+    // Add to both sides of the relationship.
+    // Compare as strings: assignedPatients holds ObjectIds, patientId is a string,
+    // so a raw .includes() would always be false and create duplicates.
+    if (!caregiver.assignedPatients.some((id) => id.toString() === patientId)) {
+      caregiver.assignedPatients.push(patientId as any);
       await caregiver.save();
     }
-    if (!patient.assignedCaregivers.includes(req.user.id)) {
+    if (!patient.assignedCaregivers.some((id) => id.toString() === req.user.id.toString())) {
       patient.assignedCaregivers.push(req.user.id);
       await patient.save();
     }

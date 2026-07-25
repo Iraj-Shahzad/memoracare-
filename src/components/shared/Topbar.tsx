@@ -37,7 +37,7 @@ export default function Topbar({
   const [voiceRem, setVoiceRem] = useState(false);
   const initials = avatar || (user?.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U');
 
-  const patientId = (user?.profile as Record<string, unknown> | undefined)?._id as string | undefined;
+  const patientId = ((user?.profile as Record<string, unknown> | undefined)?._id as string | undefined) || user?.id;
 
   useEffect(() => {
     setVoiceRem(voiceRemindersOn());

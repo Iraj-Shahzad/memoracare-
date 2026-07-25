@@ -50,10 +50,11 @@ server.listen(PORT, () => {
   startReminderScheduler(io);
 });
 
-// Handle unhandled promise rejections
+// Log unhandled promise rejections instead of killing the process.
+// Exiting on every stray rejection can crash the server mid-demo; logging keeps
+// it alive while still surfacing the problem.
 process.on('unhandledRejection', (err: any) => {
-  console.error(`Error: ${err.message}`);
-  process.exit(1);
+  console.error(`Unhandled Rejection: ${err?.message || err}`);
 });
 
 export default server;

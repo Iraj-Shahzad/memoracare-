@@ -78,7 +78,7 @@ export default function ReportsPage() {
     if (!selectedPatientId) return;
     try {
       setGenerating(true);
-      await apiPost("/reports/generate", { patient: selectedPatientId, type });
+      await apiPost("/reports/generate", { patientId: selectedPatientId, type });
       // Re-fetch reports
       const res = await apiGet("/reports");
       const data = res.data || res.reports || res || [];

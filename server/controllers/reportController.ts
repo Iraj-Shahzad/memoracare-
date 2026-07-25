@@ -71,6 +71,11 @@ export const generateReport = async (req: Request, res: Response, next: NextFunc
   try {
     const { patientId, type, format, from, to } = req.body;
 
+    // Validate up front so a missing type does not crash later at type.replace(...)
+    if (!patientId || !type) {
+      return res.status(400).json({ success: false, message: 'patientId and type are required' });
+    }
+
     const patient = await Patient.findById(patientId).populate('user', 'name');
     if (!patient) {
       return res.status(404).json({ success: false, message: 'Patient not found' });
@@ -114,7 +119,7 @@ export const generateReport = async (req: Request, res: Response, next: NextFunc
       type,
       title,
       period,
-      format: format || 'pdf',
+      format: format === 'xlsx' ? 'excel' : (format || 'pdf'),
       status: 'ready',
       data: reportData,
     });

@@ -42,15 +42,12 @@ export default function SettingsPage() {
     if (!user) return;
     try {
       setSaving(true);
-      await apiPut(`/patients/${user.id}`, {
-        settings: {
-          notifications,
-          alertTiming,
-          language,
-          privacy,
-        },
-      });
-      // Settings saved silently
+      // Caregiver UI preferences are personal to this device and have no backend
+      // model, so they are persisted locally rather than written to a patient record.
+      localStorage.setItem(
+        `caregiverSettings:${user.id}`,
+        JSON.stringify({ notifications, alertTiming, language, privacy })
+      );
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : "Failed to save settings");
     } finally {
