@@ -8,7 +8,10 @@
         "Greetings", "Good day", "Hey there", "Morning", "Hello assistant",
         "Anyone home", "Are you awake", "How are you", "Hello my friend",
         "Assalam o Alaikum", "Salam", "Adaab", "Kaise ho", "Kya haal hai",
-        "السلام علیکم", "ہیلو", "سلام", "کیا آپ موجود ہیں", "آداب", "صبح بخیر", "کیسے ہو", "کیا حال ہے"
+        "السلام علیکم", "ہیلو", "سلام", "کیا آپ موجود ہیں", "آداب", "صبح بخیر", "کیسے ہو", "کیا حال ہے",
+        "Good to see you", "Nice to see you", "Hey good morning", "Hello are you working",
+        "Assalamualaikum", "Kya aap theek hain",
+        "کیا آپ ٹھیک ہیں", "خوش آمدید", "آپ کیسے ہیں"
       ],
       "responses": [
         "Hello! I'm your MemoryCare assistant. How can I help you today?",
@@ -26,7 +29,10 @@
         "Khuda hafiz", "Allah hafiz", "Shab bakhair", "Bas itna hi", "Phir milenge",
         "خدا حافظ", "اللہ حافظ", "شب بخیر", "بس اتنا ہی", "پھر ملیں گے", "میں جا رہا ہوں", "اب بس",
         "Ok bye", "Alright goodbye", "I will talk later", "Leaving now", "Time to go", "Take care bye",
-        "Theek hai khuda hafiz", "اب میں چلتا ہوں", "ملتے ہیں", "اللہ نگہبان"
+        "Theek hai khuda hafiz", "اب میں چلتا ہوں", "ملتے ہیں", "اللہ نگہبان",
+        "See you next time", "I am off now", "Have to leave", "Talk soon", "Good bye then",
+        "Main ja raha hoon ab", "Chalta hoon",
+        "میں اب جاتا ہوں", "پھر بات کریں گے", "اللہ حافظ دوست"
       ],
       "responses": [
         "Goodbye! Take care of yourself. I'm here whenever you need me.",
@@ -66,7 +72,11 @@
         "Which tablets today", "What medicine is for me",
         "Meri dawai kya hai", "Mujhe kaun si dawa leni hai", "Meri medicine dikhao",
         "میں کون سی دوا لوں", "میری دوائیں کیا ہیں", "آج مجھے کون سی دوا لینی ہے",
-        "میری ادویات دکھائیں", "مجھے کیا دوا لینی ہے", "میری دوا کی فہرست", "آج کی دوائیں کیا ہیں"
+        "میری ادویات دکھائیں", "مجھے کیا دوا لینی ہے", "میری دوا کی فہرست", "آج کی دوائیں کیا ہیں",
+        "Name my medicines", "Which drugs are prescribed", "What are the names of my pills",
+        "Give me my medicine list", "What medication am I on", "Tell me the medicines I take",
+        "Meri dawaon ke naam", "Kaun kaun si dawai hai",
+        "میری دواؤں کے نام بتائیں", "کون کون سی دوا ہے", "میری تمام دوائیں کیا ہیں"
       ],
       "responses": [
         "Let me check your medications for you.",
@@ -87,7 +97,11 @@
         "کیا دوا کا وقت ہو گیا ہے", "دوا کب لینی ہے", "اگلی خوراک کب ہے", "کیا میں نے دوا لی",
         "At what time is my next tablet", "How long until my next dose", "What hour do I take medicine",
         "Is my medicine due", "When exactly do I take it", "What time is the next tablet",
-        "Agli dawa ka time kya hai", "میری دوا کا اگلا وقت", "کتنے بجے دوا لینی ہے"
+        "Agli dawa ka time kya hai", "میری دوا کا اگلا وقت", "کتنے بجے دوا لینی ہے",
+        "At what o'clock is my medicine", "How many hours till my dose", "What is my medicine schedule",
+        "Give me my dose timings", "When are my pills scheduled", "What are the timings of my medicines",
+        "Dawa ke auqaat kya hain", "Kitne baje dawa hai",
+        "دوا کے اوقات بتائیں", "دوا کا شیڈول کیا ہے", "میری خوراک کے اوقات کیا ہیں"
       ],
       "responses": [
         "Let me check the timing of your medicines.",
@@ -207,7 +221,11 @@
         "I feel like crying", "I am feeling helpless", "My mind feels foggy", "I feel empty",
         "I am feeling low today", "I feel so alone", "I am tired and sad",
         "Mujhe rona aa raha hai", "Main bohat udaas hoon",
-        "مجھے رونا آ رہا ہے", "میں بے بس محسوس کرتا ہوں", "میرا دل بھاری ہے"
+        "مجھے رونا آ رہا ہے", "میں بے بس محسوس کرتا ہوں", "میرا دل بھاری ہے",
+        "I feel very sad today", "I am feeling gloomy", "Nobody understands me",
+        "I feel worried and scared", "I feel down and blue", "I am emotionally tired",
+        "Main pareshan aur udaas hoon",
+        "میں بہت اداس ہوں", "کوئی میری بات نہیں سمجھتا", "میں تنہا اور اداس ہوں"
       ],
       "responses": [
         "I'm sorry you're feeling this way. You are safe, and people who love you are nearby. Would you like me to contact your caregiver?",
@@ -265,7 +283,11 @@
         "Explain what you do", "How can you support me",
         "Tum kya kar sakte ho", "Tum kaun ho", "Ye app kya hai", "Main kya pooch sakta hoon",
         "تم کیا کر سکتے ہو", "تم کون ہو", "یہ ایپ کیا ہے", "میں کیا پوچھ سکتا ہوں",
-        "تم کیسے مدد کرتے ہو", "تمہاری خصوصیات کیا ہیں"
+        "تم کیسے مدد کرتے ہو", "تمہاری خصوصیات کیا ہیں",
+        "What are your abilities", "How do you assist", "What features do you offer",
+        "Guide me on using this", "What kind of help do you provide", "Show me what you can do",
+        "Aap kya kaam karte ho", "App kaise use karein",
+        "آپ کیا کام کرتے ہیں", "یہ ایپ کیسے استعمال کریں", "آپ کیا خدمات دیتے ہیں"
       ],
       "responses": [
         "I'm your MemoryCare assistant. I can help you remember your medicines, your daily routine, your family, the date and time, and more. Just ask me!",
