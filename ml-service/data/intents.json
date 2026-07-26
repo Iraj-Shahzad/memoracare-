@@ -42,7 +42,11 @@
         "Many thanks", "Thanks a bunch", "That was helpful", "You helped me", "Great thanks",
         "Thanks for that", "I appreciate your help",
         "Shukriya", "Bahut shukriya", "Meherbani", "Aap ka shukriya",
-        "شکریہ", "بہت شکریہ", "آپ کا شکریہ", "مہربانی", "بہت مہربانی", "آپ نے مدد کی"
+        "شکریہ", "بہت شکریہ", "آپ کا شکریہ", "مہربانی", "بہت مہربانی", "آپ نے مدد کی",
+        "Thanks so much", "You are so kind", "Thank you kindly", "That is very helpful",
+        "You are the best", "I am grateful",
+        "Bohat meherbani", "Shukriya aap ka",
+        "آپ بہت مہربان ہیں", "بہت بہت شکریہ", "میں شکر گزار ہوں"
       ],
       "responses": [
         "You're very welcome! I'm always happy to help.",
@@ -136,7 +140,11 @@
         "Please tell me my name", "Remind me my name",
         "Mera naam kya hai", "Main kaun hoon", "Mera naam batao",
         "میرا نام کیا ہے", "میں کون ہوں", "میرا نام بتائیں", "مجھے میرا نام یاد دلائیں",
-        "میرا نام کیا", "میں کون ہوں یاد دلائیں"
+        "میرا نام کیا", "میں کون ہوں یاد دلائیں",
+        "Have I forgotten my name", "Tell me my full name", "What is my full name",
+        "Who am I please", "Remind me of my own name", "I cannot remember my name",
+        "Mera pura naam kya hai", "Mujhe mera naam yaad dilao",
+        "میرا پورا نام کیا ہے", "کیا میں اپنا نام بھول گیا", "مجھے میرا نام یاد دلا دیں"
       ],
       "responses": [
         "Let me remind you of your name.",
@@ -174,7 +182,11 @@
         "Where is this place", "What place is this",
         "Main kahan hoon", "Main kahan rehta hoon", "Mera ghar kahan hai",
         "میں کہاں ہوں", "میں کہاں رہتا ہوں", "میرا گھر کہاں ہے", "میرا پتہ کیا ہے",
-        "یہ کون سا شہر ہے", "میرا گھر کتنی دور ہے"
+        "یہ کون سا شہر ہے", "میرا گھر کتنی دور ہے",
+        "Where is my house located", "What is this location", "Am I at home", "Take me home",
+        "Which area do I live in", "Is this my home",
+        "Main ghar par hoon", "Mujhe ghar le chalo",
+        "کیا میں گھر پر ہوں", "یہ جگہ کون سی ہے", "مجھے گھر لے چلو"
       ],
       "responses": [
         "Let me help you with where you are.",
@@ -191,7 +203,11 @@
         "I am feeling anxious", "I feel troubled", "I am feeling sad",
         "Main udaas hoon", "Main dara hua hoon", "Main pareshan hoon",
         "میں اداس ہوں", "میں ڈرا ہوا ہوں", "میں اکیلا محسوس کرتا ہوں",
-        "میں پریشان ہوں", "مجھے اچھا نہیں لگ رہا", "میں گھبرایا ہوا ہوں", "میں بے چین ہوں"
+        "میں پریشان ہوں", "مجھے اچھا نہیں لگ رہا", "میں گھبرایا ہوا ہوں", "میں بے چین ہوں",
+        "I feel like crying", "I am feeling helpless", "My mind feels foggy", "I feel empty",
+        "I am feeling low today", "I feel so alone", "I am tired and sad",
+        "Mujhe rona aa raha hai", "Main bohat udaas hoon",
+        "مجھے رونا آ رہا ہے", "میں بے بس محسوس کرتا ہوں", "میرا دل بھاری ہے"
       ],
       "responses": [
         "I'm sorry you're feeling this way. You are safe, and people who love you are nearby. Would you like me to contact your caregiver?",
@@ -280,7 +296,11 @@
         "Is it cloudy", "What is the temperature", "Is it warm outside", "Is the weather nice",
         "Mausam kaisa hai", "Kya barish ho rahi hai",
         "موسم کیسا ہے", "کیا بارش ہو رہی ہے", "کیا آج گرمی ہے", "کیا آج سردی ہے",
-        "کیا دھوپ ہے", "موسم کا حال کیا ہے", "کیا باہر موسم اچھا ہے"
+        "کیا دھوپ ہے", "موسم کا حال کیا ہے", "کیا باہر موسم اچھا ہے",
+        "Is it windy", "Do I need an umbrella", "Is it going to rain", "How hot is it",
+        "Is it a nice day", "What is the weather today", "Is it foggy outside",
+        "Kya aaj garmi hai", "Kya bahar thand hai",
+        "کیا ہوا چل رہی ہے", "کیا آج اچھا دن ہے", "کیا مجھے چھتری چاہیے"
       ],
       "responses": [
         "I can't check the live weather, but please dress comfortably for the day. Your caregiver can tell you more.",
@@ -296,7 +316,11 @@
         "I want to see old photos", "Show me pictures of my family",
         "Meri tasveerein dikhao", "Meri yaadein dikhao",
         "میری تصویریں دکھائیں", "میری یادیں دکھائیں", "میری فوٹو دکھاؤ",
-        "میں اپنی تصویریں دیکھنا چاہتا ہوں", "میرا البم کھولیں", "میری پرانی تصویریں دکھائیں"
+        "میں اپنی تصویریں دیکھنا چاہتا ہوں", "میرا البم کھولیں", "میری پرانی تصویریں دکھائیں",
+        "Show me old memories", "Open the gallery", "Let me see pictures of my children",
+        "Show my wedding photos", "I want to remember old days", "Can I look at my album",
+        "Purani tasveerein dikhao", "Album kholo",
+        "پرانی یادیں دکھائیں", "میرے بچوں کی تصویریں دکھائیں", "گیلری کھولیں"
       ],
       "responses": [
         "Let me help you open your memory gallery so you can look at your photos.",
@@ -312,7 +336,11 @@
         "Tell me my doctor's name",
         "Mera doctor kaun hai", "Doctor ka naam kya hai",
         "میرا ڈاکٹر کون ہے", "میرے ڈاکٹر کا نام کیا ہے", "میرا علاج کون کرتا ہے",
-        "میرے معالج کا نام", "میرا ڈاکٹر کون سا ہے"
+        "میرے معالج کا نام", "میرا ڈاکٹر کون سا ہے",
+        "Tell me my physician's name", "Who is my main doctor", "What doctor looks after me",
+        "Give me my doctor's name", "Who is my medical doctor", "Who is my consultant",
+        "Mera physician kaun hai", "Mera ilaj kaun karta hai",
+        "میرا معالج کون ہے", "میرے ڈاکٹر کا نام بتائیں", "میری صحت کا ذمہ دار کون ہے"
       ],
       "responses": [
         "Let me tell you about your doctor.",
