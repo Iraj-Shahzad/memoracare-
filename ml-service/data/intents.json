@@ -378,7 +378,11 @@
         "I want water", "Bring me water",
         "Pani peena hai", "Mujhe pyaas lagi hai",
         "کیا مجھے پانی پینا چاہیے", "کیا میں پیاسا ہوں", "پانی پینے کا وقت", "مجھے پیاس لگی ہے",
-        "کیا میں نے پانی پیا", "پانی پینا یاد دلائیں", "مجھے پانی چاہیے"
+        "کیا میں نے پانی پیا", "پانی پینا یاد دلائیں", "مجھے پانی چاہیے",
+        "Give me water", "I would like water", "Is it time to hydrate", "My mouth is dry",
+        "I want to drink something", "Should I have a drink now",
+        "Pani do", "Mujhe pani chahiye",
+        "مجھے پانی دیں", "کیا میں کچھ پیوں", "میرا منہ خشک ہے", "پانی لے آئیں"
       ],
       "responses": [
         "Staying hydrated is important. Please drink a glass of water.",
@@ -394,7 +398,11 @@
         "I feel like walking", "Should I take a stroll",
         "Sair karni hai", "Warzish ka waqt",
         "کیا مجھے ورزش کرنی چاہیے", "چہل قدمی کا وقت", "کیا میں سیر کروں", "ورزش کا وقت ہے",
-        "مجھے چلنا ہے", "کیا مجھے ٹہلنا چاہیے", "میں سیر کرنا چاہتا ہوں"
+        "مجھے چلنا ہے", "کیا مجھے ٹہلنا چاہیے", "میں سیر کرنا چاہتا ہوں",
+        "Let us walk", "I should get moving", "Is walking good now", "Should I do light exercise",
+        "Can we walk together", "Time to stretch my legs",
+        "Chalo walk karein", "Thodi warzish karein",
+        "چلیں سیر کریں", "کیا اب چلنا ٹھیک ہے", "تھوڑی ورزش کریں", "میں تھوڑا چلوں"
       ],
       "responses": [
         "A little movement is great for you. A short walk would be lovely, if your caregiver agrees.",
@@ -409,7 +417,11 @@
         "Time for a nap", "I feel sleepy", "I need to lie down", "Should I rest now",
         "Sona hai", "Aaram karna hai",
         "کیا مجھے سونا چاہیے", "کیا سونے کا وقت ہے", "آرام کا وقت", "کیا میں جھپکی لوں",
-        "میں تھکا ہوا ہوں", "کیا مجھے بستر پر جانا چاہیے", "مجھے آرام کرنا ہے"
+        "میں تھکا ہوا ہوں", "کیا مجھے بستر پر جانا چاہیے", "مجھے آرام کرنا ہے",
+        "I want to lie down", "Can I sleep now", "I need some rest", "Should I close my eyes",
+        "I am feeling drowsy", "It is time to sleep",
+        "Mujhe neend aa rahi hai", "Thoda lait jaon",
+        "مجھے نیند آ رہی ہے", "کیا میں لیٹ جاؤں", "مجھے تھوڑا آرام چاہیے", "میں سونا چاہتا ہوں"
       ],
       "responses": [
         "Rest is important. If you're tired, it's fine to lie down for a while.",
@@ -424,7 +436,11 @@
         "Read me something", "What can I do for fun", "I have nothing to do", "Put on some music", "I feel bored",
         "Gana bajao", "Kahani sunao",
         "موسیقی چلائیں", "مجھے کہانی سنائیں", "میں بور ہو رہا ہوں", "کوئی گانا سنائیں",
-        "میں موسیقی سننا چاہتا ہوں", "مجھے کچھ سنائیں", "کوئی کہانی سنائیں"
+        "میں موسیقی سننا چاہتا ہوں", "مجھے کچھ سنائیں", "کوئی کہانی سنائیں",
+        "Play a nice tune", "I would like a story", "Show me something fun", "Can we watch something",
+        "Tell me a joke", "I want some entertainment",
+        "Koi film lagao", "Mujhe hansao",
+        "کوئی فلم لگائیں", "مجھے ہنسائیں", "کچھ دلچسپ دکھائیں", "کوئی لطیفہ سنائیں"
       ],
       "responses": [
         "Let's enjoy something nice. Your caregiver can play your favourite music or a story.",
@@ -439,7 +455,11 @@
         "Remind me to pray", "What time is Zuhr", "When should I pray", "When is Isha", "Prayer time please",
         "Namaz ka waqt", "Namaz kab hai",
         "نماز کا وقت کب ہے", "مجھے نماز یاد دلائیں", "کیا نماز کا وقت ہے", "اگلی نماز کب ہے",
-        "کیا مجھے نماز پڑھنی چاہیے", "فجر کب ہے", "مغرب کب ہے"
+        "کیا مجھے نماز پڑھنی چاہیے", "فجر کب ہے", "مغرب کب ہے",
+        "When is Asr", "Time for dua", "Remind me for Fajr", "Should I do wudu",
+        "When is Jummah", "Is it Isha time",
+        "Dua ka waqt", "Namaz parhni hai",
+        "عصر کب ہے", "دعا کا وقت", "کیا میں وضو کروں", "جمعہ کب ہے", "عشاء کا وقت"
       ],
       "responses": [
         "It may be time for prayer. Your caregiver can confirm today's exact prayer times.",
@@ -454,7 +474,11 @@
         "What happened today", "Latest news please", "Read me the news", "What is new", "Tell me the headlines", "Any updates today",
         "Koi khabar hai", "Aaj ki khabrein",
         "آج کوئی خبر ہے", "خبروں میں کیا ہے", "مجھے خبریں بتائیں", "کیا ہو رہا ہے",
-        "آج کیا ہوا", "تازہ خبریں سنائیں", "کوئی نئی خبر"
+        "آج کیا ہوا", "تازہ خبریں سنائیں", "کوئی نئی خبر",
+        "What is on the news", "Any big news", "Tell me current affairs", "What is today's headline",
+        "Is there news from Pakistan", "What is happening today",
+        "Pakistan ki khabrein", "Aaj kya khabar hai",
+        "پاکستان کی خبریں", "آج کی بڑی خبر", "حالات حاضرہ بتائیں", "کیا کوئی خبر آئی"
       ],
       "responses": [
         "I can't fetch live news, but your caregiver can share today's headlines with you.",
@@ -470,7 +494,11 @@
         "I need to go", "Take me to the washroom",
         "Mujhe washroom jana hai", "Bathroom kahan hai",
         "مجھے باتھ روم جانا ہے", "واش روم کہاں ہے", "مجھے ٹوائلٹ جانا ہے", "مجھے پیشاب کرنا ہے",
-        "باتھ روم کس طرف ہے", "مجھے واش روم لے چلیں", "مجھے جانا ہے"
+        "باتھ روم کس طرف ہے", "مجھے واش روم لے چلیں", "مجھے جانا ہے",
+        "I want to use the bathroom", "Please take me to washroom", "I need to relieve myself",
+        "Where can I find a toilet", "I must use the restroom", "Guide me to the toilet",
+        "Mujhe toilet jana hai", "Washroom le chalein",
+        "مجھے ٹوائلٹ جانا ہے", "براہ کرم واش روم لے چلیں", "مجھے حاجت ہے", "ٹوائلٹ کہاں ہے"
       ],
       "responses": [
         "Let me help. Your caregiver can guide you to the bathroom safely.",
@@ -485,7 +513,11 @@
         "Life is good", "I feel peaceful", "I am doing well", "I feel fine and happy",
         "Main khush hoon", "Main achha mehsoos kar raha hoon",
         "میں خوش ہوں", "میں اچھا محسوس کر رہا ہوں", "آج اچھا دن ہے", "میں پرسکون ہوں",
-        "میں بہت خوش ہوں", "میرا موڈ اچھا ہے", "میں ٹھیک محسوس کر رہا ہوں"
+        "میں بہت خوش ہوں", "میرا موڈ اچھا ہے", "میں ٹھیک محسوس کر رہا ہوں",
+        "I am feeling joyful", "I feel relaxed", "I had a good day", "I feel loved",
+        "Everything feels nice", "I am smiling today",
+        "Dil khush hai", "Aaj mood achha hai",
+        "میں خوشی محسوس کر رہا ہوں", "آج میرا دن اچھا رہا", "میں مسکرا رہا ہوں", "سب کچھ اچھا لگ رہا ہے"
       ],
       "responses": [
         "That's wonderful to hear! I'm so glad you're feeling good today.",
