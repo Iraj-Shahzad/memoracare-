@@ -368,6 +368,129 @@
         "Let me tell you about your doctor.",
         "Here is information about the doctor who looks after you."
       ]
+    },
+    {
+      "tag": "hydration",
+      "patterns": [
+        "Should I drink water", "Am I thirsty", "Do I need to drink water", "Time to drink water",
+        "Have I had water", "Remind me to drink water", "I am thirsty", "Can I have some water",
+        "How much water should I drink", "Is it time for water", "I need a drink", "Should I have some juice",
+        "I want water", "Bring me water",
+        "Pani peena hai", "Mujhe pyaas lagi hai",
+        "کیا مجھے پانی پینا چاہیے", "کیا میں پیاسا ہوں", "پانی پینے کا وقت", "مجھے پیاس لگی ہے",
+        "کیا میں نے پانی پیا", "پانی پینا یاد دلائیں", "مجھے پانی چاہیے"
+      ],
+      "responses": [
+        "Staying hydrated is important. Please drink a glass of water.",
+        "It's a good time for some water. Small sips through the day help you feel better."
+      ]
+    },
+    {
+      "tag": "exercise",
+      "patterns": [
+        "Should I exercise", "Time for a walk", "Should I go for a walk", "Do I need to exercise",
+        "Is it time for my walk", "Should I stretch", "Can I do some exercise", "I want to walk",
+        "Remind me to exercise", "Time for physical activity", "Should I move around", "Let us do some exercise",
+        "I feel like walking", "Should I take a stroll",
+        "Sair karni hai", "Warzish ka waqt",
+        "کیا مجھے ورزش کرنی چاہیے", "چہل قدمی کا وقت", "کیا میں سیر کروں", "ورزش کا وقت ہے",
+        "مجھے چلنا ہے", "کیا مجھے ٹہلنا چاہیے", "میں سیر کرنا چاہتا ہوں"
+      ],
+      "responses": [
+        "A little movement is great for you. A short walk would be lovely, if your caregiver agrees.",
+        "Let's get some gentle exercise. Please have your caregiver join you to stay safe."
+      ]
+    },
+    {
+      "tag": "sleep_rest",
+      "patterns": [
+        "Should I sleep", "Is it bedtime", "Time to rest", "Should I take a nap", "When is bedtime",
+        "I am tired", "Should I go to bed", "Is it time to sleep", "I want to rest", "Can I take a nap",
+        "Time for a nap", "I feel sleepy", "I need to lie down", "Should I rest now",
+        "Sona hai", "Aaram karna hai",
+        "کیا مجھے سونا چاہیے", "کیا سونے کا وقت ہے", "آرام کا وقت", "کیا میں جھپکی لوں",
+        "میں تھکا ہوا ہوں", "کیا مجھے بستر پر جانا چاہیے", "مجھے آرام کرنا ہے"
+      ],
+      "responses": [
+        "Rest is important. If you're tired, it's fine to lie down for a while.",
+        "A little rest sounds good. Make yourself comfortable and relax."
+      ]
+    },
+    {
+      "tag": "entertainment",
+      "patterns": [
+        "Play some music", "Tell me a story", "I am bored", "Sing a song", "Play a song",
+        "Can you tell me a story", "I want to listen to music", "Entertain me", "Play my favourite song",
+        "Read me something", "What can I do for fun", "I have nothing to do", "Put on some music", "I feel bored",
+        "Gana bajao", "Kahani sunao",
+        "موسیقی چلائیں", "مجھے کہانی سنائیں", "میں بور ہو رہا ہوں", "کوئی گانا سنائیں",
+        "میں موسیقی سننا چاہتا ہوں", "مجھے کچھ سنائیں", "کوئی کہانی سنائیں"
+      ],
+      "responses": [
+        "Let's enjoy something nice. Your caregiver can play your favourite music or a story.",
+        "How about some music or an old favourite song? Ask your caregiver to put it on."
+      ]
+    },
+    {
+      "tag": "prayer",
+      "patterns": [
+        "When is prayer time", "Remind me for namaz", "Is it time for prayer", "When is the next prayer",
+        "Time for salah", "Should I pray now", "When is Fajr", "When is Maghrib", "Is it time for namaz",
+        "Remind me to pray", "What time is Zuhr", "When should I pray", "When is Isha", "Prayer time please",
+        "Namaz ka waqt", "Namaz kab hai",
+        "نماز کا وقت کب ہے", "مجھے نماز یاد دلائیں", "کیا نماز کا وقت ہے", "اگلی نماز کب ہے",
+        "کیا مجھے نماز پڑھنی چاہیے", "فجر کب ہے", "مغرب کب ہے"
+      ],
+      "responses": [
+        "It may be time for prayer. Your caregiver can confirm today's exact prayer times.",
+        "Prayer brings peace. Please check the prayer timings with your caregiver."
+      ]
+    },
+    {
+      "tag": "news",
+      "patterns": [
+        "Any news today", "What is in the news", "Tell me the news", "What is happening",
+        "Is there any news", "What is going on in the world", "Give me the news", "Any headlines",
+        "What happened today", "Latest news please", "Read me the news", "What is new", "Tell me the headlines", "Any updates today",
+        "Koi khabar hai", "Aaj ki khabrein",
+        "آج کوئی خبر ہے", "خبروں میں کیا ہے", "مجھے خبریں بتائیں", "کیا ہو رہا ہے",
+        "آج کیا ہوا", "تازہ خبریں سنائیں", "کوئی نئی خبر"
+      ],
+      "responses": [
+        "I can't fetch live news, but your caregiver can share today's headlines with you.",
+        "For the latest news, please ask your caregiver to read it out for you."
+      ]
+    },
+    {
+      "tag": "bathroom",
+      "patterns": [
+        "I need the toilet", "Where is the bathroom", "I need to use the washroom", "Take me to the toilet",
+        "I need to pee", "Where is the washroom", "I have to go to the bathroom", "I need the restroom",
+        "Help me to the toilet", "Which way is the bathroom", "I need to use the toilet", "Show me the washroom",
+        "I need to go", "Take me to the washroom",
+        "Mujhe washroom jana hai", "Bathroom kahan hai",
+        "مجھے باتھ روم جانا ہے", "واش روم کہاں ہے", "مجھے ٹوائلٹ جانا ہے", "مجھے پیشاب کرنا ہے",
+        "باتھ روم کس طرف ہے", "مجھے واش روم لے چلیں", "مجھے جانا ہے"
+      ],
+      "responses": [
+        "Let me help. Your caregiver can guide you to the bathroom safely.",
+        "Of course. Please let your caregiver help you to the washroom."
+      ]
+    },
+    {
+      "tag": "positive_mood",
+      "patterns": [
+        "I feel good", "I am happy", "I feel great", "I am feeling wonderful", "I feel happy today",
+        "I am in a good mood", "I feel cheerful", "Today is a good day", "I feel content", "I am feeling positive",
+        "Life is good", "I feel peaceful", "I am doing well", "I feel fine and happy",
+        "Main khush hoon", "Main achha mehsoos kar raha hoon",
+        "میں خوش ہوں", "میں اچھا محسوس کر رہا ہوں", "آج اچھا دن ہے", "میں پرسکون ہوں",
+        "میں بہت خوش ہوں", "میرا موڈ اچھا ہے", "میں ٹھیک محسوس کر رہا ہوں"
+      ],
+      "responses": [
+        "That's wonderful to hear! I'm so glad you're feeling good today.",
+        "It makes me happy that you feel good. Enjoy your day!"
+      ]
     }
   ]
 }
