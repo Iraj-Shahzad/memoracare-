@@ -29,6 +29,7 @@ import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.optimizers import SGD
+from tensorflow.keras.callbacks import EarlyStopping
 
 # Fixed seeds so the reported accuracy is reproducible run to run.
 SEED = 42
@@ -135,12 +136,22 @@ model.summary()
 # ---------------------------------------------------------------------------
 # 4. Train
 # ---------------------------------------------------------------------------
+# Early stopping: watch the validation loss and stop once it stops improving,
+# then restore the weights from the BEST epoch. This directly fights overfitting
+# (otherwise the model keeps memorising the training set up to epoch 200).
+callbacks = []
+if len(X_test):
+    callbacks.append(
+        EarlyStopping(monitor="val_loss", patience=25, restore_best_weights=True)
+    )
+
 history = model.fit(
     X_train, Y_train,
     epochs=200,
     batch_size=8,
     verbose=1,
     validation_data=(X_test, Y_test) if len(X_test) else None,
+    callbacks=callbacks,
 )
 
 # ---------------------------------------------------------------------------
