@@ -118,10 +118,10 @@ X, Y, y = map(np.array, zip(*combined))
 # ---------------------------------------------------------------------------
 def build_model():
     m = Sequential()
-    m.add(Dense(128, input_shape=(len(words),), activation="relu"))
+    m.add(Dense(256, input_shape=(len(words),), activation="relu"))
     m.add(Dropout(0.5))
-    m.add(Dense(64, activation="relu"))
-    m.add(Dropout(0.5))
+    m.add(Dense(128, activation="relu"))
+    m.add(Dropout(0.4))
     m.add(Dense(len(classes), activation="softmax"))
     m.compile(
         loss="categorical_crossentropy",
