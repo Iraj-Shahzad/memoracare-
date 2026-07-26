@@ -145,7 +145,7 @@ This is your **custom-trained model** (not OpenAI, not Dialogflow). File: `ml-se
 | **5. One-hot labels** | Each intent → a vector with a 1 in its slot | Target for the softmax output |
 | **6. Split** | Stratified 80/20 train/test, `random_state=42` | Honest evaluation on data the model never trained on |
 | **7. Model** | `Dense(128,relu) → Dropout(0.5) → Dense(64,relu) → Dropout(0.5) → Dense(14,softmax)` | Learns patterns; dropout prevents overfitting; softmax gives a probability per intent |
-| **8. Train** | SGD optimiser, categorical cross-entropy loss, 200 epochs, batch 8 | Standard classification training |
+| **8. Train** | Adam optimiser, categorical cross-entropy loss, up to 200 epochs (early stopping), batch 8 | Standard classification training; Adam adapts the learning rate per weight |
 | **9. Evaluate** | Accuracy + classification report (precision/recall/F1) + confusion matrix on the test set | The numbers for your results chapter |
 | **10. Save** | `chatbot_model.h5`, `words.pkl`, `classes.pkl` | So `app.py` can load and serve it |
 
@@ -229,12 +229,12 @@ This is your **custom-trained model** (not OpenAI, not Dialogflow). File: `ml-se
 16. *What are the features?* → bag-of-words vectors over the vocabulary.
 17. *Why softmax at the output?* → produces a probability per intent that sum to 1; pick the max.
 18. *Why dropout?* → regularisation; prevents overfitting on the small dataset.
-19. *What accuracy did you get?* → **70.1% (±2.4%) under 5-fold cross-validation** — a tight spread, so the result is stable and reproducible — and **68.6% on a single held-out test set** (macro-F1 ≈ 0.69), with a full classification report + confusion matrix. The cross-validated figure is the reliable one to quote; the low ±2.4% variance is itself a strength.
+19. *What accuracy did you get?* → **75.25% under 5-fold cross-validation**, and **69.4% on a single held-out test set**, with a full classification report + confusion matrix. The cross-validated figure is the reliable one to quote. (Switching the optimiser from SGD to Adam lifted the cross-validated accuracy from ~70% to ~75%.)
 20. *How do you avoid overfitting?* → dropout + a held-out test split; I also report per-class precision/recall.
 21. *What if the model is unsure?* → confidence threshold 0.60 → safe fallback message.
 22. *What's the loss function?* → categorical cross-entropy (multi-class classification).
 23. *Bag-of-words limitation?* → ignores word order and unseen words; fine for short intent phrases.
-24. *How would you improve it?* → more/cleaner data, pretrained word embeddings, and proper Urdu lemmatisation. *Note:* I **empirically tested TF-IDF with unigrams+bigrams**, but on ~600 samples it produced a sparse ~1,600-feature space that **slightly reduced** accuracy (69.4% vs 70.1% CV), so I kept the simpler bag-of-words — a decision made from evidence, not assumption. (Good answer if asked "why not TF-IDF?".)
+24. *How would you improve it?* → more/cleaner data, pretrained word embeddings, and proper Urdu lemmatisation. *What I tried (evidence-based tuning):* (a) **scaling + balancing the dataset** (210 → ~600 phrases) took accuracy from ~58% to ~70%; (b) **switching optimiser SGD → Adam** lifted the 5-fold CV from ~70% to **~75%** (kept); (c) **TF-IDF with unigrams+bigrams** was tested but slightly *reduced* accuracy on ~600 samples (too sparse), so bag-of-words was kept. Each choice was validated with cross-validation, not assumed.
 
 **Face recognition**
 25. *Did you train the face model?* → no, pre-trained face-api.js; I built enrolment, matching, logging.
