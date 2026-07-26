@@ -234,7 +234,7 @@ This is your **custom-trained model** (not OpenAI, not Dialogflow). File: `ml-se
 21. *What if the model is unsure?* → confidence threshold 0.60 → safe fallback message.
 22. *What's the loss function?* → categorical cross-entropy (multi-class classification).
 23. *Bag-of-words limitation?* → ignores word order and unseen words; fine for short intent phrases.
-24. *How would you improve it?* → more data, k-fold CV, TF-IDF or word embeddings, proper Urdu tokenisation.
+24. *How would you improve it?* → more/cleaner data, pretrained word embeddings, and proper Urdu lemmatisation. *Note:* I **empirically tested TF-IDF with unigrams+bigrams**, but on ~600 samples it produced a sparse ~1,600-feature space that **slightly reduced** accuracy (69.4% vs 70.1% CV), so I kept the simpler bag-of-words — a decision made from evidence, not assumption. (Good answer if asked "why not TF-IDF?".)
 
 **Face recognition**
 25. *Did you train the face model?* → no, pre-trained face-api.js; I built enrolment, matching, logging.
