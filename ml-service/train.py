@@ -38,7 +38,7 @@ np.random.seed(SEED)
 tf.random.set_seed(SEED)
 
 # Metrics for the thesis results chapter
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, StratifiedKFold
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 
 # ---------------------------------------------------------------------------
@@ -111,6 +111,51 @@ combined = list(zip(X, Y, y))
 random.shuffle(combined)
 X, Y, y = map(np.array, zip(*combined))
 
+
+# ---------------------------------------------------------------------------
+# Model factory — used by both cross-validation and the final model, so every
+# model has the exact same architecture.
+# ---------------------------------------------------------------------------
+def build_model():
+    m = Sequential()
+    m.add(Dense(128, input_shape=(len(words),), activation="relu"))
+    m.add(Dropout(0.5))
+    m.add(Dense(64, activation="relu"))
+    m.add(Dropout(0.5))
+    m.add(Dense(len(classes), activation="softmax"))
+    m.compile(
+        loss="categorical_crossentropy",
+        optimizer=SGD(learning_rate=0.01, momentum=0.9, nesterov=True),
+        metrics=["accuracy"],
+    )
+    return m
+
+
+# ---------------------------------------------------------------------------
+# 2b. K-fold cross-validation
+# A single train/test split is noisy on a small dataset, so we also report the
+# mean accuracy across k folds where EVERY sample is tested exactly once. This
+# is the robust, defensible accuracy number for the thesis.
+# ---------------------------------------------------------------------------
+n_splits = min(5, int(np.min(np.bincount(y))))
+if n_splits >= 2:
+    skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=SEED)
+    fold_accs = []
+    print(f"\nRunning {n_splits}-fold cross-validation...")
+    for fold, (tr_idx, te_idx) in enumerate(skf.split(X, y), start=1):
+        m = build_model()
+        m.fit(
+            X[tr_idx], Y[tr_idx], epochs=150, batch_size=8, verbose=0,
+            validation_data=(X[te_idx], Y[te_idx]),
+            callbacks=[EarlyStopping(monitor="val_loss", patience=20, restore_best_weights=True)],
+        )
+        preds_fold = np.argmax(m.predict(X[te_idx], verbose=0), axis=1)
+        a = accuracy_score(y[te_idx], preds_fold)
+        fold_accs.append(a)
+        print(f"  Fold {fold}: accuracy = {a * 100:.2f}%")
+    print(f"\nCross-validated accuracy: {np.mean(fold_accs) * 100:.2f}% "
+          f"(+/- {np.std(fold_accs) * 100:.2f}%)\n")
+
 # Train/test split for honest evaluation (stratify if every class has >=2 samples)
 can_stratify = min(np.bincount(y)) >= 2
 X_train, X_test, Y_train, Y_test, y_train, y_test = train_test_split(
@@ -119,18 +164,9 @@ X_train, X_test, Y_train, Y_test, y_train, y_test = train_test_split(
 )
 
 # ---------------------------------------------------------------------------
-# 3. Build the neural network
+# 3. Build the final neural network (trained on the 80% split, saved for serving)
 # ---------------------------------------------------------------------------
-model = Sequential()
-model.add(Dense(128, input_shape=(len(words),), activation="relu"))
-model.add(Dropout(0.5))
-model.add(Dense(64, activation="relu"))
-model.add(Dropout(0.5))
-model.add(Dense(len(classes), activation="softmax"))
-
-sgd = SGD(learning_rate=0.01, momentum=0.9, nesterov=True)
-model.compile(loss="categorical_crossentropy", optimizer=sgd, metrics=["accuracy"])
-
+model = build_model()
 model.summary()
 
 # ---------------------------------------------------------------------------
