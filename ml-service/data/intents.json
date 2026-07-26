@@ -61,7 +61,7 @@
       ]
     },
     {
-      "tag": "medication_query",
+      "tag": "medication",
       "patterns": [
         "What medicine do I take", "What are my medications", "Which pills do I take",
         "What medication do I need today", "Show me my medicines", "What tablets do I take",
@@ -84,7 +84,7 @@
       ]
     },
     {
-      "tag": "medication_time",
+      "tag": "medication",
       "patterns": [
         "When do I take my medicine", "What time is my medication", "When is my next pill",
         "When should I take my tablets", "What time do I take medicine",

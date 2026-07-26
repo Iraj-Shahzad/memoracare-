@@ -55,6 +55,7 @@ async function buildReply(intent: any, base: any, patientId: any, lang: 'en' | '
   const ur = lang === 'ur';
 
   switch (intent) {
+    case 'medication':
     case 'medication_query':
     case 'medication_time': {
       const meds = await Medication.find({ patient: patientId, isActive: true }).select('name dosage times');
