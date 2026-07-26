@@ -28,7 +28,7 @@ from nltk.stem import WordNetLemmatizer
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
-from tensorflow.keras.optimizers import SGD
+from tensorflow.keras.optimizers import SGD, Adam
 from tensorflow.keras.callbacks import EarlyStopping
 
 # Fixed seeds so the reported accuracy is reproducible run to run.
@@ -125,7 +125,9 @@ def build_model():
     m.add(Dense(len(classes), activation="softmax"))
     m.compile(
         loss="categorical_crossentropy",
-        optimizer=SGD(learning_rate=0.01, momentum=0.9, nesterov=True),
+        # Adam adapts the learning rate per weight; on small, sparse bag-of-words
+        # inputs it often converges to a slightly better solution than plain SGD.
+        optimizer=Adam(learning_rate=0.001),
         metrics=["accuracy"],
     )
     return m
