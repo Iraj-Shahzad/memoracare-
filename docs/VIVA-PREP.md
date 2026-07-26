@@ -134,7 +134,7 @@ memorycare-repo/
 
 This is your **custom-trained model** (not OpenAI, not Dialogflow). File: `ml-service/train.py`.
 
-**Dataset:** `data/intents.json` — a **custom bilingual** dataset: **18 intents**, **~535 labelled phrases** in **English, Roman-Urdu and Urdu** (greeting, medication, routine, family, emergency, appointment, meals, weather, memories, doctor, etc.). A survey of public datasets (Kaggle intent sets, medical intent corpora, the Urdu-translated ATIS) found none covering dementia daily-care intents bilingually — which is why the dataset was curated rather than downloaded.
+**Dataset:** `data/intents.json` — a **custom bilingual** dataset: **18 intents**, **~600 labelled phrases** (602 training examples, vocabulary of 549 words) in **English, Roman-Urdu and Urdu** (greeting, medication, routine, family, emergency, appointment, meals, weather, memories, doctor, etc.). A survey of public datasets (Kaggle intent sets, medical intent corpora, the Urdu-translated ATIS) found none covering dementia daily-care intents bilingually — which is why the dataset was curated rather than downloaded.
 
 | Stage | What happens | Why |
 |-------|--------------|-----|
@@ -193,7 +193,7 @@ This is your **custom-trained model** (not OpenAI, not Dialogflow). File: `ml-se
 ---
 
 ## 12. Known limitations (own them before the examiner finds them)
-- **Modest ML dataset** (~535 phrases, 18 intents) → good accuracy but limited generalisation to very different phrasings. *Mitigation:* confidence threshold + rule-based fallback; k-fold cross-validation for an honest estimate; more data would help further.
+- **Modest ML dataset** (~600 phrases, 18 intents) → good accuracy but limited generalisation to very different phrasings. *Mitigation:* confidence threshold + rule-based fallback; k-fold cross-validation for an honest estimate; more data would help further.
 - **`emergency` vs `feeling` overlap** — physical distress ("I am in pain") and emotional distress ("I feel bad") are semantically close, so they sometimes get confused. This is acceptable because both route the patient toward care/SOS, and it's easy to explain.
 - **Single train/test split** → accuracy is a small-sample estimate; k-fold cross-validation would be more robust.
 - **Urdu** isn't lemmatised (NLTK is English-only) — it still works as distinct bag-of-words features.
@@ -229,7 +229,7 @@ This is your **custom-trained model** (not OpenAI, not Dialogflow). File: `ml-se
 16. *What are the features?* → bag-of-words vectors over the vocabulary.
 17. *Why softmax at the output?* → produces a probability per intent that sum to 1; pick the max.
 18. *Why dropout?* → regularisation; prevents overfitting on the small dataset.
-19. *What accuracy did you get?* → **73.6% (±5.4%) under 5-fold cross-validation, and 80.95% on a held-out test set** (macro-F1 ≈ 0.83), with a full classification report + confusion matrix. The cross-validated figure is the robust one; the held-out run gives the per-class report.
+19. *What accuracy did you get?* → **70.1% (±2.4%) under 5-fold cross-validation** — a tight spread, so the result is stable and reproducible — and **68.6% on a single held-out test set** (macro-F1 ≈ 0.69), with a full classification report + confusion matrix. The cross-validated figure is the reliable one to quote; the low ±2.4% variance is itself a strength.
 20. *How do you avoid overfitting?* → dropout + a held-out test split; I also report per-class precision/recall.
 21. *What if the model is unsure?* → confidence threshold 0.60 → safe fallback message.
 22. *What's the loss function?* → categorical cross-entropy (multi-class classification).
