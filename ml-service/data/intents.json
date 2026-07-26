@@ -311,25 +311,6 @@
       ]
     },
     {
-      "tag": "weather",
-      "patterns": [
-        "What is the weather", "Is it raining", "Is it hot today", "Is it cold",
-        "What is the weather like", "Is it sunny", "Will it rain today", "How is the weather",
-        "Is it cloudy", "What is the temperature", "Is it warm outside", "Is the weather nice",
-        "Mausam kaisa hai", "Kya barish ho rahi hai",
-        "موسم کیسا ہے", "کیا بارش ہو رہی ہے", "کیا آج گرمی ہے", "کیا آج سردی ہے",
-        "کیا دھوپ ہے", "موسم کا حال کیا ہے", "کیا باہر موسم اچھا ہے",
-        "Is it windy", "Do I need an umbrella", "Is it going to rain", "How hot is it",
-        "Is it a nice day", "What is the weather today", "Is it foggy outside",
-        "Kya aaj garmi hai", "Kya bahar thand hai",
-        "کیا ہوا چل رہی ہے", "کیا آج اچھا دن ہے", "کیا مجھے چھتری چاہیے"
-      ],
-      "responses": [
-        "I can't check the live weather, but please dress comfortably for the day. Your caregiver can tell you more.",
-        "Ask your caregiver about today's weather so you can dress right and stay comfortable."
-      ]
-    },
-    {
       "tag": "memories",
       "patterns": [
         "Show me my photos", "I want to see my memories", "Show my pictures",
@@ -370,44 +351,6 @@
       ]
     },
     {
-      "tag": "sleep_rest",
-      "patterns": [
-        "Should I sleep", "Is it bedtime", "Time to rest", "Should I take a nap", "When is bedtime",
-        "I am tired", "Should I go to bed", "Is it time to sleep", "I want to rest", "Can I take a nap",
-        "Time for a nap", "I feel sleepy", "I need to lie down", "Should I rest now",
-        "Sona hai", "Aaram karna hai",
-        "کیا مجھے سونا چاہیے", "کیا سونے کا وقت ہے", "آرام کا وقت", "کیا میں جھپکی لوں",
-        "میں تھکا ہوا ہوں", "کیا مجھے بستر پر جانا چاہیے", "مجھے آرام کرنا ہے",
-        "I want to lie down", "Can I sleep now", "I need some rest", "Should I close my eyes",
-        "I am feeling drowsy", "It is time to sleep",
-        "Mujhe neend aa rahi hai", "Thoda lait jaon",
-        "مجھے نیند آ رہی ہے", "کیا میں لیٹ جاؤں", "مجھے تھوڑا آرام چاہیے", "میں سونا چاہتا ہوں"
-      ],
-      "responses": [
-        "Rest is important. If you're tired, it's fine to lie down for a while.",
-        "A little rest sounds good. Make yourself comfortable and relax."
-      ]
-    },
-    {
-      "tag": "entertainment",
-      "patterns": [
-        "Play some music", "Tell me a story", "I am bored", "Sing a song", "Play a song",
-        "Can you tell me a story", "I want to listen to music", "Entertain me", "Play my favourite song",
-        "Read me something", "What can I do for fun", "I have nothing to do", "Put on some music", "I feel bored",
-        "Gana bajao", "Kahani sunao",
-        "موسیقی چلائیں", "مجھے کہانی سنائیں", "میں بور ہو رہا ہوں", "کوئی گانا سنائیں",
-        "میں موسیقی سننا چاہتا ہوں", "مجھے کچھ سنائیں", "کوئی کہانی سنائیں",
-        "Play a nice tune", "I would like a story", "Show me something fun", "Can we watch something",
-        "Tell me a joke", "I want some entertainment",
-        "Koi film lagao", "Mujhe hansao",
-        "کوئی فلم لگائیں", "مجھے ہنسائیں", "کچھ دلچسپ دکھائیں", "کوئی لطیفہ سنائیں"
-      ],
-      "responses": [
-        "Let's enjoy something nice. Your caregiver can play your favourite music or a story.",
-        "How about some music or an old favourite song? Ask your caregiver to put it on."
-      ]
-    },
-    {
       "tag": "prayer",
       "patterns": [
         "When is prayer time", "Remind me for namaz", "Is it time for prayer", "When is the next prayer",
@@ -424,25 +367,6 @@
       "responses": [
         "It may be time for prayer. Your caregiver can confirm today's exact prayer times.",
         "Prayer brings peace. Please check the prayer timings with your caregiver."
-      ]
-    },
-    {
-      "tag": "news",
-      "patterns": [
-        "Any news today", "What is in the news", "Tell me the news", "What is happening",
-        "Is there any news", "What is going on in the world", "Give me the news", "Any headlines",
-        "What happened today", "Latest news please", "Read me the news", "What is new", "Tell me the headlines", "Any updates today",
-        "Koi khabar hai", "Aaj ki khabrein",
-        "آج کوئی خبر ہے", "خبروں میں کیا ہے", "مجھے خبریں بتائیں", "کیا ہو رہا ہے",
-        "آج کیا ہوا", "تازہ خبریں سنائیں", "کوئی نئی خبر",
-        "What is on the news", "Any big news", "Tell me current affairs", "What is today's headline",
-        "Is there news from Pakistan", "What is happening today",
-        "Pakistan ki khabrein", "Aaj kya khabar hai",
-        "پاکستان کی خبریں", "آج کی بڑی خبر", "حالات حاضرہ بتائیں", "کیا کوئی خبر آئی"
-      ],
-      "responses": [
-        "I can't fetch live news, but your caregiver can share today's headlines with you.",
-        "For the latest news, please ask your caregiver to read it out for you."
       ]
     }
   ]
