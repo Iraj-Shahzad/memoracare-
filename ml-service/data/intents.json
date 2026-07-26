@@ -24,7 +24,9 @@
         "Catch you later", "I have to go", "Bye for now", "Goodnight", "See you tomorrow",
         "I am done", "That will be all", "I am going now",
         "Khuda hafiz", "Allah hafiz", "Shab bakhair", "Bas itna hi", "Phir milenge",
-        "خدا حافظ", "اللہ حافظ", "شب بخیر", "بس اتنا ہی", "پھر ملیں گے", "میں جا رہا ہوں", "اب بس"
+        "خدا حافظ", "اللہ حافظ", "شب بخیر", "بس اتنا ہی", "پھر ملیں گے", "میں جا رہا ہوں", "اب بس",
+        "Ok bye", "Alright goodbye", "I will talk later", "Leaving now", "Time to go", "Take care bye",
+        "Theek hai khuda hafiz", "اب میں چلتا ہوں", "ملتے ہیں", "اللہ نگہبان"
       ],
       "responses": [
         "Goodbye! Take care of yourself. I'm here whenever you need me.",
@@ -78,7 +80,10 @@
         "What time is my next dose", "When is my morning medicine", "When is my evening dose",
         "Dawa kab leni hai", "Meri dawa ka waqt kya hai", "Agli dawa kab hai",
         "میں دوا کب لوں", "میری دوا کا وقت کیا ہے", "میری اگلی دوا کب ہے",
-        "کیا دوا کا وقت ہو گیا ہے", "دوا کب لینی ہے", "اگلی خوراک کب ہے", "کیا میں نے دوا لی"
+        "کیا دوا کا وقت ہو گیا ہے", "دوا کب لینی ہے", "اگلی خوراک کب ہے", "کیا میں نے دوا لی",
+        "At what time is my next tablet", "How long until my next dose", "What hour do I take medicine",
+        "Is my medicine due", "When exactly do I take it", "What time is the next tablet",
+        "Agli dawa ka time kya hai", "میری دوا کا اگلا وقت", "کتنے بجے دوا لینی ہے"
       ],
       "responses": [
         "Let me check the timing of your medicines.",
@@ -149,7 +154,10 @@
         "What is the current date", "Tell me the current time",
         "Aaj kaun sa din hai", "Aaj kya tareekh hai", "Waqt kya hua hai",
         "آج کون سا دن ہے", "آج کیا تاریخ ہے", "وقت کیا ہوا ہے",
-        "آج کی تاریخ کیا ہے", "ابھی کیا وقت ہے", "کون سا مہینہ ہے", "کون سا سال ہے"
+        "آج کی تاریخ کیا ہے", "ابھی کیا وقت ہے", "کون سا مہینہ ہے", "کون سا سال ہے",
+        "What is the time please", "Can you tell me the date", "What day of the week is it",
+        "Tell me what day it is", "What is the time right now", "Do you know the time",
+        "Abhi kya time hai", "Aaj konsa din hai", "مجھے تاریخ بتائیں", "دن کون سا ہے"
       ],
       "responses": [
         "Let me tell you the current date and time.",
@@ -201,7 +209,11 @@
         "I am not well at all", "Call my caregiver", "I need urgent help",
         "Madad", "Mujhe madad chahiye", "Main gir gaya hoon", "Mujhe doctor chahiye",
         "مدد", "مجھے مدد چاہیے", "کچھ گڑبڑ ہے", "میں گر گیا ہوں", "مجھے ڈاکٹر چاہیے",
-        "مجھے درد ہو رہا ہے", "میری مدد کرو"
+        "مجھے درد ہو رہا ہے", "میری مدد کرو",
+        "I need an ambulance", "Call an ambulance", "My chest hurts", "I am bleeding",
+        "I feel faint", "I am choking", "I have chest pain", "Something happened to me",
+        "I have hurt myself", "Get a doctor now",
+        "مجھے ایمبولینس چاہیے", "میرے سینے میں درد ہے", "جلدی مدد کرو", "مجھے سانس نہیں آ رہی"
       ],
       "responses": [
         "This sounds urgent. Please press the red SOS button right away, or I can alert your caregiver immediately.",
