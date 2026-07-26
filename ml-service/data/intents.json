@@ -255,6 +255,69 @@
         "I'm your MemoryCare assistant. I can help you remember your medicines, your daily routine, your family, the date and time, and more. Just ask me!",
         "I can remind you about your medications and routines, tell you about your family, and help you feel supported. What would you like to know?"
       ]
+    },
+    {
+      "tag": "meal_time",
+      "patterns": [
+        "When is lunch", "When is dinner", "When is breakfast", "What should I eat",
+        "Am I hungry", "Is it time to eat", "When do I eat", "What is for lunch",
+        "What is for dinner", "When is my meal", "Should I eat now", "Is it meal time",
+        "What can I eat", "Time for food", "When is my next meal", "Have I eaten",
+        "Khana kab hai", "Lunch kab hai", "Kya main bhookha hoon",
+        "کھانا کب ہے", "دوپہر کا کھانا کب ہے", "رات کا کھانا کب ہے", "کیا میں بھوکا ہوں",
+        "کیا کھانے کا وقت ہے", "مجھے کیا کھانا چاہیے", "ناشتہ کب ہے", "اگلا کھانا کب ہے"
+      ],
+      "responses": [
+        "It's good to eat at your regular times. Please check with your caregiver about today's meal.",
+        "Let me remind you to eat well. Your caregiver can tell you exactly what is planned for this meal."
+      ]
+    },
+    {
+      "tag": "weather",
+      "patterns": [
+        "What is the weather", "Is it raining", "Is it hot today", "Is it cold",
+        "What is the weather like", "Is it sunny", "Will it rain today", "How is the weather",
+        "Is it cloudy", "What is the temperature", "Is it warm outside", "Is the weather nice",
+        "Mausam kaisa hai", "Kya barish ho rahi hai",
+        "موسم کیسا ہے", "کیا بارش ہو رہی ہے", "کیا آج گرمی ہے", "کیا آج سردی ہے",
+        "کیا دھوپ ہے", "موسم کا حال کیا ہے", "کیا باہر موسم اچھا ہے"
+      ],
+      "responses": [
+        "I can't check the live weather, but please dress comfortably for the day. Your caregiver can tell you more.",
+        "Ask your caregiver about today's weather so you can dress right and stay comfortable."
+      ]
+    },
+    {
+      "tag": "memories",
+      "patterns": [
+        "Show me my photos", "I want to see my memories", "Show my pictures",
+        "Can I see my photos", "Show me my family photos", "I want to look at pictures",
+        "Open my photo album", "Show my memories", "Let me see my photos", "Display my pictures",
+        "I want to see old photos", "Show me pictures of my family",
+        "Meri tasveerein dikhao", "Meri yaadein dikhao",
+        "میری تصویریں دکھائیں", "میری یادیں دکھائیں", "میری فوٹو دکھاؤ",
+        "میں اپنی تصویریں دیکھنا چاہتا ہوں", "میرا البم کھولیں", "میری پرانی تصویریں دکھائیں"
+      ],
+      "responses": [
+        "Let me help you open your memory gallery so you can look at your photos.",
+        "Your saved photos and memories are in your gallery. Would you like to see them?"
+      ]
+    },
+    {
+      "tag": "doctor_query",
+      "patterns": [
+        "Who is my doctor", "What is my doctor's name", "Tell me about my doctor",
+        "Who treats me", "What is my doctor called", "Who is my physician",
+        "Name of my doctor", "Which doctor do I see", "Who is looking after my health",
+        "Tell me my doctor's name",
+        "Mera doctor kaun hai", "Doctor ka naam kya hai",
+        "میرا ڈاکٹر کون ہے", "میرے ڈاکٹر کا نام کیا ہے", "میرا علاج کون کرتا ہے",
+        "میرے معالج کا نام", "میرا ڈاکٹر کون سا ہے"
+      ],
+      "responses": [
+        "Let me tell you about your doctor.",
+        "Here is information about the doctor who looks after you."
+      ]
     }
   ]
 }

@@ -40,6 +40,9 @@ const STATIC_UR: Record<string, string> = {
   emergency: 'یہ ہنگامی صورت لگتی ہے۔ براہ کرم فوراً سرخ SOS بٹن دبائیں تاکہ آپ کے نگہداشت کنندہ کو اطلاع ہو جائے۔',
   help: 'میں آپ کا میموری کیئر اسسٹنٹ ہوں۔ میں آپ کی دواؤں، معمولات، خاندان، اور تاریخ و وقت کے بارے میں مدد کر سکتا ہوں۔ بس پوچھیں!',
   appointment: 'اپنی ملاقاتوں کی تفصیل کے لیے براہ کرم اپنے نگہداشت کنندہ سے رابطہ کریں۔',
+  meal_time: 'کھانے کے صحیح اوقات پر کھانا اچھا ہے۔ براہ کرم آج کے کھانے کے بارے میں اپنے نگہداشت کنندہ سے پوچھیں۔',
+  weather: 'میں موجودہ موسم نہیں دیکھ سکتا، لیکن براہ کرم دن کے مطابق آرام دہ کپڑے پہنیں۔ آپ کا نگہداشت کنندہ مزید بتا سکتا ہے۔',
+  memories: 'آئیے آپ کی یادوں کی گیلری کھولیں تاکہ آپ اپنی تصویریں دیکھ سکیں۔',
   fallback: 'معذرت، میں سمجھ نہیں سکا۔ آپ مجھ سے اپنی دوائیں، معمولات، خاندان، یا تاریخ و وقت کے بارے میں پوچھ سکتے ہیں۔',
 };
 
@@ -125,6 +128,13 @@ async function buildReply(intent: any, base: any, patientId: any, lang: 'en' | '
         return ur ? `آپ ${place} میں رہتے ہیں۔ آپ محفوظ ہیں۔` : `You live at ${place}. You are safe.`;
       }
       return ur ? STATIC_UR.fallback : base;
+    }
+
+    case 'doctor_query': {
+      const patient: any = await Patient.findById(patientId).select('doctor');
+      const doc = patient?.doctor;
+      if (!doc) return ur ? STATIC_UR.fallback : base;
+      return ur ? `آپ کے ڈاکٹر ${doc} ہیں۔` : `Your doctor is ${doc}.`;
     }
 
     default:
