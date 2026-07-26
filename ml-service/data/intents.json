@@ -444,26 +444,6 @@
         "I can't fetch live news, but your caregiver can share today's headlines with you.",
         "For the latest news, please ask your caregiver to read it out for you."
       ]
-    },
-    {
-      "tag": "bathroom",
-      "patterns": [
-        "I need the toilet", "Where is the bathroom", "I need to use the washroom", "Take me to the toilet",
-        "I need to pee", "Where is the washroom", "I have to go to the bathroom", "I need the restroom",
-        "Help me to the toilet", "Which way is the bathroom", "I need to use the toilet", "Show me the washroom",
-        "I need to go", "Take me to the washroom",
-        "Mujhe washroom jana hai", "Bathroom kahan hai",
-        "مجھے باتھ روم جانا ہے", "واش روم کہاں ہے", "مجھے ٹوائلٹ جانا ہے", "مجھے پیشاب کرنا ہے",
-        "باتھ روم کس طرف ہے", "مجھے واش روم لے چلیں", "مجھے جانا ہے",
-        "I want to use the bathroom", "Please take me to washroom", "I need to relieve myself",
-        "Where can I find a toilet", "I must use the restroom", "Guide me to the toilet",
-        "Mujhe toilet jana hai", "Washroom le chalein",
-        "مجھے ٹوائلٹ جانا ہے", "براہ کرم واش روم لے چلیں", "مجھے حاجت ہے", "ٹوائلٹ کہاں ہے"
-      ],
-      "responses": [
-        "Let me help. Your caregiver can guide you to the bathroom safely.",
-        "Of course. Please let your caregiver help you to the washroom."
-      ]
     }
   ]
 }
