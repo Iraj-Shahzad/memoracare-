@@ -39,6 +39,7 @@ tf.random.set_seed(SEED)
 
 # Metrics for the thesis results chapter
 from sklearn.model_selection import train_test_split, StratifiedKFold
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 
 # ---------------------------------------------------------------------------
@@ -87,19 +88,26 @@ print(f"Intent classes ({len(classes)}): {classes}")
 print(f"Vocabulary size: {len(words)}")
 
 # ---------------------------------------------------------------------------
-# 2. Build bag-of-words training matrix
+# 2. Build the TF-IDF feature matrix (unigrams + bigrams)
+# TF-IDF weights informative words higher than very common ones, and bigrams
+# capture short phrases like "my medicine" or "when is" -- both improve intent
+# accuracy over a plain binary bag-of-words.
 # ---------------------------------------------------------------------------
-X = []  # bag-of-words vectors
-y = []  # class index
-
+corpus = []  # lemmatized text, one string per pattern
+y = []       # class index
 for tokens, tag in documents:
-    lemmas = [lemmatizer.lemmatize(t) for t in tokens]
-    bag = [1 if w in lemmas else 0 for w in words]
-    X.append(bag)
+    lemmas = [lemmatizer.lemmatize(t) for t in tokens if t not in IGNORE]
+    corpus.append(" ".join(lemmas))
     y.append(classes.index(tag))
 
-X = np.array(X)
+vectorizer = TfidfVectorizer(ngram_range=(1, 2), min_df=1)
+X = vectorizer.fit_transform(corpus).toarray().astype(np.float32)
 y = np.array(y)
+INPUT_DIM = X.shape[1]
+
+# Use the TF-IDF feature names as the saved vocabulary (for inspection).
+words = vectorizer.get_feature_names_out().tolist()
+print(f"TF-IDF features (unigrams + bigrams): {INPUT_DIM}")
 
 # One-hot encode labels
 Y = np.zeros((len(y), len(classes)), dtype=np.float32)
@@ -118,7 +126,7 @@ X, Y, y = map(np.array, zip(*combined))
 # ---------------------------------------------------------------------------
 def build_model():
     m = Sequential()
-    m.add(Dense(128, input_shape=(len(words),), activation="relu"))
+    m.add(Dense(128, input_shape=(INPUT_DIM,), activation="relu"))
     m.add(Dropout(0.5))
     m.add(Dense(64, activation="relu"))
     m.add(Dropout(0.5))
@@ -215,6 +223,8 @@ else:
 # 6. Save artifacts
 # ---------------------------------------------------------------------------
 model.save(os.path.join(MODEL_DIR, "chatbot_model.h5"))
+with open(os.path.join(MODEL_DIR, "vectorizer.pkl"), "wb") as f:
+    pickle.dump(vectorizer, f)
 with open(os.path.join(MODEL_DIR, "words.pkl"), "wb") as f:
     pickle.dump(words, f)
 with open(os.path.join(MODEL_DIR, "classes.pkl"), "wb") as f:
