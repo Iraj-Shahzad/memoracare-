@@ -370,46 +370,6 @@
       ]
     },
     {
-      "tag": "hydration",
-      "patterns": [
-        "Should I drink water", "Am I thirsty", "Do I need to drink water", "Time to drink water",
-        "Have I had water", "Remind me to drink water", "I am thirsty", "Can I have some water",
-        "How much water should I drink", "Is it time for water", "I need a drink", "Should I have some juice",
-        "I want water", "Bring me water",
-        "Pani peena hai", "Mujhe pyaas lagi hai",
-        "کیا مجھے پانی پینا چاہیے", "کیا میں پیاسا ہوں", "پانی پینے کا وقت", "مجھے پیاس لگی ہے",
-        "کیا میں نے پانی پیا", "پانی پینا یاد دلائیں", "مجھے پانی چاہیے",
-        "Give me water", "I would like water", "Is it time to hydrate", "My mouth is dry",
-        "I want to drink something", "Should I have a drink now",
-        "Pani do", "Mujhe pani chahiye",
-        "مجھے پانی دیں", "کیا میں کچھ پیوں", "میرا منہ خشک ہے", "پانی لے آئیں"
-      ],
-      "responses": [
-        "Staying hydrated is important. Please drink a glass of water.",
-        "It's a good time for some water. Small sips through the day help you feel better."
-      ]
-    },
-    {
-      "tag": "exercise",
-      "patterns": [
-        "Should I exercise", "Time for a walk", "Should I go for a walk", "Do I need to exercise",
-        "Is it time for my walk", "Should I stretch", "Can I do some exercise", "I want to walk",
-        "Remind me to exercise", "Time for physical activity", "Should I move around", "Let us do some exercise",
-        "I feel like walking", "Should I take a stroll",
-        "Sair karni hai", "Warzish ka waqt",
-        "کیا مجھے ورزش کرنی چاہیے", "چہل قدمی کا وقت", "کیا میں سیر کروں", "ورزش کا وقت ہے",
-        "مجھے چلنا ہے", "کیا مجھے ٹہلنا چاہیے", "میں سیر کرنا چاہتا ہوں",
-        "Let us walk", "I should get moving", "Is walking good now", "Should I do light exercise",
-        "Can we walk together", "Time to stretch my legs",
-        "Chalo walk karein", "Thodi warzish karein",
-        "چلیں سیر کریں", "کیا اب چلنا ٹھیک ہے", "تھوڑی ورزش کریں", "میں تھوڑا چلوں"
-      ],
-      "responses": [
-        "A little movement is great for you. A short walk would be lovely, if your caregiver agrees.",
-        "Let's get some gentle exercise. Please have your caregiver join you to stay safe."
-      ]
-    },
-    {
       "tag": "sleep_rest",
       "patterns": [
         "Should I sleep", "Is it bedtime", "Time to rest", "Should I take a nap", "When is bedtime",
@@ -503,25 +463,6 @@
       "responses": [
         "Let me help. Your caregiver can guide you to the bathroom safely.",
         "Of course. Please let your caregiver help you to the washroom."
-      ]
-    },
-    {
-      "tag": "positive_mood",
-      "patterns": [
-        "I feel good", "I am happy", "I feel great", "I am feeling wonderful", "I feel happy today",
-        "I am in a good mood", "I feel cheerful", "Today is a good day", "I feel content", "I am feeling positive",
-        "Life is good", "I feel peaceful", "I am doing well", "I feel fine and happy",
-        "Main khush hoon", "Main achha mehsoos kar raha hoon",
-        "میں خوش ہوں", "میں اچھا محسوس کر رہا ہوں", "آج اچھا دن ہے", "میں پرسکون ہوں",
-        "میں بہت خوش ہوں", "میرا موڈ اچھا ہے", "میں ٹھیک محسوس کر رہا ہوں",
-        "I am feeling joyful", "I feel relaxed", "I had a good day", "I feel loved",
-        "Everything feels nice", "I am smiling today",
-        "Dil khush hai", "Aaj mood achha hai",
-        "میں خوشی محسوس کر رہا ہوں", "آج میرا دن اچھا رہا", "میں مسکرا رہا ہوں", "سب کچھ اچھا لگ رہا ہے"
-      ],
-      "responses": [
-        "That's wonderful to hear! I'm so glad you're feeling good today.",
-        "It makes me happy that you feel good. Enjoy your day!"
       ]
     }
   ]
