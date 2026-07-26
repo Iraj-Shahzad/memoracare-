@@ -44,8 +44,8 @@ lemmatizer = WordNetLemmatizer()
 # Load artifacts produced by train.py
 with open(DATA_PATH, "r", encoding="utf-8") as f:
     intents = json.load(f)
-with open(os.path.join(MODEL_DIR, "vectorizer.pkl"), "rb") as f:
-    vectorizer = pickle.load(f)
+with open(os.path.join(MODEL_DIR, "words.pkl"), "rb") as f:
+    words = pickle.load(f)
 with open(os.path.join(MODEL_DIR, "classes.pkl"), "rb") as f:
     classes = pickle.load(f)
 
@@ -63,17 +63,15 @@ def clean_up_sentence(sentence):
     return [lemmatizer.lemmatize(t) for t in tokens]
 
 
-def features(sentence):
-    # Lemmatize, then let the saved TF-IDF vectorizer produce the feature vector
-    # (must match exactly how train.py built the features).
+def bag_of_words(sentence):
     lemmas = clean_up_sentence(sentence)
-    text = " ".join(lemmas)
-    return vectorizer.transform([text]).toarray().astype(np.float32)
+    bag = [1 if w in lemmas else 0 for w in words]
+    return np.array([bag])
 
 
 def predict_intent(sentence):
-    vec = features(sentence)
-    probs = model.predict(vec, verbose=0)[0]
+    bow = bag_of_words(sentence)
+    probs = model.predict(bow, verbose=0)[0]
     top_idx = int(np.argmax(probs))
     confidence = float(probs[top_idx])
     if confidence < ERROR_THRESHOLD:
