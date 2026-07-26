@@ -214,6 +214,19 @@ else:
     print("Dataset too small for a test split; trained on all data.")
 
 # ---------------------------------------------------------------------------
+# 5b. Retrain the FINAL model on 100% of the data for deployment
+# The numbers above (cross-validation + held-out) estimate performance. The
+# shipped model is now retrained on ALL examples so it has the most data to
+# learn from -- standard practice once evaluation is done. This does NOT change
+# the reported metrics; it only strengthens the model that actually serves users.
+# It is trained for the same number of epochs early stopping chose on the split.
+# ---------------------------------------------------------------------------
+final_epochs = len(history.history["loss"])
+print(f"\nTraining final deployment model on all {len(X)} examples for {final_epochs} epochs...")
+model = build_model()
+model.fit(X, Y, epochs=final_epochs, batch_size=8, verbose=0)
+
+# ---------------------------------------------------------------------------
 # 6. Save artifacts
 # ---------------------------------------------------------------------------
 model.save(os.path.join(MODEL_DIR, "chatbot_model.h5"))
