@@ -157,6 +157,7 @@ export default function SettingsPage() {
                   <div>
                     <p className="font-semibold text-slate-900">Email Summaries</p>
                     <p className="text-sm text-slate-600">Receive daily or weekly email summaries</p>
+                    <p className="text-xs text-amber-600 mt-1">Saved preference — email delivery coming soon</p>
                   </div>
                   <button
                     onClick={() => toggleNotification("emailSummaries")}
@@ -176,7 +177,8 @@ export default function SettingsPage() {
 
             {/* Alert Timing */}
             <div className="bg-white rounded-lg border border-slate-200 p-6 mb-8">
-              <h3 className="font-bold text-[#1a3c34] mb-6">Alert Timing</h3>
+              <h3 className="font-bold text-[#1a3c34] mb-1">Alert Timing</h3>
+              <p className="text-xs text-amber-600 mb-5">Saved preference — batching/digest delivery coming soon; alerts are currently real-time</p>
               <div className="space-y-3">
                 <label className="flex items-center p-4 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors has-[:checked]:border-[#0d9488] has-[:checked]:bg-[#f0fdf4]">
                   <input
@@ -246,6 +248,7 @@ export default function SettingsPage() {
                   <div>
                     <p className="font-semibold text-slate-900">Share with Family Members</p>
                     <p className="text-sm text-slate-600">Allow family members to view patient information</p>
+                    <p className="text-xs text-amber-600 mt-1">Saved preference — family portal coming soon</p>
                   </div>
                   <button
                     onClick={() => togglePrivacy("shareWithFamily")}
@@ -265,6 +268,7 @@ export default function SettingsPage() {
                   <div>
                     <p className="font-semibold text-slate-900">Data Collection</p>
                     <p className="text-sm text-slate-600">Allow MemoryCare to collect usage analytics</p>
+                    <p className="text-xs text-amber-600 mt-1">Saved preference — analytics not yet active</p>
                   </div>
                   <button
                     onClick={() => togglePrivacy("dataCollection")}
