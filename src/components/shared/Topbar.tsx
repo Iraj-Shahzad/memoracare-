@@ -159,7 +159,7 @@ export default function Topbar({
             {showAddButton.label}
           </button>
         )}
-        {showSOS && (
+        {showSOS && user?.role === 'patient' && (
           <button
             onClick={handleSOS}
             disabled={sosSending}

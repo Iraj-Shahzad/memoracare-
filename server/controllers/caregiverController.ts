@@ -9,8 +9,14 @@ import MedicationLog from '../models/MedicationLog';
 import Routine from '../models/Routine';
 import RoutineLog from '../models/RoutineLog';
 
-// @desc Get my assigned patients
-// @route GET /api/caregiver/patients
+// Shared helpers so the patients list and the dashboard compute identical
+// fields — a single source of truth means new patients are always consistent.
+const initialsOf = (name: string) => (name || '').split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
+const ageOf = (dob: any) => (dob ? Math.floor((Date.now() - new Date(dob).getTime()) / (365.25 * 24 * 3600 * 1000)) : 0);
+const CARD_COLORS = ['#0d9488', '#2563eb', '#7c3aed', '#db2777', '#d97706', '#059669', '#dc2626', '#0891b2'];
+
+// @desc Get my assigned patients (computed, display-ready shape)
+// @route GET /api/caregiver/my-patients
 export const getMyPatients = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const caregiver = await Caregiver.findOne({ user: req.user.id })
@@ -23,7 +29,93 @@ export const getMyPatients = async (req: Request, res: Response, next: NextFunct
       return res.status(404).json({ success: false, message: 'Caregiver profile not found' });
     }
 
-    res.status(200).json({ success: true, count: caregiver.assignedPatients.length, patients: caregiver.assignedPatients });
+    const patients: any[] = caregiver.assignedPatients as any[];
+    const patientIds = patients.map((p) => p._id);
+
+    const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
+    const [weekMedLogs, recentLogs] = await Promise.all([
+      MedicationLog.find({ patient: { $in: patientIds }, scheduledTime: { $gte: weekAgo } }),
+      MedicationLog.find({ patient: { $in: patientIds } }).sort({ updatedAt: -1 }),
+    ]);
+
+    // Per-patient medication compliance (% taken, last 7 days) + last activity.
+    const compByPatient: Record<string, number> = {};
+    const lastActivityByPatient: Record<string, string> = {};
+    for (const pid of patientIds) {
+      const key = pid.toString();
+      const logs = weekMedLogs.filter((l) => l.patient.toString() === key);
+      const taken = logs.filter((l) => l.status === 'taken').length;
+      compByPatient[key] = logs.length ? Math.round((taken / logs.length) * 100) : 0;
+      const last = recentLogs.find((l) => l.patient.toString() === key);
+      lastActivityByPatient[key] = last ? new Date((last as any).updatedAt).toLocaleDateString() : 'N/A';
+    }
+
+    const out = patients.map((p, i) => {
+      const name = p.user?.name || 'Unnamed patient';
+      const key = p._id.toString();
+      return {
+        _id: p._id,
+        name,
+        email: p.user?.email || '',
+        phone: p.user?.phone || '',
+        diagnosis: p.diagnosis || 'Not specified',
+        age: ageOf(p.dateOfBirth),
+        gender: p.gender || '',
+        city: p.city || '',
+        compliance: compByPatient[key] ?? 0,
+        initials: initialsOf(name),
+        color: CARD_COLORS[i % CARD_COLORS.length],
+        lastActivity: lastActivityByPatient[key] || 'N/A',
+        status: p.user?.isActive === false ? 'inactive' : 'active',
+      };
+    });
+
+    res.status(200).json({ success: true, count: out.length, patients: out });
+  } catch (err: any) {
+    next(err);
+  }
+};
+
+// @desc Create a new patient account and assign to this caregiver
+// @route POST /api/caregiver/patients
+export const createPatient = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { name, email, password, diagnosis, dateOfBirth, gender, phone } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ success: false, message: 'Name, email and password are required' });
+    }
+    if (String(password).length < 6) {
+      return res.status(400).json({ success: false, message: 'Password must be at least 6 characters' });
+    }
+
+    const existing = await User.findOne({ email: String(email).toLowerCase() });
+    if (existing) {
+      return res.status(400).json({ success: false, message: 'A user with this email already exists' });
+    }
+
+    // Create the login account (password is hashed by the User pre-save hook).
+    const newUser = await User.create({
+      name, email: String(email).toLowerCase(), password, role: 'patient', phone,
+    });
+
+    // Create the patient profile, pre-linked to this caregiver.
+    const patient = await Patient.create({
+      user: newUser._id,
+      diagnosis: diagnosis || undefined,
+      dateOfBirth: dateOfBirth || undefined,
+      gender: gender || undefined,
+      assignedCaregivers: [req.user.id],
+    });
+
+    // Link the caregiver -> patient side of the relationship.
+    const caregiver = await Caregiver.findOne({ user: req.user.id });
+    if (caregiver && !caregiver.assignedPatients.some((id) => id.toString() === patient._id.toString())) {
+      caregiver.assignedPatients.push(patient._id as any);
+      await caregiver.save();
+    }
+
+    res.status(201).json({ success: true, message: 'Patient created and assigned', patientId: patient._id });
   } catch (err: any) {
     next(err);
   }

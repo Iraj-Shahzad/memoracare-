@@ -2,6 +2,7 @@ import express from 'express';
 const router = express.Router();
 import {
   getMyPatients,
+  createPatient,
   assignPatient,
   unassignPatient,
   getPatientOverview,
@@ -17,6 +18,7 @@ router.use(protect); // All routes protected
 router.use(authorize('caregiver')); // All routes caregiver only
 
 router.get('/my-patients', getMyPatients);
+router.post('/patients', createPatient);
 router.post('/patients/:patientId/assign', assignPatient);
 router.delete('/patients/:patientId/unassign', unassignPatient);
 router.get('/patients/:patientId/overview', getPatientOverview);
