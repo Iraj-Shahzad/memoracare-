@@ -78,6 +78,27 @@ const DIAGNOSIS_GROUPS: { label: string; options: string[] }[] = [
 ];
 const DEFAULT_DIAGNOSIS = DIAGNOSIS_GROUPS[0].options[0];
 
+// Common cities for the City combobox (users can also type their own).
+const CITIES = [
+  "Islamabad", "Karachi", "Lahore", "Rawalpindi", "Faisalabad", "Multan",
+  "Peshawar", "Quetta", "Sialkot", "Gujranwala", "Hyderabad", "Abbottabad",
+];
+
+// Limited set of country dialing codes (India intentionally excluded).
+const COUNTRY_CODES = [
+  { code: "+92", name: "Pakistan" },
+  { code: "+1", name: "United States / Canada" },
+  { code: "+44", name: "United Kingdom" },
+  { code: "+971", name: "UAE" },
+  { code: "+966", name: "Saudi Arabia" },
+  { code: "+974", name: "Qatar" },
+  { code: "+965", name: "Kuwait" },
+  { code: "+973", name: "Bahrain" },
+  { code: "+968", name: "Oman" },
+  { code: "+61", name: "Australia" },
+  { code: "+90", name: "Turkey" },
+];
+
 export default function PatientsPage() {
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
@@ -91,8 +112,10 @@ export default function PatientsPage() {
   const [formError, setFormError] = useState("");
   const [form, setForm] = useState({
     name: "", email: "", password: "", diagnosis: DEFAULT_DIAGNOSIS, dateOfBirth: "",
-    gender: "Male", phone: "", city: "Islamabad", doctor: "",
+    gender: "Male", countryCode: "+92", phone: "", city: "Islamabad", doctor: "",
   });
+  // Real enrolled caregivers/doctors for the Doctor dropdown (no free-text names).
+  const [team, setTeam] = useState<{ _id: string; name: string; specialization: string }[]>([]);
 
   // View Details modal
   const [overview, setOverview] = useState<Overview | null>(null);
@@ -115,18 +138,21 @@ export default function PatientsPage() {
 
   useEffect(() => {
     loadPatients();
+    // Load real caregivers/doctors for the Doctor dropdown.
+    apiGet("/caregiver/team")
+      .then((res) => setTeam(Array.isArray(res.team) ? res.team : []))
+      .catch(() => setTeam([]));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Normalize any Pakistani mobile input to the canonical "+92 3XX XXXXXXX"
-  // format used across the app (matches the seeded patients). Returns null if
-  // it isn't a valid PK mobile.
-  const normalizePkPhone = (raw: string): string | null => {
+  // Build "{code} {digits}" from the selected country code + typed number.
+  // No fixed length is enforced beyond a sane 7–14 digit range (numbering
+  // plans differ by country). Returns null if the number isn't plausible.
+  const buildPhone = (code: string, raw: string): string | null => {
     let d = raw.replace(/\D/g, "");
-    if (d.startsWith("92")) d = d.slice(2);
-    if (d.startsWith("0")) d = d.slice(1);
-    if (!/^3\d{9}$/.test(d)) return null; // must be 3XXXXXXXXX
-    return `+92 ${d.slice(0, 3)} ${d.slice(3)}`;
+    if (d.startsWith("0")) d = d.slice(1); // drop a national trunk 0 if typed
+    if (d.length < 7 || d.length > 14) return null;
+    return `${code} ${d}`;
   };
 
   const submitPatient = async (e: React.FormEvent) => {
@@ -136,8 +162,8 @@ export default function PatientsPage() {
     if (form.name.trim().length < 3) { setFormError("Enter the patient's full name (min 3 characters)."); return; }
     if (!emailRe.test(form.email.trim())) { setFormError("Enter a valid email address."); return; }
     if (form.password.length < 6) { setFormError("Password must be at least 6 characters."); return; }
-    const normalizedPhone = normalizePkPhone(form.phone);
-    if (!normalizedPhone) { setFormError("Enter a valid Pakistani mobile number, e.g. 0300 1234567."); return; }
+    const normalizedPhone = buildPhone(form.countryCode, form.phone);
+    if (!normalizedPhone) { setFormError("Enter a valid phone number (7–14 digits)."); return; }
     if (form.dateOfBirth && new Date(form.dateOfBirth) > new Date()) { setFormError("Date of birth cannot be in the future."); return; }
     try {
       setSaving(true);
@@ -153,7 +179,7 @@ export default function PatientsPage() {
         doctor: form.doctor.trim() || undefined,
       });
       setShowAddModal(false);
-      setForm({ name: "", email: "", password: "", diagnosis: DEFAULT_DIAGNOSIS, dateOfBirth: "", gender: "Male", phone: "", city: "Islamabad", doctor: "" });
+      setForm({ name: "", email: "", password: "", diagnosis: DEFAULT_DIAGNOSIS, dateOfBirth: "", gender: "Male", countryCode: "+92", phone: "", city: "Islamabad", doctor: "" });
       await loadPatients(true);
     } catch (err: unknown) {
       setFormError(err instanceof Error ? err.message : "Failed to create patient");
@@ -309,7 +335,24 @@ export default function PatientsPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Phone *</label>
-                  <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="0300 1234567" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                  <div className="flex gap-2">
+                    <select
+                      value={form.countryCode}
+                      onChange={(e) => setForm({ ...form, countryCode: e.target.value })}
+                      className="px-2 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0d9488] max-w-[110px]"
+                    >
+                      {COUNTRY_CODES.map((c) => (
+                        <option key={c.code + c.name} value={c.code}>{c.code} {c.name}</option>
+                      ))}
+                    </select>
+                    <input
+                      value={form.phone}
+                      onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                      placeholder="3001234567"
+                      inputMode="numeric"
+                      className="flex-1 min-w-0 px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                    />
+                  </div>
                 </div>
               </div>
               <div>
@@ -317,7 +360,7 @@ export default function PatientsPage() {
                 <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="patient@example.com" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Temporary Password *</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Password *</label>
                 <input type="text" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder="min 6 characters" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
               </div>
               <div>
@@ -332,12 +375,20 @@ export default function PatientsPage() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Doctor</label>
-                  <input value={form.doctor} onChange={(e) => setForm({ ...form, doctor: e.target.value })} placeholder="e.g. Dr. Ahmed Raza" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Caregiver</label>
+                  <select value={form.doctor} onChange={(e) => setForm({ ...form, doctor: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]">
+                    <option value="">Select a caregiver</option>
+                    {team.map((c) => (
+                      <option key={c._id} value={c.name}>{c.name}{c.specialization ? ` — ${c.specialization}` : ""}</option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">City</label>
-                  <input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="e.g. Islamabad" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                  <input list="city-options" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="Type or select a city" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                  <datalist id="city-options">
+                    {CITIES.map((c) => <option key={c} value={c} />)}
+                  </datalist>
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -398,7 +449,7 @@ export default function PatientsPage() {
                   <div className="flex justify-between border-b border-slate-100 pb-2"><span className="text-slate-500">Email</span><span className="font-medium text-slate-900 text-right break-all">{overview.patient?.user?.email || "—"}</span></div>
                   <div className="flex justify-between border-b border-slate-100 pb-2"><span className="text-slate-500">Phone</span><span className="font-medium text-slate-900 text-right">{overview.patient?.user?.phone || "—"}</span></div>
                   <div className="flex justify-between border-b border-slate-100 pb-2"><span className="text-slate-500">Gender</span><span className="font-medium text-slate-900 text-right">{overview.patient?.gender || "—"}</span></div>
-                  <div className="flex justify-between border-b border-slate-100 pb-2"><span className="text-slate-500">Doctor</span><span className="font-medium text-slate-900 text-right">{overview.patient?.doctor || "—"}</span></div>
+                  <div className="flex justify-between border-b border-slate-100 pb-2"><span className="text-slate-500">Caregiver</span><span className="font-medium text-slate-900 text-right">{overview.patient?.doctor || "—"}</span></div>
                   <div className="flex justify-between"><span className="text-slate-500">City</span><span className="font-medium text-slate-900 text-right">{overview.patient?.city || "—"}</span></div>
                 </div>
 

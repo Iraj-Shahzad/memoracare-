@@ -385,7 +385,7 @@ export default function ProfilePage() {
           <p className="font-medium">{diagnosis}</p>
         </div>
         <div>
-          <p className="text-sm text-gray-600">Doctor</p>
+          <p className="text-sm text-gray-600">Caregiver</p>
           <p className="font-medium">{doctor}</p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

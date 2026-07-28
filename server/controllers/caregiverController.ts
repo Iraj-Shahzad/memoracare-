@@ -80,6 +80,24 @@ export const getMyPatients = async (req: Request, res: Response, next: NextFunct
   }
 };
 
+// @desc List enrolled caregivers/doctors (for assignment dropdowns)
+// @route GET /api/caregiver/team
+export const getTeam = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const caregivers = await Caregiver.find().populate('user', 'name email');
+    const team = caregivers
+      .map((c: any) => ({
+        _id: c._id,
+        name: c.user?.name || '',
+        specialization: c.specialization || '',
+      }))
+      .filter((c) => c.name);
+    res.status(200).json({ success: true, count: team.length, team });
+  } catch (err: any) {
+    next(err);
+  }
+};
+
 // @desc Create a new patient account and assign to this caregiver
 // @route POST /api/caregiver/patients
 export const createPatient = async (req: Request, res: Response, next: NextFunction) => {
