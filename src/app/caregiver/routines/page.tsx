@@ -115,9 +115,10 @@ export default function RoutinesPage() {
     setFormError("");
     if (!selectedPatientId) { setFormError("Select a patient first."); return; }
     if (!form.activityName.trim()) { setFormError("Activity name is required."); return; }
-    if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(form.startTime)) { setFormError("Pick a valid start time."); return; }
+    if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(form.startTime)) { setFormError("Pick a valid start time — this is when the reminder fires."); return; }
     if (form.endTime && !/^([01]\d|2[0-3]):[0-5]\d$/.test(form.endTime)) { setFormError("End time must be valid, or leave it blank."); return; }
-    if (form.days.length === 0) { setFormError("Select at least one day."); return; }
+    if (form.endTime && form.endTime <= form.startTime) { setFormError("End time must be after the start time."); return; }
+    if (form.days.length === 0) { setFormError("Select at least one day for the reminder to repeat."); return; }
     try {
       setSaving(true);
       await apiPost("/routines", {
@@ -300,7 +301,8 @@ export default function RoutinesPage() {
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowAddModal(false)}>
           <div className="bg-white rounded-2xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-lg font-bold text-[#1a3c34] mb-4">Add Routine</h3>
+            <h3 className="text-lg font-bold text-[#1a3c34] mb-1">Add Routine</h3>
+            <p className="text-xs text-slate-500 mb-4">A reminder is sent to the patient at the <b>Start Time</b> on each selected day.</p>
             <form onSubmit={submitRoutine} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Activity Name *</label>
@@ -310,10 +312,12 @@ export default function RoutinesPage() {
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Start Time *</label>
                   <input type="time" value={form.startTime} onChange={(e) => setForm({ ...form, startTime: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                  <p className="text-[11px] text-slate-400 mt-1">When the reminder fires.</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">End Time</label>
                   <input type="time" value={form.endTime} onChange={(e) => setForm({ ...form, endTime: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                  <p className="text-[11px] text-slate-400 mt-1">Optional — expected finish, shown on the schedule. No separate reminder.</p>
                 </div>
               </div>
               <div>
