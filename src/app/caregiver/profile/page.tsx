@@ -171,20 +171,15 @@ export default function ProfilePage() {
             <>
             {/* Profile Header */}
             <div className="bg-white rounded-lg border border-slate-200 p-8 mb-8">
-              <div className="flex flex-wrap items-start justify-between gap-4 mb-2">
-                <div className="flex items-center gap-6">
-                  <div className="w-24 h-24 bg-gradient-to-br from-teal-400 to-[#0d9488] rounded-2xl flex items-center justify-center text-white font-bold text-3xl">
-                    {userInitials}
-                  </div>
-                  <div>
-                    <h1 className="text-3xl font-bold text-[#1a3c34] mb-1">{profileInfo.name}</h1>
-                    <p className="text-lg text-slate-600">{profileInfo.role}</p>
-                    {profileInfo.specialization && <p className="text-sm text-slate-500 mt-1">{profileInfo.specialization}</p>}
-                  </div>
+              <div className="flex items-center gap-6">
+                <div className="w-24 h-24 bg-gradient-to-br from-teal-400 to-[#0d9488] rounded-2xl flex items-center justify-center text-white font-bold text-3xl">
+                  {userInitials}
                 </div>
-                <button onClick={openEdit} className="px-6 py-2.5 bg-[#0d9488] text-white rounded-lg text-sm font-semibold hover:bg-[#0a7a70] transition-colors">
-                  Edit Profile
-                </button>
+                <div>
+                  <h1 className="text-3xl font-bold text-[#1a3c34] mb-1">{profileInfo.name}</h1>
+                  <p className="text-lg text-slate-600">{profileInfo.role}</p>
+                  {profileInfo.specialization && <p className="text-sm text-slate-500 mt-1">{profileInfo.specialization}</p>}
+                </div>
               </div>
             </div>
 
