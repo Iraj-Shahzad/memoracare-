@@ -39,6 +39,29 @@ export async function api(endpoint: string, options: ApiOptions = {}) {
   return data;
 }
 
+// Download a file from an authenticated endpoint (e.g. PDF/Excel reports).
+// Uses the same bearer token, then triggers a browser download of the blob.
+export async function apiDownload(endpoint: string, filename: string) {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  const res = await fetch(`${API_BASE}${endpoint}`, {
+    headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+  });
+  if (!res.ok) {
+    let msg = 'Download failed';
+    try { const j = await res.json(); msg = j.message || msg; } catch { /* non-JSON error */ }
+    throw new Error(msg);
+  }
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
 // Convenience methods
 export const apiGet = (endpoint: string) => api(endpoint);
 export const apiPost = (endpoint: string, body: unknown) => api(endpoint, { method: 'POST', body });
