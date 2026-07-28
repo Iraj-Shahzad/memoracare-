@@ -84,7 +84,7 @@ export const getMyPatients = async (req: Request, res: Response, next: NextFunct
 // @route GET /api/caregiver/profile
 export const getMyProfile = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const caregiver = await Caregiver.findOne({ user: req.user.id }).populate('user', 'name email phone role');
+    const caregiver = await Caregiver.findOne({ user: req.user.id }).populate('user', 'name email phone role settings');
     if (!caregiver) {
       return res.status(404).json({ success: false, message: 'Caregiver profile not found' });
     }
@@ -95,8 +95,24 @@ export const getMyProfile = async (req: Request, res: Response, next: NextFuncti
         name: u?.name || '', email: u?.email || '', phone: u?.phone || '',
         role: u?.role || 'caregiver',
         specialization: caregiver.specialization || '', notes: caregiver.notes || '',
+        settings: u?.settings || {},
       },
     });
+  } catch (err: any) {
+    next(err);
+  }
+};
+
+// @desc Save my UI/notification preferences (Settings page)
+// @route PUT /api/caregiver/settings
+export const updateMySettings = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { settings } = req.body;
+    if (typeof settings !== 'object' || settings === null) {
+      return res.status(400).json({ success: false, message: 'settings object is required' });
+    }
+    const user = await User.findByIdAndUpdate(req.user.id, { settings }, { new: true });
+    res.status(200).json({ success: true, settings: user?.get('settings') || {} });
   } catch (err: any) {
     next(err);
   }

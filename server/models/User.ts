@@ -36,6 +36,12 @@ const userSchema = new Schema({
     type: Boolean,
     default: true,
   },
+  // Per-user UI/notification preferences (Settings page). Free-form object so
+  // preferences can evolve without a migration.
+  settings: {
+    type: Object,
+    default: {},
+  },
   createdAt: {
     type: Date,
     default: Date.now,

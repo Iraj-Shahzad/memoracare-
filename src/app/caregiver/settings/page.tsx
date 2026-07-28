@@ -5,8 +5,8 @@ import CaregiverSidebar from "@/components/shared/CaregiverSidebar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { timeGreeting } from "@/lib/greeting";
 import { useAuth } from "@/context/AuthContext";
-import { apiPut } from "@/lib/api";
-import { useState } from "react";
+import { apiGet, apiPut } from "@/lib/api";
+import { useState, useEffect } from "react";
 
 export default function SettingsPage() {
   const { user } = useAuth();
@@ -24,6 +24,24 @@ export default function SettingsPage() {
     dataCollection: false,
   });
   const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  // Load previously-saved settings from MongoDB.
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await apiGet("/caregiver/profile");
+        const s = (res.profile?.settings || {}) as Record<string, unknown>;
+        if (s.notifications) setNotifications((prev) => ({ ...prev, ...(s.notifications as object) }));
+        if (s.privacy) setPrivacy((prev) => ({ ...prev, ...(s.privacy as object) }));
+        if (typeof s.alertTiming === "string") setAlertTiming(s.alertTiming);
+        if (typeof s.language === "string") setLanguage(s.language);
+      } catch {
+        // keep defaults
+      }
+    };
+    load();
+  }, []);
 
   const toggleNotification = (key: keyof typeof notifications) => {
     setNotifications((prev) => ({
@@ -40,15 +58,15 @@ export default function SettingsPage() {
   };
 
   const handleSaveSettings = async () => {
-    if (!user) return;
     try {
       setSaving(true);
-      // Caregiver UI preferences are personal to this device and have no backend
-      // model, so they are persisted locally rather than written to a patient record.
-      localStorage.setItem(
-        `caregiverSettings:${user.id}`,
-        JSON.stringify({ notifications, alertTiming, language, privacy })
-      );
+      setSaved(false);
+      // Persist to MongoDB (User.settings) so choices survive across devices/logins.
+      await apiPut("/caregiver/settings", {
+        settings: { notifications, alertTiming, language, privacy },
+      });
+      setSaved(true);
+      window.setTimeout(() => setSaved(false), 3000);
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : "Failed to save settings");
     } finally {
@@ -265,7 +283,15 @@ export default function SettingsPage() {
             </div>
 
             {/* Save Button */}
-            <div className="mt-8 flex justify-end">
+            <div className="mt-8 flex items-center justify-end gap-4">
+              {saved && (
+                <span className="text-sm font-semibold text-[#0d9488] flex items-center gap-1.5">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  Settings saved
+                </span>
+              )}
               <button
                 onClick={handleSaveSettings}
                 disabled={saving}
