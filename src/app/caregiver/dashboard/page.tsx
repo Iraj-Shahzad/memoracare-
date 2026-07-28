@@ -4,8 +4,9 @@ import { useState, useEffect } from "react";
 import Topbar from "@/components/shared/Topbar";
 import CaregiverSidebar from "@/components/shared/CaregiverSidebar";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
-import { apiGet } from "@/lib/api";
+import { apiGet, apiPost } from "@/lib/api";
 
 interface DashboardData {
   totalPatients: number;
@@ -56,22 +57,62 @@ export default function CaregiverDashboard() {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [showNoteModal, setShowNoteModal] = useState(false);
+  const [noteContent, setNoteContent] = useState("");
+  const [notePatientId, setNotePatientId] = useState("");
+  const [savingNote, setSavingNote] = useState(false);
+  const [noteError, setNoteError] = useState("");
+
+  const loadDashboard = async () => {
+    try {
+      setLoading(true);
+      const res = await apiGet("/caregiver/dashboard");
+      setDashboardData(res.data || res);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to load dashboard");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
-        setLoading(true);
-        const res = await apiGet("/caregiver/dashboard");
-        setDashboardData(res.data || res);
-      } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : "Failed to load dashboard";
-        setError(message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDashboard();
+    loadDashboard();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const submitNote = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setNoteError("");
+    if (!notePatientId) { setNoteError("Please select a patient."); return; }
+    if (!noteContent.trim()) { setNoteError("Please write a note."); return; }
+    try {
+      setSavingNote(true);
+      await apiPost("/caregiver/notes", { patient: notePatientId, content: noteContent.trim() });
+      setShowNoteModal(false);
+      setNoteContent("");
+      setNotePatientId("");
+      await loadDashboard();
+    } catch (err: unknown) {
+      setNoteError(err instanceof Error ? err.message : "Failed to add note");
+    } finally {
+      setSavingNote(false);
+    }
+  };
+
+  const exportComplianceCsv = () => {
+    const rows = dashboardData?.complianceTable || [];
+    if (!rows.length) { alert("No compliance data to export yet."); return; }
+    const header = ["Patient", "Medication", "Schedule", "Today", "Weekly %", "Status"];
+    const lines = [header, ...rows.map((r) => [r.patientName, r.medication, r.schedule, r.today, String(r.weekly), r.status])];
+    const csv = lines.map((line) => line.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "medication-compliance.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const firstName = user?.name?.split(" ")[0] || "Caregiver";
   const initials = user?.name ? user.name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2) : "CG";
@@ -175,7 +216,7 @@ export default function CaregiverDashboard() {
               <div className="bg-white rounded-2xl p-6 border border-[#e2e8f0] reveal">
                 <div className="flex justify-between items-center mb-5">
                   <div className="text-base font-bold text-[#1a3c34]">My Patients</div>
-                  <span className="text-[#0d9488] text-[13px] font-semibold cursor-pointer">View all</span>
+                  <Link href="/caregiver/patients" className="text-[#0d9488] text-[13px] font-semibold cursor-pointer hover:underline">View all</Link>
                 </div>
 
                 {(dashboardData?.patients || []).map((patient, idx) => (
@@ -197,7 +238,7 @@ export default function CaregiverDashboard() {
               <div className="bg-white rounded-2xl p-6 border border-[#e2e8f0] reveal">
                 <div className="flex justify-between items-center mb-5">
                   <div className="text-base font-bold text-[#1a3c34]">Recent Alerts</div>
-                  <span className="text-[#0d9488] text-[13px] font-semibold cursor-pointer">View all</span>
+                  <Link href="/caregiver/alerts" className="text-[#0d9488] text-[13px] font-semibold cursor-pointer hover:underline">View all</Link>
                 </div>
 
                 {(dashboardData?.alerts || []).map((alert, idx) => {
@@ -237,7 +278,7 @@ export default function CaregiverDashboard() {
               <div className="col-span-2 bg-white rounded-2xl p-6 border border-[#e2e8f0] reveal">
                 <div className="flex justify-between items-center mb-5">
                   <div className="text-base font-bold text-[#1a3c34]">Medication Compliance Overview</div>
-                  <span className="text-[#0d9488] text-[13px] font-semibold cursor-pointer">Export report</span>
+                  <button type="button" onClick={exportComplianceCsv} className="text-[#0d9488] text-[13px] font-semibold cursor-pointer hover:underline bg-transparent">Export report</button>
                 </div>
                 <table className="w-full border-collapse">
                   <thead>
@@ -291,7 +332,7 @@ export default function CaregiverDashboard() {
               <div className="col-span-2 bg-white rounded-2xl p-6 border border-[#e2e8f0] reveal">
                 <div className="flex justify-between items-center mb-5">
                   <div className="text-base font-bold text-[#1a3c34]">Caregiver Notes</div>
-                  <span className="text-[#0d9488] text-[13px] font-semibold cursor-pointer">All notes</span>
+                  <Link href="/caregiver/notes" className="text-[#0d9488] text-[13px] font-semibold cursor-pointer hover:underline">All notes</Link>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   {(dashboardData?.notes || []).map((note, idx) => (
@@ -315,7 +356,7 @@ export default function CaregiverDashboard() {
 
                   {/* Add Note Button */}
                   <div className="col-span-2">
-                    <button className="w-full py-3 border-2 border-dashed border-[#d1d5db] rounded-xl bg-transparent text-[#64748b] text-sm font-semibold cursor-pointer flex items-center justify-center gap-2 hover:border-[#0d9488] hover:text-[#0d9488] transition-colors">
+                    <button onClick={() => setShowNoteModal(true)} className="w-full py-3 border-2 border-dashed border-[#d1d5db] rounded-xl bg-transparent text-[#64748b] text-sm font-semibold cursor-pointer flex items-center justify-center gap-2 hover:border-[#0d9488] hover:text-[#0d9488] transition-colors">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-[18px] h-[18px]">
                         <line x1="12" y1="5" x2="12" y2="19" />
                         <line x1="5" y1="12" x2="19" y2="12" />
@@ -329,6 +370,35 @@ export default function CaregiverDashboard() {
             </>
             )}
           </div>
+
+          {/* Add Note modal */}
+          {showNoteModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => { setShowNoteModal(false); setNoteError(""); }}>
+              <div className="bg-white rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+                <h3 className="text-lg font-bold text-[#1a3c34] mb-4">Add Caregiver Note</h3>
+                <form onSubmit={submitNote} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Patient *</label>
+                    <select value={notePatientId} onChange={(e) => setNotePatientId(e.target.value)} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]">
+                      <option value="">Select a patient</option>
+                      {(dashboardData?.patients || []).map((p) => (
+                        <option key={p._id} value={p._id}>{p.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Note *</label>
+                    <textarea value={noteContent} onChange={(e) => setNoteContent(e.target.value)} rows={4} placeholder="Write your observation about the patient..." className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                  </div>
+                  {noteError && <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{noteError}</p>}
+                  <div className="flex justify-end gap-3 pt-2">
+                    <button type="button" onClick={() => { setShowNoteModal(false); setNoteError(""); }} className="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-300 text-slate-700 hover:bg-slate-50">Cancel</button>
+                    <button type="submit" disabled={savingNote} className="px-5 py-2 rounded-lg text-sm font-semibold bg-[#0d9488] text-white hover:bg-[#0a7a70] disabled:opacity-60">{savingNote ? "Saving..." : "Add Note"}</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
         </main>
       </div>
     </div>
