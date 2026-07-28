@@ -5,7 +5,7 @@ import CaregiverSidebar from "@/components/shared/CaregiverSidebar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { timeGreeting } from "@/lib/greeting";
 import { useAuth } from "@/context/AuthContext";
-import { apiGet, apiPost } from "@/lib/api";
+import { apiGet, apiPost, apiDelete } from "@/lib/api";
 import { useState, useEffect } from "react";
 
 interface Patient {
@@ -114,9 +114,15 @@ export default function MedicationsPage() {
 
     // ---- Validation ----
     const times = form.times.map((t) => t.trim()).filter(Boolean);
+    const name = form.name.trim();
+    const dosage = form.dosage.trim();
     if (!selectedPatientId) { setFormError("Please select a patient first."); return; }
-    if (!form.name.trim()) { setFormError("Medication name is required."); return; }
-    if (!form.dosage.trim()) { setFormError("Dosage is required (e.g. 10mg)."); return; }
+    if (name.length < 2 || !/[a-zA-Z]/.test(name)) { setFormError("Enter a valid medication name (letters, at least 2 characters)."); return; }
+    // Dosage must be a numeric amount followed by a unit, e.g. 10mg, 5 ml, 400 IU.
+    if (!/^\d+(\.\d+)?\s*[a-zA-Z%µ]+$/.test(dosage)) {
+      setFormError("Dosage must be a number followed by a unit — e.g. 10mg, 5 ml, 400 IU.");
+      return;
+    }
     if (times.length === 0) { setFormError("Add at least one reminder time — otherwise the patient won't be reminded."); return; }
     // Every time must be valid 24h HH:MM (the time picker enforces this, but double-check).
     const timeOk = times.every((t) => /^([01]\d|2[0-3]):[0-5]\d$/.test(t));
@@ -126,8 +132,8 @@ export default function MedicationsPage() {
       setSaving(true);
       await apiPost("/medications", {
         patient: selectedPatientId,
-        name: form.name.trim(),
-        dosage: form.dosage.trim(),
+        name,
+        dosage,
         frequency: form.frequency,
         times,
       });
@@ -139,6 +145,23 @@ export default function MedicationsPage() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleDeleteMedication = async (id: string, medName: string) => {
+    if (!window.confirm(`Remove "${medName}"? This deletes it from the patient's schedule.`)) return;
+    try {
+      await apiDelete(`/medications/${id}`);
+      await refetchMedications();
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : "Failed to remove medication");
+    }
+  };
+
+  // Render a stored ISO timestamp as a readable local date/time.
+  const fmtDate = (raw: string) => {
+    if (!raw) return "—";
+    const d = new Date(raw);
+    return isNaN(d.getTime()) ? "—" : d.toLocaleString();
   };
 
   const handlePatientChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -277,6 +300,9 @@ export default function MedicationsPage() {
                       <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
                         Last Updated
                       </th>
+                      <th className="px-6 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200">
@@ -305,7 +331,15 @@ export default function MedicationsPage() {
                           </span>
                         </td>
                         <td className="px-6 py-3">
-                          <span className="text-sm text-slate-600">{med.lastUpdated}</span>
+                          <span className="text-sm text-slate-600">{fmtDate(med.lastUpdated)}</span>
+                        </td>
+                        <td className="px-6 py-3 text-right">
+                          <button
+                            onClick={() => handleDeleteMedication(med._id, med.name)}
+                            className="text-red-600 hover:text-red-700 text-sm font-semibold"
+                          >
+                            Remove
+                          </button>
                         </td>
                       </tr>
                     ))}

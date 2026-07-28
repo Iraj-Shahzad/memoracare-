@@ -40,15 +40,43 @@ interface Overview {
   alerts: Array<{ _id: string; message?: string; severity?: string; createdAt?: string }>;
 }
 
-const DIAGNOSES = [
-  "Alzheimer's Disease (Early Stage)",
-  "Alzheimer's Disease (Moderate Stage)",
-  "Alzheimer's Disease (Advanced Stage)",
-  "Mild Cognitive Impairment (MCI)",
-  "Vascular Dementia",
-  "Lewy Body Dementia",
-  "Frontotemporal Dementia",
+// MemoraCare is a general reminder/care app — used for dementia care but also
+// for home use, elderly care, post-op recovery, chronic conditions, or anyone
+// who just needs medication/routine reminders. Options are grouped accordingly.
+const DIAGNOSIS_GROUPS: { label: string; options: string[] }[] = [
+  {
+    label: "General / Non-medical",
+    options: [
+      "General Reminders (No diagnosis)",
+      "Home / Personal Use",
+      "Elderly Care (General)",
+      "Caregiver-Assisted (Other)",
+    ],
+  },
+  {
+    label: "Cognitive / Dementia",
+    options: [
+      "Alzheimer's Disease (Early Stage)",
+      "Alzheimer's Disease (Moderate Stage)",
+      "Alzheimer's Disease (Advanced Stage)",
+      "Mild Cognitive Impairment (MCI)",
+      "Vascular Dementia",
+      "Lewy Body Dementia",
+      "Frontotemporal Dementia",
+    ],
+  },
+  {
+    label: "Medical / Recovery",
+    options: [
+      "Post-Surgery Recovery",
+      "Chronic Illness Management",
+      "Hospital / Nursing Care",
+      "Physical Rehabilitation",
+      "Other",
+    ],
+  },
 ];
+const DEFAULT_DIAGNOSIS = DIAGNOSIS_GROUPS[0].options[0];
 
 export default function PatientsPage() {
   const { user } = useAuth();
@@ -62,7 +90,7 @@ export default function PatientsPage() {
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState("");
   const [form, setForm] = useState({
-    name: "", email: "", password: "", diagnosis: DIAGNOSES[0], dateOfBirth: "",
+    name: "", email: "", password: "", diagnosis: DEFAULT_DIAGNOSIS, dateOfBirth: "",
     gender: "Male", phone: "", city: "Islamabad", doctor: "",
   });
 
@@ -125,7 +153,7 @@ export default function PatientsPage() {
         doctor: form.doctor.trim() || undefined,
       });
       setShowAddModal(false);
-      setForm({ name: "", email: "", password: "", diagnosis: DIAGNOSES[0], dateOfBirth: "", gender: "Male", phone: "", city: "Islamabad", doctor: "" });
+      setForm({ name: "", email: "", password: "", diagnosis: DEFAULT_DIAGNOSIS, dateOfBirth: "", gender: "Male", phone: "", city: "Islamabad", doctor: "" });
       await loadPatients(true);
     } catch (err: unknown) {
       setFormError(err instanceof Error ? err.message : "Failed to create patient");
@@ -293,9 +321,13 @@ export default function PatientsPage() {
                 <input type="text" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder="min 6 characters" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Diagnosis</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Diagnosis / Purpose</label>
                 <select value={form.diagnosis} onChange={(e) => setForm({ ...form, diagnosis: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]">
-                  {DIAGNOSES.map((d) => <option key={d} value={d}>{d}</option>)}
+                  {DIAGNOSIS_GROUPS.map((group) => (
+                    <optgroup key={group.label} label={group.label}>
+                      {group.options.map((d) => <option key={d} value={d}>{d}</option>)}
+                    </optgroup>
+                  ))}
                 </select>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
