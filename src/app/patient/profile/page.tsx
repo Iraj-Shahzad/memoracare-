@@ -381,7 +381,7 @@ export default function ProfilePage() {
     return (
       <div className="space-y-3">
         <div>
-          <p className="text-sm text-gray-600">Diagnosis</p>
+          <p className="text-sm text-gray-600">Purpose</p>
           <p className="font-medium">{diagnosis}</p>
         </div>
         <div>

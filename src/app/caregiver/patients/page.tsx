@@ -256,7 +256,7 @@ export default function PatientsPage() {
                   </div>
 
                   <div className="mb-4">
-                    <p className="text-xs text-slate-500 mb-1">Diagnosis</p>
+                    <p className="text-xs text-slate-500 mb-1">Purpose</p>
                     <p className="text-sm font-medium text-slate-900">{patient.diagnosis}</p>
                   </div>
 
@@ -321,7 +321,7 @@ export default function PatientsPage() {
                 <input type="text" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder="min 6 characters" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Diagnosis / Purpose</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Purpose</label>
                 <select value={form.diagnosis} onChange={(e) => setForm({ ...form, diagnosis: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]">
                   {DIAGNOSIS_GROUPS.map((group) => (
                     <optgroup key={group.label} label={group.label}>
@@ -394,7 +394,7 @@ export default function PatientsPage() {
                 </div>
 
                 <div className="space-y-2 text-sm">
-                  <div className="flex justify-between border-b border-slate-100 pb-2"><span className="text-slate-500">Diagnosis</span><span className="font-medium text-slate-900 text-right">{overview.patient?.diagnosis || "Not specified"}</span></div>
+                  <div className="flex justify-between border-b border-slate-100 pb-2"><span className="text-slate-500">Purpose</span><span className="font-medium text-slate-900 text-right">{overview.patient?.diagnosis || "Not specified"}</span></div>
                   <div className="flex justify-between border-b border-slate-100 pb-2"><span className="text-slate-500">Email</span><span className="font-medium text-slate-900 text-right break-all">{overview.patient?.user?.email || "—"}</span></div>
                   <div className="flex justify-between border-b border-slate-100 pb-2"><span className="text-slate-500">Phone</span><span className="font-medium text-slate-900 text-right">{overview.patient?.user?.phone || "—"}</span></div>
                   <div className="flex justify-between border-b border-slate-100 pb-2"><span className="text-slate-500">Gender</span><span className="font-medium text-slate-900 text-right">{overview.patient?.gender || "—"}</span></div>
