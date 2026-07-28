@@ -163,6 +163,42 @@ export const getRoutineLogs = async (req: Request, res: Response, next: NextFunc
   }
 };
 
+// @desc Weekly routine-compliance summary (last 7 days, from real logs)
+// @route GET /api/routines/patient/:patientId/weekly-compliance
+export const getWeeklyCompliance = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { patientId } = req.params;
+    if (!(await canAccessPatient(req.user, patientId))) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
+    }
+
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const start = new Date(today); start.setDate(start.getDate() - 6); // 7-day window incl. today
+
+    const logs = await RoutineLog.find({ patient: patientId, scheduledDate: { $gte: start } });
+
+    const weekly = [];
+    for (let i = 0; i < 7; i++) {
+      const day = new Date(start); day.setDate(start.getDate() + i);
+      const nextDay = new Date(day); nextDay.setDate(day.getDate() + 1);
+      const dayLogs = logs.filter((l) => {
+        const t = new Date(l.scheduledDate).getTime();
+        return t >= day.getTime() && t < nextDay.getTime();
+      });
+      const completed = dayLogs.filter((l) => l.status === 'completed').length;
+      weekly.push({
+        day: day.toLocaleDateString('en-US', { weekday: 'long' }),
+        percentage: dayLogs.length ? Math.round((completed / dayLogs.length) * 100) : 0,
+        total: dayLogs.length,
+      });
+    }
+
+    res.status(200).json({ success: true, weekly });
+  } catch (err: any) {
+    next(err);
+  }
+};
+
 // @desc Get today's routines for a patient
 // @route GET /api/routines/patient/:patientId/today
 export const getTodayRoutines = async (req: Request, res: Response, next: NextFunction) => {
