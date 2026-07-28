@@ -141,7 +141,7 @@ export default function ProfilePage() {
             </div>
 
             {/* Personal Information */}
-            <div className="grid grid-cols-2 gap-6 mb-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
               <div className="bg-white rounded-lg border border-slate-200 p-6">
                 <h3 className="font-bold text-[#1a3c34] mb-6">Personal Information</h3>
                 <div className="space-y-4">
@@ -188,7 +188,7 @@ export default function ProfilePage() {
             {/* Assigned Patients */}
             <div className="bg-white rounded-lg border border-slate-200 p-6">
               <h3 className="font-bold text-[#1a3c34] mb-6">Assigned Patients</h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {assignedPatients.map((patient) => (
                   <div
                     key={patient._id}

@@ -152,7 +152,7 @@ export default function CaregiverDashboard() {
             ) : (
             <>
             {/* Stats Row */}
-            <div className="grid grid-cols-4 gap-4 mb-7">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-7">
               {/* Total Patients */}
               <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0] reveal">
                 <div className="w-10 h-10 rounded-xl bg-[#dbeafe] flex items-center justify-center mb-3">
@@ -211,7 +211,7 @@ export default function CaregiverDashboard() {
             </div>
 
             {/* Content Grid */}
-            <div className="grid grid-cols-2 gap-5 mb-5">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
               {/* My Patients Panel */}
               <div className="bg-white rounded-2xl p-6 border border-[#e2e8f0] reveal">
                 <div className="flex justify-between items-center mb-5">
@@ -280,6 +280,7 @@ export default function CaregiverDashboard() {
                   <div className="text-base font-bold text-[#1a3c34]">Medication Compliance Overview</div>
                   <button type="button" onClick={exportComplianceCsv} className="text-[#0d9488] text-[13px] font-semibold cursor-pointer hover:underline bg-transparent">Export report</button>
                 </div>
+                <div className="overflow-x-auto">
                 <table className="w-full border-collapse">
                   <thead>
                     <tr>
@@ -326,6 +327,7 @@ export default function CaregiverDashboard() {
                     })}
                   </tbody>
                 </table>
+                </div>
               </div>
 
               {/* Caregiver Notes - Full Width */}
@@ -334,7 +336,7 @@ export default function CaregiverDashboard() {
                   <div className="text-base font-bold text-[#1a3c34]">Caregiver Notes</div>
                   <Link href="/caregiver/notes" className="text-[#0d9488] text-[13px] font-semibold cursor-pointer hover:underline">All notes</Link>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                   {(dashboardData?.notes || []).map((note, idx) => (
                   <div
                     key={note._id || idx}

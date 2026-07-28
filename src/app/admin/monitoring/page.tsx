@@ -166,7 +166,7 @@ export default function MonitoringPage() {
             {!loading && (
             <>
             {/* Health Metrics */}
-            <div className="grid grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               {healthMetrics.map((metric, idx) => (
                 <div
                   key={idx}
@@ -203,7 +203,7 @@ export default function MonitoringPage() {
               <h3 className="text-lg font-semibold text-slate-900 mb-4">
                 API Response Time
               </h3>
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div>
                   <p className="text-slate-600 text-sm font-medium mb-2">
                     Average Response Time

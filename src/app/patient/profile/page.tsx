@@ -154,7 +154,7 @@ export default function ProfilePage() {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Date of Birth
@@ -252,7 +252,7 @@ export default function ProfilePage() {
             <p className="font-medium">{fullName}</p>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div>
             <p className="text-sm text-gray-600">Date of Birth</p>
             <p className="font-medium">
@@ -268,7 +268,7 @@ export default function ProfilePage() {
             <p className="font-medium">{gender}</p>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div>
             <p className="text-sm text-gray-600">Phone</p>
             <p className="font-medium">{phone}</p>
@@ -316,7 +316,7 @@ export default function ProfilePage() {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Blood Group
@@ -388,7 +388,7 @@ export default function ProfilePage() {
           <p className="text-sm text-gray-600">Doctor</p>
           <p className="font-medium">{doctor}</p>
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div>
             <p className="text-sm text-gray-600">Blood Group</p>
             <p className="font-medium">{bloodGroup}</p>
@@ -424,7 +424,7 @@ export default function ProfilePage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Relationship
@@ -465,7 +465,7 @@ export default function ProfilePage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Relationship
@@ -623,7 +623,7 @@ export default function ProfilePage() {
             {caregiverName} ({caregiverRelation})
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div>
             <p className="text-sm text-gray-600">Phone</p>
             <p className="font-medium">{caregiverPhone}</p>

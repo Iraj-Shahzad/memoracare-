@@ -271,7 +271,7 @@ export default function MemoryGalleryPage() {
                   />
                 </label>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                   <label className="flex flex-col gap-1.5">
                     <span className="text-[13px] font-semibold text-[#1a3c34]">Place</span>
                     <input

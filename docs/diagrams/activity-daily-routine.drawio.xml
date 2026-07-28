@@ -1,19 +1,19 @@
 <mxfile host="app.diagrams.net">
-  <diagram name="Activity - Medication Reminder">
-    <mxGraphModel dx="820" dy="660" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="580" pageHeight="660" math="0" shadow="0">
+  <diagram name="Activity - Daily Routine Reminder">
+    <mxGraphModel dx="820" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="600" pageHeight="680" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="start" value="" style="ellipse;html=1;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="269" y="13" width="22" height="22" as="geometry" /></mxCell>
-        <mxCell id="a1" value="Medication time reached" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="190" y="50" width="180" height="40" as="geometry" /></mxCell>
+        <mxCell id="a1" value="Routine time reached" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="190" y="50" width="180" height="40" as="geometry" /></mxCell>
         <mxCell id="a2" value="Send reminder to patient (voice + on-screen)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="165" y="106" width="230" height="44" as="geometry" /></mxCell>
-        <mxCell id="d1" value="Marked as taken?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="200" y="158" width="160" height="84" as="geometry" /></mxCell>
-        <mxCell id="a3" value="Log as taken" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="40" y="270" width="180" height="44" as="geometry" /></mxCell>
+        <mxCell id="d1" value="Marked complete?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="200" y="158" width="160" height="84" as="geometry" /></mxCell>
+        <mxCell id="a3" value="Log as completed" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="40" y="270" width="180" height="44" as="geometry" /></mxCell>
         <mxCell id="a4" value="Wait for grace period" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="360" y="270" width="170" height="40" as="geometry" /></mxCell>
         <mxCell id="a5" value="Log as missed" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="360" y="336" width="170" height="40" as="geometry" /></mxCell>
         <mxCell id="a6" value="Notify caregiver" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="360" y="392" width="170" height="40" as="geometry" /></mxCell>
         <mxCell id="m" value="" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="250" y="445" width="60" height="50" as="geometry" /></mxCell>
-        <mxCell id="a7" value="Update medication status" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="190" y="520" width="180" height="40" as="geometry" /></mxCell>
+        <mxCell id="a7" value="Update routine status" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="190" y="520" width="180" height="40" as="geometry" /></mxCell>
         <mxCell id="fin1" value="" style="ellipse;html=1;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="267" y="583" width="26" height="26" as="geometry" /></mxCell>
         <mxCell id="fin2" value="" style="ellipse;html=1;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="273" y="589" width="14" height="14" as="geometry" /></mxCell>
         <mxCell id="e0" style="endArrow=block;html=1;" edge="1" parent="1" source="start" target="a1"><mxGeometry relative="1" as="geometry" /></mxCell>

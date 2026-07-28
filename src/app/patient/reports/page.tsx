@@ -289,7 +289,7 @@ export default function ReportsPage() {
                       {titleCase(selectedReport.type)} · {selectedReport.format.toUpperCase()}
                     </p>
 
-                    <div className="grid grid-cols-3 gap-4 mb-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
                       <div className="p-4 bg-[#f0fdf4] rounded-lg">
                         <p className="text-xs text-gray-600 mb-1">Period</p>
                         <p className="font-semibold text-[#1a3c34] text-xs">

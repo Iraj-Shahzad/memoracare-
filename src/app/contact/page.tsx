@@ -52,7 +52,7 @@ export default function ContactPage() {
 
       {/* ==================== CONTACT CONTENT ==================== */}
       <section className="bg-[#f5f6f5] px-[60px] py-[80px]">
-        <div className="max-w-[1200px] mx-auto grid grid-cols-2 gap-16">
+        <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16">
           {/* Left: Contact Info */}
           <div>
             <h2 className="text-[28px] font-bold text-[#1a3c34] mb-3">Contact Information</h2>
@@ -168,7 +168,7 @@ export default function ContactPage() {
                 <p className="text-[14px] text-[#64748b] mb-8">Fill out the form below and we will get back to you as soon as possible.</p>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
-                  <div className="grid grid-cols-2 gap-5">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                     <div>
                       <label className="block text-[13px] font-semibold text-[#334155] mb-1.5">Full Name</label>
                       <input
@@ -195,7 +195,7 @@ export default function ContactPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-5">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                     <div>
                       <label className="block text-[13px] font-semibold text-[#334155] mb-1.5">Phone Number</label>
                       <input

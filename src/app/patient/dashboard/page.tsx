@@ -102,7 +102,7 @@ export default function Dashboard() {
           <div className="p-8 space-y-7">
 
             {/* Stats Row */}
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Meds Taken */}
               <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0] reveal">
                 <div className="w-10 h-10 rounded-xl bg-[#d1fae5] flex items-center justify-center mb-3">
@@ -163,7 +163,7 @@ export default function Dashboard() {
             </div>
 
             {/* Content Grid: Medications + Routines */}
-            <div className="grid grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
               {/* Upcoming Medications Panel */}
               <div className="bg-white rounded-2xl p-6 border border-[#e2e8f0] reveal">
                 <div className="flex justify-between items-center mb-5">
@@ -222,7 +222,7 @@ export default function Dashboard() {
               </div>
 
               {/* Quick Actions - spans full width */}
-              <div className="col-span-2 grid grid-cols-2 gap-3">
+              <div className="col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-3">
                 {/* Chat with AI */}
                 <a href="/patient/chatbot" className="flex items-center gap-3.5 p-[18px] reveal bg-white rounded-[14px] border-[1.5px] border-[#e2e8f0] cursor-pointer transition-all hover:border-[#0d9488] hover:shadow-[0_4px_16px_rgba(13,148,136,0.08)]">
                   <div className="w-11 h-11 rounded-xl bg-[#dbeafe] flex items-center justify-center flex-shrink-0">

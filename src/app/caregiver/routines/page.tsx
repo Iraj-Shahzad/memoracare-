@@ -230,7 +230,7 @@ export default function RoutinesPage() {
             </div>
 
             {/* Compliance Summary */}
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="bg-white rounded-lg border border-slate-200 p-6">
                 <p className="text-slate-600 text-sm font-medium mb-2">Completion Rate</p>
                 <p className="text-3xl font-bold text-[#1a3c34] mb-3">{completionPercentage}%</p>

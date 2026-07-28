@@ -212,7 +212,7 @@ export default function MedicationsPage() {
         <div style={{ padding: "24px 32px" }}>
           {/* Next Dose Banner */}
           <div
-            className="rounded-2xl flex items-center justify-between text-white"
+            className="rounded-2xl flex flex-wrap gap-3 items-center justify-between text-white"
             style={{
               background: "linear-gradient(135deg, #1a3c34, #0d9488)",
               padding: "20px 28px",
@@ -270,7 +270,7 @@ export default function MedicationsPage() {
           </div>
 
           {/* Summary Stats */}
-          <div className="grid grid-cols-4 gap-4" style={{ marginBottom: 24 }}>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4" style={{ marginBottom: 24 }}>
             {/* Total Medications */}
             <div className="bg-white rounded-[14px] border border-[#e2e8f0]" style={{ padding: 20 }}>
               <div className="flex items-center justify-between" style={{ marginBottom: 8 }}>
@@ -422,6 +422,7 @@ export default function MedicationsPage() {
 
           {/* Medications Table */}
           <div className="bg-white rounded-2xl border border-[#e2e8f0] overflow-hidden">
+            <div className="overflow-x-auto">
             <table className="w-full" style={{ borderCollapse: "collapse" }}>
               <thead style={{ background: "#f8fafc" }}>
                 <tr>
@@ -630,6 +631,7 @@ export default function MedicationsPage() {
                 })}
               </tbody>
             </table>
+            </div>
           </div>
 
           {/* Empty State */}

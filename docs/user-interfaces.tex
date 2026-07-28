@@ -1,0 +1,137 @@
+% ============================================================
+%  USER INTERFACES  (un-numbered chapter)
+%  Requires in preamble:  \usepackage{graphicx}  \usepackage{float}
+%  Replace each ui-*.png with your actual screenshot filename.
+%  Screenshot routes:
+%    ui-landing.png            -> /
+%    ui-login.png              -> /auth
+%    ui-patient-dashboard.png  -> /patient/dashboard
+%    ui-medications.png        -> /patient/medications
+%    ui-routines.png           -> /patient/routines
+%    ui-chatbot.png            -> /patient/chatbot
+%    ui-face-recognition.png   -> /patient/face-recognition
+%    ui-memory-gallery.png     -> /patient/memory-gallery
+%    ui-reports.png            -> /patient/reports (or /caregiver/reports)
+%    ui-caregiver-dashboard.png-> /caregiver/dashboard
+%    ui-admin-dashboard.png    -> /admin/dashboard
+% ============================================================
+\chapter*{User Interfaces}
+\addcontentsline{toc}{chapter}{User Interfaces}
+\markboth{USER INTERFACES}{USER INTERFACES}
+
+\section*{Introduction}
+MemoryCare's interface was built with one thought above everything else: it had to
+be easy to use for people living with cognitive impairments. With that priority in
+mind, every screen was designed the same way, using large and readable text,
+high-contrast elements, clear icons, and a layout that stays consistent throughout
+the app, so there is no surprise element for the users and they can navigate the app
+easily on their own. The core features of MemoryCare, medication and routine
+reminders, the chatbot assistant, and face recognition, are all kept within easy
+reach and take as few steps as possible. The app is fully responsive across laptop
+and mobile, and it supports both English and Urdu, so patients and caregivers can
+each use it in whichever language they find easier. The sections below present the
+main screens of the application for its three user roles: patient, caregiver, and
+administrator.
+
+\section*{Landing Page}
+\begin{figure}[H]\centering\includegraphics[width=\textwidth]{ui-landing.png}
+\caption{Landing Page of MemoryCare}\end{figure}
+The landing page is the first interface that appears when anyone opens MemoryCare.
+It leads with a clear, easy-to-read headline and a brief description of what the
+system offers, reminders, the AI assistant, face recognition, and caregiver
+monitoring, and it keeps \textbf{Login} and \textbf{Register} easily accessible,
+since this is often the very first impression a user gets of the app. The layout
+adjusts smoothly to the screen size, so whether it is opened on a phone or a laptop,
+the user gets a brief introduction before deciding to sign in.
+
+\section*{Registration and Login}
+\begin{figure}[H]\centering\includegraphics[width=\textwidth]{ui-login.png}
+\caption{Registration and Login Screen of MemoryCare}\end{figure}
+This interface handles authentication for all roles. New accounts can be created as
+either a \textbf{Patient} or a \textbf{Caregiver}, while administrator accounts are
+set up separately and not through self-registration. All users sign in with their
+email and password, and on a successful login each user is redirected straight to
+the dashboard built for their role. The system follows role-based access control, so
+no user can reach pages meant for a different type of user, which protects the
+integrity of the system. Invalid credentials produce a clear error message.
+
+\section*{Patient Dashboard}
+\begin{figure}[H]\centering\includegraphics[width=\textwidth]{ui-patient-dashboard.png}
+\caption{Patient Dashboard of MemoryCare}\end{figure}
+The patient dashboard has been intentionally kept simple. It greets the user and
+shows the medications and reminders scheduled for today, and it also offers the AI
+assistant whenever help is needed. Information is shown in large, easy-to-read cards,
+so the less a patient has to rely on memory, the less confusing the experience
+becomes.
+
+\section*{Medications}
+\begin{figure}[H]\centering\includegraphics[width=\textwidth]{ui-medications.png}
+\caption{Medications Screen of MemoryCare}\end{figure}
+This interface lists the medicines the patient has been prescribed, each with its
+dosage and scheduled times. When a reminder is due, the patient can mark that dose as
+\textbf{taken}, which is recorded in the medication log; if a dose is missed instead,
+the system flags it and sends a notification to the caregiver. Caregivers can add,
+edit, or remove medications as needed, and the running log allows medication
+compliance to be tracked over time.
+
+\section*{Daily Routines}
+\begin{figure}[H]\centering\includegraphics[width=\textwidth]{ui-routines.png}
+\caption{Daily Routines Screen of MemoryCare}\end{figure}
+This screen is dedicated to the activities that have to be completed during the day.
+It tracks the patient's daily activities, for example a morning walk, meals, or
+namaz, whatever they have stored as part of their routine, each with its scheduled
+time. When an activity is marked complete, it is saved to the routine log, keeping
+the record consistent between caregiver and patient. Routine reminders are delivered
+in the same way as medication reminders, helping the patient maintain a stable daily
+structure.
+
+\section*{AI Chatbot (with Voice and Urdu)}
+\begin{figure}[H]\centering\includegraphics[width=\textwidth]{ui-chatbot.png}
+\caption{AI Chatbot Screen of MemoryCare}\end{figure}
+The chatbot gives the patient a way to communicate with the app, either by typing or
+by speaking. It runs on an intent-classification model trained specifically for this
+project and replies in the patient's chosen language, English or Urdu. It is designed
+to answer everyday, low-pressure questions, such as what the date is or what is coming
+up next, and it keeps a record of past chats so the patient can revisit them if
+needed.
+
+\section*{Face Recognition}
+\begin{figure}[H]\centering\includegraphics[width=\textwidth]{ui-face-recognition.png}
+\caption{Face Recognition Screen of MemoryCare}\end{figure}
+This feature helps with the difficulty patients face in recognising people. Using the
+device camera, it captures a face and checks it against the faces already stored for
+the patient. When a match is found, it shows the person's name, their relationship to
+the patient, and the match confidence; if no match is found, it shows an
+``unknown person'' message. Every recognition attempt is logged with a timestamp and
+result for the caregiver's reference.
+
+\section*{Memory Gallery}
+\begin{figure}[H]\centering\includegraphics[width=\textwidth]{ui-memory-gallery.png}
+\caption{Memory Gallery Screen of MemoryCare}\end{figure}
+The memory gallery works like a photo-album option in the app. It is built as a grid
+of images, each with a title and its relevant details, and is meant to help patients
+hold on to and cherish memories of their loved ones.
+
+\section*{Reports}
+\begin{figure}[H]\centering\includegraphics[width=\textwidth]{ui-reports.png}
+\caption{Reports Screen of MemoryCare}\end{figure}
+The reports interface lets the user generate reports to track a patient's record in a
+detailed or overall way. A report gives a summarised view of how the patient is doing,
+for example medication completion, and can be exported as a \textbf{PDF} or
+\textbf{Excel} file for sharing with doctors or family members.
+
+\section*{Caregiver Dashboard}
+\begin{figure}[H]\centering\includegraphics[width=\textwidth]{ui-caregiver-dashboard.png}
+\caption{Caregiver Dashboard of MemoryCare}\end{figure}
+This dashboard is dedicated to the caregiver. It shows the patients assigned to that
+specific caregiver, and for each patient it shows their current status, medication and
+routine compliance, along with links to view the patient's full details. This gives
+the caregiver a clear picture of everyone assigned to them.
+
+\section*{Administrator Dashboard}
+\begin{figure}[H]\centering\includegraphics[width=\textwidth]{ui-admin-dashboard.png}
+\caption{Administrator Dashboard of MemoryCare}\end{figure}
+The administrator interface provides a system-wide view of the web application. From
+here the administrator can manage user accounts (patients, caregivers, and
+administrators), review overall system statistics, and monitor the system to make sure
+the data stays accurate and secure.

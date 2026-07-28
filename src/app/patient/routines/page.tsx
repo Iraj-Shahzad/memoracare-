@@ -291,7 +291,7 @@ export default function RoutinesPage() {
         <div style={{ padding: "24px 32px" }}>
           {/* Progress Banner */}
           <div
-            className="rounded-2xl text-white flex items-center justify-between"
+            className="rounded-2xl text-white flex flex-wrap gap-3 items-center justify-between"
             style={{
               background: "linear-gradient(135deg, #1a3c34, #0d9488)",
               padding: "24px 28px",
@@ -361,7 +361,7 @@ export default function RoutinesPage() {
           </div>
 
           {/* Summary Stats */}
-          <div className="grid grid-cols-4 gap-4" style={{ marginBottom: 24 }}>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4" style={{ marginBottom: 24 }}>
             {/* Total Routines */}
             <div className="bg-white rounded-[14px] border border-[#e2e8f0]" style={{ padding: 20 }}>
               <div className="flex items-center justify-between" style={{ marginBottom: 8 }}>

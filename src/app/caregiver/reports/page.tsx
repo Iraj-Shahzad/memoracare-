@@ -185,7 +185,7 @@ export default function ReportsPage() {
             ) : (
             <>
             {/* Quick Stats */}
-            <div className="grid grid-cols-3 gap-6 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               {stats.map((stat, idx) => (
                 <div key={idx} className="bg-white rounded-lg p-6 border border-slate-200">
                   <p className="text-slate-600 text-sm font-medium mb-2">{stat.label}</p>
@@ -195,7 +195,7 @@ export default function ReportsPage() {
             </div>
 
             {/* Report Cards */}
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {reportCards.map((report) => (
                 <div
                   key={report._id}

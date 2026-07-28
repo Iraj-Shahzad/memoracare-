@@ -92,7 +92,7 @@ export default function AdminDashboard() {
             {!loading && (
             <>
             {/* Stats Grid */}
-            <div className="grid grid-cols-4 gap-4 mb-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
               {/* Total Users */}
               <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0] reveal">
                 <div className="flex items-center justify-between mb-3">
@@ -172,7 +172,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* Two Columns: Recent Users + System Health */}
-            <div className="grid grid-cols-2 gap-6 mb-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
               {/* Recent Users */}
               <div className="bg-white rounded-2xl border border-[#e2e8f0] overflow-hidden reveal">
                 <div className="p-5 px-6 border-b border-[#e2e8f0] flex items-center justify-between">
@@ -184,6 +184,7 @@ export default function AdminDashboard() {
                     View All
                   </button>
                 </div>
+                <div className="overflow-x-auto">
                 <table className="w-full border-collapse">
                   <thead className="bg-[#f8fafc]">
                     <tr>
@@ -282,6 +283,7 @@ export default function AdminDashboard() {
                     </tr>
                   </tbody>
                 </table>
+                </div>
               </div>
 
               {/* System Health */}
@@ -368,7 +370,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* Two Columns: Recent Activity + Patient Compliance */}
-            <div className="grid grid-cols-2 gap-6 mb-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
               {/* Recent Activity */}
               <div className="bg-white rounded-2xl border border-[#e2e8f0] overflow-hidden reveal">
                 <div className="p-5 px-6 border-b border-[#e2e8f0] flex items-center justify-between">

@@ -400,7 +400,7 @@ export default function ActivityLog() {
         <div className="flex-1 overflow-y-auto bg-[#f0fdf4]">
           <div className="px-8 py-6 space-y-6 pb-8">
             {/* Stats Row */}
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Total Activities */}
               <div className="bg-white rounded-[15px] p-5 border border-slate-200 shadow-sm">
                 <div className="flex items-start justify-between mb-3">

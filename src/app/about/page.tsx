@@ -75,7 +75,7 @@ export default function AboutPage() {
             <p className="text-[15px] text-[#64748b] max-w-[550px] mx-auto">MemoryCare serves three key user roles, each with tailored features for their specific needs.</p>
           </div>
 
-          <div className="grid grid-cols-3 gap-8 stagger">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 stagger">
             {/* Patients */}
             <div className="bg-[#f5f6f5] rounded-2xl border border-[#e2e8f0] p-8 text-center reveal">
               <div className="w-[60px] h-[60px] rounded-2xl bg-[linear-gradient(135deg,#0d9488,#14b8a6)] flex items-center justify-center mx-auto mb-5">
@@ -132,7 +132,7 @@ export default function AboutPage() {
             <p className="text-[15px] text-[#64748b] max-w-[550px] mx-auto">MemoryCare leverages cutting-edge frameworks and AI models to deliver a reliable, fast, and intelligent platform.</p>
           </div>
 
-          <div className="grid grid-cols-4 gap-6 stagger">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 stagger">
             {[
               { title: 'Next.js', desc: 'React framework for a fast, modern frontend experience' },
               { title: 'Node.js + Express', desc: 'Robust backend API with real-time Socket.io support' },
