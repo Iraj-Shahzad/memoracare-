@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { apiPost } from "@/lib/api";
 import { getSocket, joinPatientRoom, leavePatientRoom } from "@/lib/socket";
@@ -31,10 +32,13 @@ export default function Topbar({
   showAddButton,
   children,
 }: TopbarProps) {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [sosSending, setSosSending] = useState(false);
   const [toasts, setToasts] = useState<ReminderToast[]>([]);
   const [voiceRem, setVoiceRem] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [showNotifs, setShowNotifs] = useState(false);
+  const roleBase = user?.role ? `/${user.role}` : "";
   const initials = avatar || (user?.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U');
 
   const patientId = ((user?.profile as Record<string, unknown> | undefined)?._id as string | undefined) || user?.id;
@@ -196,16 +200,60 @@ export default function Topbar({
           </button>
         )}
         {/* Notification Bell */}
-        <button className="w-[42px] h-[42px] rounded-[10px] border border-slate-200 bg-white flex items-center justify-center relative">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" className="w-5 h-5">
-            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
-            <path d="M13.73 21a2 2 0 01-3.46 0" />
-          </svg>
-          <span className="w-2 h-2 bg-red-500 rounded-full absolute top-2 right-2 border-2 border-white" />
-        </button>
-        {/* Avatar */}
-        <div className="w-[42px] h-[42px] bg-[#0d9488] rounded-[10px] flex items-center justify-center text-white font-bold text-sm">
-          {initials}
+        <div className="relative">
+          <button onClick={() => { setShowNotifs((s) => !s); setShowMenu(false); }} aria-label="Notifications" className="w-[42px] h-[42px] rounded-[10px] border border-slate-200 bg-white flex items-center justify-center relative hover:bg-slate-50">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" className="w-5 h-5">
+              <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 01-3.46 0" />
+            </svg>
+            {toasts.length > 0 && <span className="w-2 h-2 bg-red-500 rounded-full absolute top-2 right-2 border-2 border-white" />}
+          </button>
+          {showNotifs && (
+            <>
+              <div className="fixed inset-0 z-40" onClick={() => setShowNotifs(false)} />
+              <div className="absolute right-0 mt-2 w-72 bg-white border border-slate-200 rounded-xl shadow-lg z-50 overflow-hidden">
+                <div className="px-4 py-3 border-b border-slate-100 font-semibold text-sm text-[#1a3c34]">Notifications</div>
+                {toasts.length === 0 ? (
+                  <div className="px-4 py-6 text-center text-sm text-slate-400">No new notifications</div>
+                ) : (
+                  <div className="max-h-72 overflow-y-auto">
+                    {toasts.map((t) => (
+                      <div key={t.id} className="px-4 py-3 border-b border-slate-50 text-sm text-slate-700 flex gap-2">
+                        <span>{t.kind === 'medication' ? '💊' : t.kind === 'routine' ? '🗓️' : '⚠️'}</span>
+                        <span>{t.message}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {(user?.role === 'caregiver' || user?.role === 'admin') && (
+                  <Link href={`${roleBase}/alerts`} onClick={() => setShowNotifs(false)} className="block px-4 py-3 text-sm font-semibold text-[#0d9488] hover:bg-slate-50 border-t border-slate-100">View all alerts</Link>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+        {/* Avatar + account menu */}
+        <div className="relative">
+          <button onClick={() => { setShowMenu((s) => !s); setShowNotifs(false); }} aria-label="Account menu" className="w-[42px] h-[42px] bg-[#0d9488] rounded-[10px] flex items-center justify-center text-white font-bold text-sm hover:bg-[#0f766e]">
+            {initials}
+          </button>
+          {showMenu && (
+            <>
+              <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
+              <div className="absolute right-0 mt-2 w-56 bg-white border border-slate-200 rounded-xl shadow-lg z-50 overflow-hidden">
+                <div className="px-4 py-3 border-b border-slate-100">
+                  <div className="text-sm font-bold text-[#1a3c34] truncate">{user?.name || 'User'}</div>
+                  <div className="text-xs text-slate-500 truncate">{user?.email || ''}</div>
+                  <div className="text-[11px] text-slate-400 capitalize mt-0.5">{user?.role}</div>
+                </div>
+                {user?.role !== 'admin' && (
+                  <Link href={`${roleBase}/profile`} onClick={() => setShowMenu(false)} className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">Profile</Link>
+                )}
+                <Link href={`${roleBase}/settings`} onClick={() => setShowMenu(false)} className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">Settings</Link>
+                <button onClick={() => { setShowMenu(false); logout(); }} className="block w-full text-left px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 border-t border-slate-100">Log out</button>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
