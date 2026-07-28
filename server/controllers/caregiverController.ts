@@ -264,12 +264,13 @@ export const getMyNotes = async (req: Request, res: Response, next: NextFunction
 // @route POST /api/caregiver/notes
 export const createNote = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { patient, content } = req.body;
+    const { patient, content, category } = req.body;
 
     const note = await Note.create({
       patient,
       caregiver: req.user.id,
       content,
+      category: category || 'observation',
     });
 
     res.status(201).json({ success: true, note });
@@ -282,10 +283,13 @@ export const createNote = async (req: Request, res: Response, next: NextFunction
 // @route PUT /api/caregiver/notes/:id
 export const updateNote = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { content } = req.body;
+    const { content, category } = req.body;
+    const update: any = {};
+    if (content !== undefined) update.content = content;
+    if (category !== undefined) update.category = category;
     const note = await Note.findOneAndUpdate(
       { _id: req.params.id, caregiver: req.user.id },
-      { content },
+      update,
       { new: true, runValidators: true }
     );
 

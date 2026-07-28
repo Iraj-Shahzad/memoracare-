@@ -336,15 +336,22 @@ const seed = async () => {
         });
       }
 
-      // Alerts (one open, one resolved)
+      // Alerts (one open, one resolved) — messages carry the actual scheduled
+      // time + date of the specific missed task (not a generic "earlier today").
+      const med0 = def.meds[0];
+      const medMissedOn = at(2, 0, 0).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
       await Alert.create({
         patient: patient._id, caregiver: firstCg, type: 'medication_missed',
-        severity: 'warning', message: `${def.name} missed ${def.meds[0].name} scheduled earlier today`,
+        severity: 'warning',
+        message: `${def.name} missed ${med0.name}${med0.dosage ? ` (${med0.dosage})` : ''} — scheduled ${med0.times[0]} on ${medMissedOn}`,
         isResolved: false,
       });
+      const rt0 = def.routines[0];
+      const routineMissedOn = at(4, 0, 0).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
       await Alert.create({
         patient: patient._id, caregiver: firstCg, type: 'routine_missed',
-        severity: 'info', message: `${def.name} missed the ${def.routines[0].activityName} routine`,
+        severity: 'info',
+        message: `${def.name} missed the ${rt0.activityName} routine — scheduled ${rt0.startTime} on ${routineMissedOn}`,
         isResolved: true, resolvedBy: firstCg, resolvedAt: at(1, 18, 0),
       });
 

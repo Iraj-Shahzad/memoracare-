@@ -16,6 +16,13 @@ const noteSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please provide note content'],
     },
+    // Lets caregivers tag what a note is about, so notes are more specific
+    // and can be scanned/filtered by category.
+    category: {
+      type: String,
+      enum: ['observation', 'medication', 'behavior', 'health', 'incident', 'general'],
+      default: 'observation',
+    },
   },
   {
     timestamps: true,

@@ -136,6 +136,8 @@ async function detectMissed(io: any) {
   const dayStart = startOfToday();
   const dayEnd = endOfToday();
   const todayName = DAY_NAMES[now.getDay()];
+  // Human date for alert messages, e.g. "28 Jul 2026".
+  const dateStr = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
   // Missed medications
   const medications = await Medication.find({ isActive: true });
@@ -149,6 +151,12 @@ async function detectMissed(io: any) {
 
     const overdue = times.some((t) => nowMinutes > t + GRACE_MINUTES);
     if (!overdue) continue;
+
+    // The specific scheduled time that was missed (for an accurate message).
+    const missedTime = (med.times || []).find((t: string) => {
+      const m = parseTimeToMinutes(t);
+      return m !== null && nowMinutes > m + GRACE_MINUTES;
+    }) || (med.times && med.times[0]) || '';
 
     // Already logged today (taken / skipped / missed)? Then don't re-alert.
     const existing = await MedicationLog.findOne({
@@ -165,18 +173,19 @@ async function detectMissed(io: any) {
       notes: 'Auto-marked missed by reminder scheduler',
     });
 
+    const medMsg = `Missed ${med.name}${med.dosage ? ` (${med.dosage})` : ''} — scheduled ${missedTime} on ${dateStr}`;
     await Alert.create({
       patient: med.patient,
       type: 'medication_missed',
       severity: 'warning',
-      message: `Missed medication: ${med.name}${med.dosage ? ` (${med.dosage})` : ''}`,
+      message: medMsg,
     });
 
     io.to(med.patient.toString()).emit('alert', {
       type: 'medication_missed',
       severity: 'warning',
       patient: med.patient,
-      message: `Missed medication: ${med.name}`,
+      message: medMsg,
     });
   }
 
@@ -205,18 +214,19 @@ async function detectMissed(io: any) {
       notes: 'Auto-marked missed by reminder scheduler',
     });
 
+    const routineMsg = `Missed ${routine.activityName} routine — scheduled ${routine.startTime} on ${dateStr}`;
     await Alert.create({
       patient: routine.patient,
       type: 'routine_missed',
       severity: routine.priority === 'high' ? 'critical' : 'warning',
-      message: `Missed routine: ${routine.activityName}`,
+      message: routineMsg,
     });
 
     io.to(routine.patient.toString()).emit('alert', {
       type: 'routine_missed',
       severity: routine.priority === 'high' ? 'critical' : 'warning',
       patient: routine.patient,
-      message: `Missed routine: ${routine.activityName}`,
+      message: routineMsg,
     });
   }
 }

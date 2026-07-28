@@ -49,6 +49,13 @@ export default function AlertsPage() {
     fetchAlerts();
   }, []);
 
+  // Render the alert's raised time as a readable local date/time.
+  const fmtStamp = (raw: string) => {
+    if (!raw) return "";
+    const d = new Date(raw);
+    return isNaN(d.getTime()) ? raw : d.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+  };
+
   const filteredAlerts = alerts.filter((alert) => {
     if (selectedFilter === "all") return true;
     return alert.severity === selectedFilter;
@@ -210,7 +217,7 @@ export default function AlertsPage() {
                               {alert.message}
                             </span>
                           </p>
-                          <p className="text-xs text-slate-500 mt-1">{alert.timestamp}</p>
+                          <p className="text-xs text-slate-500 mt-1">Raised: {fmtStamp(alert.timestamp)}</p>
                         </div>
                         {!alert.resolved && (
                         <button
