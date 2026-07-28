@@ -188,26 +188,19 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* Info cards */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              <div className="bg-white rounded-lg border border-slate-200 p-6">
-                <h3 className="font-bold text-[#1a3c34] mb-6">Personal Information</h3>
-                <div className="space-y-4">
-                  <div><p className="text-xs text-slate-500 mb-1">Full Name</p><p className="text-sm font-medium text-slate-900">{profileInfo.name}</p></div>
-                  <div><p className="text-xs text-slate-500 mb-1">Phone Number</p><p className="text-sm font-medium text-slate-900">{profileInfo.phone || "Not set"}</p></div>
-                  <div><p className="text-xs text-slate-500 mb-1">Email Address</p><p className="text-sm font-medium text-slate-900">{profileInfo.email}</p></div>
-                  <button onClick={openEdit} className="mt-4 px-4 py-2 text-sm font-semibold text-[#0d9488] border border-[#0d9488] rounded-lg hover:bg-[#f0fdf4] transition-colors w-full">Edit Information</button>
-                </div>
+            {/* Profile Information — single merged card */}
+            <div className="bg-white rounded-lg border border-slate-200 p-6 mb-8">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="font-bold text-[#1a3c34]">Profile Information</h3>
+                <button onClick={openEdit} className="px-5 py-2 text-sm font-semibold text-[#0d9488] border border-[#0d9488] rounded-lg hover:bg-[#f0fdf4] transition-colors">Edit</button>
               </div>
-
-              <div className="bg-white rounded-lg border border-slate-200 p-6">
-                <h3 className="font-bold text-[#1a3c34] mb-6">Professional Details</h3>
-                <div className="space-y-4">
-                  <div><p className="text-xs text-slate-500 mb-1">Specialization</p><p className="text-sm font-medium text-slate-900">{profileInfo.specialization || "Not set"}</p></div>
-                  <div><p className="text-xs text-slate-500 mb-1">About</p><p className="text-sm font-medium text-slate-900 whitespace-pre-wrap">{profileInfo.notes || "Not set"}</p></div>
-                  <div><p className="text-xs text-slate-500 mb-1">Role</p><p className="text-sm font-medium text-slate-900">{profileInfo.role}</p></div>
-                  <button onClick={openEdit} className="mt-4 px-4 py-2 text-sm font-semibold text-[#0d9488] border border-[#0d9488] rounded-lg hover:bg-[#f0fdf4] transition-colors w-full">Edit Details</button>
-                </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
+                <div><p className="text-xs text-slate-500 mb-1">Full Name</p><p className="text-sm font-medium text-slate-900">{profileInfo.name}</p></div>
+                <div><p className="text-xs text-slate-500 mb-1">Phone Number</p><p className="text-sm font-medium text-slate-900">{profileInfo.phone || "Not set"}</p></div>
+                <div><p className="text-xs text-slate-500 mb-1">Email Address</p><p className="text-sm font-medium text-slate-900 break-all">{profileInfo.email}</p></div>
+                <div><p className="text-xs text-slate-500 mb-1">Role</p><p className="text-sm font-medium text-slate-900">{profileInfo.role}</p></div>
+                <div><p className="text-xs text-slate-500 mb-1">Specialization</p><p className="text-sm font-medium text-slate-900">{profileInfo.specialization || "Not set"}</p></div>
+                <div className="sm:col-span-2"><p className="text-xs text-slate-500 mb-1">About</p><p className="text-sm font-medium text-slate-900 whitespace-pre-wrap">{profileInfo.notes || "Not set"}</p></div>
               </div>
             </div>
 
