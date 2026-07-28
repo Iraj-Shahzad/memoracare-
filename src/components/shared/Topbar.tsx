@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { apiPost } from "@/lib/api";
@@ -38,6 +38,26 @@ export default function Topbar({
   const [voiceRem, setVoiceRem] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [showNotifs, setShowNotifs] = useState(false);
+  // Live clock tick so the greeting stays in sync with the viewer's local
+  // (device/country) time even if the page is left open across the hour.
+  const [clockTick, setClockTick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setClockTick((t) => t + 1), 60_000);
+    return () => clearInterval(id);
+  }, []);
+
+  // If a page passes a "Good Morning/Afternoon/Evening, Name" greeting, always
+  // recompute the time-of-day word from the CURRENT local time so it can never
+  // be stale (e.g. a server-rendered value) or wrong for the viewer's timezone.
+  const displayGreeting = useMemo(() => {
+    if (!greeting) return greeting;
+    const m = greeting.match(/^Good (?:Morning|Afternoon|Evening)\s*(?:,\s*(.*))?$/i);
+    if (!m) return greeting;
+    const h = new Date().getHours();
+    const word = h < 12 ? "Good Morning" : h < 17 ? "Good Afternoon" : "Good Evening";
+    return m[1] ? `${word}, ${m[1]}` : word;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [greeting, clockTick]);
   const roleBase = user?.role ? `/${user.role}` : "";
   const initials = avatar || (user?.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U');
 
@@ -138,8 +158,8 @@ export default function Topbar({
   return (
     <div className="bg-white pl-16 pr-4 md:px-8 py-4 flex items-center justify-between border-b border-slate-200 sticky top-0 z-40">
       <div>
-        {greeting ? (
-          <h1 className="text-2xl font-bold text-[#1a3c34]">{greeting}</h1>
+        {displayGreeting ? (
+          <h1 className="text-2xl font-bold text-[#1a3c34]">{displayGreeting}</h1>
         ) : (
           <h1 className="text-2xl font-bold text-[#1a3c34]">{title}</h1>
         )}
