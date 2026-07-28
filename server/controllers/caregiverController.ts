@@ -322,9 +322,8 @@ export const getDashboard = async (req: Request, res: Response, next: NextFuncti
       Medication.find({ patient: { $in: patientIds }, isActive: true }),
     ]);
 
-    const initialsOf = (name: string) => (name || '').split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
-    const ageOf = (dob: any) => (dob ? Math.floor((Date.now() - new Date(dob).getTime()) / (365.25 * 24 * 3600 * 1000)) : 0);
-    const colors = ['#0d9488', '#2563eb', '#7c3aed', '#db2777', '#d97706', '#059669', '#dc2626', '#0891b2'];
+    // Uses the shared initialsOf / ageOf / CARD_COLORS helpers above so the
+    // dashboard and the patients list compute identical fields (single source).
 
     // Per-patient medication compliance (% taken over the last 7 days).
     const compByPatient: Record<string, number> = {};
@@ -339,7 +338,7 @@ export const getDashboard = async (req: Request, res: Response, next: NextFuncti
       return {
         _id: p._id, name, diagnosis: p.diagnosis || '', age: ageOf(p.dateOfBirth),
         compliance: compByPatient[p._id.toString()] ?? 0,
-        initials: initialsOf(name), color: colors[i % colors.length],
+        initials: initialsOf(name), color: CARD_COLORS[i % CARD_COLORS.length],
       };
     });
 
