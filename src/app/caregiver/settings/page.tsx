@@ -67,7 +67,7 @@ export default function SettingsPage() {
       <div className="flex-1 ml-0 md:ml-[260px] flex flex-col">
         <Topbar
           title="Settings"
-          subtitle="Customize your notification and privacy preferences"
+          subtitle="Customize your notification preferences"
           greeting={timeGreeting(firstName)}
           avatar={userInitials}
         />
