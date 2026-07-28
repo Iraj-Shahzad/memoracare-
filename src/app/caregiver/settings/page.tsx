@@ -3,6 +3,7 @@
 import Topbar from "@/components/shared/Topbar";
 import CaregiverSidebar from "@/components/shared/CaregiverSidebar";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import { timeGreeting } from "@/lib/greeting";
 import { useAuth } from "@/context/AuthContext";
 import { apiPut } from "@/lib/api";
 import { useState } from "react";
@@ -67,7 +68,7 @@ export default function SettingsPage() {
         <Topbar
           title="Settings"
           subtitle="Customize your notification and privacy preferences"
-          greeting={`Good Morning, ${firstName}`}
+          greeting={timeGreeting(firstName)}
           avatar={userInitials}
         />
 

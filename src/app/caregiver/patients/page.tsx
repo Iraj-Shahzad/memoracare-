@@ -3,6 +3,7 @@
 import Topbar from "@/components/shared/Topbar";
 import CaregiverSidebar from "@/components/shared/CaregiverSidebar";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import { timeGreeting } from "@/lib/greeting";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPost } from "@/lib/api";
 import { useState, useEffect } from "react";
@@ -61,7 +62,8 @@ export default function PatientsPage() {
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState("");
   const [form, setForm] = useState({
-    name: "", email: "", password: "", diagnosis: DIAGNOSES[0], dateOfBirth: "", gender: "Male", phone: "",
+    name: "", email: "", password: "", diagnosis: DIAGNOSES[0], dateOfBirth: "",
+    gender: "Male", phone: "", city: "Islamabad", doctor: "",
   });
 
   // View Details modal
@@ -88,6 +90,17 @@ export default function PatientsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Normalize any Pakistani mobile input to the canonical "+92 3XX XXXXXXX"
+  // format used across the app (matches the seeded patients). Returns null if
+  // it isn't a valid PK mobile.
+  const normalizePkPhone = (raw: string): string | null => {
+    let d = raw.replace(/\D/g, "");
+    if (d.startsWith("92")) d = d.slice(2);
+    if (d.startsWith("0")) d = d.slice(1);
+    if (!/^3\d{9}$/.test(d)) return null; // must be 3XXXXXXXXX
+    return `+92 ${d.slice(0, 3)} ${d.slice(3)}`;
+  };
+
   const submitPatient = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError("");
@@ -95,6 +108,8 @@ export default function PatientsPage() {
     if (form.name.trim().length < 3) { setFormError("Enter the patient's full name (min 3 characters)."); return; }
     if (!emailRe.test(form.email.trim())) { setFormError("Enter a valid email address."); return; }
     if (form.password.length < 6) { setFormError("Password must be at least 6 characters."); return; }
+    const normalizedPhone = normalizePkPhone(form.phone);
+    if (!normalizedPhone) { setFormError("Enter a valid Pakistani mobile number, e.g. 0300 1234567."); return; }
     if (form.dateOfBirth && new Date(form.dateOfBirth) > new Date()) { setFormError("Date of birth cannot be in the future."); return; }
     try {
       setSaving(true);
@@ -105,10 +120,12 @@ export default function PatientsPage() {
         diagnosis: form.diagnosis,
         dateOfBirth: form.dateOfBirth || undefined,
         gender: form.gender,
-        phone: form.phone.trim() || undefined,
+        phone: normalizedPhone,
+        city: form.city.trim() || undefined,
+        doctor: form.doctor.trim() || undefined,
       });
       setShowAddModal(false);
-      setForm({ name: "", email: "", password: "", diagnosis: DIAGNOSES[0], dateOfBirth: "", gender: "Male", phone: "" });
+      setForm({ name: "", email: "", password: "", diagnosis: DIAGNOSES[0], dateOfBirth: "", gender: "Male", phone: "", city: "Islamabad", doctor: "" });
       await loadPatients(true);
     } catch (err: unknown) {
       setFormError(err instanceof Error ? err.message : "Failed to create patient");
@@ -148,7 +165,7 @@ export default function PatientsPage() {
         <Topbar
           title="My Patients"
           subtitle="Manage all patient profiles and details"
-          greeting={`Good Morning, ${firstName}`}
+          greeting={timeGreeting(firstName)}
           avatar={initials}
           showSOS={false}
         />
@@ -263,8 +280,8 @@ export default function PatientsPage() {
                   <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Ahmed Ali" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Phone</label>
-                  <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+92..." className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Phone *</label>
+                  <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="0300 1234567" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
                 </div>
               </div>
               <div>
@@ -280,6 +297,16 @@ export default function PatientsPage() {
                 <select value={form.diagnosis} onChange={(e) => setForm({ ...form, diagnosis: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]">
                   {DIAGNOSES.map((d) => <option key={d} value={d}>{d}</option>)}
                 </select>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Doctor</label>
+                  <input value={form.doctor} onChange={(e) => setForm({ ...form, doctor: e.target.value })} placeholder="e.g. Dr. Ahmed Raza" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">City</label>
+                  <input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="e.g. Islamabad" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>

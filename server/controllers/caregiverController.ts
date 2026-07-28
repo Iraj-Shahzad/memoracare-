@@ -35,7 +35,8 @@ export const getMyPatients = async (req: Request, res: Response, next: NextFunct
     const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
     const [weekMedLogs, recentLogs] = await Promise.all([
       MedicationLog.find({ patient: { $in: patientIds }, scheduledTime: { $gte: weekAgo } }),
-      MedicationLog.find({ patient: { $in: patientIds } }).sort({ updatedAt: -1 }),
+      // MedicationLog has no updatedAt; order by the real scheduledTime field.
+      MedicationLog.find({ patient: { $in: patientIds } }).sort({ scheduledTime: -1 }),
     ]);
 
     // Per-patient medication compliance (% taken, last 7 days) + last activity.
@@ -46,8 +47,11 @@ export const getMyPatients = async (req: Request, res: Response, next: NextFunct
       const logs = weekMedLogs.filter((l) => l.patient.toString() === key);
       const taken = logs.filter((l) => l.status === 'taken').length;
       compByPatient[key] = logs.length ? Math.round((taken / logs.length) * 100) : 0;
-      const last = recentLogs.find((l) => l.patient.toString() === key);
-      lastActivityByPatient[key] = last ? new Date((last as any).updatedAt).toLocaleDateString() : 'N/A';
+      // Most recent real timestamp we actually have on a log.
+      const last = recentLogs.find((l) => l.patient.toString() === key) as any;
+      const raw = last ? (last.takenAt || last.scheduledTime || last.createdAt) : null;
+      const dt = raw ? new Date(raw) : null;
+      lastActivityByPatient[key] = dt && !isNaN(dt.getTime()) ? dt.toLocaleDateString() : 'N/A';
     }
 
     const out = patients.map((p, i) => {
@@ -80,7 +84,7 @@ export const getMyPatients = async (req: Request, res: Response, next: NextFunct
 // @route POST /api/caregiver/patients
 export const createPatient = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { name, email, password, diagnosis, dateOfBirth, gender, phone } = req.body;
+    const { name, email, password, diagnosis, dateOfBirth, gender, phone, city, doctor } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ success: false, message: 'Name, email and password are required' });
@@ -105,6 +109,8 @@ export const createPatient = async (req: Request, res: Response, next: NextFunct
       diagnosis: diagnosis || undefined,
       dateOfBirth: dateOfBirth || undefined,
       gender: gender || undefined,
+      city: city || undefined,
+      doctor: doctor || undefined,
       assignedCaregivers: [req.user.id],
     });
 

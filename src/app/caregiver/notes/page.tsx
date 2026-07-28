@@ -3,6 +3,7 @@
 import Topbar from "@/components/shared/Topbar";
 import CaregiverSidebar from "@/components/shared/CaregiverSidebar";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import { timeGreeting } from "@/lib/greeting";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPost, apiDelete } from "@/lib/api";
 import { useState, useEffect } from "react";
@@ -139,7 +140,7 @@ export default function NotesPage() {
         <Topbar
           title="Notes"
           subtitle="Document observations and patient insights"
-          greeting={`Good Morning, ${firstName}`}
+          greeting={timeGreeting(firstName)}
           avatar={userInitials}
         />
 

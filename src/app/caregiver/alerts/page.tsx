@@ -3,6 +3,7 @@
 import Topbar from "@/components/shared/Topbar";
 import CaregiverSidebar from "@/components/shared/CaregiverSidebar";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import { timeGreeting } from "@/lib/greeting";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPut } from "@/lib/api";
 import { useState, useEffect } from "react";
@@ -133,7 +134,7 @@ export default function AlertsPage() {
         <Topbar
           title="Alerts & Notifications"
           subtitle="Monitor patient alerts and emergencies"
-          greeting={`Good Morning, ${firstName}`}
+          greeting={timeGreeting(firstName)}
           avatar={userInitials}
         />
 
