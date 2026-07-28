@@ -203,8 +203,20 @@ const patientDefs: any[] = [
 const seed = async () => {
   try {
     await connectDB();
-    console.log('Connected to MongoDB. Seeding data...\n');
+    console.log('Connected to MongoDB.\n');
 
+    // ---- Seed-safety guard ----
+    // If the database already has data, do NOT wipe it — your data is permanent.
+    // Run "ts-node seed.ts --force" only when you deliberately want to reset.
+    const existingUsers = await User.countDocuments();
+    const force = process.argv.includes('--force') || process.env.SEED_FORCE === 'true';
+    if (existingUsers > 0 && !force) {
+      console.log(`Database already has ${existingUsers} users. Skipping seed to protect your data.`);
+      console.log('Tip: run "ts-node seed.ts --force" only if you want to wipe and reload the demo data.');
+      process.exit(0);
+    }
+
+    console.log('Seeding data...\n');
     await Promise.all([
       User.deleteMany({}), Patient.deleteMany({}), Caregiver.deleteMany({}),
       Medication.deleteMany({}), MedicationLog.deleteMany({}),
