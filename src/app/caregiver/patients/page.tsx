@@ -78,26 +78,18 @@ const DIAGNOSIS_GROUPS: { label: string; options: string[] }[] = [
 ];
 const DEFAULT_DIAGNOSIS = DIAGNOSIS_GROUPS[0].options[0];
 
-// Common cities for the City combobox (users can also type their own).
-const CITIES = [
-  "Islamabad", "Karachi", "Lahore", "Rawalpindi", "Faisalabad", "Multan",
-  "Peshawar", "Quetta", "Sialkot", "Gujranwala", "Hyderabad", "Abbottabad",
+// 7 countries (Pakistan + 6), India intentionally excluded. City options are
+// tied to the selected country so the two dropdowns stay consistent.
+const COUNTRIES = [
+  { code: "+92", name: "Pakistan", cities: ["Islamabad", "Karachi", "Lahore", "Rawalpindi", "Faisalabad", "Peshawar", "Quetta", "Multan", "Sialkot"] },
+  { code: "+971", name: "UAE", cities: ["Dubai", "Abu Dhabi", "Sharjah", "Ajman", "Al Ain"] },
+  { code: "+966", name: "Saudi Arabia", cities: ["Riyadh", "Jeddah", "Mecca", "Medina", "Dammam"] },
+  { code: "+44", name: "UK", cities: ["London", "Manchester", "Birmingham", "Leeds", "Glasgow"] },
+  { code: "+1", name: "USA / Canada", cities: ["New York", "Los Angeles", "Chicago", "Houston", "Toronto"] },
+  { code: "+61", name: "Australia", cities: ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide"] },
+  { code: "+90", name: "Turkey", cities: ["Istanbul", "Ankara", "Izmir", "Bursa", "Antalya"] },
 ];
-
-// Limited set of country dialing codes (India intentionally excluded).
-const COUNTRY_CODES = [
-  { code: "+92", name: "Pakistan" },
-  { code: "+1", name: "United States / Canada" },
-  { code: "+44", name: "United Kingdom" },
-  { code: "+971", name: "UAE" },
-  { code: "+966", name: "Saudi Arabia" },
-  { code: "+974", name: "Qatar" },
-  { code: "+965", name: "Kuwait" },
-  { code: "+973", name: "Bahrain" },
-  { code: "+968", name: "Oman" },
-  { code: "+61", name: "Australia" },
-  { code: "+90", name: "Turkey" },
-];
+const citiesFor = (code: string) => COUNTRIES.find((c) => c.code === code)?.cities || [];
 
 export default function PatientsPage() {
   const { user } = useAuth();
@@ -338,10 +330,13 @@ export default function PatientsPage() {
                   <div className="flex gap-2">
                     <select
                       value={form.countryCode}
-                      onChange={(e) => setForm({ ...form, countryCode: e.target.value })}
-                      className="px-2 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0d9488] max-w-[110px]"
+                      onChange={(e) => {
+                        const code = e.target.value;
+                        setForm({ ...form, countryCode: code, city: citiesFor(code)[0] || "" });
+                      }}
+                      className="px-2 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0d9488] max-w-[120px]"
                     >
-                      {COUNTRY_CODES.map((c) => (
+                      {COUNTRIES.map((c) => (
                         <option key={c.code + c.name} value={c.code}>{c.code} {c.name}</option>
                       ))}
                     </select>
@@ -385,10 +380,9 @@ export default function PatientsPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">City</label>
-                  <input list="city-options" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="Type or select a city" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
-                  <datalist id="city-options">
-                    {CITIES.map((c) => <option key={c} value={c} />)}
-                  </datalist>
+                  <select value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]">
+                    {citiesFor(form.countryCode).map((c) => <option key={c} value={c}>{c}</option>)}
+                  </select>
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
