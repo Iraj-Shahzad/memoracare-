@@ -5,7 +5,7 @@ import CaregiverSidebar from "@/components/shared/CaregiverSidebar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { timeGreeting } from "@/lib/greeting";
 import { useAuth } from "@/context/AuthContext";
-import { apiGet, apiPost, apiDownload } from "@/lib/api";
+import { apiGet, apiPost, apiDownload, apiDelete } from "@/lib/api";
 import { useState, useEffect } from "react";
 
 interface Patient {
@@ -102,6 +102,15 @@ export default function ReportsPage() {
 
   const handleGenerateReport = async (type: string) => {
     if (!selectedPatientId) return;
+    // Prevent silently piling up duplicates: if a report of this type already
+    // exists for this patient (same period), confirm before generating another.
+    const alreadyExists = reportCards.some((r) => r.type.toLowerCase() === type.toLowerCase());
+    if (alreadyExists) {
+      const ok = window.confirm(
+        `A ${type} report for this patient already exists for this period. It would be the same report for the same date range — generate another copy anyway?`
+      );
+      if (!ok) return;
+    }
     try {
       setGenerating(true);
       await apiPost("/reports/generate", { patientId: selectedPatientId, type });
@@ -110,6 +119,16 @@ export default function ReportsPage() {
       alert(err instanceof Error ? err.message : "Failed to generate report");
     } finally {
       setGenerating(false);
+    }
+  };
+
+  const handleDeleteReport = async (report: Report) => {
+    if (!window.confirm(`Delete "${report.title}"? This removes the report permanently.`)) return;
+    try {
+      await apiDelete(`/reports/${report._id}`);
+      await loadReports(selectedPatientId, true);
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : "Failed to delete report");
     }
   };
 
@@ -237,9 +256,12 @@ export default function ReportsPage() {
                       <p className="text-sm text-slate-600 mb-3">{report.description}</p>
                       {report.dateRange && <p className="text-xs text-slate-500 mb-4">{report.dateRange}</p>}
                     </div>
-                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ml-2 ${getTypeColor(report.type)}`}>
-                      {report.type}
-                    </span>
+                    <div className="flex flex-col items-end gap-2 ml-2">
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${getTypeColor(report.type)}`}>
+                        {report.type}
+                      </span>
+                      <button onClick={() => handleDeleteReport(report)} className="text-xs text-red-500 hover:text-red-700 font-semibold">Delete</button>
+                    </div>
                   </div>
 
                   <div className="flex items-center gap-3 pt-4 border-t border-slate-200">
