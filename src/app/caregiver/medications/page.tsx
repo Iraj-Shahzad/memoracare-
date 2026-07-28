@@ -30,6 +30,12 @@ export default function MedicationsPage() {
   const [medications, setMedications] = useState<Medication[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [form, setForm] = useState<{ name: string; dosage: string; frequency: string; times: string[] }>({
+    name: "", dosage: "", frequency: "Once daily", times: [""],
+  });
 
   // Fetch patients list
   useEffect(() => {
@@ -38,11 +44,14 @@ export default function MedicationsPage() {
         const res = await apiGet("/caregiver/my-patients");
         const data = res.data || res.patients || res || [];
         const list = Array.isArray(data) ? data : [];
-        setPatients(list.map((p: Record<string, unknown>) => ({ _id: (p._id || p.id) as string, name: p.name as string })));
+        // Patient name is nested under the populated `user` object.
+        const nameOf = (p: Record<string, unknown>) =>
+          ((p.user as Record<string, unknown> | undefined)?.name as string) || (p.name as string) || "Unnamed patient";
+        setPatients(list.map((p: Record<string, unknown>) => ({ _id: (p._id || p.id) as string, name: nameOf(p) })));
         if (list.length > 0) {
           const first = list[0] as Record<string, unknown>;
           setSelectedPatientId((first._id || first.id) as string);
-          setSelectedPatientName(first.name as string);
+          setSelectedPatientName(nameOf(first));
         }
       } catch {
         // patients will remain empty
@@ -69,7 +78,7 @@ export default function MedicationsPage() {
           name: (m.name || '') as string,
           dosage: (m.dosage || '') as string,
           frequency: (m.frequency || '') as string,
-          time: (m.time || m.scheduledTime || '') as string,
+          time: (m.time || (Array.isArray(m.times) ? (m.times as string[]).join(', ') : m.scheduledTime) || '') as string,
           status: (m.status || 'upcoming') as string,
           lastUpdated: (m.lastUpdated || m.updatedAt || '') as string,
         })));
@@ -83,29 +92,51 @@ export default function MedicationsPage() {
     fetchMedications();
   }, [selectedPatientId]);
 
-  const handleAddMedication = async () => {
-    if (!selectedPatientId) return;
-    const name = prompt("Medication name:");
-    if (!name) return;
-    const dosage = prompt("Dosage (e.g., 10mg):");
-    const frequency = prompt("Frequency (e.g., Once daily):");
+  const refetchMedications = async () => {
+    const res = await apiGet(`/medications/patient/${selectedPatientId}`);
+    const data = res.data || res.medications || res || [];
+    const list = Array.isArray(data) ? data : [];
+    setMedications(list.map((m: Record<string, unknown>) => ({
+      _id: (m._id || m.id || '') as string,
+      name: (m.name || '') as string,
+      dosage: (m.dosage || '') as string,
+      frequency: (m.frequency || '') as string,
+      time: (m.time || (Array.isArray(m.times) ? (m.times as string[]).join(', ') : m.scheduledTime) || '') as string,
+      status: (m.status || 'upcoming') as string,
+      lastUpdated: (m.lastUpdated || m.updatedAt || '') as string,
+    })));
+  };
+
+  const submitMedication = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError("");
+
+    // ---- Validation ----
+    const times = form.times.map((t) => t.trim()).filter(Boolean);
+    if (!selectedPatientId) { setFormError("Please select a patient first."); return; }
+    if (!form.name.trim()) { setFormError("Medication name is required."); return; }
+    if (!form.dosage.trim()) { setFormError("Dosage is required (e.g. 10mg)."); return; }
+    if (times.length === 0) { setFormError("Add at least one reminder time — otherwise the patient won't be reminded."); return; }
+    // Every time must be valid 24h HH:MM (the time picker enforces this, but double-check).
+    const timeOk = times.every((t) => /^([01]\d|2[0-3]):[0-5]\d$/.test(t));
+    if (!timeOk) { setFormError("Times must be in 24-hour HH:MM format (e.g. 09:00, 21:30)."); return; }
+
     try {
-      await apiPost("/medications", { name, dosage, frequency, patient: selectedPatientId });
-      // Re-fetch
-      const res = await apiGet(`/medications/patient/${selectedPatientId}`);
-      const data = res.data || res.medications || res || [];
-      const list = Array.isArray(data) ? data : [];
-      setMedications(list.map((m: Record<string, unknown>) => ({
-        _id: (m._id || m.id || '') as string,
-        name: (m.name || '') as string,
-        dosage: (m.dosage || '') as string,
-        frequency: (m.frequency || '') as string,
-        time: (m.time || m.scheduledTime || '') as string,
-        status: (m.status || 'upcoming') as string,
-        lastUpdated: (m.lastUpdated || m.updatedAt || '') as string,
-      })));
+      setSaving(true);
+      await apiPost("/medications", {
+        patient: selectedPatientId,
+        name: form.name.trim(),
+        dosage: form.dosage.trim(),
+        frequency: form.frequency,
+        times,
+      });
+      setShowAddModal(false);
+      setForm({ name: "", dosage: "", frequency: "Once daily", times: [""] });
+      await refetchMedications();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : "Failed to add medication");
+      setFormError(err instanceof Error ? err.message : "Failed to add medication");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -184,7 +215,7 @@ export default function MedicationsPage() {
                 </select>
               </div>
               <div className="pt-7">
-                <button onClick={handleAddMedication} className="px-6 py-2.5 bg-[#0d9488] text-white rounded-lg text-sm font-semibold hover:bg-[#0a7a70] transition-colors flex items-center gap-2">
+                <button onClick={() => { if (selectedPatientId) setShowAddModal(true); }} className="px-6 py-2.5 bg-[#0d9488] text-white rounded-lg text-sm font-semibold hover:bg-[#0a7a70] transition-colors flex items-center gap-2">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
                     <line x1="12" y1="5" x2="12" y2="19" />
                     <line x1="5" y1="12" x2="19" y2="12" />
@@ -284,6 +315,53 @@ export default function MedicationsPage() {
             </>
             )}
           </div>
+
+          {/* Add Medication modal form */}
+          {showAddModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowAddModal(false)}>
+              <div className="bg-white rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+                <h3 className="text-lg font-bold text-[#1a3c34] mb-1">Add Medication</h3>
+                <p className="text-sm text-[#64748b] mb-5">For {selectedPatientName || "the selected patient"}</p>
+                <form onSubmit={submitMedication} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Medication name *</label>
+                    <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required placeholder="e.g. Donepezil (Aricept)" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Dosage *</label>
+                    <input value={form.dosage} onChange={(e) => setForm({ ...form, dosage: e.target.value })} required placeholder="e.g. 10mg" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Frequency</label>
+                    <select value={form.frequency} onChange={(e) => setForm({ ...form, frequency: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]">
+                      <option>Once daily</option>
+                      <option>Twice daily</option>
+                      <option>Three times daily</option>
+                      <option>Four times daily</option>
+                      <option>As needed</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Reminder time(s) * <span className="font-normal text-slate-400">— when the patient is reminded</span></label>
+                    {form.times.map((t, i) => (
+                      <div key={i} className="flex items-center gap-2 mb-2">
+                        <input type="time" value={t} onChange={(e) => { const nt = [...form.times]; nt[i] = e.target.value; setForm({ ...form, times: nt }); }} className="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                        {form.times.length > 1 && (
+                          <button type="button" onClick={() => setForm({ ...form, times: form.times.filter((_, idx) => idx !== i) })} className="w-9 h-9 rounded-lg border border-slate-300 text-slate-500 hover:bg-slate-50" aria-label="Remove time">✕</button>
+                        )}
+                      </div>
+                    ))}
+                    <button type="button" onClick={() => setForm({ ...form, times: [...form.times, ""] })} className="text-[#0d9488] text-sm font-semibold">+ Add another time</button>
+                  </div>
+                  {formError && <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{formError}</p>}
+                  <div className="flex justify-end gap-3 pt-2">
+                    <button type="button" onClick={() => { setShowAddModal(false); setFormError(""); }} className="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-300 text-slate-700 hover:bg-slate-50">Cancel</button>
+                    <button type="submit" disabled={saving} className="px-5 py-2 rounded-lg text-sm font-semibold bg-[#0d9488] text-white hover:bg-[#0a7a70] disabled:opacity-60">{saving ? "Saving..." : "Add Medication"}</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
         </main>
       </div>
     </div>

@@ -211,27 +211,84 @@ export const getDashboard = async (req: Request, res: Response, next: NextFuncti
       return res.status(404).json({ success: false, message: 'Caregiver profile not found' });
     }
 
-    const patientIds = caregiver.assignedPatients.map((p) => p._id);
+    const patients: any[] = caregiver.assignedPatients as any[];
+    const patientIds = patients.map((p) => p._id);
 
-    const [unresolvedAlerts, recentNotes] = await Promise.all([
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1);
+    const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
+
+    const [weekMedLogs, todayRoutineLogs, unresolvedAlerts, recentNotes, allMeds] = await Promise.all([
+      MedicationLog.find({ patient: { $in: patientIds }, scheduledTime: { $gte: weekAgo } }),
+      RoutineLog.find({ patient: { $in: patientIds }, scheduledDate: { $gte: today, $lt: tomorrow } }),
       Alert.find({ patient: { $in: patientIds }, isResolved: false })
         .populate({ path: 'patient', populate: { path: 'user', select: 'name' } })
-        .sort({ createdAt: -1 })
-        .limit(10),
+        .sort({ createdAt: -1 }).limit(10),
       Note.find({ caregiver: req.user.id })
         .populate({ path: 'patient', populate: { path: 'user', select: 'name' } })
-        .sort({ createdAt: -1 })
-        .limit(5),
+        .sort({ createdAt: -1 }).limit(5),
+      Medication.find({ patient: { $in: patientIds }, isActive: true }),
     ]);
+
+    const initialsOf = (name: string) => (name || '').split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
+    const ageOf = (dob: any) => (dob ? Math.floor((Date.now() - new Date(dob).getTime()) / (365.25 * 24 * 3600 * 1000)) : 0);
+    const colors = ['#0d9488', '#2563eb', '#7c3aed', '#db2777', '#d97706', '#059669', '#dc2626', '#0891b2'];
+
+    // Per-patient medication compliance (% taken over the last 7 days).
+    const compByPatient: Record<string, number> = {};
+    for (const pid of patientIds) {
+      const logs = weekMedLogs.filter((l) => l.patient.toString() === pid.toString());
+      const taken = logs.filter((l) => l.status === 'taken').length;
+      compByPatient[pid.toString()] = logs.length ? Math.round((taken / logs.length) * 100) : 0;
+    }
+
+    const patientsOut = patients.map((p, i) => {
+      const name = p.user?.name || 'Unnamed patient';
+      return {
+        _id: p._id, name, diagnosis: p.diagnosis || '', age: ageOf(p.dateOfBirth),
+        compliance: compByPatient[p._id.toString()] ?? 0,
+        initials: initialsOf(name), color: colors[i % colors.length],
+      };
+    });
+
+    const totalTaken = weekMedLogs.filter((l) => l.status === 'taken').length;
+    const medsCompliance = weekMedLogs.length ? Math.round((totalTaken / weekMedLogs.length) * 100) : 0;
+    const routinesCompleted = todayRoutineLogs.filter((l) => l.status === 'completed').length;
+
+    const alertsOut = unresolvedAlerts.map((a: any) => ({
+      _id: a._id, type: a.type, severity: a.severity,
+      patientName: a.patient?.user?.name || '',
+      message: a.message || '', description: '',
+      timeAgo: new Date(a.createdAt).toLocaleDateString(),
+    }));
+
+    const notesOut = recentNotes.map((n: any) => ({
+      _id: n._id, patientName: n.patient?.user?.name || '',
+      initials: initialsOf(n.patient?.user?.name || ''), color: '#0d9488',
+      content: n.content, date: new Date(n.createdAt).toLocaleDateString(),
+    }));
+
+    const complianceTable = allMeds.map((m: any) => {
+      const p = patients.find((pp) => pp._id.toString() === m.patient.toString());
+      const name = p?.user?.name || '';
+      const comp = compByPatient[m.patient.toString()] ?? 0;
+      return {
+        patientName: name, initials: initialsOf(name), color: '#0d9488',
+        medication: m.name, schedule: (m.times || []).join(', ') || m.frequency || '',
+        today: '-', weekly: comp, status: comp >= 80 ? 'good' : comp >= 60 ? 'fair' : 'poor',
+      };
+    });
 
     res.status(200).json({
       success: true,
-      dashboard: {
-        patientsCount: caregiver.assignedPatients.length,
-        patients: caregiver.assignedPatients,
-        alerts: unresolvedAlerts,
-        recentNotes,
-      },
+      totalPatients: patients.length,
+      medsCompliance,
+      missedAlerts: unresolvedAlerts.length,
+      routinesToday: { completed: routinesCompleted, total: todayRoutineLogs.length },
+      patients: patientsOut,
+      alerts: alertsOut,
+      complianceTable,
+      notes: notesOut,
     });
   } catch (err: any) {
     next(err);
