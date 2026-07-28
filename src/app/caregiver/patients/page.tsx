@@ -78,18 +78,9 @@ const DIAGNOSIS_GROUPS: { label: string; options: string[] }[] = [
 ];
 const DEFAULT_DIAGNOSIS = DIAGNOSIS_GROUPS[0].options[0];
 
-// 7 countries (Pakistan + 6), India intentionally excluded. City options are
-// tied to the selected country so the two dropdowns stay consistent.
-const COUNTRIES = [
-  { code: "+92", name: "Pakistan", cities: ["Islamabad", "Karachi", "Lahore", "Rawalpindi", "Faisalabad", "Peshawar", "Quetta", "Multan", "Sialkot"] },
-  { code: "+971", name: "UAE", cities: ["Dubai", "Abu Dhabi", "Sharjah", "Ajman", "Al Ain"] },
-  { code: "+966", name: "Saudi Arabia", cities: ["Riyadh", "Jeddah", "Mecca", "Medina", "Dammam"] },
-  { code: "+44", name: "UK", cities: ["London", "Manchester", "Birmingham", "Leeds", "Glasgow"] },
-  { code: "+1", name: "USA / Canada", cities: ["New York", "Los Angeles", "Chicago", "Houston", "Toronto"] },
-  { code: "+61", name: "Australia", cities: ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide"] },
-  { code: "+90", name: "Turkey", cities: ["Istanbul", "Ankara", "Izmir", "Bursa", "Antalya"] },
-];
-const citiesFor = (code: string) => COUNTRIES.find((c) => c.code === code)?.cities || [];
+// Pakistan-only: fixed +92 dial code and Pakistani cities.
+const PK_DIAL = "+92";
+const PK_CITIES = ["Islamabad", "Karachi", "Lahore", "Rawalpindi", "Faisalabad", "Peshawar", "Quetta", "Multan", "Sialkot", "Gujranwala", "Hyderabad", "Abbottabad"];
 
 export default function PatientsPage() {
   const { user } = useAuth();
@@ -328,22 +319,11 @@ export default function PatientsPage() {
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Phone *</label>
                   <div className="flex gap-2">
-                    <select
-                      value={form.countryCode}
-                      onChange={(e) => {
-                        const code = e.target.value;
-                        setForm({ ...form, countryCode: code, city: citiesFor(code)[0] || "" });
-                      }}
-                      className="px-2 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0d9488] max-w-[120px]"
-                    >
-                      {COUNTRIES.map((c) => (
-                        <option key={c.code + c.name} value={c.code}>{c.code} {c.name}</option>
-                      ))}
-                    </select>
+                    <span className="px-3 py-2 border border-slate-300 rounded-lg text-sm bg-slate-50 text-slate-700 flex items-center font-medium">🇵🇰 +92</span>
                     <input
                       value={form.phone}
                       onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                      placeholder="3001234567"
+                      placeholder="300 1234567"
                       inputMode="numeric"
                       className="flex-1 min-w-0 px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
                     />
@@ -381,7 +361,7 @@ export default function PatientsPage() {
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">City</label>
                   <select value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]">
-                    {citiesFor(form.countryCode).map((c) => <option key={c} value={c}>{c}</option>)}
+                    {PK_CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
               </div>
