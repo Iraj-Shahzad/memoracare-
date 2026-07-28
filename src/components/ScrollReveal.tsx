@@ -24,10 +24,15 @@ export default function ScrollReveal() {
       window.setTimeout(() => el.classList.remove('reveal', 'in'), 1200);
     };
 
-    // Reduced motion or no observer support: just show everything.
+    // Reduced motion or no observer support: just show everything, now and as
+    // new cards are rendered (data-driven pages add cards after mount).
     if (reduce || !('IntersectionObserver' in window)) {
-      document.querySelectorAll<HTMLElement>('.reveal:not(.in)').forEach(reveal);
-      return;
+      const showAll = () =>
+        document.querySelectorAll<HTMLElement>('.reveal:not(.in)').forEach(reveal);
+      showAll();
+      const mo = new MutationObserver(showAll);
+      mo.observe(document.body, { childList: true, subtree: true });
+      return () => mo.disconnect();
     }
 
     const io = new IntersectionObserver(
@@ -49,8 +54,20 @@ export default function ScrollReveal() {
       document.querySelectorAll<HTMLElement>('.reveal:not(.in)').forEach((el) => io.observe(el));
     const timers = [60, 400, 1000, 2000].map((d) => window.setTimeout(scan, d));
 
+    // Also observe cards added later WITHOUT a route change — e.g. when a page
+    // refetches data (add note / add medication / generate report) and remounts
+    // its cards. Without this, those fresh `.reveal` cards never get observed and
+    // stay invisible, leaving the section blank until the next navigation.
+    const mo = new MutationObserver((mutations) => {
+      for (const m of mutations) {
+        if (m.addedNodes.length) { scan(); break; }
+      }
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+
     return () => {
       timers.forEach((t) => window.clearTimeout(t));
+      mo.disconnect();
       io.disconnect();
     };
   }, [pathname]);
