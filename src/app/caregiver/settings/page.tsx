@@ -18,7 +18,6 @@ export default function SettingsPage() {
   });
 
   const [alertTiming, setAlertTiming] = useState("immediate");
-  const [language, setLanguage] = useState("english");
   const [privacy, setPrivacy] = useState({
     shareWithFamily: true,
     dataCollection: false,
@@ -35,7 +34,6 @@ export default function SettingsPage() {
         if (s.notifications) setNotifications((prev) => ({ ...prev, ...(s.notifications as object) }));
         if (s.privacy) setPrivacy((prev) => ({ ...prev, ...(s.privacy as object) }));
         if (typeof s.alertTiming === "string") setAlertTiming(s.alertTiming);
-        if (typeof s.language === "string") setLanguage(s.language);
       } catch {
         // keep defaults
       }
@@ -63,7 +61,7 @@ export default function SettingsPage() {
       setSaved(false);
       // Persist to MongoDB (User.settings) so choices survive across devices/logins.
       await apiPut("/caregiver/settings", {
-        settings: { notifications, alertTiming, language, privacy },
+        settings: { notifications, alertTiming, privacy },
       });
       setSaved(true);
       window.setTimeout(() => setSaved(false), 3000);
@@ -225,19 +223,6 @@ export default function SettingsPage() {
                   </div>
                 </label>
               </div>
-            </div>
-
-            {/* Language Settings */}
-            <div className="bg-white rounded-lg border border-slate-200 p-6 mb-8">
-              <h3 className="font-bold text-[#1a3c34] mb-6">Language</h3>
-              <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent"
-              >
-                <option value="english">English</option>
-                <option value="urdu">Urdu</option>
-              </select>
             </div>
 
             {/* Privacy Settings */}
