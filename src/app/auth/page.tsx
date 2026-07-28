@@ -122,14 +122,36 @@ export default function AuthPage() {
     setRegisterError("");
     setRegisterSuccess("");
 
-    // Validation
-    if (registerPassword !== registerConfirmPassword) {
-      setRegisterError("Passwords do not match.");
+    // ---- Field validation ----
+    if (!registerFullName.trim() || registerFullName.trim().length < 3) {
+      setRegisterError("Please enter your full name (at least 3 characters).");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerEmail.trim())) {
+      setRegisterError("Please enter a valid email address (e.g. name@example.com).");
+      return;
+    }
+    // Pakistani mobile: 10 digits starting with 3 (a leading 0 is stripped).
+    let phoneDigits = registerPhone.replace(/\D/g, "");
+    if (phoneDigits.startsWith("0")) phoneDigits = phoneDigits.slice(1);
+    if (!/^3\d{9}$/.test(phoneDigits)) {
+      setRegisterError("Enter a valid mobile number: 10 digits starting with 3, e.g. 3001234567.");
       return;
     }
     if (registerPassword.length < 6) {
       setRegisterError("Password must be at least 6 characters.");
       return;
+    }
+    if (registerPassword !== registerConfirmPassword) {
+      setRegisterError("Passwords do not match.");
+      return;
+    }
+    if (registerDob) {
+      const dobDate = new Date(registerDob);
+      if (isNaN(dobDate.getTime()) || dobDate > new Date()) {
+        setRegisterError("Please enter a valid date of birth (not in the future).");
+        return;
+      }
     }
     if (!agreeTerms) {
       setRegisterError("Please agree to the Terms & Privacy Policy.");
@@ -144,7 +166,7 @@ export default function AuthPage() {
         email: registerEmail,
         password: registerPassword,
         role: selectedRole,
-        phone: registerPhone ? `+92${registerPhone}` : undefined,
+        phone: `+92${phoneDigits}`,
       });
       setRegisterSuccess("Account created successfully! Redirecting...");
       setTimeout(() => redirectByRole(registeredUser.role), 1000);
