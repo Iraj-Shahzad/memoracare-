@@ -63,15 +63,18 @@ export default function CaregiverDashboard() {
   const [savingNote, setSavingNote] = useState(false);
   const [noteError, setNoteError] = useState("");
 
-  const loadDashboard = async () => {
+  // `silent` refreshes the data WITHOUT toggling the loading flag, so the cards
+  // are never unmounted/remounted. Used after in-page actions (add note) to
+  // avoid the reveal-animation blank flash — data updates in place instead.
+  const loadDashboard = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const res = await apiGet("/caregiver/dashboard");
       setDashboardData(res.data || res);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to load dashboard");
+      if (!silent) setError(err instanceof Error ? err.message : "Failed to load dashboard");
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -91,7 +94,7 @@ export default function CaregiverDashboard() {
       setShowNoteModal(false);
       setNoteContent("");
       setNotePatientId("");
-      await loadDashboard();
+      await loadDashboard(true);
     } catch (err: unknown) {
       setNoteError(err instanceof Error ? err.message : "Failed to add note");
     } finally {
