@@ -80,6 +80,67 @@ export const getMyPatients = async (req: Request, res: Response, next: NextFunct
   }
 };
 
+// @desc Get my own caregiver profile
+// @route GET /api/caregiver/profile
+export const getMyProfile = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const caregiver = await Caregiver.findOne({ user: req.user.id }).populate('user', 'name email phone role');
+    if (!caregiver) {
+      return res.status(404).json({ success: false, message: 'Caregiver profile not found' });
+    }
+    const u: any = caregiver.user;
+    res.status(200).json({
+      success: true,
+      profile: {
+        name: u?.name || '', email: u?.email || '', phone: u?.phone || '',
+        role: u?.role || 'caregiver',
+        specialization: caregiver.specialization || '', notes: caregiver.notes || '',
+      },
+    });
+  } catch (err: any) {
+    next(err);
+  }
+};
+
+// @desc Update my own caregiver profile (User name/phone + Caregiver fields)
+// @route PUT /api/caregiver/profile
+export const updateMyProfile = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { name, phone, specialization, notes } = req.body;
+    if (name !== undefined && String(name).trim().length < 3) {
+      return res.status(400).json({ success: false, message: 'Name must be at least 3 characters' });
+    }
+
+    const userUpdate: any = {};
+    if (name !== undefined) userUpdate.name = String(name).trim();
+    if (phone !== undefined) userUpdate.phone = phone;
+    if (Object.keys(userUpdate).length) {
+      await User.findByIdAndUpdate(req.user.id, userUpdate, { new: true, runValidators: true });
+    }
+
+    const cgUpdate: any = {};
+    if (specialization !== undefined) cgUpdate.specialization = specialization;
+    if (notes !== undefined) cgUpdate.notes = notes;
+    const caregiver = await Caregiver.findOneAndUpdate({ user: req.user.id }, cgUpdate, { new: true })
+      .populate('user', 'name email phone role');
+
+    if (!caregiver) {
+      return res.status(404).json({ success: false, message: 'Caregiver profile not found' });
+    }
+    const u: any = caregiver.user;
+    res.status(200).json({
+      success: true,
+      profile: {
+        name: u?.name || '', email: u?.email || '', phone: u?.phone || '',
+        role: u?.role || 'caregiver',
+        specialization: caregiver.specialization || '', notes: caregiver.notes || '',
+      },
+    });
+  } catch (err: any) {
+    next(err);
+  }
+};
+
 // @desc List enrolled caregivers/doctors (for assignment dropdowns)
 // @route GET /api/caregiver/team
 export const getTeam = async (req: Request, res: Response, next: NextFunction) => {
