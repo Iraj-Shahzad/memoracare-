@@ -20,7 +20,27 @@ export const getMedicationsByPatient = async (req: Request, res: Response, next:
       .populate('addedBy', 'name')
       .sort({ createdAt: -1 });
 
-    res.status(200).json({ success: true, count: medications.length, medications });
+    // Attach REAL per-medication today-status + 7-day compliance from logs, so
+    // the UI reflects actual data (not a hardcoded status/compliance).
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1);
+    const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
+    const medIds = medications.map((m) => m._id);
+    const [todayLogs, weekLogs] = await Promise.all([
+      MedicationLog.find({ medication: { $in: medIds }, scheduledTime: { $gte: today, $lt: tomorrow } }),
+      MedicationLog.find({ medication: { $in: medIds }, scheduledTime: { $gte: weekAgo } }),
+    ]);
+
+    const out = medications.map((m: any) => {
+      const key = m._id.toString();
+      const tLog = todayLogs.find((l) => l.medication.toString() === key);
+      const wLogs = weekLogs.filter((l) => l.medication.toString() === key);
+      const taken = wLogs.filter((l) => l.status === 'taken').length;
+      const compliance = wLogs.length ? Math.round((taken / wLogs.length) * 100) : 0;
+      return { ...m.toObject(), todayStatus: tLog ? tLog.status : 'upcoming', compliance };
+    });
+
+    res.status(200).json({ success: true, count: out.length, medications: out });
   } catch (err: any) {
     next(err);
   }
@@ -111,19 +131,30 @@ export const logMedicationStatus = async (req: Request, res: Response, next: Nex
       return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
     }
 
-    const logData: any = {
+    // Idempotent per day: update today's log if it exists, else create one — so
+    // marking taken/skip repeatedly doesn't pile up duplicate logs.
+    const dayStart = new Date(); dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(dayStart); dayEnd.setDate(dayEnd.getDate() + 1);
+    let log = await MedicationLog.findOne({
       medication: medication._id,
-      patient: medication.patient,
-      scheduledTime: scheduledTime || new Date(),
-      status,
-      notes,
-    };
+      scheduledTime: { $gte: dayStart, $lt: dayEnd },
+    });
 
-    if (status === 'taken') {
-      logData.takenAt = new Date();
+    if (log) {
+      log.status = status;
+      (log as any).notes = notes;
+      (log as any).takenAt = status === 'taken' ? new Date() : undefined;
+      await log.save();
+    } else {
+      log = await MedicationLog.create({
+        medication: medication._id,
+        patient: medication.patient,
+        scheduledTime: scheduledTime || new Date(),
+        status,
+        notes,
+        ...(status === 'taken' ? { takenAt: new Date() } : {}),
+      });
     }
-
-    const log = await MedicationLog.create(logData);
 
     // Emit real-time update if io is available
     if (req.io) {

@@ -28,6 +28,7 @@ interface Medication {
   compliance: number;
   complianceLevel: "high" | "med" | "low";
   status: "taken" | "upcoming" | "missed";
+  instructions?: string;
   iconBg: string;
   iconStroke: string;
   iconPath: React.ReactNode;
@@ -52,71 +53,71 @@ export default function MedicationsPage() {
   );
 
   const [medications, setMedications] = useState<Medication[]>([]);
+  const [detailMed, setDetailMed] = useState<Medication | null>(null);
+
+  const loadData = async (silent = false) => {
+    if (!patientId) return;
+    try {
+      if (!silent) setLoading(true);
+      const [medRes, compRes] = await Promise.all([
+        apiGet(`/medications/patient/${patientId}`).catch(() => null),
+        apiGet(`/medications/patient/${patientId}/compliance`).catch(() => null),
+      ]);
+      const list = Array.isArray(medRes?.medications) ? medRes.medications : [];
+      const mapped = list.map((m: any) => {
+        // Real today-status from the backend log lookup.
+        const status: "taken" | "upcoming" | "missed" =
+          m.todayStatus === "taken" ? "taken"
+          : (m.todayStatus === "missed" || m.todayStatus === "skipped") ? "missed"
+          : "upcoming";
+        const times: string[] = Array.isArray(m.times) ? m.times : [];
+        const schedStatus = status === "taken" ? "done" : status === "missed" ? "missed" : "upcoming";
+        const schedules: MedSchedule[] = times.length
+          ? times.map((t) => ({ time: t, status: schedStatus as MedSchedule["status"] }))
+          : [{ time: "—", status: "upcoming" }];
+        const compliance = typeof m.compliance === "number" ? m.compliance : 0;
+        return {
+          id: m._id || m.id,
+          name: m.name || "Unknown",
+          genericName: m.genericName || m.name || "",
+          dosage: m.dosage || "",
+          type: m.type || "Tablet",
+          purpose: m.purpose || m.instructions || "",
+          frequency: m.frequency || "Once Daily",
+          schedules,
+          prescribedBy: m.prescribedBy || m.addedBy?.name || "Caregiver",
+          compliance,
+          complianceLevel: (compliance >= 85 ? "high" : compliance >= 70 ? "med" : "low") as "high" | "med" | "low",
+          status,
+          instructions: m.instructions || "",
+          iconBg: "#dbeafe",
+          iconStroke: "#3b82f6",
+          iconPath: defaultIconPath,
+        };
+      });
+      setMedications(mapped);
+      if (compRes?.stats) setComplianceStats(compRes.stats);
+    } catch (err) {
+      console.error("Medications fetch error:", err);
+    } finally {
+      if (!silent) setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    if (!patientId) return;
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const [medRes, compRes] = await Promise.all([
-          apiGet(`/medications/patient/${patientId}`).catch(() => null),
-          apiGet(`/medications/patient/${patientId}/compliance`).catch(() => null),
-        ]);
-        if (medRes?.medications && Array.isArray(medRes.medications) && medRes.medications.length > 0) {
-          const mapped = medRes.medications.map((m: any) => ({
-            id: m._id || m.id,
-            name: m.name || m.brandName || "Unknown",
-            genericName: m.genericName || m.name || "",
-            dosage: m.dosage || "",
-            type: m.type || "Tablet",
-            purpose: m.purpose || "",
-            frequency: m.frequency || "Once Daily",
-            schedules: m.schedules || [{ time: "8:00 AM", status: "upcoming" }],
-            prescribedBy: m.prescribedBy || "Doctor",
-            compliance: m.compliance || 80,
-            complianceLevel: (m.compliance || 80) >= 85 ? "high" : (m.compliance || 80) >= 70 ? "med" : "low",
-            status: m.status || "upcoming",
-            iconBg: "#dbeafe",
-            iconStroke: "#3b82f6",
-            iconPath: defaultIconPath,
-          }));
-          setMedications(mapped);
-        }
-        if (compRes?.stats) setComplianceStats(compRes.stats);
-      } catch (err) {
-        console.error("Medications fetch error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [patientId]);
 
+  // Marking is idempotent per day on the backend; we refetch to reflect the
+  // real updated status + compliance (consistent for any medication).
   const handleMarkTaken = async (medId: string) => {
-    try {
-      await apiPost(`/medications/${medId}/log`, { status: "taken" });
-      setMedications(prev => prev.map(m => m.id === medId ? { ...m, status: "taken" as const } : m));
-    } catch (err) {
-      console.error("Mark taken error:", err);
-    }
+    try { await apiPost(`/medications/${medId}/log`, { status: "taken" }); await loadData(true); }
+    catch (err) { alert(err instanceof Error ? err.message : "Could not mark as taken"); }
   };
-
   const handleMarkMissed = async (medId: string) => {
-    try {
-      await apiPost(`/medications/${medId}/log`, { status: "missed" });
-      setMedications(prev => prev.map(m => m.id === medId ? { ...m, status: "missed" as const } : m));
-    } catch (err) {
-      console.error("Mark missed error:", err);
-    }
-  };
-
-  const handleDeleteMed = async (medId: string) => {
-    try {
-      await apiDelete(`/medications/${medId}`);
-      setMedications(prev => prev.filter(m => m.id !== medId));
-    } catch (err) {
-      console.error("Delete medication error:", err);
-    }
+    try { await apiPost(`/medications/${medId}/log`, { status: "skipped" }); await loadData(true); }
+    catch (err) { alert(err instanceof Error ? err.message : "Could not skip"); }
   };
 
   const filteredMeds = medications.filter((med) => {
@@ -177,7 +178,7 @@ export default function MedicationsPage() {
   const totalMeds = medications.length;
   const takenToday = medications.filter(m => m.status === "taken").length;
   const missedToday = medications.filter(m => m.status === "missed").length;
-  const weeklyCompliance = complianceStats?.weeklyCompliance ?? 87;
+  const weeklyCompliance = complianceStats?.complianceRate ?? complianceStats?.weeklyCompliance ?? 0;
 
   const nextMed = medications.find(m => m.status === "upcoming");
 
@@ -243,20 +244,21 @@ export default function MedicationsPage() {
               </div>
               <div>
                 <div className="text-[13px] opacity-80">Next Dose Coming Up</div>
-                <div className="text-[18px] font-bold">{nextMed ? `${nextMed.name} ${nextMed.dosage}` : "Aricept (Donepezil) 10mg"}</div>
-                <div className="text-[14px] opacity-90 mt-0.5">Today at {nextMed?.schedules?.[0]?.time || "2:00 PM"}</div>
+                <div className="text-[18px] font-bold">{nextMed ? `${nextMed.name} ${nextMed.dosage}` : "All doses handled"}</div>
+                <div className="text-[14px] opacity-90 mt-0.5">{nextMed ? `Scheduled at ${nextMed.schedules?.[0]?.time || "—"}` : "No upcoming doses right now"}</div>
               </div>
             </div>
+            {nextMed && (
             <div className="flex gap-[10px]">
               <button
-                onClick={() => nextMed && handleMarkTaken(nextMed.id)}
+                onClick={() => handleMarkTaken(nextMed.id)}
                 className="rounded-[10px] text-[14px] font-semibold border-none cursor-pointer"
                 style={{ padding: "10px 24px", background: "#fff", color: "#1a3c34" }}
               >
                 Mark as Taken
               </button>
               <button
-                onClick={() => nextMed && handleMarkMissed(nextMed.id)}
+                onClick={() => handleMarkMissed(nextMed.id)}
                 className="rounded-[10px] text-[14px] font-semibold cursor-pointer text-white"
                 style={{
                   padding: "10px 24px",
@@ -267,6 +269,7 @@ export default function MedicationsPage() {
                 Skip
               </button>
             </div>
+            )}
           </div>
 
           {/* Summary Stats */}
@@ -566,62 +569,42 @@ export default function MedicationsPage() {
                       {/* Actions */}
                       <td style={{ padding: "16px 20px", verticalAlign: "middle" }}>
                         <div className="flex gap-1.5">
-                          {/* Check/Take */}
+                          {/* Mark as Taken */}
                           <button
                             onClick={() => handleMarkTaken(med.id)}
-                            className="flex items-center justify-center rounded-[8px] border border-[#e2e8f0] bg-white cursor-pointer hover:border-[#0d9488] hover:bg-[#f0fdf4] transition-all"
+                            disabled={med.status === "taken"}
+                            className="flex items-center justify-center rounded-[8px] border border-[#e2e8f0] bg-white cursor-pointer hover:border-[#16a34a] hover:bg-[#f0fdf4] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                             style={{ width: 34, height: 34 }}
                             title="Mark as Taken"
                           >
-                            <svg
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="#64748b"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              style={{ width: 16, height: 16 }}
-                            >
+                            <svg viewBox="0 0 24 24" fill="none" stroke={med.status === "taken" ? "#16a34a" : "#64748b"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}>
                               <polyline points="20 6 9 17 4 12" />
                             </svg>
                           </button>
-                          {/* Info */}
+                          {/* Skip / Mark Missed */}
                           <button
+                            onClick={() => handleMarkMissed(med.id)}
+                            disabled={med.status === "missed"}
+                            className="flex items-center justify-center rounded-[8px] border border-[#e2e8f0] bg-white cursor-pointer hover:border-[#dc2626] hover:bg-[#fef2f2] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                            style={{ width: 34, height: 34 }}
+                            title="Skip (mark missed)"
+                          >
+                            <svg viewBox="0 0 24 24" fill="none" stroke={med.status === "missed" ? "#dc2626" : "#64748b"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}>
+                              <line x1="18" y1="6" x2="6" y2="18" />
+                              <line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
+                          </button>
+                          {/* View Details */}
+                          <button
+                            onClick={() => setDetailMed(med)}
                             className="flex items-center justify-center rounded-[8px] border border-[#e2e8f0] bg-white cursor-pointer hover:border-[#0d9488] hover:bg-[#f0fdf4] transition-all"
                             style={{ width: 34, height: 34 }}
                             title="View Details"
                           >
-                            <svg
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="#64748b"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              style={{ width: 16, height: 16 }}
-                            >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}>
                               <circle cx="12" cy="12" r="10" />
                               <line x1="12" y1="8" x2="12" y2="12" />
                               <line x1="12" y1="16" x2="12.01" y2="16" />
-                            </svg>
-                          </button>
-                          {/* Edit */}
-                          <button
-                            className="flex items-center justify-center rounded-[8px] border border-[#e2e8f0] bg-white cursor-pointer hover:border-[#0d9488] hover:bg-[#f0fdf4] transition-all"
-                            style={{ width: 34, height: 34 }}
-                            title="Edit"
-                          >
-                            <svg
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="#64748b"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              style={{ width: 16, height: 16 }}
-                            >
-                              <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
-                              <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
                             </svg>
                           </button>
                         </div>
@@ -648,11 +631,44 @@ export default function MedicationsPage() {
                 <path d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-6 18h6" />
               </svg>
               <p className="text-[#64748b] font-medium">No medications found</p>
-              <p className="text-[#94a3b8] text-sm mt-1">Try adjusting your search or filter</p>
+              <p className="text-[#94a3b8] text-sm mt-1">
+                {searchTerm
+                  ? "No medication matches your search."
+                  : activeFilter !== "all"
+                  ? `No ${activeFilter} medications right now.`
+                  : "No medications have been added for you yet."}
+              </p>
             </div>
           )}
         </div>
       </main>
+
+      {/* Medication details modal */}
+      {detailMed && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setDetailMed(null)}>
+          <div className="bg-white rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-start justify-between mb-4">
+              <h3 className="text-lg font-bold text-[#1a3c34]">{detailMed.name}</h3>
+              <button onClick={() => setDetailMed(null)} className="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
+            </div>
+            <div className="space-y-2.5 text-sm">
+              <div className="flex justify-between border-b border-slate-100 pb-2"><span className="text-slate-500">Dosage</span><span className="font-medium text-slate-900">{detailMed.dosage || "—"}</span></div>
+              <div className="flex justify-between border-b border-slate-100 pb-2"><span className="text-slate-500">Frequency</span><span className="font-medium text-slate-900">{detailMed.frequency}</span></div>
+              <div className="flex justify-between border-b border-slate-100 pb-2"><span className="text-slate-500">Schedule</span><span className="font-medium text-slate-900 text-right">{detailMed.schedules.map((s) => s.time).join(", ")}</span></div>
+              <div className="flex justify-between border-b border-slate-100 pb-2"><span className="text-slate-500">Prescribed by</span><span className="font-medium text-slate-900">{detailMed.prescribedBy}</span></div>
+              <div className="flex justify-between border-b border-slate-100 pb-2"><span className="text-slate-500">7-day compliance</span><span className="font-medium text-slate-900">{detailMed.compliance}%</span></div>
+              <div className="flex justify-between"><span className="text-slate-500">Today</span><span className="font-medium text-slate-900 capitalize">{detailMed.status}</span></div>
+              {detailMed.instructions && (
+                <div className="pt-2"><p className="text-slate-500 mb-1">Instructions</p><p className="font-medium text-slate-900">{detailMed.instructions}</p></div>
+              )}
+            </div>
+            <div className="flex gap-2.5 mt-5">
+              <button onClick={() => { handleMarkTaken(detailMed.id); setDetailMed(null); }} disabled={detailMed.status === "taken"} className="flex-1 px-4 py-2.5 rounded-[10px] text-[13px] font-semibold bg-[#0d9488] text-white hover:bg-[#0f766e] disabled:opacity-50">Mark as Taken</button>
+              <button onClick={() => { handleMarkMissed(detailMed.id); setDetailMed(null); }} disabled={detailMed.status === "missed"} className="flex-1 px-4 py-2.5 rounded-[10px] text-[13px] font-semibold bg-white text-[#1a3c34] border-[1.5px] border-[#e2e8f0] hover:border-[#dc2626] disabled:opacity-50">Skip</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
     </ProtectedRoute>
   );
