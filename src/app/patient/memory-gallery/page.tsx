@@ -7,6 +7,7 @@ import Topbar from "@/components/shared/Topbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiDelete, api } from "@/lib/api";
+import { speak, getLang } from "@/lib/speech";
 
 const API_HOST = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api").replace(/\/api\/?$/, "");
 
@@ -37,8 +38,14 @@ export default function MemoryGalleryPage() {
   const [showModal, setShowModal] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [form, setForm] = useState({ title: "", people: "", location: "", date: "", description: "" });
+  const [form, setForm] = useState({ title: "", location: "", date: "", description: "" });
   const [file, setFile] = useState<File | null>(null);
+  const [detailMemory, setDetailMemory] = useState<Memory | null>(null);
+
+  // People picker: known faces as options + an "Other" free-text entry.
+  const [knownPeople, setKnownPeople] = useState<string[]>([]);
+  const [selectedPeople, setSelectedPeople] = useState<string[]>([]);
+  const [otherPerson, setOtherPerson] = useState("");
 
   const fetchMemories = async () => {
     if (!patientId) return;
@@ -52,33 +59,55 @@ export default function MemoryGalleryPage() {
     }
   };
 
+  const fetchPeople = async () => {
+    if (!patientId) return;
+    try {
+      const res = await apiGet(`/face-recognition/patient/${patientId}/known-faces`).catch(() => null);
+      const names = Array.isArray(res?.knownFaces) ? res.knownFaces.map((f: any) => f.name).filter(Boolean) : [];
+      setKnownPeople(names);
+    } catch { /* people list stays empty */ }
+  };
+
   useEffect(() => {
     fetchMemories();
+    fetchPeople();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [patientId]);
 
   const resetForm = () => {
-    setForm({ title: "", people: "", location: "", date: "", description: "" });
+    setForm({ title: "", location: "", date: "", description: "" });
     setFile(null);
+    setSelectedPeople([]);
+    setOtherPerson("");
     setError("");
   };
 
+  const togglePerson = (name: string) => {
+    setSelectedPeople((prev) => (prev.includes(name) ? prev.filter((p) => p !== name) : [...prev, name]));
+  };
+
   const handleSave = async () => {
-    if (!form.title.trim()) {
-      setError("Please give this memory a title.");
-      return;
-    }
+    // ---- Validation ----
+    const people = [...selectedPeople, ...otherPerson.split(",").map((p) => p.trim()).filter(Boolean)];
+    if (form.title.trim().length < 3) { setError("Please give this memory a clear title (at least 3 characters)."); return; }
+    if (!file) { setError("Please choose a photo for this memory."); return; }
+    if (!form.location.trim()) { setError("Please enter the place."); return; }
+    if (!form.date) { setError("Please pick the date of this memory."); return; }
+    if (new Date(form.date) > new Date()) { setError("The date can't be in the future."); return; }
+    if (form.description.trim().length < 3) { setError("Please add a short description."); return; }
+    if (people.length === 0) { setError("Add at least one person (pick from the list or type a name)."); return; }
+
     setSaving(true);
     setError("");
     try {
       const fd = new FormData();
       fd.append("patientId", patientId);
       fd.append("title", form.title.trim());
-      if (form.people.trim()) fd.append("people", form.people.trim());
-      if (form.location.trim()) fd.append("location", form.location.trim());
-      if (form.date) fd.append("date", form.date);
-      if (form.description.trim()) fd.append("description", form.description.trim());
-      if (file) fd.append("image", file);
+      fd.append("people", people.join(", "));
+      fd.append("location", form.location.trim());
+      fd.append("date", form.date);
+      fd.append("description", form.description.trim());
+      fd.append("image", file);
 
       await api("/memories", { method: "POST", body: fd, isFormData: true });
       setShowModal(false);
@@ -152,7 +181,8 @@ export default function MemoryGalleryPage() {
                 {memories.map((m, idx) => (
                   <div
                     key={m._id}
-                    className="group bg-white rounded-2xl overflow-hidden border border-slate-200 hover:shadow-lg transition-shadow"
+                    onClick={() => setDetailMemory(m)}
+                    className="group bg-white rounded-2xl overflow-hidden border border-slate-200 hover:shadow-lg transition-shadow cursor-pointer"
                   >
                     {/* Photo */}
                     <div style={{ height: 180, position: "relative" }}>
@@ -181,7 +211,7 @@ export default function MemoryGalleryPage() {
                         </div>
                       )}
                       <button
-                        onClick={() => handleDelete(m._id)}
+                        onClick={(e) => { e.stopPropagation(); handleDelete(m._id); }}
                         title="Remove memory"
                         className="absolute top-2 right-2 w-8 h-8 rounded-lg bg-black/45 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500"
                       >
@@ -220,6 +250,49 @@ export default function MemoryGalleryPage() {
           </div>
         </div>
 
+        {/* Memory preview modal */}
+        {detailMemory && (
+          <div className="fixed inset-0 z-[80] flex items-center justify-center p-4" style={{ background: "rgba(15,23,42,0.5)" }} onClick={() => setDetailMemory(null)}>
+            <div className="bg-white rounded-2xl w-full max-w-[560px] max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              <div style={{ height: 260, position: "relative" }}>
+                {detailMemory.imageUrl ? (
+                  <img src={`${API_HOST}${detailMemory.imageUrl}`} alt={detailMemory.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                ) : (
+                  <div style={{ width: "100%", height: "100%", background: CARD_GRADIENTS[0], display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.5" style={{ width: 56, height: 56, opacity: 0.85 }}><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>
+                  </div>
+                )}
+                <button onClick={() => setDetailMemory(null)} className="absolute top-3 right-3 w-9 h-9 rounded-lg bg-black/45 text-white flex items-center justify-center hover:bg-black/60 text-xl leading-none">×</button>
+              </div>
+              <div style={{ padding: 24 }}>
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h2 className="text-xl font-bold text-[#1a3c34]">{detailMemory.title}</h2>
+                    {(detailMemory.location || detailMemory.date) && (
+                      <p className="text-[13px] text-[#94a3b8] mt-1">{[detailMemory.location, fmtDate(detailMemory.date)].filter(Boolean).join(" · ")}</p>
+                    )}
+                  </div>
+                  <button
+                    title="Read aloud"
+                    onClick={() => speak(`${detailMemory.title}. ${detailMemory.description || ""}. ${detailMemory.people?.length ? "With " + detailMemory.people.join(", ") : ""}`, getLang())}
+                    className="w-10 h-10 rounded-lg border border-slate-200 flex items-center justify-center hover:border-[#0d9488] flex-shrink-0"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#0d9488" strokeWidth="2" className="w-5 h-5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" /><path d="M15.54 8.46a5 5 0 010 7.07" /><path d="M19.07 4.93a10 10 0 010 14.14" /></svg>
+                  </button>
+                </div>
+                {detailMemory.description && <p className="text-[14px] text-[#475569] mt-3 leading-relaxed">{detailMemory.description}</p>}
+                {detailMemory.people && detailMemory.people.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mt-4">
+                    {detailMemory.people.map((p, i) => (
+                      <span key={i} className="text-[12px] font-semibold text-[#0b6f66] bg-[#d6f0ea] rounded-full px-3 py-1">{p}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Add Memory Modal */}
         {showModal && (
           <div
@@ -252,28 +325,43 @@ export default function MemoryGalleryPage() {
                 </label>
 
                 <label className="flex flex-col gap-1.5">
-                  <span className="text-[13px] font-semibold text-[#1a3c34]">Photo</span>
+                  <span className="text-[13px] font-semibold text-[#1a3c34]">Photo <span className="text-red-500">*</span></span>
                   <input
                     type="file"
                     accept="image/png,image/jpeg,image/webp"
                     onChange={(e) => setFile(e.target.files?.[0] || null)}
                     className="text-sm text-[#64748b] file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#d6f0ea] file:text-[#0b6f66] hover:file:bg-[#c3e9e0]"
                   />
+                  {file && <span className="text-[12px] text-[#0b6f66]">Selected: {file.name}</span>}
                 </label>
 
-                <label className="flex flex-col gap-1.5">
-                  <span className="text-[13px] font-semibold text-[#1a3c34]">People in this memory</span>
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-[13px] font-semibold text-[#1a3c34]">People in this memory <span className="text-red-500">*</span></span>
+                  {knownPeople.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {knownPeople.map((name) => (
+                        <button
+                          key={name}
+                          type="button"
+                          onClick={() => togglePerson(name)}
+                          className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${selectedPeople.includes(name) ? "bg-[#0d9488] text-white border-[#0d9488]" : "bg-white text-slate-600 border-slate-300 hover:border-[#0d9488]"}`}
+                        >
+                          {name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                   <input
-                    value={form.people}
-                    onChange={(e) => setForm({ ...form, people: e.target.value })}
-                    placeholder="Separate names with commas, e.g. Bilal, Aisha"
+                    value={otherPerson}
+                    onChange={(e) => setOtherPerson(e.target.value)}
+                    placeholder={knownPeople.length ? "Other (type a name, or comma-separate)" : "Type names, comma-separated"}
                     className="border border-slate-300 rounded-[10px] px-3.5 py-2.5 text-sm outline-none focus:border-[#0d9488]"
                   />
-                </label>
+                </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                   <label className="flex flex-col gap-1.5">
-                    <span className="text-[13px] font-semibold text-[#1a3c34]">Place</span>
+                    <span className="text-[13px] font-semibold text-[#1a3c34]">Place <span className="text-red-500">*</span></span>
                     <input
                       value={form.location}
                       onChange={(e) => setForm({ ...form, location: e.target.value })}
@@ -282,7 +370,7 @@ export default function MemoryGalleryPage() {
                     />
                   </label>
                   <label className="flex flex-col gap-1.5">
-                    <span className="text-[13px] font-semibold text-[#1a3c34]">Date</span>
+                    <span className="text-[13px] font-semibold text-[#1a3c34]">Date <span className="text-red-500">*</span></span>
                     <input
                       type="date"
                       value={form.date}
@@ -293,7 +381,7 @@ export default function MemoryGalleryPage() {
                 </div>
 
                 <label className="flex flex-col gap-1.5">
-                  <span className="text-[13px] font-semibold text-[#1a3c34]">Description</span>
+                  <span className="text-[13px] font-semibold text-[#1a3c34]">Description <span className="text-red-500">*</span></span>
                   <textarea
                     value={form.description}
                     onChange={(e) => setForm({ ...form, description: e.target.value })}
