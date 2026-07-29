@@ -72,17 +72,25 @@ export const createAlert = async (req: Request, res: Response, next: NextFunctio
       return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
     }
 
+    // Route the alert to the patient's assigned caregiver(s), not the patient.
+    const patientDoc: any = await Patient.findById(patient).populate('user', 'name');
+    const caregiverIds: any[] = patientDoc?.assignedCaregivers || [];
+
     const alert = await Alert.create({
       patient,
-      caregiver: req.user.id,
+      caregiver: caregiverIds[0] || undefined,
       type,
       severity,
       message,
     });
 
-    // Emit real-time alert
-    if (req.io && patient) {
-      req.io.to(patient).emit('alert', { type, severity, message });
+    // Real-time: notify the assigned CAREGIVER(s) in their own room — an SOS
+    // must reach the caregiver, not pop up on the patient's own screen.
+    if (req.io) {
+      const patientName = patientDoc?.user?.name || 'Patient';
+      caregiverIds.forEach((cgId) => {
+        req.io.to(cgId.toString()).emit('alert', { type, severity, message, patientName });
+      });
     }
 
     res.status(201).json({ success: true, alert });

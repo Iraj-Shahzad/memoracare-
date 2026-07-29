@@ -79,12 +79,17 @@ export default function Topbar({
     if (next) speak(getLang() === 'ur' ? 'صوتی یاد دہانیاں آن ہیں' : 'Voice reminders are on', getLang());
   };
 
-  // Real-time reminders / missed-dose alerts pushed by the backend scheduler.
+  // Real-time reminders / alerts pushed by the backend.
+  // - Patients join their PATIENT room → receive medication/routine reminders.
+  // - Caregivers/admins join their own USER-ID room → receive alerts about their
+  //   patients (e.g. an SOS), instead of the SOS popping on the patient's screen.
   useEffect(() => {
-    if (user?.role !== 'patient' || !patientId) return;
+    if (!user) return;
+    const room = user.role === 'patient' ? patientId : user.id;
+    if (!room) return;
 
     const socket = getSocket();
-    const join = () => joinPatientRoom(patientId);
+    const join = () => joinPatientRoom(room);
     join();
     socket.on('connect', join);
 
@@ -132,9 +137,9 @@ export default function Topbar({
       socket.off('connect', join);
       socket.off('reminder', onReminder);
       socket.off('alert', onAlert);
-      leavePatientRoom(patientId);
+      leavePatientRoom(room);
     };
-  }, [user?.role, patientId]);
+  }, [user?.role, user?.id, patientId]);
 
   const dismissToast = (id: number) => setToasts((prev) => prev.filter((t) => t.id !== id));
 

@@ -126,12 +126,48 @@ export const getDashboard = async (req: Request, res: Response, next: NextFuncti
     const routinesCompleted = todayRoutineLogs.filter((l) => l.status === 'completed').length;
     const routinesTotal = todayRoutineLogs.length || routines.length;
 
+    // ---- Next upcoming medication / routine time (real, from schedules) ----
+    const now = new Date();
+    const nowMin = now.getHours() * 60 + now.getMinutes();
+    const toMin = (t: string) => {
+      const [h, m] = String(t || '').split(':').map(Number);
+      return Number.isNaN(h) || Number.isNaN(m) ? null : h * 60 + m;
+    };
+    const fmt = (min: number | null | undefined) =>
+      min == null ? '—' : `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
+
+    const medTimes = medications.flatMap((m: any) => m.times || []).map(toMin).filter((v): v is number => v !== null).sort((a, b) => a - b);
+    const nextMedTime = fmt(medTimes.find((t) => t >= nowMin) ?? medTimes[0]);
+
+    const routineTimes = routines.map((r: any) => toMin(r.startTime)).filter((v): v is number => v !== null).sort((a, b) => a - b);
+    const nextRoutine = fmt(routineTimes.find((t) => t >= nowMin) ?? routineTimes[0]);
+
+    // ---- Weekly score: % of medication doses taken over the last 7 days ----
+    const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
+    const weekMedLogs = await MedicationLog.find({ patient: patientId, scheduledTime: { $gte: weekAgo } });
+    const weekTaken = weekMedLogs.filter((l) => l.status === 'taken').length;
+    const weeklyScore = weekMedLogs.length ? Math.round((weekTaken / weekMedLogs.length) * 100) : 0;
+
+    // ---- Streak: consecutive days (back from today) with at least one taken dose ----
+    const takenDays = new Set(
+      weekMedLogs.filter((l) => l.status === 'taken').map((l) => new Date(l.scheduledTime).toDateString())
+    );
+    let streak = 0;
+    const cursor = new Date(); cursor.setHours(0, 0, 0, 0);
+    // If today has no taken dose yet, start counting from yesterday so an in-progress day doesn't reset it.
+    if (!takenDays.has(cursor.toDateString())) cursor.setDate(cursor.getDate() - 1);
+    while (takenDays.has(cursor.toDateString())) { streak++; cursor.setDate(cursor.getDate() - 1); }
+
     res.status(200).json({
       success: true,
       dashboard: {
         patient,
         medications: { total: medsTotal, taken: medsTaken, list: medications },
         routines: { total: routinesTotal, completed: routinesCompleted, list: routines },
+        nextMedTime,
+        nextRoutine,
+        weeklyScore,
+        streak,
         alerts: recentAlerts,
       },
     });

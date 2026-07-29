@@ -2,11 +2,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import PatientSidebar from "@/components/shared/PatientSidebar";
 import Topbar from "@/components/shared/Topbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet } from "@/lib/api";
+import { timeGreeting } from "@/lib/greeting";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -16,6 +18,7 @@ export default function Dashboard() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [dashboardData, setDashboardData] = useState<Record<string, any>| null>(null);
   const [loading, setLoading] = useState(true);
+  const [showCaregiver, setShowCaregiver] = useState(false);
 
   const userName = user?.name || "User";
   const initials = userName.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
@@ -91,7 +94,7 @@ export default function Dashboard() {
         {/* Topbar */}
         <Topbar
           title="Dashboard"
-          greeting={`${getGreeting()}, ${userName}`}
+          greeting={timeGreeting(userName)}
           subtitle={`${dayName}, ${dateStr} | You have ${medsTotal} medications and ${routinesTotal} routines today`}
           avatar={initials}
           showSOS={true}
@@ -144,7 +147,9 @@ export default function Dashboard() {
                 <div className="text-[28px] font-[800] text-[#1a3c34] leading-none">
                   {weeklyScore}<span className="text-base text-[#94a3b8]">%</span>
                 </div>
-                <div className="text-xs text-[#94a3b8] mt-1">Great progress!</div>
+                <div className="text-xs text-[#94a3b8] mt-1">
+                  {weeklyScore >= 80 ? "Great progress!" : weeklyScore >= 50 ? "Keep going!" : weeklyScore > 0 ? "Let's improve this" : "No doses logged yet"}
+                </div>
               </div>
 
               {/* Streak */}
@@ -158,7 +163,7 @@ export default function Dashboard() {
                 <div className="text-[28px] font-[800] text-[#1a3c34] leading-none">
                   {streak}<span className="text-base text-[#94a3b8]"> days</span>
                 </div>
-                <div className="text-xs text-[#94a3b8] mt-1">Keep it up!</div>
+                <div className="text-xs text-[#94a3b8] mt-1">{streak > 0 ? "Keep it up!" : "Start your streak today"}</div>
               </div>
             </div>
 
@@ -168,7 +173,7 @@ export default function Dashboard() {
               <div className="bg-white rounded-2xl p-6 border border-[#e2e8f0] reveal">
                 <div className="flex justify-between items-center mb-5">
                   <div className="text-base font-bold text-[#1a3c34]">Upcoming Medications</div>
-                  <a href="/patient/medications" className="text-[13px] font-semibold text-[#0d9488]">View all</a>
+                  <Link href="/patient/medications" className="text-[13px] font-semibold text-[#0d9488] hover:underline">View all</Link>
                 </div>
 
                 {medList.length === 0 ? (
@@ -202,7 +207,7 @@ export default function Dashboard() {
               <div className="bg-white rounded-2xl p-6 border border-[#e2e8f0] reveal">
                 <div className="flex justify-between items-center mb-5">
                   <div className="text-base font-bold text-[#1a3c34]">Today&apos;s Routine</div>
-                  <a href="/patient/routines" className="text-[13px] font-semibold text-[#0d9488]">View all</a>
+                  <Link href="/patient/routines" className="text-[13px] font-semibold text-[#0d9488] hover:underline">View all</Link>
                 </div>
 
                 {routineList.length === 0 ? (
@@ -255,7 +260,7 @@ export default function Dashboard() {
               <div className="col-span-2 bg-white rounded-2xl p-6 border border-[#e2e8f0] reveal">
                 <div className="flex justify-between items-center mb-4">
                   <div className="text-base font-bold text-[#1a3c34]">My Caregiver</div>
-                  <a href="#" className="text-[13px] font-semibold text-[#0d9488]">View details</a>
+                  <button onClick={() => caregiver && setShowCaregiver(true)} disabled={!caregiver} className="text-[13px] font-semibold text-[#0d9488] hover:underline disabled:opacity-50 disabled:cursor-not-allowed bg-transparent">View details</button>
                 </div>
                 <div className="flex items-center gap-[18px]">
                   {/* Caregiver Avatar */}
@@ -273,20 +278,20 @@ export default function Dashboard() {
                       {caregiver?.phone || "--"}
                     </div>
                   </div>
-                  {/* Caregiver Action Buttons */}
+                  {/* Caregiver Action Buttons — real device dialer / SMS */}
                   <div className="flex gap-2.5 flex-shrink-0">
-                    <button className="flex items-center gap-1.5 px-[18px] py-2.5 rounded-[10px] text-[13px] font-semibold bg-[#0d9488] text-white hover:bg-[#0f766e] transition-colors">
+                    <a href={caregiver?.phone ? `tel:${caregiver.phone.replace(/\s/g, "")}` : undefined} aria-disabled={!caregiver?.phone} className={`flex items-center gap-1.5 px-[18px] py-2.5 rounded-[10px] text-[13px] font-semibold bg-[#0d9488] text-white hover:bg-[#0f766e] transition-colors ${!caregiver?.phone ? "opacity-50 pointer-events-none" : ""}`}>
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
                       </svg>
                       Call
-                    </button>
-                    <button className="flex items-center gap-1.5 px-[18px] py-2.5 rounded-[10px] text-[13px] font-semibold bg-white text-[#1a3c34] border-[1.5px] border-[#e2e8f0] hover:border-[#0d9488] transition-colors">
+                    </a>
+                    <a href={caregiver?.phone ? `sms:${caregiver.phone.replace(/\s/g, "")}` : undefined} aria-disabled={!caregiver?.phone} className={`flex items-center gap-1.5 px-[18px] py-2.5 rounded-[10px] text-[13px] font-semibold bg-white text-[#1a3c34] border-[1.5px] border-[#e2e8f0] hover:border-[#0d9488] transition-colors ${!caregiver?.phone ? "opacity-50 pointer-events-none" : ""}`}>
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                       </svg>
                       Message
-                    </button>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -295,6 +300,32 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* Caregiver details modal */}
+      {showCaregiver && caregiver && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowCaregiver(false)}>
+          <div className="bg-white rounded-2xl w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-start justify-between mb-4">
+              <h3 className="text-lg font-bold text-[#1a3c34]">My Caregiver</h3>
+              <button onClick={() => setShowCaregiver(false)} className="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
+            </div>
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-16 h-16 rounded-full flex items-center justify-center text-white text-xl font-extrabold" style={{ background: "linear-gradient(135deg, #0d9488, #14b8a6)" }}>{caregiverInitials}</div>
+              <div>
+                <div className="text-base font-bold text-[#1a3c34]">{caregiver?.name}</div>
+                <div className="text-sm text-slate-500">Primary Caregiver</div>
+              </div>
+            </div>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between border-b border-slate-100 pb-2"><span className="text-slate-500">Phone</span><span className="font-medium text-slate-900">{caregiver?.phone || "—"}</span></div>
+            </div>
+            <div className="flex gap-2.5 mt-5">
+              <a href={caregiver?.phone ? `tel:${caregiver.phone.replace(/\s/g, "")}` : undefined} className={`flex-1 text-center px-4 py-2.5 rounded-[10px] text-[13px] font-semibold bg-[#0d9488] text-white hover:bg-[#0f766e] ${!caregiver?.phone ? "opacity-50 pointer-events-none" : ""}`}>Call</a>
+              <a href={caregiver?.phone ? `sms:${caregiver.phone.replace(/\s/g, "")}` : undefined} className={`flex-1 text-center px-4 py-2.5 rounded-[10px] text-[13px] font-semibold bg-white text-[#1a3c34] border-[1.5px] border-[#e2e8f0] hover:border-[#0d9488] ${!caregiver?.phone ? "opacity-50 pointer-events-none" : ""}`}>Message</a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
     </ProtectedRoute>
   );
