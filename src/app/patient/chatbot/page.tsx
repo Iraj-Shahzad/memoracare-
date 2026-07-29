@@ -6,7 +6,7 @@ import PatientSidebar from "@/components/shared/PatientSidebar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPost } from "@/lib/api";
-import { getLang, setLang as persistLang, speak, listenOnce, speechRecognitionSupported, primeVoices, type Lang } from "@/lib/speech";
+import { getLang, setLang as persistLang, speak, stopSpeaking, listenOnce, speechRecognitionSupported, primeVoices, type Lang } from "@/lib/speech";
 
 interface ChatMessage {
   id: string;
@@ -46,7 +46,9 @@ export default function ChatbotPage() {
   const [lang, setLangState] = useState<Lang>("en");
   const [voiceReply, setVoiceReply] = useState(false);
   const [listening, setListening] = useState(false);
+  const [recordSecs, setRecordSecs] = useState(0);
   const [micSupported, setMicSupported] = useState(true);
+  const [historyEntries, setHistoryEntries] = useState<any[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Load saved language + warm up speech voices (client only).
@@ -71,6 +73,7 @@ export default function ChatbotPage() {
         setLoadingHistory(true);
         const res = await apiGet(`/chat/patient/${patientId}/history`).catch(() => null);
         const history = res?.history;
+        if (Array.isArray(history)) setHistoryEntries(history);
         if (Array.isArray(history) && history.length > 0) {
           const fmt = (d?: string) =>
             d ? new Date(d).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "";
@@ -109,18 +112,54 @@ export default function ChatbotPage() {
     fetchHistory();
   }, [patientId]);
 
+  const greetingMessage = (): ChatMessage => ({
+    id: "1",
+    type: "bot",
+    content:
+      lang === "ur"
+        ? `السلام علیکم، ${userName}! میں آپ کا میموری کیئر اسسٹنٹ ہوں۔ میں آپ کی کیسے مدد کر سکتا ہوں؟`
+        : `Assalam o Alaikum, ${userName}! I'm your MemoryCare assistant. How can I help you today?`,
+    timestamp: new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+  });
+
+  // Trash: clear the current conversation view (asks first).
   const handleClearChat = () => {
-    setMessages([
-      {
-        id: "1",
-        type: "bot",
-        content:
-          lang === "ur"
-            ? `السلام علیکم، ${userName}! میں آپ کا میموری کیئر اسسٹنٹ ہوں۔ میں آپ کی کیسے مدد کر سکتا ہوں؟`
-            : `Assalam o Alaikum, ${userName}! I'm your MemoryCare assistant. How can I help you today?`,
-        timestamp: new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
-      },
-    ]);
+    if (!window.confirm("Clear this conversation from the screen? Your saved history stays in the sidebar.")) return;
+    stopSpeaking();
+    setMessages([greetingMessage()]);
+    setSelectedChat("");
+  };
+
+  // "+" New chat: start a fresh conversation view.
+  const handleNewChat = () => {
+    stopSpeaking();
+    setMessages([greetingMessage()]);
+    setSelectedChat("new");
+    setInputValue("");
+  };
+
+  // Click a past conversation → load that exchange into the main view.
+  const handleSelectConversation = (convId: string) => {
+    setSelectedChat(convId);
+    const entry = historyEntries.find((e: any) => (e._id || "") === convId);
+    if (!entry) return;
+    const fmt = (d?: string) => (d ? new Date(d).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "");
+    const loaded: ChatMessage[] = [];
+    if (entry.query) loaded.push({ id: `${convId}-u`, type: "user", content: entry.query, timestamp: fmt(entry.createdAt) });
+    if (entry.response) loaded.push({ id: `${convId}-b`, type: "bot", content: entry.response, timestamp: fmt(entry.createdAt) });
+    if (loaded.length) setMessages(loaded);
+  };
+
+  // Toggle read-aloud; when turning on, immediately read the latest bot reply.
+  const toggleVoiceReply = () => {
+    const next = !voiceReply;
+    setVoiceReply(next);
+    if (next) {
+      const lastBot = [...messages].reverse().find((m) => m.type === "bot" && typeof m.content === "string");
+      if (lastBot) speak(lastBot.content as string, lang);
+    } else {
+      stopSpeaking();
+    }
   };
 
   const scrollToBottom = () => {
@@ -177,33 +216,24 @@ export default function ChatbotPage() {
 
   const handleSendMessage = () => sendText(inputValue);
 
-  // Voice input: listen in the chosen language, then send the transcript.
+  // Voice input: show a live recording timer, then drop the transcript into the
+  // input box so the user can review it and press Send (instead of auto-sending).
   const handleMic = async () => {
     if (!micSupported || listening || sending) return;
     setListening(true);
+    setRecordSecs(0);
+    const timer = setInterval(() => setRecordSecs((s) => s + 1), 1000);
     try {
       const transcript = await listenOnce(lang);
-      if (transcript) await sendText(transcript);
+      if (transcript) setInputValue((prev) => (prev ? `${prev} ${transcript}` : transcript));
     } catch (err) {
       console.error("Mic error:", err);
     } finally {
+      clearInterval(timer);
       setListening(false);
+      setRecordSecs(0);
     }
   };
-
-  const medList = [
-    { name: "Aricept 10mg", time: "8:00 AM", status: "Taken", done: true },
-    { name: "Namenda 5mg", time: "9:00 AM", status: "Taken", done: true },
-    { name: "Vitamin E 400 IU", time: "8:00 AM", status: "Taken", done: true },
-    { name: "Aricept 10mg", time: "2:00 PM", status: "Upcoming", done: false },
-    {
-      name: "Galantamine 8mg",
-      time: "6:00 PM",
-      status: "Upcoming",
-      done: false,
-    },
-    { name: "Melatonin 3mg", time: "9:30 PM", status: "Upcoming", done: false },
-  ];
 
   const renderBotAvatar = () => (
     <div
@@ -232,68 +262,7 @@ export default function ChatbotPage() {
     </div>
   );
 
-  const renderMessageContent = (message: ChatMessage) => {
-    if (message.content === "MED_LIST") {
-      return (
-        <div>
-          Here are your medications for today, {userName}:
-          <div style={{ marginTop: 10 }}>
-            {medList.map((med, idx) => (
-              <div
-                key={idx}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 8,
-                  padding: "8px 0",
-                  borderBottom:
-                    idx < medList.length - 1 ? "1px solid #f1f5f9" : "none",
-                  fontSize: 13,
-                }}
-              >
-                {med.done ? (
-                  <svg
-                    viewBox="0 0 24 24"
-                    style={{
-                      width: 16,
-                      height: 16,
-                      flexShrink: 0,
-                      stroke: "#16a34a",
-                      fill: "none",
-                      strokeWidth: 2,
-                    }}
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                ) : (
-                  <svg
-                    viewBox="0 0 24 24"
-                    style={{
-                      width: 16,
-                      height: 16,
-                      flexShrink: 0,
-                      stroke: "#d97706",
-                      fill: "none",
-                      strokeWidth: 2,
-                    }}
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
-                  </svg>
-                )}
-                <span>
-                  <strong>{med.name}</strong> - {med.time} ({med.status})
-                </span>
-              </div>
-            ))}
-          </div>
-          You&apos;ve taken 3 out of 6 doses so far. Your next medication is
-          Aricept 10mg at 2:00 PM.
-        </div>
-      );
-    }
-    return <>{message.content}</>;
-  };
+  const renderMessageContent = (message: ChatMessage) => <>{message.content}</>;
 
   return (
     <ProtectedRoute allowedRoles={["patient"]}>
@@ -331,6 +300,8 @@ export default function ChatbotPage() {
                 Chat History
               </h3>
               <button
+                onClick={handleNewChat}
+                title="New chat"
                 style={{
                   width: 36,
                   height: 36,
@@ -387,10 +358,19 @@ export default function ChatbotPage() {
 
             {/* History List */}
             <div className="flex-1 overflow-y-auto" style={{ padding: 8 }}>
-              {conversations.map((conv) => (
+              {conversations.filter((c) =>
+                (c.title + " " + c.preview).toLowerCase().includes(searchValue.toLowerCase())
+              ).length === 0 && (
+                <p style={{ fontSize: 12, color: "#94a3b8", padding: "12px 16px" }}>
+                  {searchValue ? "No conversations match your search." : "No past conversations yet."}
+                </p>
+              )}
+              {conversations
+                .filter((c) => (c.title + " " + c.preview).toLowerCase().includes(searchValue.toLowerCase()))
+                .map((conv) => (
                 <div
                   key={conv.id}
-                  onClick={() => setSelectedChat(conv.id)}
+                  onClick={() => handleSelectConversation(conv.id)}
                   style={{
                     padding: "14px 16px",
                     borderRadius: 10,
@@ -528,8 +508,8 @@ export default function ChatbotPage() {
 
                 {/* Speak replies toggle */}
                 <button
-                  title={voiceReply ? "Voice replies on" : "Voice replies off"}
-                  onClick={() => setVoiceReply((v) => !v)}
+                  title={voiceReply ? "Voice replies on — click to read last reply / turn off" : "Voice replies off"}
+                  onClick={toggleVoiceReply}
                   style={{ width: 38, height: 38, borderRadius: 8, border: "1px solid #e2e8f0", background: voiceReply ? "#0d9488" : "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
                 >
                   <svg viewBox="0 0 24 24" style={{ width: 18, height: 18, stroke: voiceReply ? "#fff" : "#64748b", fill: "none", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" }}>
@@ -675,6 +655,12 @@ export default function ChatbotPage() {
                 borderTop: "1px solid #e2e8f0",
               }}
             >
+              {listening && (
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, color: "#dc2626", fontSize: 13, fontWeight: 600 }}>
+                  <span className="animate-pulse" style={{ width: 10, height: 10, background: "#ef4444", borderRadius: "50%", display: "inline-block" }} />
+                  Recording… {recordSecs}s &nbsp;<span style={{ color: "#94a3b8", fontWeight: 400 }}>— speak now, it&apos;ll fill the box to review &amp; send</span>
+                </div>
+              )}
               <div
                 style={{
                   display: "flex",
