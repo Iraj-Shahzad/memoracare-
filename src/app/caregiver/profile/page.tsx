@@ -3,6 +3,7 @@
 import Topbar from "@/components/shared/Topbar";
 import CaregiverSidebar from "@/components/shared/CaregiverSidebar";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import Logo from "@/components/icons/Logo";
 import { timeGreeting } from "@/lib/greeting";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPut } from "@/lib/api";
@@ -172,9 +173,7 @@ export default function ProfilePage() {
             {/* Profile Header */}
             <div className="bg-white rounded-lg border border-slate-200 p-8 mb-8">
               <div className="flex flex-wrap items-center gap-6">
-                <div className="w-24 h-24 rounded-2xl bg-[#0d9488] flex items-center justify-center text-white font-bold text-3xl shadow-md shrink-0">
-                  {userInitials}
-                </div>
+                <Logo className="w-24 h-24 shrink-0 shadow-md border border-slate-100" />
                 <div className="min-w-0">
                   <h1 className="text-3xl font-bold text-[#1a3c34] mb-1">{profileInfo.name}</h1>
                   <p className="text-lg text-slate-600">{profileInfo.role}</p>
