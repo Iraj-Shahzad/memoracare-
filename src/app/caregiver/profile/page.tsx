@@ -171,14 +171,19 @@ export default function ProfilePage() {
             <>
             {/* Profile Header */}
             <div className="bg-white rounded-lg border border-slate-200 p-8 mb-8">
-              <div className="flex items-center gap-6">
-                <div className="w-24 h-24 bg-gradient-to-br from-teal-400 to-[#0d9488] rounded-2xl flex items-center justify-center text-white font-bold text-3xl">
+              <div className="flex flex-wrap items-center gap-6">
+                <div className="w-24 h-24 rounded-2xl bg-[#0d9488] flex items-center justify-center text-white font-bold text-3xl shadow-md shrink-0">
                   {userInitials}
                 </div>
-                <div>
+                <div className="min-w-0">
                   <h1 className="text-3xl font-bold text-[#1a3c34] mb-1">{profileInfo.name}</h1>
                   <p className="text-lg text-slate-600">{profileInfo.role}</p>
-                  {profileInfo.specialization && <p className="text-sm text-slate-500 mt-1">{profileInfo.specialization}</p>}
+                  {profileInfo.specialization && <p className="text-sm text-slate-500 mt-0.5">{profileInfo.specialization}</p>}
+                  {profileInfo.email && <p className="text-sm text-slate-400 mt-0.5 break-all">{profileInfo.email}</p>}
+                </div>
+                <div className="ml-auto text-center bg-[#f0fdf4] border border-[#d1fae5] rounded-xl px-7 py-4">
+                  <div className="text-3xl font-extrabold text-[#0d9488]">{assignedPatients.length}</div>
+                  <div className="text-xs text-slate-500 mt-1">Assigned Patients</div>
                 </div>
               </div>
             </div>
