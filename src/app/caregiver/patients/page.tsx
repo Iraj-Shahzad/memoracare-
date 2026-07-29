@@ -99,6 +99,8 @@ export default function PatientsPage() {
   });
   // Real enrolled caregivers/doctors for the Doctor dropdown (no free-text names).
   const [team, setTeam] = useState<{ _id: string; name: string; specialization: string }[]>([]);
+  // When the user picks "Other" in the city dropdown, they type a custom city.
+  const [cityIsOther, setCityIsOther] = useState(false);
 
   // View Details modal
   const [overview, setOverview] = useState<Overview | null>(null);
@@ -147,6 +149,7 @@ export default function PatientsPage() {
     if (form.password.length < 6) { setFormError("Password must be at least 6 characters."); return; }
     const normalizedPhone = buildPhone(form.countryCode, form.phone);
     if (!normalizedPhone) { setFormError("Enter a valid phone number (7–14 digits)."); return; }
+    if (cityIsOther && !form.city.trim()) { setFormError("Please enter the city name."); return; }
     if (form.dateOfBirth && new Date(form.dateOfBirth) > new Date()) { setFormError("Date of birth cannot be in the future."); return; }
     try {
       setSaving(true);
@@ -163,6 +166,7 @@ export default function PatientsPage() {
       });
       setShowAddModal(false);
       setForm({ name: "", email: "", password: "", diagnosis: DEFAULT_DIAGNOSIS, dateOfBirth: "", gender: "Male", countryCode: "+92", phone: "", city: "Islamabad", doctor: "" });
+      setCityIsOther(false);
       await loadPatients(true);
     } catch (err: unknown) {
       setFormError(err instanceof Error ? err.message : "Failed to create patient");
@@ -360,9 +364,25 @@ export default function PatientsPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">City</label>
-                  <select value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]">
+                  <select
+                    value={cityIsOther ? "Other" : form.city}
+                    onChange={(e) => {
+                      if (e.target.value === "Other") { setCityIsOther(true); setForm({ ...form, city: "" }); }
+                      else { setCityIsOther(false); setForm({ ...form, city: e.target.value }); }
+                    }}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                  >
                     {PK_CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                    <option value="Other">Other…</option>
                   </select>
+                  {cityIsOther && (
+                    <input
+                      value={form.city}
+                      onChange={(e) => setForm({ ...form, city: e.target.value })}
+                      placeholder="Enter city name"
+                      className="mt-2 w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                    />
+                  )}
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -375,7 +395,6 @@ export default function PatientsPage() {
                   <select value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]">
                     <option>Male</option>
                     <option>Female</option>
-                    <option>Other</option>
                   </select>
                 </div>
               </div>
