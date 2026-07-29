@@ -51,10 +51,14 @@ export default function Topbar({
   // be stale (e.g. a server-rendered value) or wrong for the viewer's timezone.
   const displayGreeting = useMemo(() => {
     if (!greeting) return greeting;
-    const m = greeting.match(/^Good (?:Morning|Afternoon|Evening)\s*(?:,\s*(.*))?$/i);
+    const m = greeting.match(/^Good (?:Morning|Afternoon|Evening|Night)\s*(?:,\s*(.*))?$/i);
     if (!m) return greeting;
     const h = new Date().getHours();
-    const word = h < 12 ? "Good Morning" : h < 17 ? "Good Afternoon" : "Good Evening";
+    const word =
+      h < 12 ? "Good Morning"
+      : h < 17 ? "Good Afternoon"
+      : h < 21 ? "Good Evening"
+      : "Good Night";
     return m[1] ? `${word}, ${m[1]}` : word;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [greeting, clockTick]);
