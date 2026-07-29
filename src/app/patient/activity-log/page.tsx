@@ -167,42 +167,77 @@ export default function ActivityLog() {
   const userName = user?.name || "User";
   const initials = userName.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
 
-  const [activityData, setActivityData] = useState<ActivityEntry[]>(defaultActivityData);
+  const [activityData, setActivityData] = useState<ActivityEntry[]>([]);
   const [selectedType, setSelectedType] = useState<string>("all");
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({ total: 156, medsTaken: 89, routinesCompleted: 42, faceRecognitions: 25 });
+  const [stats, setStats] = useState({ total: 0, medsTaken: 0, routinesCompleted: 0, faceRecognitions: 0 });
 
   const itemsPerPage = 10;
 
   useEffect(() => {
     if (!patientId) return;
+    const fmtTime = (d?: string) => (d ? new Date(d).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "");
+
     const fetchActivityLog = async () => {
       try {
         setLoading(true);
-        const res = await apiGet(`/patients/${patientId}/activity-log`).catch(() => null);
-        if (res?.activities && Array.isArray(res.activities) && res.activities.length > 0) {
-          const mapped = res.activities.map((a: any, idx: number) => ({
-            id: a._id || a.id || String(idx + 1),
-            date: a.date ? a.date.split("T")[0] : new Date().toISOString().split("T")[0],
-            time: a.time || new Date(a.date || a.createdAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
-            type: a.type || "medication_taken",
-            title: a.title || a.action || "Activity",
-            description: a.description || a.details || "",
-            status: a.status || "completed",
-          }));
-          setActivityData(mapped);
-          // Update stats from data
-          setStats({
-            total: mapped.length,
-            medsTaken: mapped.filter((a: any) => a.type === "medication_taken").length,
-            routinesCompleted: mapped.filter((a: any) => a.type === "routine_completed").length,
-            faceRecognitions: mapped.filter((a: any) => a.type === "face_recognition").length,
+        // Med/routine activity + face-recognition logs, merged into one timeline.
+        const [actRes, faceRes] = await Promise.all([
+          apiGet(`/patients/${patientId}/activity-log`).catch(() => null),
+          apiGet(`/face-recognition/patient/${patientId}/logs`).catch(() => null),
+        ]);
+
+        const entries: ActivityEntry[] = [];
+
+        // Backend activity items carry type 'medication'|'routine' + raw status.
+        (Array.isArray(actRes?.activities) ? actRes.activities : []).forEach((a: any, idx: number) => {
+          const raw = a.status || "";
+          let type: ActivityEntry["type"]; let title: string; let status: ActivityEntry["status"];
+          if (a.type === "medication") {
+            const taken = raw === "taken";
+            type = taken ? "medication_taken" : "medication_missed";
+            title = taken ? "Medication Taken" : "Medication Missed";
+            status = taken ? "completed" : "missed";
+          } else {
+            const done = raw === "completed";
+            type = done ? "routine_completed" : "routine_missed";
+            title = done ? "Routine Completed" : "Routine Missed";
+            status = done ? "completed" : "missed";
+          }
+          entries.push({
+            id: a._id || a.id || `a-${idx}`,
+            date: a.date ? String(a.date).split("T")[0] : "",
+            time: fmtTime(a.date),
+            type, title, description: a.description || "", status,
           });
-        }
+        });
+
+        // Face-recognition logs.
+        (Array.isArray(faceRes?.logs) ? faceRes.logs : []).forEach((l: any, idx: number) => {
+          const recognized = l.result !== "unknown";
+          entries.push({
+            id: l._id || `f-${idx}`,
+            date: l.createdAt ? String(l.createdAt).split("T")[0] : "",
+            time: fmtTime(l.createdAt),
+            type: "face_recognition",
+            title: "Face Recognition",
+            description: recognized ? `Recognized ${l.recognizedPerson?.name || "a person"}` : "Unknown person",
+            status: recognized ? "completed" : "warning",
+          });
+        });
+
+        entries.sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time));
+        setActivityData(entries);
+        setStats({
+          total: entries.length,
+          medsTaken: entries.filter((a) => a.type === "medication_taken").length,
+          routinesCompleted: entries.filter((a) => a.type === "routine_completed").length,
+          faceRecognitions: entries.filter((a) => a.type === "face_recognition").length,
+        });
       } catch (err) {
         console.error("Activity log fetch error:", err);
       } finally {
