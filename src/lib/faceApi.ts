@@ -65,7 +65,7 @@ export interface MatchResult {
 export function findBestMatch(
   probe: Float32Array,
   known: KnownFaceLite[],
-  threshold = 0.55
+  threshold = 0.6
 ): MatchResult | null {
   let best: MatchResult | null = null;
   for (const k of known) {

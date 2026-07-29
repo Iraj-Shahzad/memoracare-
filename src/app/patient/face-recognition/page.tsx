@@ -6,7 +6,7 @@ import PatientSidebar from "@/components/shared/PatientSidebar";
 import Topbar from "@/components/shared/Topbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
-import { apiGet, apiPost, api } from "@/lib/api";
+import { apiGet, apiPost, apiDelete, api } from "@/lib/api";
 import { loadFaceApi, getDescriptor, findBestMatch, type KnownFaceLite } from "@/lib/faceApi";
 import { speak, getLang } from "@/lib/speech";
 
@@ -60,13 +60,27 @@ export default function FaceRecognitionPage() {
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
   const knownRef = useRef<KnownFaceLite[]>([]);
+  const streamRef = useRef<MediaStream | null>(null);
 
   const [loading, setLoading] = useState(true);
   const [modelStatus, setModelStatus] = useState<"loading" | "ready" | "error">("loading");
   const [cameraActive, setCameraActive] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [result, setResult] = useState<RecognitionResult | null>(null);
+
+  // UI/UX state
+  const [isMobile, setIsMobile] = useState(false);
+  const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
+  const [showAllLogs, setShowAllLogs] = useState(false);
+  const [showManageAll, setShowManageAll] = useState(false);
+  const [manageFace, setManageFace] = useState<{ id: string; name: string; relation: string; scans: number } | null>(null);
+  const [showAdd, setShowAdd] = useState(false);
+  const [addForm, setAddForm] = useState({ name: "", relationship: "" });
+  const [addSaving, setAddSaving] = useState(false);
+  // Descriptor captured from the camera (enroll-on-unknown) or a picked photo.
+  const pendingDescriptorRef = useRef<number[] | null>(null);
 
   const [recentRecognitions, setRecentRecognitions] = useState<
     { name: string; initials: string; relation: string; time: string; confidence: number; confidenceLevel: "high" | "medium"; gradient: string }[]
@@ -155,6 +169,7 @@ export default function FaceRecognitionPage() {
 
       try {
         stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+        streamRef.current = stream;
         if (cancelled) {
           stream.getTracks().forEach((t) => t.stop());
           return;
@@ -177,6 +192,24 @@ export default function FaceRecognitionPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [patientId]);
 
+  // Switch-camera only makes sense on phones (front/back). Hidden on desktop.
+  useEffect(() => {
+    setIsMobile(typeof navigator !== "undefined" && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent));
+  }, []);
+
+  const switchCamera = async () => {
+    const next = facingMode === "user" ? "environment" : "user";
+    setFacingMode(next);
+    try {
+      streamRef.current?.getTracks().forEach((t) => t.stop());
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: next } });
+      streamRef.current = stream;
+      if (videoRef.current) { videoRef.current.srcObject = stream; await videoRef.current.play().catch(() => {}); }
+    } catch (err) {
+      console.error("Switch camera error:", err);
+    }
+  };
+
   // Capture the current frame, compute its descriptor, and match it.
   const handleCapture = async () => {
     if (!videoRef.current || modelStatus !== "ready" || scanning) return;
@@ -190,6 +223,8 @@ export default function FaceRecognitionPage() {
         return;
       }
 
+      // Keep this descriptor so an unknown face can be enrolled ("Add this person").
+      pendingDescriptorRef.current = Array.from(probe);
       const match = findBestMatch(probe, knownRef.current);
       if (match) {
         setResult({ name: match.name, relationship: match.relationship || "Recognized", initials: toInitials(match.name), confidence: match.confidence, unknown: false });
@@ -216,48 +251,95 @@ export default function FaceRecognitionPage() {
     }
   };
 
-  // Enroll a new face from a photo file.
-  const handleAddFace = () => {
-    if (modelStatus !== "ready") {
-      window.alert("The face model is still loading. Please wait a moment and try again.");
-      return;
-    }
-    fileInputRef.current?.click();
+  const computeDescriptorFromFile = async (file: File): Promise<Float32Array | null> => {
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(file);
+    await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
+    const d = await getDescriptor(img);
+    URL.revokeObjectURL(img.src);
+    return d;
   };
 
+  // Add New Face → pick a photo, then a small name/relationship form (no prompts).
+  const handleAddFace = () => {
+    if (modelStatus !== "ready") { window.alert("The face model is still loading. Please wait a moment and try again."); return; }
+    pendingDescriptorRef.current = null;
+    fileInputRef.current?.click();
+  };
   const handleFileSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    e.target.value = ""; // allow re-selecting the same file later
+    e.target.value = "";
     if (!file) return;
-
-    const name = window.prompt("Who is this person? (full name)")?.trim();
-    if (!name) return;
-    const relationship = window.prompt("Relationship? (e.g. Daughter, Doctor)")?.trim() || "";
-
     try {
-      const img = document.createElement("img");
-      img.src = URL.createObjectURL(file);
-      await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
-      const descriptor = await getDescriptor(img);
-      URL.revokeObjectURL(img.src);
+      const d = await computeDescriptorFromFile(file);
+      if (!d) { window.alert("Couldn't find a clear face in that photo. Try a well-lit, front-facing one."); return; }
+      pendingDescriptorRef.current = Array.from(d);
+      setAddForm({ name: "", relationship: "" });
+      setShowAdd(true);
+    } catch { window.alert("Could not read that photo."); }
+  };
 
-      if (!descriptor) {
-        window.alert("Couldn't find a clear face in that photo. Try another one with a well-lit, front-facing face.");
-        return;
-      }
+  // "Add this person" on an unknown capture → enroll using the captured descriptor.
+  const enrollFromCapture = () => {
+    if (!pendingDescriptorRef.current) { window.alert("Please capture a face first."); return; }
+    setAddForm({ name: "", relationship: "" });
+    setShowAdd(true);
+  };
 
+  const submitAddFace = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!pendingDescriptorRef.current) { window.alert("No face captured. Please try again."); return; }
+    if (addForm.name.trim().length < 2) { window.alert("Please enter the person's name."); return; }
+    try {
+      setAddSaving(true);
       await apiPost("/face-recognition/known-faces", {
-        patientId,
-        name,
-        relationship,
-        descriptor: Array.from(descriptor),
+        patientId, name: addForm.name.trim(), relationship: addForm.relationship.trim(),
+        descriptor: pendingDescriptorRef.current,
       });
-      window.alert(`${name} was added to known faces.`);
-      fetchKnownFaces();
-    } catch (err) {
-      console.error("Add face error:", err);
-      window.alert("Could not add this face. Please try again.");
-    }
+      setShowAdd(false);
+      pendingDescriptorRef.current = null;
+      setResult(null);
+      await fetchKnownFaces();
+    } catch (err) { window.alert(err instanceof Error ? err.message : "Could not add this face."); }
+    finally { setAddSaving(false); }
+  };
+
+  // Gallery → recognise a face from a chosen photo.
+  const handleGallery = () => {
+    if (modelStatus !== "ready") { window.alert("The face model is still loading. Please wait a moment and try again."); return; }
+    galleryInputRef.current?.click();
+  };
+  const handleGallerySelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setScanning(true); setResult(null);
+    try {
+      const d = await computeDescriptorFromFile(file);
+      if (!d) { setResult({ name: "No face detected", relationship: "Try a clearer photo", initials: "!", confidence: 0, unknown: true }); return; }
+      pendingDescriptorRef.current = Array.from(d);
+      const match = findBestMatch(d, knownRef.current);
+      if (match) {
+        setResult({ name: match.name, relationship: match.relationship || "Recognized", initials: toInitials(match.name), confidence: match.confidence, unknown: false });
+        announceFace(match.name, match.relationship, false);
+        await apiPost("/face-recognition/recognize", { patientId, result: "recognized", name: match.name, relationship: match.relationship, confidence: match.confidence, knownFaceId: match.knownFaceId }).catch(() => {});
+      } else {
+        setResult({ name: "Unknown Person", relationship: "Not in your known faces", initials: "?", confidence: 0, unknown: true });
+        announceFace("", "", true);
+        await apiPost("/face-recognition/recognize", { patientId, result: "unknown", confidence: 0 }).catch(() => {});
+      }
+      fetchLogs();
+    } catch { setResult(null); }
+    finally { setScanning(false); }
+  };
+
+  const handleDeleteFace = async (id: string) => {
+    if (!window.confirm("Remove this person from known faces?")) return;
+    try {
+      await apiDelete(`/face-recognition/known-faces/${id}`);
+      setManageFace(null);
+      await fetchKnownFaces();
+    } catch (err) { window.alert(err instanceof Error ? err.message : "Could not delete this face."); }
   };
 
   if (loading) {
@@ -339,6 +421,14 @@ export default function FaceRecognitionPage() {
                 type="file"
                 accept="image/png,image/jpeg"
                 onChange={handleFileSelected}
+                style={{ display: "none" }}
+              />
+              {/* Hidden file input for recognising a face from a gallery photo */}
+              <input
+                ref={galleryInputRef}
+                type="file"
+                accept="image/png,image/jpeg"
+                onChange={handleGallerySelected}
                 style={{ display: "none" }}
               />
 
@@ -661,8 +751,10 @@ export default function FaceRecognitionPage() {
                   gap: 16,
                 }}
               >
+                {isMobile && (
                 <button
                   title="Switch Camera"
+                  onClick={switchCamera}
                   style={{
                     width: 48,
                     height: 48,
@@ -693,6 +785,7 @@ export default function FaceRecognitionPage() {
                     <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" />
                   </svg>
                 </button>
+                )}
                 <button
                   onClick={handleCapture}
                   title="Capture"
@@ -718,7 +811,8 @@ export default function FaceRecognitionPage() {
                   />
                 </button>
                 <button
-                  title="Gallery"
+                  title="Recognise from a photo"
+                  onClick={handleGallery}
                   style={{
                     width: 48,
                     height: 48,
@@ -865,6 +959,14 @@ export default function FaceRecognitionPage() {
                         flexShrink: 0,
                       }}
                     >
+                      {result.unknown && (
+                        <button
+                          onClick={enrollFromCapture}
+                          style={{ padding: "10px 20px", borderRadius: 10, fontFamily: "inherit", fontSize: 13, fontWeight: 600, cursor: "pointer", border: "none", background: "#0d9488", color: "#fff" }}
+                        >
+                          Add this person
+                        </button>
+                      )}
                       <button
                         onClick={handleCapture}
                         disabled={scanning}
@@ -921,17 +1023,12 @@ export default function FaceRecognitionPage() {
               >
                 Recent Recognitions
               </h3>
-              <a
-                href="#"
-                style={{
-                  fontSize: 13,
-                  color: "#0d9488",
-                  textDecoration: "none",
-                  fontWeight: 600,
-                }}
+              <button
+                onClick={() => setShowAllLogs(true)}
+                style={{ fontSize: 13, color: "#0d9488", fontWeight: 600, background: "transparent", border: "none", cursor: "pointer" }}
               >
                 View All
-              </a>
+              </button>
             </div>
             <div
               style={{
@@ -1033,17 +1130,13 @@ export default function FaceRecognitionPage() {
               >
                 Known Faces
               </h3>
-              <a
-                href="#"
-                style={{
-                  fontSize: 13,
-                  color: "#0d9488",
-                  textDecoration: "none",
-                  fontWeight: 600,
-                }}
+              <button
+                onClick={() => setShowManageAll(true)}
+                disabled={knownFaces.length === 0}
+                style={{ fontSize: 13, color: "#0d9488", fontWeight: 600, background: "transparent", border: "none", cursor: knownFaces.length ? "pointer" : "not-allowed", opacity: knownFaces.length ? 1 : 0.5 }}
               >
                 Manage
-              </a>
+              </button>
             </div>
             <div
               style={{
@@ -1056,6 +1149,7 @@ export default function FaceRecognitionPage() {
               {knownFaces.map((face, idx) => (
                 <div
                   key={idx}
+                  onClick={() => setManageFace(face)}
                   style={{
                     background: "#fff",
                     borderRadius: 14,
@@ -1164,6 +1258,87 @@ export default function FaceRecognitionPage() {
           </div>
         </div>
       </div>
+
+      {/* Add Face modal (name + relationship for the captured/picked face) */}
+      {showAdd && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 60, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.4)", padding: 16 }} onClick={() => setShowAdd(false)}>
+          <div style={{ background: "#fff", borderRadius: 16, width: "100%", maxWidth: 400, padding: 24 }} onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: "#1a3c34", marginBottom: 16 }}>Add to Known Faces</h3>
+            <form onSubmit={submitAddFace}>
+              <label style={{ fontSize: 13, fontWeight: 600, color: "#334155" }}>Name *</label>
+              <input value={addForm.name} onChange={(e) => setAddForm({ ...addForm, name: e.target.value })} placeholder="Full name" style={{ width: "100%", padding: "10px 12px", border: "1px solid #e2e8f0", borderRadius: 10, marginTop: 4, marginBottom: 12, fontFamily: "inherit", fontSize: 14 }} />
+              <label style={{ fontSize: 13, fontWeight: 600, color: "#334155" }}>Relationship</label>
+              <input value={addForm.relationship} onChange={(e) => setAddForm({ ...addForm, relationship: e.target.value })} placeholder="e.g. Daughter, Doctor" style={{ width: "100%", padding: "10px 12px", border: "1px solid #e2e8f0", borderRadius: 10, marginTop: 4, marginBottom: 16, fontFamily: "inherit", fontSize: 14 }} />
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
+                <button type="button" onClick={() => setShowAdd(false)} style={{ padding: "10px 18px", borderRadius: 10, border: "1px solid #e2e8f0", background: "#fff", color: "#334155", fontWeight: 600, cursor: "pointer" }}>Cancel</button>
+                <button type="submit" disabled={addSaving} style={{ padding: "10px 18px", borderRadius: 10, border: "none", background: "#0d9488", color: "#fff", fontWeight: 600, cursor: "pointer", opacity: addSaving ? 0.6 : 1 }}>{addSaving ? "Saving…" : "Save"}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Known-face detail + delete */}
+      {manageFace && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 60, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.4)", padding: 16 }} onClick={() => setManageFace(null)}>
+          <div style={{ background: "#fff", borderRadius: 16, width: "100%", maxWidth: 360, padding: 24, textAlign: "center" }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ width: 72, height: 72, borderRadius: 16, margin: "0 auto 12px", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, color: "#fff", fontSize: 24, background: "linear-gradient(135deg,#0d9488,#1a3c34)" }}>{toInitials(manageFace.name)}</div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: "#1a3c34" }}>{manageFace.name}</div>
+            <div style={{ fontSize: 13, color: "#64748b", marginTop: 2 }}>{manageFace.relation || "—"}</div>
+            <div style={{ fontSize: 12, color: "#94a3b8", marginTop: 6 }}>{manageFace.scans} recognitions</div>
+            <div style={{ display: "flex", gap: 8, marginTop: 18 }}>
+              <button onClick={() => setManageFace(null)} style={{ flex: 1, padding: "10px", borderRadius: 10, border: "1px solid #e2e8f0", background: "#fff", color: "#334155", fontWeight: 600, cursor: "pointer" }}>Close</button>
+              <button onClick={() => handleDeleteFace(manageFace.id)} style={{ flex: 1, padding: "10px", borderRadius: 10, border: "none", background: "#dc2626", color: "#fff", fontWeight: 600, cursor: "pointer" }}>Remove</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* View All recognitions */}
+      {showAllLogs && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 60, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.4)", padding: 16 }} onClick={() => setShowAllLogs(false)}>
+          <div style={{ background: "#fff", borderRadius: 16, width: "100%", maxWidth: 480, maxHeight: "80vh", overflowY: "auto", padding: 24 }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+              <h3 style={{ fontSize: 18, fontWeight: 700, color: "#1a3c34" }}>All Recognitions</h3>
+              <button onClick={() => setShowAllLogs(false)} style={{ background: "transparent", border: "none", fontSize: 22, color: "#94a3b8", cursor: "pointer", lineHeight: 1 }}>&times;</button>
+            </div>
+            {recentRecognitions.length === 0 ? (
+              <p style={{ fontSize: 14, color: "#64748b" }}>No recognitions yet.</p>
+            ) : recentRecognitions.map((rec, idx) => (
+              <div key={idx} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: "1px solid #f1f5f9" }}>
+                <div style={{ width: 40, height: 40, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, background: rec.gradient }}>{rec.initials}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "#1a3c34" }}>{rec.name}</div>
+                  <div style={{ fontSize: 12, color: "#64748b" }}>{rec.relation} · {rec.time}</div>
+                </div>
+                <span style={{ fontSize: 12, fontWeight: 700, color: rec.confidenceLevel === "high" ? "#16a34a" : "#d97706" }}>{rec.confidence}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Manage all known faces */}
+      {showManageAll && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 60, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.4)", padding: 16 }} onClick={() => setShowManageAll(false)}>
+          <div style={{ background: "#fff", borderRadius: 16, width: "100%", maxWidth: 420, maxHeight: "80vh", overflowY: "auto", padding: 24 }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+              <h3 style={{ fontSize: 18, fontWeight: 700, color: "#1a3c34" }}>Manage Known Faces</h3>
+              <button onClick={() => setShowManageAll(false)} style={{ background: "transparent", border: "none", fontSize: 22, color: "#94a3b8", cursor: "pointer", lineHeight: 1 }}>&times;</button>
+            </div>
+            {knownFaces.map((f) => (
+              <div key={f.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: "1px solid #f1f5f9" }}>
+                <div style={{ width: 40, height: 40, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, background: f.gradient }}>{f.initials}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "#1a3c34" }}>{f.name}</div>
+                  <div style={{ fontSize: 12, color: "#64748b" }}>{f.relation || "—"} · {f.scans} scans</div>
+                </div>
+                <button onClick={() => handleDeleteFace(f.id)} style={{ fontSize: 13, fontWeight: 600, color: "#dc2626", background: "transparent", border: "none", cursor: "pointer" }}>Remove</button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* CSS Animations */}
       <style jsx>{`
