@@ -7,6 +7,7 @@ import Topbar from "@/components/shared/Topbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPost } from "@/lib/api";
+import { speak, getLang } from "@/lib/speech";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
@@ -59,7 +60,7 @@ const mapReport = (r: any): Report => ({
   id: r._id || r.id,
   title: r.title || "Report",
   date: r.createdAt
-    ? new Date(r.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+    ? new Date(r.createdAt).toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })
     : "",
   type: r.type || "summary",
   format: (r.format || "pdf").toLowerCase(),
@@ -87,6 +88,8 @@ export default function ReportsPage() {
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [downloadingId, setDownloadingId] = useState<string>("");
+  const [genError, setGenError] = useState("");
+  const [downloaded, setDownloaded] = useState<Set<string>>(new Set());
 
   const loadReports = async () => {
     if (!patientId) return;
@@ -116,25 +119,37 @@ export default function ReportsPage() {
 
   const handleGenerateReport = async () => {
     if (!patientId) return;
+    setGenError("");
+    // ---- Validation: a report must have a valid time span ----
+    if (!fromDate) { setGenError("Please choose a From date."); return; }
+    if (!toDate) { setGenError("Please choose a To date."); return; }
+    if (new Date(fromDate) > new Date(toDate)) { setGenError("The From date must be before the To date."); return; }
+    if (new Date(toDate) > new Date()) { setGenError("The To date can't be in the future."); return; }
+
+    const type = reportType.toLowerCase().replace(/\s+/g, "_");
+    // Warn before creating a duplicate of the same type.
+    if (reports.some((r) => r.type === type)) {
+      if (!window.confirm(`A ${reportType} report already exists. Generate another one for this period?`)) return;
+    }
+
     try {
       setGenerating(true);
-      await apiPost("/reports/generate", {
-        patientId,
-        type: reportType.toLowerCase().replace(/\s+/g, "_"),
-        format: format.toLowerCase(),
-        from: fromDate || undefined,
-        to: toDate || undefined,
-      });
+      await apiPost("/reports/generate", { patientId, type, format: format.toLowerCase(), from: fromDate, to: toDate });
       await loadReports();
+      setShowGenerateModal(false);
+      setFromDate(""); setToDate("");
     } catch (err) {
-      console.error("Generate report error:", err);
+      setGenError(err instanceof Error ? err.message : "Could not generate the report.");
     } finally {
       setGenerating(false);
-      setShowGenerateModal(false);
     }
   };
 
   const downloadFile = async (id: string, title: string, fmt: "pdf" | "excel") => {
+    const key = id + fmt;
+    if (downloaded.has(key)) {
+      if (!window.confirm(`You already downloaded this ${fmt.toUpperCase()} file. Download it again?`)) return;
+    }
     try {
       setDownloadingId(id + fmt);
       const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -151,6 +166,7 @@ export default function ReportsPage() {
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
+      setDownloaded((prev) => new Set(prev).add(key));
     } catch (err) {
       console.error("Download error:", err);
       window.alert("Could not download the report. Please try again.");
@@ -284,10 +300,26 @@ export default function ReportsPage() {
                   </div>
                 ) : (
                   <>
-                    <h2 className="text-2xl font-bold text-[#1a3c34] mb-1">{selectedReport.title}</h2>
-                    <p className="text-sm text-gray-500 mb-6 capitalize">
-                      {titleCase(selectedReport.type)} · {selectedReport.format.toUpperCase()}
-                    </p>
+                    <div className="flex items-start justify-between gap-3 mb-6">
+                      <div>
+                        <h2 className="text-2xl font-bold text-[#1a3c34] mb-1">{selectedReport.title}</h2>
+                        <p className="text-sm text-gray-500 capitalize">
+                          {titleCase(selectedReport.type)} · {selectedReport.format.toUpperCase()}
+                        </p>
+                      </div>
+                      <button
+                        title="Read this report aloud"
+                        onClick={() => {
+                          const parts = [selectedReport.title];
+                          if (med) parts.push(`Medication compliance ${med.complianceRate} percent, ${med.taken} taken, ${med.missed} missed.`);
+                          if (rtn) parts.push(`Routine completion ${rtn.completionRate} percent, ${rtn.completed} completed, ${rtn.missed} missed.`);
+                          speak(parts.join(" "), getLang());
+                        }}
+                        className="w-10 h-10 rounded-lg border border-gray-200 flex items-center justify-center hover:border-[#0d9488] flex-shrink-0"
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#0d9488" strokeWidth="2" className="w-5 h-5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" /><path d="M15.54 8.46a5 5 0 010 7.07" /><path d="M19.07 4.93a10 10 0 010 14.14" /></svg>
+                      </button>
+                    </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
                       <div className="p-4 bg-[#f0fdf4] rounded-lg">
@@ -375,6 +407,9 @@ export default function ReportsPage() {
               </div>
 
               <div className="space-y-5">
+                {genError && (
+                  <div className="text-[13px] text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{genError}</div>
+                )}
                 <div>
                   <label className="block text-sm font-semibold text-[#1a3c34] mb-2">Report Type</label>
                   <select
