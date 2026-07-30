@@ -7,7 +7,7 @@ import PatientSidebar from "@/components/shared/PatientSidebar";
 import Topbar from "@/components/shared/Topbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
-import { apiGet } from "@/lib/api";
+import { apiGet, apiPost } from "@/lib/api";
 import { timeGreeting } from "@/lib/greeting";
 
 export default function Dashboard() {
@@ -19,6 +19,19 @@ export default function Dashboard() {
   const [dashboardData, setDashboardData] = useState<Record<string, any>| null>(null);
   const [loading, setLoading] = useState(true);
   const [showCaregiver, setShowCaregiver] = useState(false);
+  const [completedRoutines, setCompletedRoutines] = useState<Set<string>>(new Set());
+
+  const markRoutineDone = async (routineId: string) => {
+    if (!routineId || completedRoutines.has(routineId)) return;
+    try {
+      await apiPost(`/routines/${routineId}/log`, { status: "completed" });
+      setCompletedRoutines((prev) => new Set(prev).add(routineId));
+      const dashRes = await apiGet(`/patients/${patientId}/dashboard`).catch(() => null);
+      if (dashRes?.dashboard) setDashboardData(dashRes.dashboard);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Could not mark this routine complete.");
+    }
+  };
 
   const userName = user?.name || "User";
   const initials = userName.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
@@ -213,16 +226,28 @@ export default function Dashboard() {
                 {routineList.length === 0 ? (
                   <div className="text-sm text-[#94a3b8] py-4">No routines scheduled for today.</div>
                 ) : (
-                  routineList.slice(0, 5).map((r) => (
+                  routineList.slice(0, 5).map((r) => {
+                    const done = completedRoutines.has(r._id);
+                    return (
                     <div key={r._id} className="flex items-center gap-3.5 p-3.5 bg-[#f9fafb] rounded-xl mb-2.5 border-l-4 border-[#0d9488]">
-                      <div className="w-6 h-6 rounded-full border-2 border-[#d1d5db] flex-shrink-0" />
+                      <button
+                        onClick={() => markRoutineDone(r._id)}
+                        disabled={done}
+                        title={done ? "Completed" : "Mark as done"}
+                        className={`w-6 h-6 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-colors ${done ? "bg-[#16a34a] border-[#16a34a] cursor-default" : "border-[#d1d5db] bg-white cursor-pointer hover:border-[#0d9488]"}`}
+                      >
+                        {done && (
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5"><polyline points="20 6 9 17 4 12" /></svg>
+                        )}
+                      </button>
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm font-semibold text-[#1a3c34]">{r.activityName}</div>
-                        <div className="text-xs text-[#64748b]">Scheduled</div>
+                        <div className={`text-sm font-semibold text-[#1a3c34] ${done ? "line-through opacity-60" : ""}`}>{r.activityName}</div>
+                        <div className="text-xs text-[#64748b]">{done ? "Completed" : "Scheduled"}</div>
                       </div>
                       <div className="text-[13px] font-semibold text-[#1a3c34] whitespace-nowrap">{r.startTime || ""}</div>
                     </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
 
