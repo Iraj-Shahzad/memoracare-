@@ -6,10 +6,12 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { timeGreeting } from "@/lib/greeting";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPut } from "@/lib/api";
+import { useUI } from "@/components/ui/UIProvider";
 import { useState, useEffect } from "react";
 
 export default function SettingsPage() {
   const { user } = useAuth();
+  const { toast } = useUI();
   const [notifications, setNotifications] = useState({
     medicationAlerts: true,
     routineAlerts: true,
@@ -50,7 +52,7 @@ export default function SettingsPage() {
       setSaved(true);
       window.setTimeout(() => setSaved(false), 3000);
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : "Failed to save settings");
+      toast(err instanceof Error ? err.message : "Failed to save settings", "error");
     } finally {
       setSaving(false);
     }

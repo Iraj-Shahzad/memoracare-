@@ -8,6 +8,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiDelete, api } from "@/lib/api";
 import { speak, getLang } from "@/lib/speech";
+import { useUI } from "@/components/ui/UIProvider";
 
 const API_HOST = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api").replace(/\/api\/?$/, "");
 
@@ -31,6 +32,7 @@ const CARD_GRADIENTS = [
 
 export default function MemoryGalleryPage() {
   const { user } = useAuth();
+  const { confirm } = useUI();
   const patientId = (user?.profile as any)?._id || user?.id;
 
   const [memories, setMemories] = useState<Memory[]>([]);
@@ -121,7 +123,7 @@ export default function MemoryGalleryPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm("Remove this memory?")) return;
+    if (!(await confirm({ message: "Remove this memory?", danger: true, confirmText: "Remove" }))) return;
     try {
       await apiDelete(`/memories/${id}`);
       setMemories((prev) => prev.filter((m) => m._id !== id));

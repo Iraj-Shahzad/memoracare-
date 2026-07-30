@@ -7,6 +7,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPost } from "@/lib/api";
+import { useUI } from "@/components/ui/UIProvider";
 
 interface DashboardData {
   totalPatients: number;
@@ -53,6 +54,7 @@ interface DashboardData {
 
 export default function CaregiverDashboard() {
   const { user } = useAuth();
+  const { toast } = useUI();
   const [activeNote, setActiveNote] = useState<number | null>(null);
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -104,7 +106,7 @@ export default function CaregiverDashboard() {
 
   const exportComplianceCsv = () => {
     const rows = dashboardData?.complianceTable || [];
-    if (!rows.length) { alert("No compliance data to export yet."); return; }
+    if (!rows.length) { toast("No compliance data to export yet.", "info"); return; }
     const header = ["Patient", "Medication", "Schedule", "Today", "Weekly %", "Status"];
     const lines = [header, ...rows.map((r) => [r.patientName, r.medication, r.schedule, r.today, String(r.weekly), r.status])];
     const csv = lines.map((line) => line.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");

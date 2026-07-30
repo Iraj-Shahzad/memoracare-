@@ -8,6 +8,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPost } from "@/lib/api";
 import { speak, getLang } from "@/lib/speech";
+import { useUI } from "@/components/ui/UIProvider";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
@@ -75,6 +76,7 @@ const fmtDate = (d?: string) =>
 
 export default function ReportsPage() {
   const { user } = useAuth();
+  const { toast, confirm } = useUI();
   const patientId = (user?.profile as any)?._id || user?.id;
 
   const [reports, setReports] = useState<Report[]>([]);
@@ -129,7 +131,7 @@ export default function ReportsPage() {
     const type = reportType.toLowerCase().replace(/\s+/g, "_");
     // Warn before creating a duplicate of the same type.
     if (reports.some((r) => r.type === type)) {
-      if (!window.confirm(`A ${reportType} report already exists. Generate another one for this period?`)) return;
+      if (!(await confirm({ message: `A ${reportType} report already exists. Generate another one for this period?` }))) return;
     }
 
     try {
@@ -148,7 +150,7 @@ export default function ReportsPage() {
   const downloadFile = async (id: string, title: string, fmt: "pdf" | "excel") => {
     const key = id + fmt;
     if (downloaded.has(key)) {
-      if (!window.confirm(`You already downloaded this ${fmt.toUpperCase()} file. Download it again?`)) return;
+      if (!(await confirm({ message: `You already downloaded this ${fmt.toUpperCase()} file. Download it again?` }))) return;
     }
     try {
       setDownloadingId(id + fmt);
@@ -169,7 +171,7 @@ export default function ReportsPage() {
       setDownloaded((prev) => new Set(prev).add(key));
     } catch (err) {
       console.error("Download error:", err);
-      window.alert("Could not download the report. Please try again.");
+      toast("Could not download the report. Please try again.", "error");
     } finally {
       setDownloadingId("");
     }

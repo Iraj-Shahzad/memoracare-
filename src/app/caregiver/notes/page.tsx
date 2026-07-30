@@ -6,6 +6,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { timeGreeting } from "@/lib/greeting";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api";
+import { useUI } from "@/components/ui/UIProvider";
 import { useState, useEffect } from "react";
 
 interface Patient {
@@ -35,6 +36,7 @@ const catMeta = (v: string) => CATEGORIES.find((c) => c.value === v) || CATEGORI
 
 export default function NotesPage() {
   const { user } = useAuth();
+  const { toast, confirm } = useUI();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [selectedPatientId, setSelectedPatientId] = useState("");
   const [selectedPatientName, setSelectedPatientName] = useState("");
@@ -112,7 +114,7 @@ export default function NotesPage() {
       setNewCategory("observation");
       await loadNotes(true);
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : "Failed to add note");
+      toast(err instanceof Error ? err.message : "Failed to add note", "error");
     } finally {
       setSaving(false);
     }
@@ -128,26 +130,26 @@ export default function NotesPage() {
     setEditContent("");
   };
   const saveEdit = async (noteId: string) => {
-    if (!editContent.trim()) { alert("Note cannot be empty."); return; }
+    if (!editContent.trim()) { toast("Note cannot be empty.", "error"); return; }
     try {
       setSavingEdit(true);
       await apiPut(`/caregiver/notes/${noteId}`, { content: editContent.trim(), category: editCategory });
       setEditingId(null);
       await loadNotes(true);
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : "Failed to update note");
+      toast(err instanceof Error ? err.message : "Failed to update note", "error");
     } finally {
       setSavingEdit(false);
     }
   };
 
   const handleDeleteNote = async (noteId: string) => {
-    if (!window.confirm("Delete this note? This cannot be undone.")) return;
+    if (!(await confirm({ message: "Delete this note? This cannot be undone.", danger: true, confirmText: "Delete" }))) return;
     try {
       await apiDelete(`/caregiver/notes/${noteId}`);
       setNotes((prev) => prev.filter((n) => n._id !== noteId));
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : "Failed to delete note");
+      toast(err instanceof Error ? err.message : "Failed to delete note", "error");
     }
   };
 

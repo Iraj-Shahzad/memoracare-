@@ -8,6 +8,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPost } from "@/lib/api";
 import { speak, getLang } from "@/lib/speech";
+import { useUI } from "@/components/ui/UIProvider";
 
 type RoutineStatus = "done" | "active" | "missed" | "upcoming";
 
@@ -40,6 +41,7 @@ const SECTION_META = [
 
 export default function RoutinesPage() {
   const { user } = useAuth();
+  const { toast } = useUI();
   const patientId = (user?.profile as any)?._id || user?.id;
 
   const [selectedDay, setSelectedDay] = useState(todayShort);
@@ -139,7 +141,7 @@ export default function RoutinesPage() {
       await apiPost(`/routines/${routineId}/log`, { status });
       await loadData(true);
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Could not update routine");
+      toast(err instanceof Error ? err.message : "Could not update routine", "error");
     }
   };
 

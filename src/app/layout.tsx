@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import ScrollReveal from "@/components/ScrollReveal";
+import { UIProvider } from "@/components/ui/UIProvider";
 import AccessibilityApplier from "@/components/AccessibilityApplier";
 
 export const metadata: Metadata = {
@@ -23,7 +24,9 @@ export default function RootLayout({
         <ScrollReveal />
         <AccessibilityApplier />
         <AuthProvider>
-          {children}
+          <UIProvider>
+            {children}
+          </UIProvider>
         </AuthProvider>
       </body>
     </html>

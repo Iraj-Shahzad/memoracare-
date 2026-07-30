@@ -5,6 +5,7 @@ import AdminSidebar from "@/components/shared/AdminSidebar";
 import Topbar from "@/components/shared/Topbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
+import { useUI } from "@/components/ui/UIProvider";
 import { apiGet, apiPut, apiDelete } from "@/lib/api";
 
 interface Alert {
@@ -19,6 +20,7 @@ interface Alert {
 export default function AlertsPage() {
   const { user } = useAuth();
   void user;
+  const { toast, confirm } = useUI();
 
   const [activeFilter, setActiveFilter] = useState<string>("All");
   const [alerts, setAlerts] = useState<Alert[]>([]);
@@ -58,7 +60,7 @@ export default function AlertsPage() {
       await apiPut(`/alerts/${aid}/resolve`, {});
       await fetchAlerts();
     } catch (err: unknown) {
-      window.alert(err instanceof Error ? err.message : "Failed to resolve alert");
+      toast(err instanceof Error ? err.message : "Failed to resolve alert", "error");
     } finally {
       setActionLoading(null);
     }
@@ -66,13 +68,13 @@ export default function AlertsPage() {
 
   const handleDismiss = async (alert: Alert) => {
     const aid = alert._id || String(alert.id);
-    if (!confirm("Are you sure you want to dismiss this alert?")) return;
+    if (!(await confirm({ message: "Are you sure you want to dismiss this alert?", danger: true, confirmText: "Dismiss" }))) return;
     setActionLoading(aid);
     try {
       await apiDelete(`/alerts/${aid}`);
       await fetchAlerts();
     } catch (err: unknown) {
-      window.alert(err instanceof Error ? err.message : "Failed to dismiss alert");
+      toast(err instanceof Error ? err.message : "Failed to dismiss alert", "error");
     } finally {
       setActionLoading(null);
     }

@@ -6,6 +6,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { timeGreeting } from "@/lib/greeting";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPut } from "@/lib/api";
+import { useUI } from "@/components/ui/UIProvider";
 import { useState, useEffect } from "react";
 
 interface Alert {
@@ -19,6 +20,7 @@ interface Alert {
 
 export default function AlertsPage() {
   const { user } = useAuth();
+  const { toast } = useUI();
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
@@ -68,7 +70,7 @@ export default function AlertsPage() {
       await apiPut(`/alerts/${alertId}/resolve`, {});
       setAlerts(alerts.map(a => a._id === alertId ? { ...a, resolved: true } : a));
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : "Failed to resolve alert");
+      toast(err instanceof Error ? err.message : "Failed to resolve alert", "error");
     }
   };
 

@@ -9,9 +9,11 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPost } from "@/lib/api";
 import { timeGreeting } from "@/lib/greeting";
+import { useUI } from "@/components/ui/UIProvider";
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const { toast, confirm } = useUI();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const patientId = (user?.profile as Record<string, any>)?._id || user?.id;
 
@@ -29,7 +31,7 @@ export default function Dashboard() {
       const dashRes = await apiGet(`/patients/${patientId}/dashboard`).catch(() => null);
       if (dashRes?.dashboard) setDashboardData(dashRes.dashboard);
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Could not mark this routine complete.");
+      toast(err instanceof Error ? err.message : "Could not mark this routine complete.", "error");
     }
   };
 

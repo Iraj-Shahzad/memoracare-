@@ -7,9 +7,11 @@ import Topbar from "@/components/shared/Topbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPut } from "@/lib/api";
+import { useUI } from "@/components/ui/UIProvider";
 
 export default function ProfilePage() {
   const { user } = useAuth();
+  const { toast, confirm } = useUI();
   const patientId = (user?.profile as any)?._id || user?.id;
   const userName = user?.name || "User";
   const initials = userName.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
@@ -130,7 +132,7 @@ export default function ProfilePage() {
       setEditMode(null);
     } catch (err) {
       console.error("Profile save error:", err);
-      alert("Failed to save profile. Please try again.");
+      toast("Failed to save profile. Please try again.", "error");
     } finally {
       setSaving(false);
     }

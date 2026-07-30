@@ -9,6 +9,7 @@ import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPost, apiDelete, api } from "@/lib/api";
 import { loadFaceApi, getDescriptor, findBestMatch, type KnownFaceLite } from "@/lib/faceApi";
 import { speak, getLang } from "@/lib/speech";
+import { useUI } from "@/components/ui/UIProvider";
 
 // Common relationship words in Urdu for a natural spoken announcement.
 const REL_UR: Record<string, string> = {
@@ -48,6 +49,7 @@ function toInitials(name: string) {
 
 export default function FaceRecognitionPage() {
   const { user } = useAuth();
+  const { toast, confirm } = useUI();
   const patientId = (user?.profile as any)?._id || user?.id;
 
   const GRADIENTS = [
@@ -262,7 +264,7 @@ export default function FaceRecognitionPage() {
 
   // Add New Face → pick a photo, then a small name/relationship form (no prompts).
   const handleAddFace = () => {
-    if (modelStatus !== "ready") { window.alert("The face model is still loading. Please wait a moment and try again."); return; }
+    if (modelStatus !== "ready") { toast("The face model is still loading. Please wait a moment and try again.", "info"); return; }
     pendingDescriptorRef.current = null;
     fileInputRef.current?.click();
   };
@@ -272,24 +274,24 @@ export default function FaceRecognitionPage() {
     if (!file) return;
     try {
       const d = await computeDescriptorFromFile(file);
-      if (!d) { window.alert("Couldn't find a clear face in that photo. Try a well-lit, front-facing one."); return; }
+      if (!d) { toast("Couldn't find a clear face in that photo. Try a well-lit, front-facing one.", "error"); return; }
       pendingDescriptorRef.current = Array.from(d);
       setAddForm({ name: "", relationship: "" });
       setShowAdd(true);
-    } catch { window.alert("Could not read that photo."); }
+    } catch { toast("Could not read that photo.", "error"); }
   };
 
   // "Add this person" on an unknown capture → enroll using the captured descriptor.
   const enrollFromCapture = () => {
-    if (!pendingDescriptorRef.current) { window.alert("Please capture a face first."); return; }
+    if (!pendingDescriptorRef.current) { toast("Please capture a face first.", "info"); return; }
     setAddForm({ name: "", relationship: "" });
     setShowAdd(true);
   };
 
   const submitAddFace = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!pendingDescriptorRef.current) { window.alert("No face captured. Please try again."); return; }
-    if (addForm.name.trim().length < 2) { window.alert("Please enter the person's name."); return; }
+    if (!pendingDescriptorRef.current) { toast("No face captured. Please try again.", "error"); return; }
+    if (addForm.name.trim().length < 2) { toast("Please enter the person's name.", "info"); return; }
     try {
       setAddSaving(true);
       await apiPost("/face-recognition/known-faces", {
@@ -300,13 +302,13 @@ export default function FaceRecognitionPage() {
       pendingDescriptorRef.current = null;
       setResult(null);
       await fetchKnownFaces();
-    } catch (err) { window.alert(err instanceof Error ? err.message : "Could not add this face."); }
+    } catch (err) { toast(err instanceof Error ? err.message : "Could not add this face.", "error"); }
     finally { setAddSaving(false); }
   };
 
   // Gallery → recognise a face from a chosen photo.
   const handleGallery = () => {
-    if (modelStatus !== "ready") { window.alert("The face model is still loading. Please wait a moment and try again."); return; }
+    if (modelStatus !== "ready") { toast("The face model is still loading. Please wait a moment and try again.", "info"); return; }
     galleryInputRef.current?.click();
   };
   const handleGallerySelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -334,12 +336,12 @@ export default function FaceRecognitionPage() {
   };
 
   const handleDeleteFace = async (id: string) => {
-    if (!window.confirm("Remove this person from known faces?")) return;
+    if (!(await confirm({ message: "Remove this person from known faces?", danger: true, confirmText: "Remove" }))) return;
     try {
       await apiDelete(`/face-recognition/known-faces/${id}`);
       setManageFace(null);
       await fetchKnownFaces();
-    } catch (err) { window.alert(err instanceof Error ? err.message : "Could not delete this face."); }
+    } catch (err) { toast(err instanceof Error ? err.message : "Could not delete this face.", "error"); }
   };
 
   if (loading) {

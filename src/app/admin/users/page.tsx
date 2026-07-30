@@ -5,6 +5,7 @@ import AdminSidebar from "@/components/shared/AdminSidebar";
 import Topbar from "@/components/shared/Topbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
+import { useUI } from "@/components/ui/UIProvider";
 import { apiGet, apiPut, apiDelete } from "@/lib/api";
 
 interface User {
@@ -24,6 +25,7 @@ interface User {
 export default function UsersPage() {
   const { user: authUser } = useAuth();
   void authUser;
+  const { toast, confirm } = useUI();
 
   const [filterRole, setFilterRole] = useState<string>("All");
   const [filterStatus, setFilterStatus] = useState<string>("All");
@@ -69,7 +71,7 @@ export default function UsersPage() {
       await apiPut(`/users/${uid}`, { isActive: newStatus });
       await fetchUsers();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : "Failed to update user");
+      toast(err instanceof Error ? err.message : "Failed to update user", "error");
     } finally {
       setActionLoading(null);
     }
@@ -77,13 +79,13 @@ export default function UsersPage() {
 
   const handleDelete = async (u: User) => {
     const uid = u._id || String(u.id);
-    if (!confirm(`Are you sure you want to delete ${u.name}?`)) return;
+    if (!(await confirm({ message: `Are you sure you want to delete ${u.name}?`, danger: true, confirmText: "Delete" }))) return;
     setActionLoading(uid);
     try {
       await apiDelete(`/users/${uid}`);
       await fetchUsers();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : "Failed to delete user");
+      toast(err instanceof Error ? err.message : "Failed to delete user", "error");
     } finally {
       setActionLoading(null);
     }

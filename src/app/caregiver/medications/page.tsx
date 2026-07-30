@@ -6,6 +6,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { timeGreeting } from "@/lib/greeting";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPost, apiDelete } from "@/lib/api";
+import { useUI } from "@/components/ui/UIProvider";
 import { useState, useEffect } from "react";
 
 interface Patient {
@@ -25,6 +26,7 @@ interface Medication {
 
 export default function MedicationsPage() {
   const { user } = useAuth();
+  const { toast, confirm } = useUI();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [selectedPatientId, setSelectedPatientId] = useState("");
   const [selectedPatientName, setSelectedPatientName] = useState("");
@@ -148,12 +150,12 @@ export default function MedicationsPage() {
   };
 
   const handleDeleteMedication = async (id: string, medName: string) => {
-    if (!window.confirm(`Remove "${medName}"? This deletes it from the patient's schedule.`)) return;
+    if (!(await confirm({ message: `Remove "${medName}"? This deletes it from the patient's schedule.`, danger: true, confirmText: "Remove" }))) return;
     try {
       await apiDelete(`/medications/${id}`);
       await refetchMedications();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : "Failed to remove medication");
+      toast(err instanceof Error ? err.message : "Failed to remove medication", "error");
     }
   };
 

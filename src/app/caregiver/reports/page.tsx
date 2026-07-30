@@ -6,6 +6,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { timeGreeting } from "@/lib/greeting";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPost, apiDownload, apiDelete } from "@/lib/api";
+import { useUI } from "@/components/ui/UIProvider";
 import { useState, useEffect } from "react";
 
 interface Patient {
@@ -24,6 +25,7 @@ interface Report {
 
 export default function ReportsPage() {
   const { user } = useAuth();
+  const { toast, confirm } = useUI();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [selectedPatientId, setSelectedPatientId] = useState("");
   const [reportCards, setReportCards] = useState<Report[]>([]);
@@ -106,9 +108,9 @@ export default function ReportsPage() {
     // exists for this patient (same period), confirm before generating another.
     const alreadyExists = reportCards.some((r) => r.type.toLowerCase() === type.toLowerCase());
     if (alreadyExists) {
-      const ok = window.confirm(
-        `A ${type} report for this patient already exists for this period. It would be the same report for the same date range — generate another copy anyway?`
-      );
+      const ok = await confirm({
+        message: `A ${type} report for this patient already exists for this period. It would be the same report for the same date range — generate another copy anyway?`,
+      });
       if (!ok) return;
     }
     try {
@@ -116,26 +118,26 @@ export default function ReportsPage() {
       await apiPost("/reports/generate", { patientId: selectedPatientId, type });
       await loadReports(selectedPatientId, true);
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : "Failed to generate report");
+      toast(err instanceof Error ? err.message : "Failed to generate report", "error");
     } finally {
       setGenerating(false);
     }
   };
 
   const handleDeleteReport = async (report: Report) => {
-    if (!window.confirm(`Delete "${report.title}"? This removes the report permanently.`)) return;
+    if (!(await confirm({ message: `Delete "${report.title}"? This removes the report permanently.`, danger: true, confirmText: "Delete" }))) return;
     try {
       await apiDelete(`/reports/${report._id}`);
       await loadReports(selectedPatientId, true);
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : "Failed to delete report");
+      toast(err instanceof Error ? err.message : "Failed to delete report", "error");
     }
   };
 
   const handleDownload = async (report: Report, format: "pdf" | "excel") => {
     const key = `${report._id}:${format}`;
     if (downloaded.has(key)) {
-      if (!window.confirm(`You already downloaded this ${format.toUpperCase()} file. Download it again?`)) return;
+      if (!(await confirm({ message: `You already downloaded this ${format.toUpperCase()} file. Download it again?` }))) return;
     }
     try {
       const ext = format === "excel" ? "xlsx" : "pdf";
@@ -143,7 +145,7 @@ export default function ReportsPage() {
       await apiDownload(`/reports/${report._id}/download?format=${format}`, `${safe}.${ext}`);
       setDownloaded((prev) => new Set(prev).add(key));
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : "Download failed");
+      toast(err instanceof Error ? err.message : "Download failed", "error");
     }
   };
 

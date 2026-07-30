@@ -7,6 +7,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPost } from "@/lib/api";
 import { getLang, setLang as persistLang, speak, stopSpeaking, listenOnce, speechRecognitionSupported, primeVoices, type Lang } from "@/lib/speech";
+import { useUI } from "@/components/ui/UIProvider";
 
 interface ChatMessage {
   id: string;
@@ -24,6 +25,7 @@ interface Conversation {
 
 export default function ChatbotPage() {
   const { user } = useAuth();
+  const { toast, confirm } = useUI();
   const patientId = (user?.profile as any)?._id || user?.id;
   const userName = user?.name || "User";
   const initials = userName.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
@@ -123,8 +125,8 @@ export default function ChatbotPage() {
   });
 
   // Trash: clear the current conversation view (asks first).
-  const handleClearChat = () => {
-    if (!window.confirm("Clear this conversation from the screen? Your saved history stays in the sidebar.")) return;
+  const handleClearChat = async () => {
+    if (!(await confirm({ message: "Clear this conversation from the screen? Your saved history stays in the sidebar." }))) return;
     stopSpeaking();
     setMessages([greetingMessage()]);
     setSelectedChat("");

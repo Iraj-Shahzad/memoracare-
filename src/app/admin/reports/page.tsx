@@ -5,6 +5,7 @@ import AdminSidebar from "@/components/shared/AdminSidebar";
 import Topbar from "@/components/shared/Topbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
+import { useUI } from "@/components/ui/UIProvider";
 import { apiGet, apiPost, apiDelete } from "@/lib/api";
 
 interface Report {
@@ -19,6 +20,7 @@ interface Report {
 export default function ReportsPage() {
   const { user } = useAuth();
   void user;
+  const { toast, confirm } = useUI();
 
   const [activeTab, setActiveTab] = useState<string>("All");
   const [reports, setReports] = useState<Report[]>([]);
@@ -58,7 +60,7 @@ export default function ReportsPage() {
       await apiPost("/reports/generate", { type: "System Usage" });
       await fetchReports();
     } catch (err: unknown) {
-      window.alert(err instanceof Error ? err.message : "Failed to generate report");
+      toast(err instanceof Error ? err.message : "Failed to generate report", "error");
     } finally {
       setGenerating(false);
     }
@@ -66,13 +68,13 @@ export default function ReportsPage() {
 
   const handleDelete = async (report: Report) => {
     const rid = report._id || String(report.id);
-    if (!confirm(`Are you sure you want to delete "${report.title}"?`)) return;
+    if (!(await confirm({ message: `Are you sure you want to delete "${report.title}"?`, danger: true, confirmText: "Delete" }))) return;
     setActionLoading(rid);
     try {
       await apiDelete(`/reports/${rid}`);
       await fetchReports();
     } catch (err: unknown) {
-      window.alert(err instanceof Error ? err.message : "Failed to delete report");
+      toast(err instanceof Error ? err.message : "Failed to delete report", "error");
     } finally {
       setActionLoading(null);
     }

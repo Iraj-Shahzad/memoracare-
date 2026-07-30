@@ -7,6 +7,7 @@ import Topbar from "@/components/shared/Topbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPost, apiDelete } from "@/lib/api";
+import { useUI } from "@/components/ui/UIProvider";
 
 type FilterTab = "all" | "taken" | "upcoming" | "missed";
 
@@ -36,6 +37,7 @@ interface Medication {
 
 export default function MedicationsPage() {
   const { user } = useAuth();
+  const { toast, confirm } = useUI();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const patientId = (user?.profile as Record<string, any>)?._id || user?.id;
 
@@ -113,7 +115,7 @@ export default function MedicationsPage() {
   // real updated status + compliance (consistent for any medication).
   const handleMarkTaken = async (medId: string) => {
     try { await apiPost(`/medications/${medId}/log`, { status: "taken" }); await loadData(true); }
-    catch (err) { alert(err instanceof Error ? err.message : "Could not mark as taken"); }
+    catch (err) { toast(err instanceof Error ? err.message : "Could not mark as taken", "error"); }
   };
 
   const filteredMeds = medications.filter((med) => {
