@@ -7,6 +7,7 @@ import Topbar from "@/components/shared/Topbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPost } from "@/lib/api";
+import { speak, getLang } from "@/lib/speech";
 
 type RoutineStatus = "done" | "active" | "missed" | "upcoming";
 
@@ -220,8 +221,17 @@ export default function RoutinesPage() {
               </div>
             </div>
             <div className="flex gap-[10px]">
-              <button onClick={() => setViewAll((v) => !v)} className="rounded-[10px] text-[14px] font-semibold border-none cursor-pointer" style={{ padding: "10px 24px", background: "#fff", color: "#1a3c34" }}>
-                {viewAll ? "Filter by Day" : "View All"}
+              <button
+                onClick={() => {
+                  if (visibleRoutines.length === 0) { speak("No routines scheduled.", getLang()); return; }
+                  const spoken = visibleRoutines.map((r) => `${r.name} at ${r.startTime}`).join(", ");
+                  speak(`You have ${visibleRoutines.length} routines. ${spoken}.`, getLang());
+                }}
+                className="rounded-[10px] text-[14px] font-semibold border-none cursor-pointer flex items-center gap-2"
+                style={{ padding: "10px 24px", background: "#fff", color: "#1a3c34" }}
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="#0d9488" strokeWidth="2" style={{ width: 18, height: 18 }}><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" /><path d="M15.54 8.46a5 5 0 010 7.07" /><path d="M19.07 4.93a10 10 0 010 14.14" /></svg>
+                Read aloud
               </button>
               <button onClick={openWeekly} className="rounded-[10px] text-[14px] font-semibold cursor-pointer text-white" style={{ padding: "10px 24px", background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.3)" }}>
                 Weekly Report
@@ -249,18 +259,28 @@ export default function RoutinesPage() {
             </div>
           </div>
 
-          {/* Day Selector (disabled in View All mode) */}
-          <div className="flex gap-2 flex-wrap" style={{ marginBottom: 24, opacity: viewAll ? 0.5 : 1, pointerEvents: viewAll ? "none" : "auto" }}>
-            {SHORT_DAYS.map((day) => (
+          {/* Day Selector: 'All' shows every routine; a day shows only that day's. */}
+          <div className="flex gap-2 flex-wrap" style={{ marginBottom: 24 }}>
+            <button
+              onClick={() => setViewAll(true)}
+              className={`rounded-[10px] text-[13px] font-semibold cursor-pointer transition-all ${viewAll ? "bg-[#0d9488] text-white" : "bg-white text-[#64748b] hover:bg-[#f0fdf4] hover:text-[#1a3c34]"}`}
+              style={{ padding: "10px 20px", border: "1px solid", borderColor: viewAll ? "#0d9488" : "#e2e8f0" }}
+            >
+              All
+            </button>
+            {SHORT_DAYS.map((day) => {
+              const active = !viewAll && selectedDay === day;
+              return (
               <button
                 key={day}
-                onClick={() => setSelectedDay(day)}
-                className={`rounded-[10px] text-[13px] font-semibold cursor-pointer transition-all ${selectedDay === day ? "bg-[#0d9488] text-white" : "bg-white text-[#64748b] hover:bg-[#f0fdf4] hover:text-[#1a3c34]"}`}
-                style={{ padding: "10px 20px", border: "1px solid", borderColor: selectedDay === day ? "#0d9488" : "#e2e8f0" }}
+                onClick={() => { setViewAll(false); setSelectedDay(day); }}
+                className={`rounded-[10px] text-[13px] font-semibold cursor-pointer transition-all ${active ? "bg-[#0d9488] text-white" : "bg-white text-[#64748b] hover:bg-[#f0fdf4] hover:text-[#1a3c34]"}`}
+                style={{ padding: "10px 20px", border: "1px solid", borderColor: active ? "#0d9488" : "#e2e8f0" }}
               >
                 {day}{day === todayShort ? " •" : ""}
               </button>
-            ))}
+              );
+            })}
           </div>
 
           {totalRoutines === 0 ? (
