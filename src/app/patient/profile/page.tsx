@@ -18,37 +18,35 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  // Personal Information
-  const [fullName, setFullName] = useState(user?.name || "Ahmed Khan");
-  const [dateOfBirth, setDateOfBirth] = useState("1958-03-15");
-  const [gender, setGender] = useState("Male");
-  const [phone, setPhone] = useState(user?.phone || "+92 312 456 7890");
-  const [email, setEmail] = useState(user?.email || "ahmed.khan@email.com");
-  const [address, setAddress] = useState("House 42, Street 5, F-7/2, Islamabad, Pakistan");
-  const [cnic, setCnic] = useState("34201-9876543-1");
+  // Personal Information (real values loaded from the API; no fake defaults)
+  const [fullName, setFullName] = useState(user?.name || "");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [gender, setGender] = useState("");
+  const [phone, setPhone] = useState(user?.phone || "");
+  const [email, setEmail] = useState(user?.email || "");
+  const [address, setAddress] = useState("");
+  const [cnic, setCnic] = useState("");
 
   // Medical Information
-  const [diagnosis, setDiagnosis] = useState("Alzheimer's Disease - Early Stage");
-  const [doctor, setDoctor] = useState("Dr. Farhan Malik");
-  const [bloodGroup, setBloodGroup] = useState("B+");
-  const [allergies, setAllergies] = useState("Penicillin, Shellfish");
-  const [medicalHistory, setMedicalHistory] = useState(
-    "Hypertension (controlled), Type 2 Diabetes (managed with insulin)"
-  );
+  const [diagnosis, setDiagnosis] = useState("");
+  const [doctor, setDoctor] = useState("");
+  const [bloodGroup, setBloodGroup] = useState("");
+  const [allergies, setAllergies] = useState("");
+  const [medicalHistory, setMedicalHistory] = useState("");
 
   // Emergency Contacts
-  const [primaryContact, setPrimaryContact] = useState("Fatima Khan");
-  const [primaryRelation, setPrimaryRelation] = useState("Daughter");
-  const [primaryPhone, setPrimaryPhone] = useState("+92 300 123 4567");
-  const [secondaryContact, setSecondaryContact] = useState("Ali Khan");
-  const [secondaryRelation, setSecondaryRelation] = useState("Son");
-  const [secondaryPhone, setSecondaryPhone] = useState("+92 321 987 6543");
+  const [primaryContact, setPrimaryContact] = useState("");
+  const [primaryRelation, setPrimaryRelation] = useState("");
+  const [primaryPhone, setPrimaryPhone] = useState("");
+  const [secondaryContact, setSecondaryContact] = useState("");
+  const [secondaryRelation, setSecondaryRelation] = useState("");
+  const [secondaryPhone, setSecondaryPhone] = useState("");
 
-  // Caregiver Information
-  const [caregiverName, setCaregiverName] = useState("Sarah Khan");
-  const [caregiverRelation, setCaregiverRelation] = useState("Wife");
-  const [caregiverPhone, setCaregiverPhone] = useState("+92 333 555 8888");
-  const [caregiverEmail, setCaregiverEmail] = useState("sarah.khan@email.com");
+  // Caregiver Information (the REAL assigned caregiver, from the backend)
+  const [caregiverName, setCaregiverName] = useState("");
+  const [caregiverRelation, setCaregiverRelation] = useState("");
+  const [caregiverPhone, setCaregiverPhone] = useState("");
+  const [caregiverEmail, setCaregiverEmail] = useState("");
 
   useEffect(() => {
     if (!patientId) return;
@@ -58,11 +56,12 @@ export default function ProfilePage() {
         const res = await apiGet(`/patients/${patientId}`).catch(() => null);
         if (res?.patient) {
           const p = res.patient;
-          if (p.name) setFullName(p.name);
+          // Name/email/phone live on the linked user account.
+          setFullName(p.user?.name || "");
+          setPhone(p.user?.phone || "");
+          setEmail(p.user?.email || "");
           if (p.dateOfBirth) setDateOfBirth(p.dateOfBirth.split("T")[0]);
           if (p.gender) setGender(p.gender);
-          if (p.phone) setPhone(p.phone);
-          if (p.email) setEmail(p.email);
           if (p.address) setAddress(p.address);
           if (p.cnic) setCnic(p.cnic);
           if (p.diagnosis) setDiagnosis(p.diagnosis);
@@ -70,24 +69,26 @@ export default function ProfilePage() {
           if (p.bloodGroup) setBloodGroup(p.bloodGroup);
           if (p.allergies) setAllergies(Array.isArray(p.allergies) ? p.allergies.join(", ") : p.allergies);
           if (p.medicalHistory) setMedicalHistory(p.medicalHistory);
-          if (p.emergencyContacts) {
+          if (Array.isArray(p.emergencyContacts)) {
             const ec = p.emergencyContacts;
             if (ec[0]) {
               setPrimaryContact(ec[0].name || "");
-              setPrimaryRelation(ec[0].relation || ec[0].relationship || "");
+              setPrimaryRelation(ec[0].relationship || ec[0].relation || "");
               setPrimaryPhone(ec[0].phone || "");
             }
             if (ec[1]) {
               setSecondaryContact(ec[1].name || "");
-              setSecondaryRelation(ec[1].relation || ec[1].relationship || "");
+              setSecondaryRelation(ec[1].relationship || ec[1].relation || "");
               setSecondaryPhone(ec[1].phone || "");
             }
           }
-          if (p.caregiver) {
-            setCaregiverName(p.caregiver.name || "");
-            setCaregiverRelation(p.caregiver.relation || p.caregiver.relationship || "");
-            setCaregiverPhone(p.caregiver.phone || "");
-            setCaregiverEmail(p.caregiver.email || "");
+          // The REAL assigned caregiver (populated user).
+          const cg = Array.isArray(p.assignedCaregivers) ? p.assignedCaregivers[0] : null;
+          if (cg) {
+            setCaregiverName(cg.name || "");
+            setCaregiverPhone(cg.phone || "");
+            setCaregiverEmail(cg.email || "");
+            setCaregiverRelation("Primary Caregiver");
           }
         }
       } catch (err) {

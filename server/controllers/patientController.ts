@@ -50,7 +50,7 @@ export const getPatient = async (req: Request, res: Response, next: NextFunction
 
     const patient = await Patient.findById(req.params.id)
       .populate('user', 'name email phone avatar isActive')
-      .populate('assignedCaregivers', 'name email');
+      .populate('assignedCaregivers', 'name email phone');
 
     if (!patient) {
       return res.status(404).json({ success: false, message: 'Patient not found' });
