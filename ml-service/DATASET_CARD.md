@@ -41,8 +41,22 @@ a simple neural network / classical ML model make a strong baseline.
 ## Baseline
 A feed-forward neural network (bag-of-words → Dense(128) → Dense(64) → softmax, Adam)
 achieved roughly **75% accuracy under 5-fold cross-validation** on an earlier 17-intent
-version. This expanded version has **26 intents and ~980 labelled utterances** (about 38
+version. The curated seed here has **26 intents and ~980 labelled utterances** (about 38
 per intent); run `python train.py` to retrain and print updated cross-validation numbers.
+
+## Data augmentation (optional, ~10k)
+`augment.py` expands the curated seed into a **~10,000-pattern** training set via
+template-based augmentation: language-aware paraphrase wrappers (polite/filler prefixes
+and suffixes, applied separately to Latin and Urdu-script utterances) plus light synonym
+substitution for common domain words. It deduplicates and balances counts across intents,
+writing `data/intents.augmented.json`, which `train.py` and `export_dataset.py` auto-prefer.
+
+    python augment.py     # generate ~10k-pattern data/intents.augmented.json
+    python train.py       # trains on it, prints 5-fold cross-validation accuracy
+
+Augmentation increases surface variety, not underlying meaning, so on a bag-of-words model
+accuracy typically plateaus; its main value is a larger, defensible corpus. Delete
+`data/intents.augmented.json` to fall back to the curated seed.
 
 ## Licence
 Creative Commons Attribution 4.0 (CC BY 4.0) — free to use with attribution.

@@ -45,8 +45,13 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 # Setup
 # ---------------------------------------------------------------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_PATH = os.path.join(BASE_DIR, "data", "intents.json")
+# Prefer the augmented dataset (data/intents.augmented.json, produced by
+# augment.py) if it exists; otherwise fall back to the curated seed.
+_AUG_PATH = os.path.join(BASE_DIR, "data", "intents.augmented.json")
+_SEED_PATH = os.path.join(BASE_DIR, "data", "intents.json")
+DATA_PATH = _AUG_PATH if os.path.exists(_AUG_PATH) else _SEED_PATH
 MODEL_DIR = os.path.join(BASE_DIR, "model")
+print(f"Training data: {os.path.basename(DATA_PATH)}")
 os.makedirs(MODEL_DIR, exist_ok=True)
 
 # Download the small NLTK resources we need (safe to call repeatedly)

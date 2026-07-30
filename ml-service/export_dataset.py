@@ -11,7 +11,8 @@ import os
 from collections import Counter
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-DATA = os.path.join(BASE, "data", "intents.json")
+_AUG = os.path.join(BASE, "data", "intents.augmented.json")
+DATA = _AUG if os.path.exists(_AUG) else os.path.join(BASE, "data", "intents.json")
 OUT = os.path.join(BASE, "dataset.csv")
 
 
