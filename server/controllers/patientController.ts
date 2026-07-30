@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import PDFDocument from 'pdfkit';
 import Patient from '../models/Patient';
 import User from '../models/User';
 import Medication from '../models/Medication';
@@ -7,6 +8,7 @@ import MedicationLog from '../models/MedicationLog';
 import RoutineLog from '../models/RoutineLog';
 import Alert from '../models/Alert';
 import Caregiver from '../models/Caregiver';
+import Memory from '../models/Memory';
 import { canAccessPatient } from '../utils/access';
 
 // @desc Get all patients (admin/caregiver)
@@ -92,6 +94,145 @@ export const updatePatient = async (req: Request, res: Response, next: NextFunct
   }
 };
 
+// @desc Export the patient's own data as a PDF document
+// @route GET /api/patients/:id/export
+export const exportPatientData = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (!(await canAccessPatient(req.user, req.params.id))) {
+      return res.status(403).json({ success: false, message: 'Not authorized to export this patient' });
+    }
+
+    const patientId = req.params.id;
+    const [patient, medications, routines, memories] = await Promise.all([
+      Patient.findById(patientId)
+        .populate('user', 'name email phone')
+        .populate('assignedCaregivers', 'name email phone'),
+      Medication.find({ patient: patientId }),
+      Routine.find({ patient: patientId }),
+      Memory.find({ patient: patientId }).sort({ createdAt: -1 }),
+    ]);
+
+    if (!patient) {
+      return res.status(404).json({ success: false, message: 'Patient not found' });
+    }
+
+    const p: any = patient;
+    const patientName = p.user?.name || 'Patient';
+    const safeName = patientName.replace(/[^a-z0-9]+/gi, '_');
+
+    const doc = new PDFDocument({ margin: 50, size: 'A4' });
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="MemoraCare_MyData_${safeName}.pdf"`);
+    doc.pipe(res);
+
+    const TEAL = '#0d9488';
+    const INK = '#1a3c34';
+    const GREY = '#64748b';
+    const fmtDate = (d: any) => (d ? new Date(d).toLocaleDateString('en-GB') : '—');
+
+    // Header
+    doc.fillColor(TEAL).fontSize(22).font('Helvetica-Bold').text('MemoraCare');
+    doc.moveDown(0.2);
+    doc.fillColor(INK).fontSize(16).font('Helvetica-Bold').text('My Personal Data Export');
+    doc.moveDown(0.4);
+    doc.fillColor(GREY).fontSize(10).font('Helvetica');
+    doc.text(`Name: ${patientName}`);
+    doc.text(`Generated: ${new Date().toLocaleString('en-GB')}`);
+    doc.moveDown(0.6);
+    doc.strokeColor('#e2e8f0').lineWidth(1).moveTo(50, doc.y).lineTo(545, doc.y).stroke();
+    doc.moveDown(0.6);
+
+    const section = (title: string) => {
+      doc.moveDown(0.5).fillColor(INK).fontSize(13).font('Helvetica-Bold').text(title);
+      doc.moveDown(0.3);
+    };
+    const stat = (label: string, value: any) => {
+      doc.fillColor(GREY).fontSize(10).font('Helvetica').text(`${label}: `, { continued: true });
+      doc.fillColor(INK).font('Helvetica-Bold').text(value == null || value === '' ? '—' : String(value));
+    };
+
+    // Profile
+    section('Profile');
+    stat('Email', p.user?.email);
+    stat('Phone', p.user?.phone);
+    stat('Date of birth', p.dateOfBirth ? fmtDate(p.dateOfBirth) : '—');
+    stat('Gender', p.gender);
+    stat('City', p.city);
+    stat('Address', p.address);
+    stat('CNIC', p.cnic);
+    stat('Purpose', p.diagnosis);
+    stat('Doctor / Supervisor', p.doctor);
+    stat('Blood group', p.bloodGroup);
+    stat('Precautions', Array.isArray(p.allergies) ? p.allergies.join(', ') : p.allergies);
+    stat('Background / Notes', p.medicalHistory);
+
+    // Emergency contacts
+    if (Array.isArray(p.emergencyContacts) && p.emergencyContacts.length) {
+      section('Emergency Contacts');
+      p.emergencyContacts.forEach((c: any, i: number) => {
+        if (!c?.name) return;
+        stat(`Contact ${i + 1}`, `${c.name}${c.relationship ? ` (${c.relationship})` : ''} — ${c.phone || '—'}`);
+      });
+    }
+
+    // Caregiver(s)
+    if (Array.isArray(p.assignedCaregivers) && p.assignedCaregivers.length) {
+      section('Caregiver');
+      p.assignedCaregivers.forEach((c: any) => {
+        stat(c.name || 'Caregiver', `${c.email || '—'} — ${c.phone || '—'}`);
+      });
+    }
+
+    // Medications
+    section('Medications');
+    if (medications.length) {
+      doc.font('Courier').fontSize(9).fillColor(INK);
+      doc.text('NAME'.padEnd(24) + 'DOSAGE'.padEnd(14) + 'TIMES');
+      doc.fillColor(GREY);
+      medications.forEach((m: any) => {
+        const times = Array.isArray(m.times) ? m.times.join(', ') : (m.time || '—');
+        doc.text(String(m.name || '-').slice(0, 22).padEnd(24) + String(m.dosage || '-').slice(0, 12).padEnd(14) + times);
+      });
+    } else {
+      doc.fillColor(GREY).fontSize(10).font('Helvetica').text('No medications recorded.');
+    }
+
+    // Routines
+    section('Routines');
+    if (routines.length) {
+      doc.font('Courier').fontSize(9).fillColor(INK);
+      doc.text('ACTIVITY'.padEnd(28) + 'TIME'.padEnd(10) + 'DAYS');
+      doc.fillColor(GREY);
+      routines.forEach((r: any) => {
+        const days = Array.isArray(r.days) ? r.days.map((d: string) => d.slice(0, 3)).join(',') : '—';
+        doc.text(String(r.activityName || '-').slice(0, 26).padEnd(28) + String(r.startTime || '-').padEnd(10) + days);
+      });
+    } else {
+      doc.fillColor(GREY).fontSize(10).font('Helvetica').text('No routines recorded.');
+    }
+
+    // Memories
+    section('Memory Gallery');
+    if (memories.length) {
+      doc.fillColor(GREY).fontSize(10).font('Helvetica');
+      memories.forEach((m: any) => {
+        doc.fillColor(INK).font('Helvetica-Bold').text(String(m.title || 'Memory'), { continued: true });
+        doc.fillColor(GREY).font('Helvetica').text(`  —  ${fmtDate(m.date || m.createdAt)}${m.location ? ` · ${m.location}` : ''}`);
+      });
+    } else {
+      doc.fillColor(GREY).fontSize(10).font('Helvetica').text('No memories saved.');
+    }
+
+    doc.moveDown(2);
+    doc.fillColor('#94a3b8').fontSize(8).font('Helvetica')
+      .text('Exported from MemoraCare at the account owner\'s request. Contains your personal data — please keep it safe.', { align: 'center' });
+
+    doc.end();
+  } catch (err: any) {
+    next(err);
+  }
+};
+
 // @desc Get patient dashboard data
 // @route GET /api/patients/:id/dashboard
 export const getDashboard = async (req: Request, res: Response, next: NextFunction) => {
@@ -133,8 +274,15 @@ export const getDashboard = async (req: Request, res: Response, next: NextFuncti
       const [h, m] = String(t || '').split(':').map(Number);
       return Number.isNaN(h) || Number.isNaN(m) ? null : h * 60 + m;
     };
-    const fmt = (min: number | null | undefined) =>
-      min == null ? '—' : `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
+    // 12-hour clock with AM/PM (e.g. "4:03 AM", "1:09 PM").
+    const fmt = (min: number | null | undefined) => {
+      if (min == null) return '—';
+      const h24 = Math.floor(min / 60);
+      const mm = min % 60;
+      const ap = h24 >= 12 ? 'PM' : 'AM';
+      const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
+      return `${h12}:${String(mm).padStart(2, '0')} ${ap}`;
+    };
 
     const medTimes = medications.flatMap((m: any) => m.times || []).map(toMin).filter((v): v is number => v !== null).sort((a, b) => a - b);
     const nextMedTime = fmt(medTimes.find((t) => t >= nowMin) ?? medTimes[0]);

@@ -7,7 +7,7 @@ import PatientSidebar from "@/components/shared/PatientSidebar";
 import Topbar from "@/components/shared/Topbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
-import { apiGet, apiPut, apiDelete } from "@/lib/api";
+import { apiPut, apiDelete, apiDownload } from "@/lib/api";
 import { loadSettings, saveSettings, DEFAULT_SETTINGS, type PatientSettings } from "@/lib/patientSettings";
 
 export default function SettingsPage() {
@@ -60,32 +60,17 @@ export default function SettingsPage() {
     }
   };
 
-  // Export data
+  // Export data as a PDF document (built server-side with pdfkit).
   const [exporting, setExporting] = useState(false);
+  const [exportErr, setExportErr] = useState("");
   const handleExport = async () => {
+    setExportErr("");
     try {
       setExporting(true);
-      const [profile, meds, routines, memories] = await Promise.all([
-        apiGet(`/patients/${patientId}`).catch(() => null),
-        apiGet(`/medications/patient/${patientId}`).catch(() => null),
-        apiGet(`/routines/patient/${patientId}`).catch(() => null),
-        apiGet(`/memories/patient/${patientId}`).catch(() => null),
-      ]);
-      const data = {
-        exportedFor: user?.name,
-        exportedAt: new Date().toString(),
-        profile: profile?.patient,
-        medications: meds?.medications,
-        routines: routines?.routines,
-        memories: memories?.memories,
-      };
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url; a.download = "my-memoracare-data.json"; a.click();
-      URL.revokeObjectURL(url);
-    } catch {
-      // no-op
+      const safe = (user?.name || "patient").replace(/[^a-z0-9]+/gi, "_");
+      await apiDownload(`/patients/${patientId}/export`, `MemoraCare_MyData_${safe}.pdf`);
+    } catch (err) {
+      setExportErr(err instanceof Error ? err.message : "Could not export your data.");
     } finally {
       setExporting(false);
     }
@@ -152,11 +137,8 @@ export default function SettingsPage() {
               <SettingRow label="Routine Reminders" description="Pop-up + voice when a routine is due">
                 <ToggleSwitch enabled={settings.routineReminders} onChange={(v) => update({ routineReminders: v })} />
               </SettingRow>
-              <SettingRow label="Emergency Alerts">
+              <SettingRow label="Emergency Alerts" description="Show a banner when a caregiver alert arrives">
                 <ToggleSwitch enabled={settings.emergencyAlerts} onChange={(v) => update({ emergencyAlerts: v })} />
-              </SettingRow>
-              <SettingRow label="Email Notifications" description="Email delivery is not available yet">
-                <ToggleSwitch enabled={settings.emailNotifications} onChange={(v) => update({ emailNotifications: v })} />
               </SettingRow>
               <SettingRow label="Voice Alerts" description="Speak reminders aloud">
                 <ToggleSwitch enabled={settings.voiceAlerts} onChange={(v) => update({ voiceAlerts: v })} />
@@ -224,8 +206,9 @@ export default function SettingsPage() {
             <h2 className="text-xl font-bold text-[#1a3c34] mb-4">Data Management</h2>
             <div className="space-y-3">
               <button onClick={handleExport} disabled={exporting} className="w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition disabled:opacity-60">
-                {exporting ? "Preparing…" : "Export My Data"}
+                {exporting ? "Preparing PDF…" : "Export My Data (PDF)"}
               </button>
+              {exportErr && <p className="text-sm text-red-600">{exportErr}</p>}
               <button onClick={() => { setShowDelete(true); setDeleteText(""); setDeleteErr(""); }} className="w-full px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition">
                 Delete Account
               </button>

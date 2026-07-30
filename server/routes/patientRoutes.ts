@@ -6,6 +6,7 @@ import {
   updatePatient,
   getDashboard,
   getActivityLog,
+  exportPatientData,
 } from '../controllers/patientController';
 import { protect, authorize } from '../middleware/auth';
 
@@ -16,5 +17,6 @@ router.get('/:id', getPatient);
 router.put('/:id', updatePatient);
 router.get('/:id/dashboard', getDashboard);
 router.get('/:id/activity-log', getActivityLog);
+router.get('/:id/export', exportPatientData);
 
 export default router;

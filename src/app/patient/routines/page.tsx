@@ -104,11 +104,21 @@ export default function RoutinesPage() {
 
   const isToday = selectedDay === todayShort;
 
+  // Does this routine run on the selected weekday? Strict — a routine only
+  // appears on days it is actually scheduled for (no "empty = every day").
+  const runsOnDay = (days: string[], short: string) => {
+    const full = (SHORT_TO_FULL[short] || "").toLowerCase();
+    const sh = short.toLowerCase();
+    return (days || []).some((d) => {
+      const dl = String(d).toLowerCase();
+      return dl === full || dl === sh || dl.slice(0, 3) === sh;
+    });
+  };
+
   // Routines to show: filtered by the selected weekday (or all days in View All).
   const visibleRoutines = useMemo(() => {
-    const fullDay = SHORT_TO_FULL[selectedDay];
     return rawRoutines
-      .filter((r) => viewAll || !r.days.length || r.days.includes(fullDay))
+      .filter((r) => viewAll || runsOnDay(r.days, selectedDay))
       .map((r) => ({
         ...r,
         // Real completion status only applies to today; other days show as scheduled.

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Logo from "../icons/Logo";
 import { useAuth } from "@/context/AuthContext";
+import { useUI } from "@/components/ui/UIProvider";
 
 const navItems = [
   {
@@ -119,8 +120,20 @@ const bottomItems = [
 export default function PatientSidebar() {
   const pathname = usePathname();
   const { logout } = useAuth();
+  const { confirm } = useUI();
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
+
+  // Always ask once before logging out (in-site modal, not a browser popup).
+  const handleLogout = async () => {
+    const ok = await confirm({
+      title: "Log out?",
+      message: "You will need to sign in again to continue.",
+      confirmText: "Log out",
+      cancelText: "Stay",
+    });
+    if (ok) { close(); logout(); }
+  };
 
   return (
     <>
@@ -202,7 +215,7 @@ export default function PatientSidebar() {
           {/* Logout button */}
           <li>
             <button
-              onClick={() => { close(); logout(); }}
+              onClick={handleLogout}
               className="flex items-center gap-3 px-6 py-3 text-sm font-medium transition-all text-white/60 hover:text-white hover:bg-white/5 w-full text-left"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">

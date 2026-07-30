@@ -129,6 +129,8 @@ export default function Topbar({
       }
     };
     const onAlert = (data: { message?: string }) => {
+      // Respect the patient's Emergency Alerts preference.
+      if (!loadSettings().emergencyAlerts) return;
       pushToast('alert', data.message || 'New alert.');
     };
 
