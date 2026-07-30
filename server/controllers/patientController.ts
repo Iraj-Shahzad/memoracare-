@@ -158,12 +158,19 @@ export const getDashboard = async (req: Request, res: Response, next: NextFuncti
     if (!takenDays.has(cursor.toDateString())) cursor.setDate(cursor.getDate() - 1);
     while (takenDays.has(cursor.toDateString())) { streak++; cursor.setDate(cursor.getDate() - 1); }
 
+    // Attach each routine's REAL status for today so the dashboard tick persists
+    // across navigation (read from the DB, not kept only in memory).
+    const routinesWithStatus = routines.map((r: any) => {
+      const log = todayRoutineLogs.find((l) => l.routine.toString() === r._id.toString());
+      return { ...r.toObject(), todayStatus: log ? log.status : 'upcoming' };
+    });
+
     res.status(200).json({
       success: true,
       dashboard: {
         patient,
         medications: { total: medsTotal, taken: medsTaken, list: medications },
-        routines: { total: routinesTotal, completed: routinesCompleted, list: routines },
+        routines: { total: routinesTotal, completed: routinesCompleted, list: routinesWithStatus },
         nextMedTime,
         nextRoutine,
         weeklyScore,

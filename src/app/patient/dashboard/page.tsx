@@ -227,7 +227,8 @@ export default function Dashboard() {
                   <div className="text-sm text-[#94a3b8] py-4">No routines scheduled for today.</div>
                 ) : (
                   routineList.slice(0, 5).map((r) => {
-                    const done = completedRoutines.has(r._id);
+                    // Persisted status from the DB, or an optimistic just-ticked one.
+                    const done = r.todayStatus === "completed" || completedRoutines.has(r._id);
                     return (
                     <div key={r._id} className="flex items-center gap-3.5 p-3.5 bg-[#f9fafb] rounded-xl mb-2.5 border-l-4 border-[#0d9488]">
                       <button
