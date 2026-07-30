@@ -9,6 +9,47 @@ import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPut } from "@/lib/api";
 import { useUI } from "@/components/ui/UIProvider";
 
+// Purpose options — the app is now general-purpose (domestic, elderly, recovery,
+// as well as cognitive care), so this mirrors the caregiver "Add Patient" form.
+const PURPOSE_GROUPS: { label: string; options: string[] }[] = [
+  {
+    label: "General / Non-medical",
+    options: [
+      "General Reminders (No diagnosis)",
+      "Home / Personal Use",
+      "Elderly Care (General)",
+      "Caregiver-Assisted (Other)",
+    ],
+  },
+  {
+    label: "Cognitive / Dementia",
+    options: [
+      "Alzheimer's Disease (Early Stage)",
+      "Alzheimer's Disease (Moderate Stage)",
+      "Alzheimer's Disease (Advanced Stage)",
+      "Mild Cognitive Impairment (MCI)",
+      "Vascular Dementia",
+      "Lewy Body Dementia",
+      "Frontotemporal Dementia",
+    ],
+  },
+  {
+    label: "Medical / Recovery",
+    options: [
+      "Post-Surgery Recovery",
+      "Chronic Illness Management",
+      "Hospital / Nursing Care",
+      "Physical Rehabilitation",
+      "Other",
+    ],
+  },
+];
+
+// --- small validation helpers (used by every edit form on this page) ---
+const digitsOnly = (s: string) => (s || "").replace(/\D/g, "");
+const isValidEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((s || "").trim());
+const isValidPhone = (s: string) => digitsOnly(s).length >= 10 && digitsOnly(s).length <= 13;
+
 export default function ProfilePage() {
   const { user } = useAuth();
   const { toast, confirm } = useUI();
@@ -19,6 +60,8 @@ export default function ProfilePage() {
   const [editMode, setEditMode] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  // Field-level validation errors, keyed by field name.
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Personal Information (real values loaded from the API; no fake defaults)
   const [fullName, setFullName] = useState(user?.name || "");
@@ -29,11 +72,11 @@ export default function ProfilePage() {
   const [address, setAddress] = useState("");
   const [cnic, setCnic] = useState("");
 
-  // Medical Information
+  // Care Information
   const [diagnosis, setDiagnosis] = useState("");
   const [doctor, setDoctor] = useState("");
   const [bloodGroup, setBloodGroup] = useState("");
-  const [allergies, setAllergies] = useState("");
+  const [allergies, setAllergies] = useState(""); // now shown as "Precautions"
   const [medicalHistory, setMedicalHistory] = useState("");
 
   // Emergency Contacts
@@ -102,7 +145,69 @@ export default function ProfilePage() {
     fetchProfile();
   }, [patientId]);
 
+  // --- per-section validation ---
+  const validatePersonal = () => {
+    const e: Record<string, string> = {};
+    if (!fullName.trim() || fullName.trim().length < 2)
+      e.fullName = "Please enter your full name (at least 2 letters).";
+    if (!dateOfBirth) e.dateOfBirth = "Please select your date of birth.";
+    else if (new Date(dateOfBirth) > new Date()) e.dateOfBirth = "Date of birth cannot be in the future.";
+    if (!gender) e.gender = "Please select a gender.";
+    if (!phone.trim()) e.phone = "Please enter a phone number.";
+    else if (!isValidPhone(phone)) e.phone = "Enter a valid phone number (at least 10 digits).";
+    if (!email.trim()) e.email = "Please enter an email address.";
+    else if (!isValidEmail(email)) e.email = "Enter a valid email like name@example.com.";
+    if (cnic.trim() && digitsOnly(cnic).length !== 13)
+      e.cnic = "CNIC must be 13 digits (e.g. 35201-1234567-1).";
+    return e;
+  };
+
+  const validateCare = () => {
+    const e: Record<string, string> = {};
+    if (!diagnosis.trim()) e.diagnosis = "Please choose a purpose for using the app.";
+    return e;
+  };
+
+  const validateEmergency = () => {
+    const e: Record<string, string> = {};
+    // Primary contact is required in full.
+    if (!primaryContact.trim()) e.primaryContact = "Enter the primary contact's name.";
+    if (!primaryRelation.trim()) e.primaryRelation = "Enter the relationship (e.g. Son, Wife, Friend).";
+    if (!primaryPhone.trim()) e.primaryPhone = "Enter the primary contact's phone number.";
+    else if (!isValidPhone(primaryPhone)) e.primaryPhone = "Enter a valid phone number.";
+    // Secondary contact is optional, but if started it must be completed.
+    const anySecondary = secondaryContact.trim() || secondaryRelation.trim() || secondaryPhone.trim();
+    if (anySecondary) {
+      if (!secondaryContact.trim()) e.secondaryContact = "Enter the secondary contact's name.";
+      if (!secondaryRelation.trim()) e.secondaryRelation = "Enter the relationship.";
+      if (!secondaryPhone.trim()) e.secondaryPhone = "Enter the secondary contact's phone number.";
+      else if (!isValidPhone(secondaryPhone)) e.secondaryPhone = "Enter a valid phone number.";
+    }
+    return e;
+  };
+
+  const validateCaregiver = () => {
+    const e: Record<string, string> = {};
+    if (!caregiverName.trim()) e.caregiverName = "Enter the caregiver's name.";
+    if (!caregiverRelation.trim()) e.caregiverRelation = "Enter the relationship.";
+    if (caregiverPhone.trim() && !isValidPhone(caregiverPhone)) e.caregiverPhone = "Enter a valid phone number.";
+    if (caregiverEmail.trim() && !isValidEmail(caregiverEmail)) e.caregiverEmail = "Enter a valid email address.";
+    return e;
+  };
+
   const handleSave = async () => {
+    // Validate only the section currently being edited.
+    let e: Record<string, string> = {};
+    if (editMode === "personal") e = validatePersonal();
+    else if (editMode === "medical") e = validateCare();
+    else if (editMode === "emergency") e = validateEmergency();
+    else if (editMode === "caregiver") e = validateCaregiver();
+    setErrors(e);
+    if (Object.keys(e).length > 0) {
+      toast("Please fix the highlighted fields before saving.", "error");
+      return;
+    }
+
     try {
       setSaving(true);
       await apiPut(`/patients/${patientId}`, {
@@ -118,18 +223,23 @@ export default function ProfilePage() {
         bloodGroup,
         allergies,
         medicalHistory,
+        // NOTE: the Patient model field is `relationship` — sending `relation`
+        // was silently dropped by Mongoose, which is why relationships showed
+        // as empty "( )". We now send the correct key.
         emergencyContacts: [
-          { name: primaryContact, relation: primaryRelation, phone: primaryPhone },
-          { name: secondaryContact, relation: secondaryRelation, phone: secondaryPhone },
+          { name: primaryContact, relationship: primaryRelation, phone: primaryPhone },
+          { name: secondaryContact, relationship: secondaryRelation, phone: secondaryPhone },
         ],
         caregiver: {
           name: caregiverName,
-          relation: caregiverRelation,
+          relationship: caregiverRelation,
           phone: caregiverPhone,
           email: caregiverEmail,
         },
       });
+      setErrors({});
       setEditMode(null);
+      toast("Profile saved.", "success");
     } catch (err) {
       console.error("Profile save error:", err);
       toast("Failed to save profile. Please try again.", "error");
@@ -139,94 +249,103 @@ export default function ProfilePage() {
   };
 
   const handleCancel = () => {
+    setErrors({});
     setEditMode(null);
   };
+
+  // Toggle an edit section; always clear stale errors when switching.
+  const toggleEdit = (section: string) => {
+    setErrors({});
+    setEditMode(editMode === section ? null : section);
+  };
+
+  // Shared input styling that turns red when the field has an error.
+  const inputCls = (name: string) =>
+    `w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488] ${
+      errors[name] ? "border-red-400 bg-red-50" : "border-gray-300"
+    }`;
+  const errText = (name: string) =>
+    errors[name] ? <p className="mt-1 text-xs text-red-600">{errors[name]}</p> : null;
 
   const renderPersonalInfo = () => {
     if (editMode === "personal") {
       return (
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Full Name
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
             <input
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+              className={inputCls("fullName")}
             />
+            {errText("fullName")}
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Date of Birth
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
               <input
                 type="date"
                 value={dateOfBirth}
                 onChange={(e) => setDateOfBirth(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                className={inputCls("dateOfBirth")}
               />
+              {errText("dateOfBirth")}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Gender
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
               <select
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                className={inputCls("gender")}
               >
+                <option value="">Select gender...</option>
                 <option>Male</option>
                 <option>Female</option>
-                <option>Other</option>
               </select>
+              {errText("gender")}
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Phone
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
             <input
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+              placeholder="+92 300 1234567"
+              className={inputCls("phone")}
             />
+            {errText("phone")}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+              className={inputCls("email")}
             />
+            {errText("email")}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Address
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
             <textarea
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+              className={inputCls("address")}
               rows={2}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              CNIC
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">CNIC</label>
             <input
               type="text"
               value={cnic}
               onChange={(e) => setCnic(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+              placeholder="35201-1234567-1"
+              className={inputCls("cnic")}
             />
+            {errText("cnic")}
           </div>
           <div className="flex gap-3 pt-4">
             <button
@@ -259,35 +378,37 @@ export default function ProfilePage() {
           <div>
             <p className="text-sm text-gray-600">Date of Birth</p>
             <p className="font-medium">
-              {new Date(dateOfBirth).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
+              {dateOfBirth
+                ? new Date(dateOfBirth).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })
+                : "—"}
             </p>
           </div>
           <div>
             <p className="text-sm text-gray-600">Gender</p>
-            <p className="font-medium">{gender}</p>
+            <p className="font-medium">{gender || "—"}</p>
           </div>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div>
             <p className="text-sm text-gray-600">Phone</p>
-            <p className="font-medium">{phone}</p>
+            <p className="font-medium">{phone || "—"}</p>
           </div>
           <div>
             <p className="text-sm text-gray-600">Email</p>
-            <p className="font-medium">{email}</p>
+            <p className="font-medium">{email || "—"}</p>
           </div>
         </div>
         <div>
           <p className="text-sm text-gray-600">Address</p>
-          <p className="font-medium">{address}</p>
+          <p className="font-medium">{address || "—"}</p>
         </div>
         <div>
           <p className="text-sm text-gray-600">CNIC</p>
-          <p className="font-medium">{cnic}</p>
+          <p className="font-medium">{cnic || "—"}</p>
         </div>
       </div>
     );
@@ -298,37 +419,44 @@ export default function ProfilePage() {
       return (
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Diagnosis
-            </label>
-            <input
-              type="text"
+            <label className="block text-sm font-medium text-gray-700 mb-1">Purpose</label>
+            <select
               value={diagnosis}
               onChange={(e) => setDiagnosis(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
-            />
+              className={inputCls("diagnosis")}
+            >
+              <option value="">Select a purpose...</option>
+              {PURPOSE_GROUPS.map((group) => (
+                <optgroup key={group.label} label={group.label}>
+                  {group.options.map((opt) => (
+                    <option key={opt} value={opt}>
+                      {opt}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+            {errText("diagnosis")}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Doctor
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Doctor / Supervisor</label>
             <input
               type="text"
               value={doctor}
               onChange={(e) => setDoctor(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+              placeholder="Optional — attending doctor or supervisor"
+              className={inputCls("doctor")}
             />
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Blood Group
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Blood Group</label>
               <select
                 value={bloodGroup}
                 onChange={(e) => setBloodGroup(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                className={inputCls("bloodGroup")}
               >
+                <option value="">Select...</option>
                 <option>A+</option>
                 <option>A-</option>
                 <option>B+</option>
@@ -340,25 +468,22 @@ export default function ProfilePage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Allergies
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Precautions</label>
               <input
                 type="text"
                 value={allergies}
                 onChange={(e) => setAllergies(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                placeholder="e.g. Penicillin, avoid stairs, low salt"
+                className={inputCls("allergies")}
               />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Medical History
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Background / Notes</label>
             <textarea
               value={medicalHistory}
               onChange={(e) => setMedicalHistory(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+              className={inputCls("medicalHistory")}
               rows={3}
             />
           </div>
@@ -385,25 +510,25 @@ export default function ProfilePage() {
       <div className="space-y-3">
         <div>
           <p className="text-sm text-gray-600">Purpose</p>
-          <p className="font-medium">{diagnosis}</p>
+          <p className="font-medium">{diagnosis || "—"}</p>
         </div>
         <div>
-          <p className="text-sm text-gray-600">Caregiver</p>
-          <p className="font-medium">{doctor}</p>
+          <p className="text-sm text-gray-600">Doctor / Supervisor</p>
+          <p className="font-medium">{doctor || "—"}</p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div>
             <p className="text-sm text-gray-600">Blood Group</p>
-            <p className="font-medium">{bloodGroup}</p>
+            <p className="font-medium">{bloodGroup || "—"}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-600">Allergies</p>
-            <p className="font-medium">{allergies}</p>
+            <p className="text-sm text-gray-600">Precautions</p>
+            <p className="font-medium">{allergies || "—"}</p>
           </div>
         </div>
         <div>
-          <p className="text-sm text-gray-600">Medical History</p>
-          <p className="font-medium">{medicalHistory}</p>
+          <p className="text-sm text-gray-600">Background / Notes</p>
+          <p className="font-medium">{medicalHistory || "—"}</p>
         </div>
       </div>
     );
@@ -417,79 +542,77 @@ export default function ProfilePage() {
             <h4 className="font-semibold mb-3">Primary Contact</h4>
             <div className="space-y-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Name
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
                 <input
                   type="text"
                   value={primaryContact}
                   onChange={(e) => setPrimaryContact(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                  className={inputCls("primaryContact")}
                 />
+                {errText("primaryContact")}
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Relationship
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Relationship</label>
                   <input
                     type="text"
                     value={primaryRelation}
                     onChange={(e) => setPrimaryRelation(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                    placeholder="e.g. Son, Wife, Friend"
+                    className={inputCls("primaryRelation")}
                   />
+                  {errText("primaryRelation")}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Phone
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
                   <input
                     type="tel"
                     value={primaryPhone}
                     onChange={(e) => setPrimaryPhone(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                    placeholder="+92 300 1234567"
+                    className={inputCls("primaryPhone")}
                   />
+                  {errText("primaryPhone")}
                 </div>
               </div>
             </div>
           </div>
 
           <div>
-            <h4 className="font-semibold mb-3">Secondary Contact</h4>
+            <h4 className="font-semibold mb-3">Secondary Contact <span className="text-xs font-normal text-gray-400">(optional)</span></h4>
             <div className="space-y-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Name
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
                 <input
                   type="text"
                   value={secondaryContact}
                   onChange={(e) => setSecondaryContact(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                  className={inputCls("secondaryContact")}
                 />
+                {errText("secondaryContact")}
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Relationship
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Relationship</label>
                   <input
                     type="text"
                     value={secondaryRelation}
                     onChange={(e) => setSecondaryRelation(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                    placeholder="e.g. Daughter, Neighbour"
+                    className={inputCls("secondaryRelation")}
                   />
+                  {errText("secondaryRelation")}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Phone
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
                   <input
                     type="tel"
                     value={secondaryPhone}
                     onChange={(e) => setSecondaryPhone(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                    placeholder="+92 321 1234567"
+                    className={inputCls("secondaryPhone")}
                   />
+                  {errText("secondaryPhone")}
                 </div>
               </div>
             </div>
@@ -522,30 +645,36 @@ export default function ProfilePage() {
             <div>
               <p className="text-sm text-gray-600">Name</p>
               <p className="font-medium">
-                {primaryContact} ({primaryRelation})
+                {primaryContact || "—"}
+                {primaryRelation ? ` (${primaryRelation})` : ""}
               </p>
             </div>
             <div>
               <p className="text-sm text-gray-600">Phone</p>
-              <p className="font-medium">{primaryPhone}</p>
+              <p className="font-medium">{primaryPhone || "—"}</p>
             </div>
           </div>
         </div>
 
         <div>
           <h4 className="font-semibold text-[#1a3c34] mb-2">Secondary Contact</h4>
-          <div className="space-y-2">
-            <div>
-              <p className="text-sm text-gray-600">Name</p>
-              <p className="font-medium">
-                {secondaryContact} ({secondaryRelation})
-              </p>
+          {secondaryContact ? (
+            <div className="space-y-2">
+              <div>
+                <p className="text-sm text-gray-600">Name</p>
+                <p className="font-medium">
+                  {secondaryContact}
+                  {secondaryRelation ? ` (${secondaryRelation})` : ""}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Phone</p>
+                <p className="font-medium">{secondaryPhone || "—"}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-gray-600">Phone</p>
-              <p className="font-medium">{secondaryPhone}</p>
-            </div>
-          </div>
+          ) : (
+            <p className="text-sm text-gray-400">No secondary contact added.</p>
+          )}
         </div>
       </div>
     );
@@ -556,48 +685,45 @@ export default function ProfilePage() {
       return (
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Caregiver Name
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Caregiver Name</label>
             <input
               type="text"
               value={caregiverName}
               onChange={(e) => setCaregiverName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+              className={inputCls("caregiverName")}
             />
+            {errText("caregiverName")}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Relationship
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Relationship</label>
             <input
               type="text"
               value={caregiverRelation}
               onChange={(e) => setCaregiverRelation(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+              className={inputCls("caregiverRelation")}
             />
+            {errText("caregiverRelation")}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Phone
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
             <input
               type="tel"
               value={caregiverPhone}
               onChange={(e) => setCaregiverPhone(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+              placeholder="+92 300 1234567"
+              className={inputCls("caregiverPhone")}
             />
+            {errText("caregiverPhone")}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input
               type="email"
               value={caregiverEmail}
               onChange={(e) => setCaregiverEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+              className={inputCls("caregiverEmail")}
             />
+            {errText("caregiverEmail")}
           </div>
           <div className="flex gap-3 pt-4">
             <button
@@ -623,17 +749,18 @@ export default function ProfilePage() {
         <div>
           <p className="text-sm text-gray-600">Caregiver Name</p>
           <p className="font-medium">
-            {caregiverName} ({caregiverRelation})
+            {caregiverName || "—"}
+            {caregiverRelation ? ` (${caregiverRelation})` : ""}
           </p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div>
             <p className="text-sm text-gray-600">Phone</p>
-            <p className="font-medium">{caregiverPhone}</p>
+            <p className="font-medium">{caregiverPhone || "—"}</p>
           </div>
           <div>
             <p className="text-sm text-gray-600">Email</p>
-            <p className="font-medium">{caregiverEmail}</p>
+            <p className="font-medium">{caregiverEmail || "—"}</p>
           </div>
         </div>
       </div>
@@ -688,9 +815,7 @@ export default function ProfilePage() {
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-[#1a3c34]">Personal Information</h2>
               <button
-                onClick={() =>
-                  setEditMode(editMode === "personal" ? null : "personal")
-                }
+                onClick={() => toggleEdit("personal")}
                 className="px-4 py-2 text-[#0d9488] font-medium hover:bg-[#f0fdf4] rounded-lg transition"
               >
                 {editMode === "personal" ? "Cancel" : "Edit"}
@@ -699,14 +824,12 @@ export default function ProfilePage() {
             {renderPersonalInfo()}
           </div>
 
-          {/* Medical Information Section */}
+          {/* Care Information Section */}
           <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold text-[#1a3c34]">Medical Information</h2>
+              <h2 className="text-xl font-bold text-[#1a3c34]">Care Information</h2>
               <button
-                onClick={() =>
-                  setEditMode(editMode === "medical" ? null : "medical")
-                }
+                onClick={() => toggleEdit("medical")}
                 className="px-4 py-2 text-[#0d9488] font-medium hover:bg-[#f0fdf4] rounded-lg transition"
               >
                 {editMode === "medical" ? "Cancel" : "Edit"}
@@ -720,9 +843,7 @@ export default function ProfilePage() {
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-[#1a3c34]">Emergency Contacts</h2>
               <button
-                onClick={() =>
-                  setEditMode(editMode === "emergency" ? null : "emergency")
-                }
+                onClick={() => toggleEdit("emergency")}
                 className="px-4 py-2 text-[#0d9488] font-medium hover:bg-[#f0fdf4] rounded-lg transition"
               >
                 {editMode === "emergency" ? "Cancel" : "Edit"}
@@ -736,9 +857,7 @@ export default function ProfilePage() {
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-[#1a3c34]">Caregiver Information</h2>
               <button
-                onClick={() =>
-                  setEditMode(editMode === "caregiver" ? null : "caregiver")
-                }
+                onClick={() => toggleEdit("caregiver")}
                 className="px-4 py-2 text-[#0d9488] font-medium hover:bg-[#f0fdf4] rounded-lg transition"
               >
                 {editMode === "caregiver" ? "Cancel" : "Edit"}
