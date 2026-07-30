@@ -8,6 +8,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPost } from "@/lib/api";
 import { speak, getLang } from "@/lib/speech";
+import { formatTime12 } from "@/lib/time";
 import { useUI } from "@/components/ui/UIProvider";
 
 type RoutineStatus = "done" | "active" | "missed" | "upcoming";
@@ -236,7 +237,7 @@ export default function RoutinesPage() {
               <button
                 onClick={() => {
                   if (visibleRoutines.length === 0) { speak("No routines scheduled.", getLang()); return; }
-                  const spoken = visibleRoutines.map((r) => `${r.name} at ${r.startTime}`).join(", ");
+                  const spoken = visibleRoutines.map((r) => `${r.name} at ${formatTime12(r.startTime)}`).join(", ");
                   speak(`You have ${visibleRoutines.length} routines. ${spoken}.`, getLang());
                 }}
                 className="rounded-[10px] text-[14px] font-semibold border-none cursor-pointer flex items-center gap-2"
@@ -340,7 +341,7 @@ export default function RoutinesPage() {
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className="text-[13px] font-semibold text-[#1a3c34] rounded-[8px]" style={{ background: "#f1f5f9", padding: "6px 14px" }}>{routine.startTime || "—"}</span>
+                        <span className="text-[13px] font-semibold text-[#1a3c34] rounded-[8px]" style={{ background: "#f1f5f9", padding: "6px 14px" }}>{formatTime12(routine.startTime)}</span>
                         <span className={`${badge.bg} ${badge.text} text-[12px] font-semibold rounded-[20px]`} style={{ padding: "4px 12px" }}>{badge.label}</span>
                       </div>
                     </div>

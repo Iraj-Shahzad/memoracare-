@@ -6,6 +6,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { timeGreeting } from "@/lib/greeting";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPost } from "@/lib/api";
+import { formatTime12 } from "@/lib/time";
 import { useState, useEffect } from "react";
 
 interface Patient {
@@ -235,7 +236,7 @@ export default function RoutinesPage() {
                         <div className="flex items-center justify-between gap-4">
                           <div>
                             <p className="font-semibold text-slate-900">{routine.name}</p>
-                            <p className="text-sm text-slate-500">{routine.time}</p>
+                            <p className="text-sm text-slate-500">{formatTime12(routine.time)}</p>
                           </div>
                           <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${getStatusBadgeColor(routine.status)}`}>
                             {routine.status.charAt(0).toUpperCase() + routine.status.slice(1)}

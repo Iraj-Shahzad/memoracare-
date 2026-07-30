@@ -6,6 +6,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { timeGreeting } from "@/lib/greeting";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPost, apiDelete } from "@/lib/api";
+import { formatTime12 } from "@/lib/time";
 import { useUI } from "@/components/ui/UIProvider";
 import { useState, useEffect } from "react";
 
@@ -320,7 +321,7 @@ export default function MedicationsPage() {
                           <span className="text-sm text-slate-600">{med.frequency}</span>
                         </td>
                         <td className="px-6 py-3">
-                          <span className="text-sm text-slate-600">{med.time}</span>
+                          <span className="text-sm text-slate-600">{formatTime12(med.time)}</span>
                         </td>
                         <td className="px-6 py-3">
                           <span

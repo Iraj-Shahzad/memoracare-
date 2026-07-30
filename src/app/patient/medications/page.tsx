@@ -7,6 +7,7 @@ import Topbar from "@/components/shared/Topbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPost, apiDelete } from "@/lib/api";
+import { formatTime12 } from "@/lib/time";
 import { useUI } from "@/components/ui/UIProvider";
 
 type FilterTab = "all" | "taken" | "upcoming" | "missed";
@@ -243,7 +244,7 @@ export default function MedicationsPage() {
               <div>
                 <div className="text-[13px] opacity-80">Next Dose Coming Up</div>
                 <div className="text-[18px] font-bold">{nextMed ? `${nextMed.name} ${nextMed.dosage}` : "All doses handled"}</div>
-                <div className="text-[14px] opacity-90 mt-0.5">{nextMed ? `Scheduled at ${nextMed.schedules?.[0]?.time || "—"}` : "No upcoming doses right now"}</div>
+                <div className="text-[14px] opacity-90 mt-0.5">{nextMed ? `Scheduled at ${formatTime12(nextMed.schedules?.[0]?.time)}` : "No upcoming doses right now"}</div>
               </div>
             </div>
             {nextMed && (
@@ -509,7 +510,7 @@ export default function MedicationsPage() {
                               )}`}
                               style={{ padding: "3px 8px" }}
                             >
-                              {schedule.time}
+                              {formatTime12(schedule.time)}
                             </span>
                           ))}
                         </div>
@@ -628,7 +629,7 @@ export default function MedicationsPage() {
             <div className="space-y-2.5 text-sm">
               <div className="flex justify-between border-b border-slate-100 pb-2"><span className="text-slate-500">Dosage</span><span className="font-medium text-slate-900">{detailMed.dosage || "—"}</span></div>
               <div className="flex justify-between border-b border-slate-100 pb-2"><span className="text-slate-500">Frequency</span><span className="font-medium text-slate-900">{detailMed.frequency}</span></div>
-              <div className="flex justify-between border-b border-slate-100 pb-2"><span className="text-slate-500">Schedule</span><span className="font-medium text-slate-900 text-right">{detailMed.schedules.map((s) => s.time).join(", ")}</span></div>
+              <div className="flex justify-between border-b border-slate-100 pb-2"><span className="text-slate-500">Schedule</span><span className="font-medium text-slate-900 text-right">{detailMed.schedules.map((s) => formatTime12(s.time)).join(", ")}</span></div>
               <div className="flex justify-between border-b border-slate-100 pb-2"><span className="text-slate-500">Prescribed by</span><span className="font-medium text-slate-900">{detailMed.prescribedBy}</span></div>
               <div className="flex justify-between border-b border-slate-100 pb-2"><span className="text-slate-500">7-day compliance</span><span className="font-medium text-slate-900">{detailMed.compliance}%</span></div>
               <div className="flex justify-between"><span className="text-slate-500">Today</span><span className="font-medium text-slate-900 capitalize">{detailMed.status}</span></div>

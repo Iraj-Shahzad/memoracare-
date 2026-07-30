@@ -9,6 +9,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPost } from "@/lib/api";
 import { timeGreeting } from "@/lib/greeting";
+import { formatTime12 } from "@/lib/time";
 import { useUI } from "@/components/ui/UIProvider";
 
 export default function Dashboard() {
@@ -247,7 +248,7 @@ export default function Dashboard() {
                         <div className={`text-sm font-semibold text-[#1a3c34] ${done ? "line-through opacity-60" : ""}`}>{r.activityName}</div>
                         <div className="text-xs text-[#64748b]">{done ? "Completed" : "Scheduled"}</div>
                       </div>
-                      <div className="text-[13px] font-semibold text-[#1a3c34] whitespace-nowrap">{r.startTime || ""}</div>
+                      <div className="text-[13px] font-semibold text-[#1a3c34] whitespace-nowrap">{formatTime12(r.startTime)}</div>
                     </div>
                     );
                   })
