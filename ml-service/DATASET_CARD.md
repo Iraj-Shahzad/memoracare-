@@ -2,7 +2,7 @@
 
 A custom, curated **intent-classification dataset** for a conversational assistant that
 supports Alzheimer's, dementia, and Mild Cognitive Impairment (MCI) patients. Each row is
-a short user utterance labelled with one of **25 intents**, in **English, Roman-Urdu, and
+a short user utterance labelled with one of **26 intents**, in **English, Roman-Urdu, and
 Urdu script** — grounded in a **Pakistani** care context (including *namaz*/prayer intents).
 
 ## Why this dataset exists
@@ -21,13 +21,13 @@ language they are most comfortable with.
 |--------|-------------|
 | `text` | the user utterance |
 | `language` | `english` (Latin script, incl. Roman-Urdu) or `urdu` (Urdu script) |
-| `intent` | one of the 25 intent labels |
+| `intent` | one of the 26 intent labels |
 
-## Intents (25)
-`greeting`, `goodbye`, `thanks`, `medication`, `routine_query`, `family_query`,
-`name_query`, `date_time`, `location`, `feeling`, `emergency`, `appointment`, `help`,
-`meal_time`, `weather`, `memories`, `doctor_query`, `hydration`, `exercise`, `sleep_rest`,
-`entertainment`, `prayer` (namaz), `news`, `bathroom`, `positive_mood`.
+## Intents (26)
+`greeting`, `goodbye`, `thanks`, `medication`, `medication_time`, `routine_query`,
+`family_query`, `name_query`, `date_time`, `location`, `feeling`, `emergency`, `appointment`,
+`help`, `meal_time`, `weather`, `memories`, `doctor_query`, `hydration`, `exercise`,
+`sleep_rest`, `entertainment`, `prayer` (namaz), `news`, `bathroom`, `positive_mood`.
 
 ## Languages
 - **English** — standard English phrasings.
@@ -41,7 +41,8 @@ a simple neural network / classical ML model make a strong baseline.
 ## Baseline
 A feed-forward neural network (bag-of-words → Dense(128) → Dense(64) → softmax, Adam)
 achieved roughly **75% accuracy under 5-fold cross-validation** on an earlier 17-intent
-version; retrain on this 25-intent version for updated numbers.
+version. This expanded version has **26 intents and ~980 labelled utterances** (about 38
+per intent); run `python train.py` to retrain and print updated cross-validation numbers.
 
 ## Licence
 Creative Commons Attribution 4.0 (CC BY 4.0) — free to use with attribution.

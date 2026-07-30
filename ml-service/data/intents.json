@@ -7,16 +7,19 @@
         "Hi there", "Hello there", "Is anyone there", "Are you there", "Hey assistant",
         "Greetings", "Good day", "Hey there", "Morning", "Hello assistant",
         "Anyone home", "Are you awake", "How are you", "Hello my friend",
-        "Assalam o Alaikum", "Salam", "Adaab", "Kaise ho", "Kya haal hai",
-        "السلام علیکم", "ہیلو", "سلام", "کیا آپ موجود ہیں", "آداب", "صبح بخیر", "کیسے ہو", "کیا حال ہے",
         "Good to see you", "Nice to see you", "Hey good morning", "Hello are you working",
-        "Assalamualaikum", "Kya aap theek hain",
-        "کیا آپ ٹھیک ہیں", "خوش آمدید", "آپ کیسے ہیں"
+        "Are you listening", "Can you hear me", "Hello can you help me", "Hi friend",
+        "Good morning assistant", "Hello good evening", "Hey how are you",
+        "Assalam o Alaikum", "Assalamualaikum", "Salam", "Adaab", "Kaise ho", "Kya haal hai",
+        "Kya aap theek hain", "Aap kaise hain", "Subah bakhair",
+        "السلام علیکم", "ہیلو", "سلام", "کیا آپ موجود ہیں", "آداب", "صبح بخیر", "کیسے ہو",
+        "کیا حال ہے", "کیا آپ ٹھیک ہیں", "خوش آمدید", "آپ کیسے ہیں", "کیا آپ سن رہے ہیں"
       ],
       "responses": [
         "Hello! I'm your MemoryCare assistant. How can I help you today?",
         "Hi there! It's good to see you. What can I do for you?",
-        "Assalam o Alaikum! I'm here to help. How are you feeling today?"
+        "Assalam o Alaikum! I'm here to help. How are you feeling today?",
+        "Hello, my friend. I'm always here. What would you like to know?"
       ]
     },
     {
@@ -25,348 +28,516 @@
         "Bye", "Goodbye", "See you later", "Talk to you later", "I am leaving",
         "Good night", "That is all", "Nothing else", "Thanks bye", "See you",
         "Catch you later", "I have to go", "Bye for now", "Goodnight", "See you tomorrow",
-        "I am done", "That will be all", "I am going now",
+        "I am done", "That will be all", "I am going now", "Ok bye", "Alright bye",
+        "I will talk to you later", "Take care", "Let us stop", "We are finished",
+        "No more questions", "I am tired now goodbye", "Ok that is enough",
         "Khuda hafiz", "Allah hafiz", "Shab bakhair", "Bas itna hi", "Phir milenge",
-        "خدا حافظ", "اللہ حافظ", "شب بخیر", "بس اتنا ہی", "پھر ملیں گے", "میں جا رہا ہوں", "اب بس",
-        "Ok bye", "Alright goodbye", "I will talk later", "Leaving now", "Time to go", "Take care bye",
-        "Theek hai khuda hafiz", "اب میں چلتا ہوں", "ملتے ہیں", "اللہ نگہبان",
-        "See you next time", "I am off now", "Have to leave", "Talk soon", "Good bye then",
-        "Main ja raha hoon ab", "Chalta hoon",
-        "میں اب جاتا ہوں", "پھر بات کریں گے", "اللہ حافظ دوست"
+        "Main ja raha hoon", "Ab bas", "Chalta hoon", "Theek hai bye",
+        "خدا حافظ", "اللہ حافظ", "شب بخیر", "بس اتنا ہی", "پھر ملیں گے", "میں جا رہا ہوں",
+        "اب بس", "ٹھیک ہے خدا حافظ", "اجازت دیں", "میں تھک گیا ہوں خدا حافظ"
       ],
       "responses": [
         "Goodbye! Take care of yourself. I'm here whenever you need me.",
-        "See you soon. Remember, I'm always here to help.",
-        "Take care! Press the button anytime you want to talk."
+        "Allah Hafiz! Have a peaceful day. Come back anytime.",
+        "Bye for now. Remember, I'm always here to help you.",
+        "Take care! Rest well and reach out whenever you like."
       ]
     },
     {
       "tag": "thanks",
       "patterns": [
-        "Thanks", "Thank you", "That is helpful", "Thanks a lot", "Thank you so much",
-        "That helped", "Appreciate it", "You are helpful", "Thank you very much",
-        "Many thanks", "Thanks a bunch", "That was helpful", "You helped me", "Great thanks",
-        "Thanks for that", "I appreciate your help",
-        "Shukriya", "Bahut shukriya", "Meherbani", "Aap ka shukriya",
-        "شکریہ", "بہت شکریہ", "آپ کا شکریہ", "مہربانی", "بہت مہربانی", "آپ نے مدد کی",
-        "Thanks so much", "You are so kind", "Thank you kindly", "That is very helpful",
-        "You are the best", "I am grateful",
-        "Bohat meherbani", "Shukriya aap ka",
-        "آپ بہت مہربان ہیں", "بہت بہت شکریہ", "میں شکر گزار ہوں"
+        "Thank you", "Thanks", "Thank you so much", "That is helpful", "Thanks a lot",
+        "I appreciate it", "You are helpful", "That was helpful", "Great thanks",
+        "Thank you very much", "Thanks for your help", "You helped me", "Well done",
+        "Good job", "That is kind of you", "Much appreciated", "Thanks friend",
+        "Thank you for helping", "You are very kind", "Thanks that is what I needed",
+        "Perfect thank you", "Lovely thank you", "Thank you assistant",
+        "Shukriya", "Bahut shukriya", "Shukria dost", "Aap ne meri madad ki", "Bara meherbani",
+        "Meherbani", "Aap bahut ache hain",
+        "شکریہ", "بہت شکریہ", "آپ نے میری مدد کی", "بڑی مہربانی", "مہربانی", "آپ بہت اچھے ہیں",
+        "آپ کا شکریہ", "بہت بہت شکریہ", "آپ نے بہت مدد کی", "زبردست شکریہ"
       ],
       "responses": [
-        "You're very welcome! I'm always happy to help.",
+        "You're most welcome! I'm always happy to help.",
+        "It's my pleasure. Let me know if you need anything else.",
         "Anytime! That's what I'm here for.",
-        "My pleasure. Let me know if you need anything else."
+        "You're welcome, my friend. I'm glad I could help."
       ]
     },
     {
       "tag": "medication",
       "patterns": [
-        "What medicine do I take", "What are my medications", "Which pills do I take",
-        "What medication do I need today", "Show me my medicines", "What tablets do I take",
-        "Tell me about my medicines", "Do I have any medicine today", "My medication list",
-        "What drugs am I taking", "What should I take today", "List my medicines",
-        "Which medicines are mine", "What pills are due", "Tell me my medicines",
-        "What do I need to take", "Show my prescriptions", "What are today's medicines",
-        "Which tablets today", "What medicine is for me",
-        "Meri dawai kya hai", "Mujhe kaun si dawa leni hai", "Meri medicine dikhao",
-        "میں کون سی دوا لوں", "میری دوائیں کیا ہیں", "آج مجھے کون سی دوا لینی ہے",
-        "میری ادویات دکھائیں", "مجھے کیا دوا لینی ہے", "میری دوا کی فہرست", "آج کی دوائیں کیا ہیں",
-        "Name my medicines", "Which drugs are prescribed", "What are the names of my pills",
-        "Give me my medicine list", "What medication am I on", "Tell me the medicines I take",
-        "Meri dawaon ke naam", "Kaun kaun si dawai hai",
-        "میری دواؤں کے نام بتائیں", "کون کون سی دوا ہے", "میری تمام دوائیں کیا ہیں"
+        "What medicine do I take", "What are my medications", "Show me my medicines",
+        "Which pills should I take", "Tell me my medication", "What medicine should I take today",
+        "List my medicines", "What are my pills", "What tablets do I take", "My medication please",
+        "Do I have any medicine", "What drugs do I take", "Tell me about my medicines",
+        "What do I need to take", "Which medicine is mine", "Remind me of my medication",
+        "What are my prescriptions", "Show my medication list", "What pills am I on",
+        "I forgot my medicine", "Have I taken my medicine", "What medicine is left",
+        "Do I need to take any tablets", "My medicines for today", "What are my tablets today",
+        "Which medicines do I need", "Tell me what medicine to take",
+        "Meri dawa kya hai", "Mujhe konsi dawa leni hai", "Meri dawai batao", "Konsi goli leni hai",
+        "Meri medicine kya hai", "Kya dawa leni hai", "Meri dawaiyan dikhao", "Aaj konsi dawa hai",
+        "میری دوا کیا ہے", "مجھے کونسی دوا لینی ہے", "میری دوائی بتاؤ", "کونسی گولی لینی ہے",
+        "میری میڈیسن کیا ہے", "کیا دوا لینی ہے", "میری دوائیں دکھاؤ", "آج کونسی دوا لینی ہے",
+        "میری دوائیوں کی فہرست", "میں نے دوا لی یا نہیں"
       ],
       "responses": [
         "Let me check your medications for you.",
-        "Here is what I found about your medicines."
+        "Here is your medication information.",
+        "I'll look up your medicines right now."
       ]
     },
     {
-      "tag": "medication",
+      "tag": "medication_time",
       "patterns": [
-        "When do I take my medicine", "What time is my medication", "When is my next pill",
-        "When should I take my tablets", "What time do I take medicine",
-        "Is it time for my medicine", "When is my next dose", "Have I taken my medicine",
-        "Did I take my pills", "When is my medicine due", "At what time is my medicine",
-        "Time for medicine", "Is my dose due now", "When is the next tablet",
-        "What time is my next dose", "When is my morning medicine", "When is my evening dose",
-        "Dawa kab leni hai", "Meri dawa ka waqt kya hai", "Agli dawa kab hai",
-        "میں دوا کب لوں", "میری دوا کا وقت کیا ہے", "میری اگلی دوا کب ہے",
-        "کیا دوا کا وقت ہو گیا ہے", "دوا کب لینی ہے", "اگلی خوراک کب ہے", "کیا میں نے دوا لی",
-        "At what time is my next tablet", "How long until my next dose", "What hour do I take medicine",
-        "Is my medicine due", "When exactly do I take it", "What time is the next tablet",
-        "Agli dawa ka time kya hai", "میری دوا کا اگلا وقت", "کتنے بجے دوا لینی ہے",
-        "At what o'clock is my medicine", "How many hours till my dose", "What is my medicine schedule",
-        "Give me my dose timings", "When are my pills scheduled", "What are the timings of my medicines",
-        "Dawa ke auqaat kya hain", "Kitne baje dawa hai",
-        "دوا کے اوقات بتائیں", "دوا کا شیڈول کیا ہے", "میری خوراک کے اوقات کیا ہیں"
+        "When do I take my medicine", "What time is my medication", "When should I take my pills",
+        "At what time do I take medicine", "When is my next medicine", "Medicine time please",
+        "What time do I take my tablets", "When are my pills due", "Time for my medication",
+        "When is my medicine due", "What are the times for my medicines", "Next medicine time",
+        "When do I take the next tablet", "Is it time for my medicine", "When is my morning medicine",
+        "When is my evening medicine", "What time should I take my pill", "When do I take my night medicine",
+        "How soon is my next dose", "When is my medication scheduled", "At what time are my medicines",
+        "When do I take my tablet today", "Tell me my medicine timings",
+        "Dawa kab leni hai", "Meri dawa ka time kya hai", "Agli dawa kab hai", "Kis waqt dawa leni hai",
+        "Dawai ka waqt", "Goli kab leni hai", "Subah wali dawa kab hai", "Raat wali dawa kab hai",
+        "دوا کب لینی ہے", "میری دوا کا وقت کیا ہے", "اگلی دوا کب ہے", "کس وقت دوا لینی ہے",
+        "دوائی کا وقت", "گولی کب لینی ہے", "صبح والی دوا کب ہے", "رات والی دوا کب ہے",
+        "میری دوا کا اگلا وقت", "کیا دوا کا وقت ہو گیا ہے"
       ],
       "responses": [
-        "Let me check the timing of your medicines.",
-        "Here are the times for your medication."
+        "Let me check the times for your medicines.",
+        "Here are your medication timings.",
+        "I'll find out when your next medicine is due."
       ]
     },
     {
       "tag": "routine_query",
       "patterns": [
-        "What is my routine", "What should I do today", "What are my activities",
-        "What is my schedule", "What do I have planned", "What is next on my schedule",
-        "Tell me my daily routine", "What activities do I have", "What is my plan for today",
-        "What should I do now", "What is on my schedule today", "What is my daily plan",
-        "What comes next", "What activity is next", "Tell me my schedule",
-        "What are my tasks today", "What do I do next", "What is my next activity",
-        "Mera maamool kya hai", "Aaj mujhe kya karna hai", "Mera schedule kya hai",
-        "میرا معمول کیا ہے", "آج مجھے کیا کرنا ہے", "میرا شیڈول کیا ہے",
-        "آج کے کام کیا ہیں", "آج میرا کیا پروگرام ہے", "اگلا کام کیا ہے", "میرے آج کے کام"
+        "What is my routine today", "What are my activities", "What do I have to do today",
+        "Show me my schedule", "What is on my routine", "Tell me my daily routine",
+        "What activities do I have", "What is my plan for today", "What should I do today",
+        "My routine please", "What is scheduled today", "What tasks do I have today",
+        "Do I have any activities", "What is next on my routine", "List my routines",
+        "What is my daily plan", "What am I supposed to do today", "Show my daily activities",
+        "What is my agenda today", "Any tasks for me today", "What are my routines for today",
+        "Tell me what I have to do", "What is my morning routine", "What is my evening routine",
+        "Mera aaj ka routine kya hai", "Meri activities kya hain", "Aaj mujhe kya karna hai",
+        "Mera schedule dikhao", "Aaj ka plan kya hai", "Meri routine batao", "Aaj kya karna hai",
+        "میرا آج کا معمول کیا ہے", "میری سرگرمیاں کیا ہیں", "آج مجھے کیا کرنا ہے",
+        "میرا شیڈول دکھاؤ", "آج کا منصوبہ کیا ہے", "میری روٹین بتاؤ", "آج کیا کرنا ہے",
+        "میرے آج کے کام کیا ہیں", "میرا صبح کا معمول", "میرا شام کا معمول"
       ],
       "responses": [
-        "Let me look at your routine for today.",
-        "Here is your schedule for today."
+        "Let me check your routine for today.",
+        "Here is your schedule for today.",
+        "I'll look up your daily activities now."
       ]
     },
     {
       "tag": "family_query",
       "patterns": [
-        "Who is my family", "Tell me about my family", "Who are my children",
-        "Who is my daughter", "Who is my son", "Who is my caregiver",
-        "Who takes care of me", "Who can I call", "Who are my emergency contacts",
-        "Tell me about my daughter", "Who is my wife", "Who is my husband",
-        "Tell me about my son", "Who are my relatives", "Who looks after me",
-        "Who is my family member", "Tell me about my children", "Who is my grandson",
-        "Who is my granddaughter", "Show me my family",
-        "Mera khandan kaun hai", "Meri beti kaun hai", "Mera beta kaun hai",
-        "میرا خاندان کون ہے", "میرے خاندان کے بارے میں بتائیں", "میری بیٹی کون ہے",
-        "میرا بیٹا کون ہے", "میری دیکھ بھال کون کرتا ہے", "میری بیوی کون ہے", "میرے بچے کون ہیں"
+        "Who is my family", "Tell me about my family", "Who are my children", "Who are my relatives",
+        "Who is my daughter", "Who is my son", "Who is my wife", "Who is my husband",
+        "Tell me about my kids", "Who visits me", "Who are my loved ones", "Show me my family",
+        "Who is in my family", "Do I have children", "Who is my caregiver family",
+        "Who takes care of me", "Who is my emergency contact", "Who should I call in my family",
+        "Who are my family members", "Tell me my family names", "Who is my grandchild",
+        "Who is my brother", "Who is my sister", "Remind me about my family",
+        "Mera khandan kaun hai", "Mere bache kaun hain", "Meri beti kaun hai", "Mera beta kaun hai",
+        "Meri family batao", "Mujhe kaun milne aata hai", "Mere ghar walay kaun hain",
+        "میرا خاندان کون ہے", "میرے بچے کون ہیں", "میری بیٹی کون ہے", "میرا بیٹا کون ہے",
+        "میری فیملی بتاؤ", "مجھے کون ملنے آتا ہے", "میرے گھر والے کون ہیں",
+        "میرے خاندان کے افراد کون ہیں", "میری بیوی کون ہے", "میرا شوہر کون ہے"
       ],
       "responses": [
-        "Let me tell you about your family and the people who care for you.",
-        "Here are the people close to you."
+        "Let me tell you about your family.",
+        "Here is your family information.",
+        "I'll look up your loved ones for you."
       ]
     },
     {
       "tag": "name_query",
       "patterns": [
-        "What is my name", "Who am I", "Do you know my name", "Tell me my name",
-        "Say my name", "What am I called", "Remind me who I am", "Can you tell my name",
-        "I forgot my name", "What do people call me", "Who am I again", "Tell me who I am",
-        "Please tell me my name", "Remind me my name",
-        "Mera naam kya hai", "Main kaun hoon", "Mera naam batao",
-        "میرا نام کیا ہے", "میں کون ہوں", "میرا نام بتائیں", "مجھے میرا نام یاد دلائیں",
-        "میرا نام کیا", "میں کون ہوں یاد دلائیں",
-        "Have I forgotten my name", "Tell me my full name", "What is my full name",
-        "Who am I please", "Remind me of my own name", "I cannot remember my name",
-        "Mera pura naam kya hai", "Mujhe mera naam yaad dilao",
-        "میرا پورا نام کیا ہے", "کیا میں اپنا نام بھول گیا", "مجھے میرا نام یاد دلا دیں"
+        "What is my name", "Who am I", "Tell me my name", "Do you know my name",
+        "What am I called", "Say my name", "Remind me of my name", "What is my full name",
+        "Who am I again", "I forgot my name", "Can you tell me who I am", "What do people call me",
+        "What is my name please", "Am I the right person", "Tell me who I am",
+        "What is my identity", "Whose account is this", "Remind me who I am",
+        "I cannot remember my name", "What is my name today",
+        "Mera naam kya hai", "Main kaun hoon", "Mujhe mera naam batao", "Kya aap mera naam jante hain",
+        "Mujhe kya kehte hain", "Main kaun hoon dobara", "Mera pura naam kya hai",
+        "میرا نام کیا ہے", "میں کون ہوں", "مجھے میرا نام بتاؤ", "کیا آپ میرا نام جانتے ہیں",
+        "مجھے کیا کہتے ہیں", "میں کون ہوں دوبارہ", "میرا پورا نام کیا ہے",
+        "مجھے اپنا نام یاد نہیں", "میں کون سا شخص ہوں", "میرا نام بتائیں"
       ],
       "responses": [
         "Let me remind you of your name.",
-        "Of course, here is your name."
+        "Here is who you are.",
+        "Of course, let me tell you your name."
       ]
     },
     {
       "tag": "date_time",
       "patterns": [
-        "What day is it", "What is today", "What is the date", "What time is it",
-        "What is the day today", "Tell me the date", "Tell me the time",
-        "What is today's date", "Is it morning or evening", "What month is it",
-        "What year is it", "Tell me the day", "What is the current time",
-        "Which day is today", "What is the time now", "Is it day or night",
-        "What is the current date", "Tell me the current time",
-        "Aaj kaun sa din hai", "Aaj kya tareekh hai", "Waqt kya hua hai",
-        "آج کون سا دن ہے", "آج کیا تاریخ ہے", "وقت کیا ہوا ہے",
-        "آج کی تاریخ کیا ہے", "ابھی کیا وقت ہے", "کون سا مہینہ ہے", "کون سا سال ہے",
-        "What is the time please", "Can you tell me the date", "What day of the week is it",
-        "Tell me what day it is", "What is the time right now", "Do you know the time",
-        "Abhi kya time hai", "Aaj konsa din hai", "مجھے تاریخ بتائیں", "دن کون سا ہے"
+        "What is the date today", "What time is it", "What day is it", "Tell me the date",
+        "What is today", "What is the current time", "What is the day today", "Which day is it",
+        "What month is it", "What year is it", "Is it morning or evening", "What is the time now",
+        "Tell me the day and date", "What is the date and time", "Do you know the time",
+        "What is the time right now", "Is it day or night", "What is today's date",
+        "Which month are we in", "What is the exact time", "Please tell me the date",
+        "What is the time and day", "Remind me what day it is",
+        "Aaj kya tareekh hai", "Kya waqt hua hai", "Aaj konsa din hai", "Tareekh batao",
+        "Abhi kitne baje hain", "Konsa mahina hai", "Aaj kya din hai", "Waqt kya hua hai",
+        "آج کیا تاریخ ہے", "کیا وقت ہوا ہے", "آج کونسا دن ہے", "تاریخ بتاؤ",
+        "ابھی کتنے بجے ہیں", "کونسا مہینہ ہے", "آج کیا دن ہے", "وقت کیا ہوا ہے",
+        "کیا یہ صبح ہے یا شام", "آج کی تاریخ کیا ہے"
       ],
       "responses": [
         "Let me tell you the current date and time.",
-        "Here is today's date and time."
+        "Here is today's date and time.",
+        "I'll check the day and time for you."
       ]
     },
     {
       "tag": "location",
       "patterns": [
-        "Where am I", "Where do I live", "What is my address", "Where is my home",
-        "How do I get home", "What city am I in", "Tell me where I live",
-        "What is my home address", "Which city is this", "Where is my house",
-        "How far is my home", "Tell me my address", "What area am I in",
-        "Where is this place", "What place is this",
-        "Main kahan hoon", "Main kahan rehta hoon", "Mera ghar kahan hai",
-        "میں کہاں ہوں", "میں کہاں رہتا ہوں", "میرا گھر کہاں ہے", "میرا پتہ کیا ہے",
-        "یہ کون سا شہر ہے", "میرا گھر کتنی دور ہے",
-        "Where is my house located", "What is this location", "Am I at home", "Take me home",
-        "Which area do I live in", "Is this my home",
-        "Main ghar par hoon", "Mujhe ghar le chalo",
-        "کیا میں گھر پر ہوں", "یہ جگہ کون سی ہے", "مجھے گھر لے چلو"
+        "Where am I", "What is this place", "Where do I live", "What is my address",
+        "Where is my home", "Which city am I in", "Tell me where I am", "Where is this",
+        "What place is this", "Am I at home", "Where is my house", "What is my home address",
+        "Which house is this", "Where am I right now", "I do not know where I am",
+        "Help me I am lost", "Where have I come", "What area is this", "Where is my location",
+        "Tell me my address", "Which town is this", "Where am I living",
+        "Main kahan hoon", "Yeh jagah kya hai", "Main kahan rehta hoon", "Mera pata kya hai",
+        "Mera ghar kahan hai", "Main kis sheher mein hoon", "Main kahan aa gaya hoon",
+        "میں کہاں ہوں", "یہ جگہ کیا ہے", "میں کہاں رہتا ہوں", "میرا پتہ کیا ہے",
+        "میرا گھر کہاں ہے", "میں کس شہر میں ہوں", "میں کہاں آ گیا ہوں",
+        "مجھے نہیں معلوم میں کہاں ہوں", "میں راستہ بھول گیا ہوں", "میرا پتہ بتائیں"
       ],
       "responses": [
         "Let me help you with where you are.",
-        "Here is information about your home."
+        "Here is your location information.",
+        "You are safe. Let me remind you where you are."
       ]
     },
     {
       "tag": "feeling",
       "patterns": [
-        "I feel sad", "I am scared", "I feel lonely", "I am confused", "I am worried",
-        "I feel lost", "I am anxious", "I do not feel well", "I feel upset",
-        "I am frightened", "I feel nervous", "I am unhappy", "I feel afraid",
-        "I am feeling down", "I feel restless", "I am not okay", "I feel low",
-        "I am feeling anxious", "I feel troubled", "I am feeling sad",
-        "Main udaas hoon", "Main dara hua hoon", "Main pareshan hoon",
-        "میں اداس ہوں", "میں ڈرا ہوا ہوں", "میں اکیلا محسوس کرتا ہوں",
-        "میں پریشان ہوں", "مجھے اچھا نہیں لگ رہا", "میں گھبرایا ہوا ہوں", "میں بے چین ہوں",
-        "I feel like crying", "I am feeling helpless", "My mind feels foggy", "I feel empty",
-        "I am feeling low today", "I feel so alone", "I am tired and sad",
-        "Mujhe rona aa raha hai", "Main bohat udaas hoon",
-        "مجھے رونا آ رہا ہے", "میں بے بس محسوس کرتا ہوں", "میرا دل بھاری ہے",
-        "I feel very sad today", "I am feeling gloomy", "Nobody understands me",
-        "I feel worried and scared", "I feel down and blue", "I am emotionally tired",
-        "Main pareshan aur udaas hoon",
-        "میں بہت اداس ہوں", "کوئی میری بات نہیں سمجھتا", "میں تنہا اور اداس ہوں"
+        "I feel sad", "I am not okay", "I feel lonely", "I am worried", "I feel scared",
+        "I am upset", "I feel anxious", "I am feeling down", "I feel unwell in my heart",
+        "I am not happy", "I feel low", "I am feeling bad", "I feel depressed", "I feel hopeless",
+        "I am crying", "Nobody loves me", "I feel alone", "I am afraid", "I feel nervous",
+        "I feel empty", "I am so sad today", "I feel like crying", "My heart feels heavy",
+        "I feel restless", "I am feeling uneasy", "I feel troubled",
+        "Main udaas hoon", "Main akela hoon", "Mujhe dar lag raha hai", "Main pareshan hoon",
+        "Main theek nahi hoon", "Dil ghabra raha hai", "Main rona chahta hoon", "Main dukhi hoon",
+        "میں اداس ہوں", "میں اکیلا ہوں", "مجھے ڈر لگ رہا ہے", "میں پریشان ہوں",
+        "میں ٹھیک نہیں ہوں", "دل گھبرا رہا ہے", "میں رونا چاہتا ہوں", "میں دکھی ہوں",
+        "مجھے تنہائی محسوس ہو رہی ہے", "میرا دل بھاری ہے"
       ],
       "responses": [
-        "I'm sorry you're feeling this way. You are safe, and people who love you are nearby. Would you like me to contact your caregiver?",
-        "It's okay to feel this way. Take a slow, deep breath. I'm here with you, and your caregiver is close by.",
-        "You are not alone. I'm here to help you. If you'd like, press the SOS button and your caregiver will come."
+        "I'm sorry you're feeling this way. You are safe, and people who love you are near. Would you like me to tell your caregiver?",
+        "It's okay to feel this way. You are not alone, I'm right here with you. Take a slow, deep breath.",
+        "I'm here for you. You matter, and you are cared for. Shall I let your caregiver know how you feel?"
       ]
     },
     {
       "tag": "emergency",
       "patterns": [
-        "Help", "Emergency", "I need help", "Something is wrong", "I have fallen",
-        "I am hurt", "Call for help", "I need a doctor", "This is an emergency",
-        "I am in pain", "Help me please", "I cannot breathe", "Call the doctor",
-        "I feel dizzy", "I fell down", "Please help me", "Get help now",
-        "I am not well at all", "Call my caregiver", "I need urgent help",
-        "Madad", "Mujhe madad chahiye", "Main gir gaya hoon", "Mujhe doctor chahiye",
-        "مدد", "مجھے مدد چاہیے", "کچھ گڑبڑ ہے", "میں گر گیا ہوں", "مجھے ڈاکٹر چاہیے",
-        "مجھے درد ہو رہا ہے", "میری مدد کرو",
-        "I need an ambulance", "Call an ambulance", "My chest hurts", "I am bleeding",
-        "I feel faint", "I am choking", "I have chest pain", "Something happened to me",
-        "I have hurt myself", "Get a doctor now",
-        "مجھے ایمبولینس چاہیے", "میرے سینے میں درد ہے", "جلدی مدد کرو", "مجھے سانس نہیں آ رہی"
+        "Help me", "It is an emergency", "I need help now", "Call someone", "I have fallen",
+        "I am in pain", "Something is wrong", "I feel very sick", "Call my caregiver",
+        "Emergency", "I cannot breathe", "My chest hurts", "I need a doctor now",
+        "Please help quickly", "I am hurt", "Call for help", "I feel dizzy and weak",
+        "I think I am having an emergency", "Get help", "I am not safe", "Send help",
+        "I fell down", "Help me please it is urgent", "Something bad is happening",
+        "Meri madad karo", "Yeh emergency hai", "Mujhe madad chahiye", "Kisi ko bulao",
+        "Main gir gaya hoon", "Mujhe doctor chahiye", "Seene mein dard hai", "Jaldi madad karo",
+        "میری مدد کرو", "یہ ایمرجنسی ہے", "مجھے مدد چاہیے", "کسی کو بلاؤ",
+        "میں گر گیا ہوں", "مجھے ڈاکٹر چاہیے", "سینے میں درد ہے", "جلدی مدد کرو",
+        "مجھے سانس نہیں آ رہا", "میں محفوظ نہیں ہوں"
       ],
       "responses": [
-        "This sounds urgent. Please press the red SOS button right away, or I can alert your caregiver immediately.",
-        "If you are in danger or hurt, press the SOS button now so your caregiver is alerted at once."
+        "This sounds like an emergency. Please press the red SOS button right away so your caregiver is alerted immediately.",
+        "I want to keep you safe. Please use the SOS button now to reach your caregiver. Help is coming.",
+        "Please press the SOS button at the top of the screen right now. Your caregiver will be notified at once."
       ]
     },
     {
       "tag": "appointment",
       "patterns": [
-        "When is my appointment", "Do I have a doctor appointment", "When is my next appointment",
-        "What appointments do I have", "When do I see the doctor", "Is there an appointment today",
-        "Do I have any appointment", "Remind me of my appointment", "When should I visit the doctor",
-        "Is my checkup today", "Any appointment this week", "When is my doctor visit",
-        "Do I have a checkup", "When is my clinic visit", "Is there a doctor visit today",
-        "When is my medical appointment", "Do I meet the doctor today",
-        "Meri mulaqat kab hai", "Doctor se waqt kab hai", "Kya aaj appointment hai",
-        "میری ملاقات کب ہے", "میرا ڈاکٹر سے وقت کب ہے", "کیا آج کوئی اپائنٹمنٹ ہے",
-        "میری اگلی ملاقات کب ہے", "ڈاکٹر کے پاس کب جانا ہے", "کیا اس ہفتے کوئی ملاقات ہے"
+        "Do I have an appointment", "When is my appointment", "What appointments do I have",
+        "Any appointment today", "When is my next appointment", "Do I see the doctor today",
+        "What is my appointment time", "Remind me of my appointments", "Is there a visit today",
+        "When do I meet the doctor", "Do I have a checkup", "When is my doctor visit",
+        "Any doctor appointment", "What is scheduled with the doctor", "Do I have a meeting today",
+        "When is my clinic visit", "Is my appointment today", "Show my appointments",
+        "Do I have to go anywhere today", "When is my hospital visit",
+        "Meri appointment kab hai", "Kya aaj appointment hai", "Doctor se kab milna hai",
+        "Meri agli appointment kab hai", "Kya aaj checkup hai", "Aaj kahin jana hai kya",
+        "میری اپائنٹمنٹ کب ہے", "کیا آج اپائنٹمنٹ ہے", "ڈاکٹر سے کب ملنا ہے",
+        "میری اگلی اپائنٹمنٹ کب ہے", "کیا آج چیک اپ ہے", "آج کہیں جانا ہے کیا",
+        "میری اپائنٹمنٹس دکھاؤ", "کیا آج ہسپتال جانا ہے"
       ],
       "responses": [
-        "Let me check your appointments.",
-        "Here is what I know about your appointments. For details, please check with your caregiver."
+        "For your appointment details, please check with your caregiver, who keeps your schedule.",
+        "Your caregiver has your appointment details. Shall I remind them to tell you?",
+        "Please ask your caregiver about your appointments so you have the correct time."
       ]
     },
     {
       "tag": "help",
       "patterns": [
-        "What can you do", "How can you help me", "What are you", "Who are you",
-        "What can I ask you", "How do you work", "What is this app", "What is MemoryCare",
-        "What are your features", "How can you assist me", "What things can you do",
-        "Tell me what you can do", "What help can you give", "What can this app do",
-        "How do you help patients", "What are you for", "What questions can I ask",
-        "Explain what you do", "How can you support me",
-        "Tum kya kar sakte ho", "Tum kaun ho", "Ye app kya hai", "Main kya pooch sakta hoon",
-        "تم کیا کر سکتے ہو", "تم کون ہو", "یہ ایپ کیا ہے", "میں کیا پوچھ سکتا ہوں",
-        "تم کیسے مدد کرتے ہو", "تمہاری خصوصیات کیا ہیں",
-        "What are your abilities", "How do you assist", "What features do you offer",
-        "Guide me on using this", "What kind of help do you provide", "Show me what you can do",
-        "Aap kya kaam karte ho", "App kaise use karein",
-        "آپ کیا کام کرتے ہیں", "یہ ایپ کیسے استعمال کریں", "آپ کیا خدمات دیتے ہیں"
+        "Help", "What can you do", "How can you help me", "What can I ask you",
+        "I need assistance", "What are your features", "Tell me what you can do",
+        "How do you work", "What questions can I ask", "Can you help me", "Guide me",
+        "What do you know", "How can I use you", "What can you tell me", "What are you for",
+        "Show me what you can do", "I need some help", "What kind of help do you give",
+        "Give me options", "What should I ask you", "How can you assist me",
+        "Aap kya kar sakte hain", "Aap meri madad kaise kar sakte hain", "Main kya pooch sakta hoon",
+        "Mujhe madad chahiye", "Aap kaise kaam karte hain", "Aap kya batate hain",
+        "آپ کیا کر سکتے ہیں", "آپ میری مدد کیسے کر سکتے ہیں", "میں کیا پوچھ سکتا ہوں",
+        "مجھے مدد چاہیے", "آپ کیسے کام کرتے ہیں", "آپ کیا بتاتے ہیں", "میری رہنمائی کریں",
+        "آپ کس کام کے لیے ہیں", "مجھے کچھ مدد چاہیے"
       ],
       "responses": [
-        "I'm your MemoryCare assistant. I can help you remember your medicines, your daily routine, your family, the date and time, and more. Just ask me!",
-        "I can remind you about your medications and routines, tell you about your family, and help you feel supported. What would you like to know?"
+        "I'm your MemoryCare assistant. I can help with your medicines, your routine, your family, and the date and time. Just ask!",
+        "You can ask me about your medications, your daily routine, your loved ones, where you are, or the time. How can I help?",
+        "I'm here to help you remember things, medicines, routines, family, the date, and more. What would you like to know?"
       ]
     },
     {
       "tag": "meal_time",
       "patterns": [
-        "When is lunch", "When is dinner", "When is breakfast", "What should I eat",
-        "Am I hungry", "Is it time to eat", "When do I eat", "What is for lunch",
-        "What is for dinner", "When is my meal", "Should I eat now", "Is it meal time",
-        "What can I eat", "Time for food", "When is my next meal", "Have I eaten",
-        "Khana kab hai", "Lunch kab hai", "Kya main bhookha hoon",
-        "کھانا کب ہے", "دوپہر کا کھانا کب ہے", "رات کا کھانا کب ہے", "کیا میں بھوکا ہوں",
-        "کیا کھانے کا وقت ہے", "مجھے کیا کھانا چاہیے", "ناشتہ کب ہے", "اگلا کھانا کب ہے"
+        "When do I eat", "What time is lunch", "When is dinner", "When is breakfast",
+        "Have I eaten", "What time do I have my meal", "When should I eat", "Is it time to eat",
+        "When is my food time", "What time is my meal", "When do I have lunch",
+        "When do I have dinner", "Did I have breakfast", "When is my next meal",
+        "Is it lunch time", "Is it dinner time", "What time do I eat food", "When is food ready",
+        "Time for food", "When do we eat", "Have I had my food", "When is my meal today",
+        "Khana kab khana hai", "Nashta kab hai", "Dopeher ka khana kab hai", "Raat ka khana kab hai",
+        "Kya main ne khana khaya", "Khane ka waqt kya hai", "Khana kab hai",
+        "کھانا کب کھانا ہے", "ناشتہ کب ہے", "دوپہر کا کھانا کب ہے", "رات کا کھانا کب ہے",
+        "کیا میں نے کھانا کھایا", "کھانے کا وقت کیا ہے", "کھانا کب ہے", "کیا کھانے کا وقت ہو گیا"
       ],
       "responses": [
-        "It's good to eat at your regular times. Please check with your caregiver about today's meal.",
-        "Let me remind you to eat well. Your caregiver can tell you exactly what is planned for this meal."
+        "Eating at the right times is good for you. Please ask your caregiver about today's meals.",
+        "It's important to eat well. Your caregiver can tell you when your next meal is ready.",
+        "Let's make sure you eat on time. Please check with your caregiver about your meal."
       ]
     },
     {
       "tag": "memories",
       "patterns": [
-        "Show me my photos", "I want to see my memories", "Show my pictures",
-        "Can I see my photos", "Show me my family photos", "I want to look at pictures",
-        "Open my photo album", "Show my memories", "Let me see my photos", "Display my pictures",
-        "I want to see old photos", "Show me pictures of my family",
-        "Meri tasveerein dikhao", "Meri yaadein dikhao",
-        "میری تصویریں دکھائیں", "میری یادیں دکھائیں", "میری فوٹو دکھاؤ",
-        "میں اپنی تصویریں دیکھنا چاہتا ہوں", "میرا البم کھولیں", "میری پرانی تصویریں دکھائیں",
-        "Show me old memories", "Open the gallery", "Let me see pictures of my children",
-        "Show my wedding photos", "I want to remember old days", "Can I look at my album",
-        "Purani tasveerein dikhao", "Album kholo",
-        "پرانی یادیں دکھائیں", "میرے بچوں کی تصویریں دکھائیں", "گیلری کھولیں"
+        "Show me my photos", "I want to see my pictures", "Show my memories", "Open my gallery",
+        "Let me see old photos", "Show me my family pictures", "I want to look at photos",
+        "Show me my memory gallery", "Can I see my pictures", "Show me pictures of my family",
+        "I miss my family show photos", "Let me see my memories", "Show me happy memories",
+        "Open my photo album", "I want to remember old times", "Show my old pictures",
+        "Can we look at photos", "Show me my picture album", "Display my memories",
+        "Let me see photographs", "Show me who I love",
+        "Mujhe apni tasveerain dikhao", "Meri yaadein dikhao", "Gallery kholo", "Purani tasveerain dikhao",
+        "Mujhe photos dekhne hain", "Family ki tasveerain dikhao", "Meri yaadon ki gallery kholo",
+        "مجھے اپنی تصویریں دکھاؤ", "میری یادیں دکھاؤ", "گیلری کھولو", "پرانی تصویریں دکھاؤ",
+        "مجھے فوٹو دیکھنے ہیں", "فیملی کی تصویریں دکھاؤ", "میری یادوں کی گیلری کھولو",
+        "مجھے اپنا فوٹو البم دکھاؤ", "خوشی کی یادیں دکھاؤ"
       ],
       "responses": [
-        "Let me help you open your memory gallery so you can look at your photos.",
-        "Your saved photos and memories are in your gallery. Would you like to see them?"
+        "Let's open your memory gallery so you can see your pictures.",
+        "I'd love to show you your memories. Let's look at your photo gallery.",
+        "Your photos are in your memory gallery. Let's look at them together."
       ]
     },
     {
       "tag": "doctor_query",
       "patterns": [
         "Who is my doctor", "What is my doctor's name", "Tell me about my doctor",
-        "Who treats me", "What is my doctor called", "Who is my physician",
-        "Name of my doctor", "Which doctor do I see", "Who is looking after my health",
-        "Tell me my doctor's name",
-        "Mera doctor kaun hai", "Doctor ka naam kya hai",
-        "میرا ڈاکٹر کون ہے", "میرے ڈاکٹر کا نام کیا ہے", "میرا علاج کون کرتا ہے",
-        "میرے معالج کا نام", "میرا ڈاکٹر کون سا ہے",
-        "Tell me my physician's name", "Who is my main doctor", "What doctor looks after me",
-        "Give me my doctor's name", "Who is my medical doctor", "Who is my consultant",
-        "Mera physician kaun hai", "Mera ilaj kaun karta hai",
-        "میرا معالج کون ہے", "میرے ڈاکٹر کا نام بتائیں", "میری صحت کا ذمہ دار کون ہے"
+        "Who treats me", "Which doctor do I see", "Name of my doctor", "Who is my physician",
+        "Do I have a doctor", "Who looks after my health", "My doctor please",
+        "Which doctor is mine", "Remind me of my doctor", "Who is my specialist",
+        "Tell me my doctor name", "Who is my medical doctor", "Which doctor treats me",
+        "What is the name of my doctor", "Who checks my health", "Do you know my doctor",
+        "Mera doctor kaun hai", "Mere doctor ka naam kya hai", "Mujhe kaun doctor dekhta hai",
+        "Mera physician kaun hai", "Doctor ka naam batao", "Mera ilaj kaun karta hai",
+        "میرا ڈاکٹر کون ہے", "میرے ڈاکٹر کا نام کیا ہے", "مجھے کون ڈاکٹر دیکھتا ہے",
+        "میرا معالج کون ہے", "ڈاکٹر کا نام بتاؤ", "میرا علاج کون کرتا ہے",
+        "میرا ڈاکٹر کون سا ہے", "میری صحت کون دیکھتا ہے"
       ],
       "responses": [
-        "Let me tell you about your doctor.",
-        "Here is information about the doctor who looks after you."
+        "Let me check who your doctor is.",
+        "Here is your doctor's information.",
+        "I'll find your doctor's name for you."
       ]
     },
     {
       "tag": "prayer",
       "patterns": [
-        "When is prayer time", "Remind me for namaz", "Is it time for prayer", "When is the next prayer",
-        "Time for salah", "Should I pray now", "When is Fajr", "When is Maghrib", "Is it time for namaz",
-        "Remind me to pray", "What time is Zuhr", "When should I pray", "When is Isha", "Prayer time please",
-        "Namaz ka waqt", "Namaz kab hai",
-        "نماز کا وقت کب ہے", "مجھے نماز یاد دلائیں", "کیا نماز کا وقت ہے", "اگلی نماز کب ہے",
-        "کیا مجھے نماز پڑھنی چاہیے", "فجر کب ہے", "مغرب کب ہے",
-        "When is Asr", "Time for dua", "Remind me for Fajr", "Should I do wudu",
-        "When is Jummah", "Is it Isha time",
-        "Dua ka waqt", "Namaz parhni hai",
-        "عصر کب ہے", "دعا کا وقت", "کیا میں وضو کروں", "جمعہ کب ہے", "عشاء کا وقت"
+        "When is prayer time", "Is it time to pray", "What is the namaz time", "When is namaz",
+        "Time for prayer", "When is the next prayer", "Is it time for namaz", "When should I pray",
+        "What time is fajr", "What time is zuhr", "What time is asr", "What time is maghrib",
+        "What time is isha", "Prayer time please", "When is the azaan", "Has the azaan happened",
+        "Should I pray now", "When is dua time", "Is it maghrib time yet",
+        "Namaz ka waqt kya hai", "Kya namaz ka waqt hua", "Azaan kab hai", "Namaz kab hai",
+        "Fajr ka waqt kya hai", "Maghrib kab hai", "Kya ab namaz parhoon",
+        "نماز کا وقت کیا ہے", "کیا نماز کا وقت ہوا", "اذان کب ہے", "نماز کب ہے",
+        "فجر کا وقت کیا ہے", "مغرب کب ہے", "کیا اب نماز پڑھوں", "کیا اذان ہو گئی",
+        "دعا کا وقت کب ہے", "کیا نماز کا وقت ہو گیا"
       ],
       "responses": [
-        "It may be time for prayer. Your caregiver can confirm today's exact prayer times.",
-        "Prayer brings peace. Please check the prayer timings with your caregiver."
+        "It may be time for prayer. Your caregiver can tell you today's prayer times.",
+        "Prayer brings peace. Please check today's namaz times with your caregiver.",
+        "It might be time to pray. Your caregiver knows today's exact prayer schedule."
+      ]
+    },
+    {
+      "tag": "weather",
+      "patterns": [
+        "What is the weather", "Is it hot today", "Is it cold outside", "Is it raining",
+        "How is the weather today", "What is it like outside", "Is it sunny", "Will it rain today",
+        "Is it warm outside", "What is the temperature", "Do I need a jacket", "Is it cloudy",
+        "Should I wear warm clothes", "Is the weather nice", "How is it outside", "Is it windy",
+        "What is the weather like", "Is it going to be cold", "Do I need an umbrella",
+        "Mausam kaisa hai", "Kya aaj garmi hai", "Kya bahar thand hai", "Kya barish ho rahi hai",
+        "Kya dhoop hai", "Kya mujhe jacket pehanni chahiye", "Bahar mausam kaisa hai",
+        "موسم کیسا ہے", "کیا آج گرمی ہے", "کیا باہر ٹھنڈ ہے", "کیا بارش ہو رہی ہے",
+        "کیا دھوپ ہے", "کیا مجھے جیکٹ پہننی چاہیے", "باہر موسم کیسا ہے", "کیا آج سردی ہو گی"
+      ],
+      "responses": [
+        "I can't see the live weather, but please dress comfortably for the day. Your caregiver can tell you more.",
+        "I'm not able to check the weather right now, but wear something comfortable. Ask your caregiver if you're unsure.",
+        "I can't check outside conditions, but do dress warmly if it feels cold. Your caregiver can help."
+      ]
+    },
+    {
+      "tag": "hydration",
+      "patterns": [
+        "I am thirsty", "I want water", "Can I have some water", "I need a drink",
+        "Should I drink water", "I feel thirsty", "Give me water", "My mouth is dry",
+        "I need water", "Time to drink water", "Can I get something to drink", "I want to drink",
+        "Have I had water today", "Remind me to drink water", "I feel dehydrated",
+        "I would like a glass of water", "Is it time for water", "I am feeling dry",
+        "Mujhe pyaas lagi hai", "Mujhe pani chahiye", "Kya main pani pi loon", "Pani do",
+        "Mujhe pyaas lag rahi hai", "Kya mujhe pani peena chahiye", "Munh sookh raha hai",
+        "مجھے پیاس لگی ہے", "مجھے پانی چاہیے", "کیا میں پانی پی لوں", "پانی دو",
+        "مجھے پیاس لگ رہی ہے", "کیا مجھے پانی پینا چاہیے", "منہ سوکھ رہا ہے", "پانی پینے کا وقت"
+      ],
+      "responses": [
+        "Staying hydrated is important. Please have a glass of water.",
+        "It's a good idea to drink water regularly. Please take a few sips now.",
+        "Yes, please drink some water. It will help you feel better."
+      ]
+    },
+    {
+      "tag": "exercise",
+      "patterns": [
+        "Should I exercise", "I want to walk", "Can I go for a walk", "Time for exercise",
+        "I want to do some exercise", "Should I take a walk", "Let us do exercise",
+        "I feel like walking", "Is it good to walk now", "Help me exercise", "I want to stretch",
+        "Can we do some movement", "Should I do my exercises", "I want to be active",
+        "Remind me to exercise", "Is it exercise time", "I would like to walk a bit",
+        "Kya mujhe exercise karni chahiye", "Main chalna chahta hoon", "Kya main sair ko jaoon",
+        "Exercise ka waqt", "Mujhe warzish karni hai", "Thodi chehal qadmi karni hai",
+        "کیا مجھے ورزش کرنی چاہیے", "میں چلنا چاہتا ہوں", "کیا میں سیر کو جاؤں",
+        "ورزش کا وقت", "مجھے ورزش کرنی ہے", "تھوڑی چہل قدمی کرنی ہے", "میں تھوڑا چلنا چاہتا ہوں"
+      ],
+      "responses": [
+        "A little walk is good for you. Please take a walk with your caregiver nearby.",
+        "Gentle movement is wonderful for your health. Try a short, safe walk.",
+        "Exercise keeps you strong. A slow walk with someone nearby is a great idea."
+      ]
+    },
+    {
+      "tag": "sleep_rest",
+      "patterns": [
+        "I am tired", "I want to sleep", "I need to rest", "I feel sleepy", "Can I take a nap",
+        "I want to lie down", "I am feeling exhausted", "Time to rest", "I want to go to bed",
+        "I need to lie down", "I feel very tired", "Should I sleep now", "I am sleepy",
+        "Let me rest", "I want to close my eyes", "I feel drowsy", "Can I rest for a while",
+        "I am worn out", "Help me rest",
+        "Main thak gaya hoon", "Mujhe neend aa rahi hai", "Mujhe aaram karna hai", "Main sona chahta hoon",
+        "Mujhe lait na hai", "Main bohat thaka hua hoon", "Kya main abhi so jaoon",
+        "میں تھک گیا ہوں", "مجھے نیند آ رہی ہے", "مجھے آرام کرنا ہے", "میں سونا چاہتا ہوں",
+        "مجھے لیٹنا ہے", "میں بہت تھکا ہوا ہوں", "کیا میں ابھی سو جاؤں", "مجھے آرام چاہیے"
+      ],
+      "responses": [
+        "Rest is important. If you're tired, please lie down for a while.",
+        "It's okay to rest. Make yourself comfortable and close your eyes for a bit.",
+        "You deserve some rest. Please lie down somewhere comfortable and relax."
+      ]
+    },
+    {
+      "tag": "entertainment",
+      "patterns": [
+        "I am bored", "Play some music", "I want to listen to music", "Tell me a story",
+        "Entertain me", "Play a song", "I want to hear a song", "Can you play music",
+        "Sing me something", "I want some fun", "Play my favorite song", "Tell me something nice",
+        "I want to listen to a story", "Play something for me", "I have nothing to do",
+        "Can we listen to music", "I feel bored", "Give me something to do", "Read me a story",
+        "Main bore ho raha hoon", "Music chalao", "Mujhe gana sunna hai", "Koi kahani sunao",
+        "Koi gana lagao", "Mujhe kuch entertainment chahiye", "Meri pasand ka gana chalao",
+        "میں بور ہو رہا ہوں", "میوزک چلاؤ", "مجھے گانا سننا ہے", "کوئی کہانی سناؤ",
+        "کوئی گانا لگاؤ", "مجھے کچھ تفریح چاہیے", "میری پسند کا گانا چلاؤ", "میرے پاس کرنے کو کچھ نہیں"
+      ],
+      "responses": [
+        "Let's enjoy something nice. Your caregiver can play your favorite music or a story.",
+        "How about some music? Ask your caregiver to put on a song you love.",
+        "Let's brighten your day. Your caregiver can play music or read you a story."
+      ]
+    },
+    {
+      "tag": "news",
+      "patterns": [
+        "What is the news", "Tell me the news", "Any news today", "What is happening in the world",
+        "Give me the latest news", "What is in the news today", "Read me the news",
+        "What is going on today", "Tell me today's headlines", "What is new today",
+        "Any current news", "What is happening around", "Show me the news", "What is the latest",
+        "Tell me what is happening", "Is there any important news",
+        "Khabrein kya hain", "Aaj ki khabar kya hai", "Mujhe khabrein sunao", "Duniya mein kya ho raha hai",
+        "Taza khabrein batao", "Aaj kya ho raha hai", "Aaj ki headlines batao",
+        "خبریں کیا ہیں", "آج کی خبر کیا ہے", "مجھے خبریں سناؤ", "دنیا میں کیا ہو رہا ہے",
+        "تازہ خبریں بتاؤ", "آج کیا ہو رہا ہے", "آج کی سرخیاں بتاؤ", "کوئی اہم خبر ہے"
+      ],
+      "responses": [
+        "I can't show the latest news, but your caregiver can read you today's headlines.",
+        "I'm not able to fetch the news, but your caregiver can share today's news with you.",
+        "I can't bring live news, but ask your caregiver, they can tell you what's happening today."
+      ]
+    },
+    {
+      "tag": "bathroom",
+      "patterns": [
+        "I need the bathroom", "Where is the toilet", "I have to use the washroom",
+        "I need to go to the toilet", "Take me to the bathroom", "Where is the washroom",
+        "I need to pee", "I have to use the bathroom", "I need the toilet now",
+        "Help me to the bathroom", "Which way is the toilet", "I want to go to washroom",
+        "I need to use the restroom", "Where do I go to the toilet", "Show me the bathroom",
+        "Mujhe bathroom jana hai", "Toilet kahan hai", "Mujhe washroom jana hai",
+        "Mujhe peshab karna hai", "Bathroom kis taraf hai", "Mujhe ghusalkhana jana hai",
+        "مجھے باتھ روم جانا ہے", "ٹوائلٹ کہاں ہے", "مجھے واش روم جانا ہے",
+        "مجھے پیشاب کرنا ہے", "باتھ روم کس طرف ہے", "مجھے غسل خانہ جانا ہے", "ٹوائلٹ کس طرف ہے"
+      ],
+      "responses": [
+        "Okay. Your caregiver can help you get to the bathroom safely.",
+        "Let's get you to the bathroom. Please ask your caregiver to walk with you.",
+        "That's alright. Your caregiver can guide you to the washroom safely."
+      ]
+    },
+    {
+      "tag": "positive_mood",
+      "patterns": [
+        "I am happy", "I feel good today", "I am feeling great", "I feel wonderful",
+        "I am doing well", "I feel fine", "I am cheerful", "I feel much better",
+        "Today is a good day", "I am in a good mood", "I feel peaceful", "I am content",
+        "I feel healthy today", "I am feeling positive", "I feel lovely", "I am okay today",
+        "Everything is good", "I feel strong today", "I am feeling happy",
+        "Main khush hoon", "Main aaj acha mehsoos kar raha hoon", "Main theek hoon", "Aaj acha din hai",
+        "Main bohat acha hoon", "Mera mood acha hai", "Main behtar mehsoos kar raha hoon",
+        "میں خوش ہوں", "میں آج اچھا محسوس کر رہا ہوں", "میں ٹھیک ہوں", "آج اچھا دن ہے",
+        "میں بہت اچھا ہوں", "میرا موڈ اچھا ہے", "میں بہتر محسوس کر رہا ہوں", "میں آج خوش ہوں"
+      ],
+      "responses": [
+        "That's wonderful to hear! I'm so glad you're feeling good today.",
+        "I'm happy that you're feeling well. Keep smiling!",
+        "That makes me glad! It's lovely to know you're having a good day."
       ]
     }
   ]
