@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { apiPost } from "@/lib/api";
 import { getSocket, joinPatientRoom, leavePatientRoom } from "@/lib/socket";
 import { speak, getLang, voiceRemindersOn, setVoiceReminders, primeVoices } from "@/lib/speech";
+import { loadSettings } from "@/lib/patientSettings";
 
 interface ReminderToast {
   id: number;
@@ -37,6 +38,7 @@ export default function Topbar({
   const [toasts, setToasts] = useState<ReminderToast[]>([]);
   const [voiceRem, setVoiceRem] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showNotifs, setShowNotifs] = useState(false);
   // Live clock tick so the greeting stays in sync with the viewer's local
   // (device/country) time even if the page is left open across the hour.
@@ -107,9 +109,14 @@ export default function Topbar({
     };
 
     const onReminder = (data: { kind?: string; name?: string; message?: string }) => {
-      pushToast(data.kind === 'routine' ? 'routine' : 'medication', data.message || 'You have a reminder.');
-      // Speak the reminder aloud in the chosen language (if enabled).
-      if (voiceRemindersOn()) {
+      // Respect the patient's notification preferences.
+      const s = loadSettings();
+      const kind = data.kind === 'routine' ? 'routine' : 'medication';
+      if (kind === 'medication' && !s.medReminders) return;
+      if (kind === 'routine' && !s.routineReminders) return;
+      pushToast(kind, data.message || 'You have a reminder.');
+      // Speak the reminder aloud in the chosen language (if enabled + voice alerts on).
+      if (voiceRemindersOn() && s.voiceAlerts) {
         const lang = getLang();
         const name = data.name || '';
         let text = data.message || '';
@@ -279,7 +286,7 @@ export default function Topbar({
                   <Link href={`${roleBase}/profile`} onClick={() => setShowMenu(false)} className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">Profile</Link>
                 )}
                 <Link href={`${roleBase}/settings`} onClick={() => setShowMenu(false)} className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">Settings</Link>
-                <button onClick={() => { setShowMenu(false); logout(); }} className="block w-full text-left px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 border-t border-slate-100">Log out</button>
+                <button onClick={() => { setShowMenu(false); setShowLogoutConfirm(true); }} className="block w-full text-left px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 border-t border-slate-100">Log out</button>
               </div>
             </>
           )}
@@ -318,6 +325,20 @@ export default function Topbar({
               </button>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Log out confirmation (in-site, not a browser popup) */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4" onClick={() => setShowLogoutConfirm(false)}>
+          <div className="bg-white rounded-2xl w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-lg font-bold text-[#1a3c34] mb-1">Log out?</h3>
+            <p className="text-sm text-slate-600 mb-5">You&apos;ll need to sign in again to use MemoraCare.</p>
+            <div className="flex justify-end gap-3">
+              <button onClick={() => setShowLogoutConfirm(false)} className="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-300 text-slate-700 hover:bg-slate-50">Cancel</button>
+              <button onClick={() => { setShowLogoutConfirm(false); logout(); }} className="px-5 py-2 rounded-lg text-sm font-semibold bg-red-600 text-white hover:bg-red-700">Log out</button>
+            </div>
+          </div>
         </div>
       )}
     </div>

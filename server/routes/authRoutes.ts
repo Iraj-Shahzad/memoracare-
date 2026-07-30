@@ -1,6 +1,6 @@
 import express from 'express';
 const router = express.Router();
-import { register, login, googleAuth, getMe, logout, changePassword } from '../controllers/authController';
+import { register, login, googleAuth, getMe, logout, changePassword, deleteMe } from '../controllers/authController';
 import { protect } from '../middleware/auth';
 import { registerValidation, loginValidation, handleValidationErrors } from '../middleware/validators';
 
@@ -10,5 +10,6 @@ router.post('/google', googleAuth);
 router.get('/me', protect, getMe);
 router.post('/logout', protect, logout);
 router.put('/change-password', protect, changePassword);
+router.delete('/me', protect, deleteMe);
 
 export default router;

@@ -177,6 +177,20 @@ export const logout = async (req: Request, res: Response, next: NextFunction) =>
   }
 };
 
+// @desc Delete my own account (and its role profile)
+// @route DELETE /api/auth/me
+export const deleteMe = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user.id;
+    await Patient.deleteOne({ user: userId }).catch(() => {});
+    await Caregiver.deleteOne({ user: userId }).catch(() => {});
+    await User.findByIdAndDelete(userId);
+    res.status(200).json({ success: true, message: 'Account deleted' });
+  } catch (err: any) {
+    next(err);
+  }
+};
+
 // @desc Change password
 // @route PUT /api/auth/change-password
 export const changePassword = async (req: Request, res: Response, next: NextFunction) => {

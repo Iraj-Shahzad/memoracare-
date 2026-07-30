@@ -77,3 +77,6 @@ body {
   .hero-ken { animation: none; }
   .reveal { opacity: 1; transform: none; transition: none; }
 }
+
+/* Accessibility: high-contrast mode (toggled from patient Settings). */
+html.high-contrast { filter: contrast(1.28) saturate(1.12); }
