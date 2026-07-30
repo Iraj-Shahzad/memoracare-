@@ -115,10 +115,6 @@ export default function MedicationsPage() {
     try { await apiPost(`/medications/${medId}/log`, { status: "taken" }); await loadData(true); }
     catch (err) { alert(err instanceof Error ? err.message : "Could not mark as taken"); }
   };
-  const handleMarkMissed = async (medId: string) => {
-    try { await apiPost(`/medications/${medId}/log`, { status: "skipped" }); await loadData(true); }
-    catch (err) { alert(err instanceof Error ? err.message : "Could not skip"); }
-  };
 
   const filteredMeds = medications.filter((med) => {
     const matchesFilter =
@@ -256,17 +252,6 @@ export default function MedicationsPage() {
                 style={{ padding: "10px 24px", background: "#fff", color: "#1a3c34" }}
               >
                 Mark as Taken
-              </button>
-              <button
-                onClick={() => handleMarkMissed(nextMed.id)}
-                className="rounded-[10px] text-[14px] font-semibold cursor-pointer text-white"
-                style={{
-                  padding: "10px 24px",
-                  background: "rgba(255,255,255,0.15)",
-                  border: "1px solid rgba(255,255,255,0.3)",
-                }}
-              >
-                Skip
               </button>
             </div>
             )}
@@ -581,19 +566,6 @@ export default function MedicationsPage() {
                               <polyline points="20 6 9 17 4 12" />
                             </svg>
                           </button>
-                          {/* Skip / Mark Missed */}
-                          <button
-                            onClick={() => handleMarkMissed(med.id)}
-                            disabled={med.status === "missed"}
-                            className="flex items-center justify-center rounded-[8px] border border-[#e2e8f0] bg-white cursor-pointer hover:border-[#dc2626] hover:bg-[#fef2f2] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                            style={{ width: 34, height: 34 }}
-                            title="Skip (mark missed)"
-                          >
-                            <svg viewBox="0 0 24 24" fill="none" stroke={med.status === "missed" ? "#dc2626" : "#64748b"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}>
-                              <line x1="18" y1="6" x2="6" y2="18" />
-                              <line x1="6" y1="6" x2="18" y2="18" />
-                            </svg>
-                          </button>
                           {/* View Details */}
                           <button
                             onClick={() => setDetailMed(med)}
@@ -664,7 +636,7 @@ export default function MedicationsPage() {
             </div>
             <div className="flex gap-2.5 mt-5">
               <button onClick={() => { handleMarkTaken(detailMed.id); setDetailMed(null); }} disabled={detailMed.status === "taken"} className="flex-1 px-4 py-2.5 rounded-[10px] text-[13px] font-semibold bg-[#0d9488] text-white hover:bg-[#0f766e] disabled:opacity-50">Mark as Taken</button>
-              <button onClick={() => { handleMarkMissed(detailMed.id); setDetailMed(null); }} disabled={detailMed.status === "missed"} className="flex-1 px-4 py-2.5 rounded-[10px] text-[13px] font-semibold bg-white text-[#1a3c34] border-[1.5px] border-[#e2e8f0] hover:border-[#dc2626] disabled:opacity-50">Skip</button>
+              <button onClick={() => setDetailMed(null)} className="flex-1 px-4 py-2.5 rounded-[10px] text-[13px] font-semibold bg-white text-[#1a3c34] border-[1.5px] border-[#e2e8f0] hover:border-[#0d9488]">Close</button>
             </div>
           </div>
         </div>
