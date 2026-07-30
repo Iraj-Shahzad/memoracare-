@@ -9,6 +9,11 @@ const recognitionLogSchema = new mongoose.Schema({
   imageUrl: {
     type: String,
   },
+  // When recognized, the enrolled face this scan matched (for per-person galleries).
+  knownFace: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'KnownFace',
+  },
   result: {
     type: String,
     enum: ['recognized', 'unknown'],

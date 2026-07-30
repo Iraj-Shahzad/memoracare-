@@ -7,9 +7,17 @@ import Topbar from "@/components/shared/Topbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
 import { apiGet, apiPost, apiDelete, api } from "@/lib/api";
-import { loadFaceApi, getDescriptor, findBestMatch, type KnownFaceLite } from "@/lib/faceApi";
+import { loadFaceApi, getDescriptor, getAveragedDescriptor, findBestMatch, type KnownFaceLite } from "@/lib/faceApi";
 import { speak, getLang } from "@/lib/speech";
 import { useUI } from "@/components/ui/UIProvider";
+
+// Backend origin (without the trailing /api) so we can load uploaded face images.
+const API_HOST = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api").replace(/\/api\/?$/, "");
+// Turn a stored "/uploads/faces/x.jpg" into a full URL the browser can load.
+const imgUrl = (u?: string | null) => (!u ? "" : /^https?:\/\//i.test(u) ? u : `${API_HOST}${u}`);
+// POST multipart form data (image + fields) through the shared api() helper.
+const apiForm = (endpoint: string, form: FormData) =>
+  api(endpoint, { method: "POST", body: form, isFormData: true });
 
 // Common relationship words in Urdu for a natural spoken announcement.
 const REL_UR: Record<string, string> = {
@@ -47,6 +55,33 @@ function toInitials(name: string) {
   return (name || "?").split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
 }
 
+// Avatar that shows the real enrolled/scanned photo when we have one, and falls
+// back to coloured initials otherwise (also if the image fails to load).
+function FaceAvatar({
+  imageUrl, initials, gradient, size, radius, fontSize,
+}: { imageUrl?: string; initials: string; gradient: string; size: number; radius: number; fontSize: number }) {
+  return (
+    <div
+      style={{
+        position: "relative", width: size, height: size, borderRadius: radius, flexShrink: 0,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        color: "#fff", fontWeight: 700, fontSize, background: gradient, overflow: "hidden",
+      }}
+    >
+      <span>{initials}</span>
+      {imageUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={imgUrl(imageUrl)}
+          alt={initials}
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+          onError={(e) => { e.currentTarget.remove(); }}
+        />
+      ) : null}
+    </div>
+  );
+}
+
 export default function FaceRecognitionPage() {
   const { user } = useAuth();
   const { toast, confirm } = useUI();
@@ -77,18 +112,62 @@ export default function FaceRecognitionPage() {
   const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
   const [showAllLogs, setShowAllLogs] = useState(false);
   const [showManageAll, setShowManageAll] = useState(false);
-  const [manageFace, setManageFace] = useState<{ id: string; name: string; relation: string; scans: number } | null>(null);
+  const [manageFace, setManageFace] = useState<{ id: string; name: string; relation: string; scans: number; imageUrl?: string; gradient?: string } | null>(null);
+  // All scan photos this person has appeared in (per-person recognition gallery).
+  const [managePhotos, setManagePhotos] = useState<string[]>([]);
+  const [managePhotosLoading, setManagePhotosLoading] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
   const [addForm, setAddForm] = useState({ name: "", relationship: "" });
   const [addSaving, setAddSaving] = useState(false);
-  // Descriptor captured from the camera (enroll-on-unknown) or a picked photo.
+  // Descriptor + the actual image captured from the camera (enroll-on-unknown)
+  // or a picked photo — so we can store a real face photo, not just the numbers.
   const pendingDescriptorRef = useRef<number[] | null>(null);
+  const pendingImageRef = useRef<Blob | null>(null);
+
+  // Grab the current webcam frame as a JPEG blob (the real captured photo).
+  const captureFrameBlob = async (): Promise<Blob | null> => {
+    const video = videoRef.current;
+    if (!video || !video.videoWidth) return null;
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    return new Promise((resolve) => canvas.toBlob((b) => resolve(b), "image/jpeg", 0.85));
+  };
+
+  // Record a recognition result, attaching the captured photo when we have one.
+  const logRecognition = async (opts: {
+    result: "recognized" | "unknown";
+    name?: string;
+    relationship?: string;
+    confidence?: number;
+    knownFaceId?: string;
+    image?: Blob | null;
+  }) => {
+    try {
+      const fd = new FormData();
+      fd.append("patientId", patientId);
+      fd.append("result", opts.result);
+      if (opts.confidence != null) fd.append("confidence", String(opts.confidence));
+      if (opts.result === "recognized") {
+        if (opts.name) fd.append("name", opts.name);
+        if (opts.relationship) fd.append("relationship", opts.relationship);
+        if (opts.knownFaceId) fd.append("knownFaceId", opts.knownFaceId);
+      }
+      if (opts.image) fd.append("image", opts.image, `scan_${Date.now()}.jpg`);
+      await apiForm("/face-recognition/recognize", fd);
+    } catch {
+      /* logging is best-effort; never block the UI */
+    }
+  };
 
   const [recentRecognitions, setRecentRecognitions] = useState<
-    { name: string; initials: string; relation: string; time: string; confidence: number; confidenceLevel: "high" | "medium"; gradient: string }[]
+    { name: string; initials: string; relation: string; time: string; confidence: number; confidenceLevel: "high" | "medium"; gradient: string; imageUrl?: string }[]
   >([]);
   const [knownFaces, setKnownFaces] = useState<
-    { id: string; name: string; initials: string; relation: string; scans: number; gradient: string }[]
+    { id: string; name: string; initials: string; relation: string; scans: number; gradient: string; imageUrl?: string }[]
   >([]);
 
   // Load enrolled faces from the backend (with their descriptors for matching).
@@ -112,6 +191,7 @@ export default function FaceRecognitionPage() {
             relation: f.relationship || "",
             scans: f.recognitionCount || 0,
             gradient: GRADIENTS[i % GRADIENTS.length],
+            imageUrl: f.imageUrl || "",
           }))
         );
       }
@@ -139,6 +219,7 @@ export default function FaceRecognitionPage() {
               confidence: conf,
               confidenceLevel: conf >= 85 ? ("high" as const) : ("medium" as const),
               gradient: log.result === "unknown" ? "linear-gradient(135deg, #64748b, #334155)" : GRADIENTS[i % GRADIENTS.length],
+              imageUrl: log.imageUrl || "",
             };
           })
         );
@@ -199,6 +280,27 @@ export default function FaceRecognitionPage() {
     setIsMobile(typeof navigator !== "undefined" && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent));
   }, []);
 
+  // When a known face is opened, load every scan photo they appear in.
+  useEffect(() => {
+    if (!manageFace || !patientId) { setManagePhotos([]); return; }
+    let cancelled = false;
+    (async () => {
+      try {
+        setManagePhotosLoading(true);
+        const res = await apiGet(`/face-recognition/patient/${patientId}/logs?knownFace=${manageFace.id}&limit=50`).catch(() => null);
+        const logs = Array.isArray(res?.logs) ? res.logs : [];
+        const photos: string[] = logs.map((l: any) => l.imageUrl).filter(Boolean);
+        // Show the enrolment photo first if we have one.
+        if (manageFace.imageUrl && !photos.includes(manageFace.imageUrl)) photos.unshift(manageFace.imageUrl);
+        if (!cancelled) setManagePhotos(photos);
+      } finally {
+        if (!cancelled) setManagePhotosLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [manageFace, patientId]);
+
   const switchCamera = async () => {
     const next = facingMode === "user" ? "environment" : "user";
     setFacingMode(next);
@@ -214,7 +316,10 @@ export default function FaceRecognitionPage() {
 
   // Capture the current frame, compute its descriptor, and match it.
   const handleCapture = async () => {
-    if (!videoRef.current || modelStatus !== "ready" || scanning) return;
+    if (scanning) return;
+    if (modelStatus === "loading") { toast("The face model is still loading. Please wait a moment.", "info"); return; }
+    if (modelStatus === "error") { toast("The face model failed to load. Check that the model files are in public/models.", "error"); return; }
+    if (!videoRef.current || !cameraActive) { toast("Camera is not active. Please allow camera access and try again.", "error"); return; }
     setScanning(true);
     setResult(null);
     try {
@@ -225,24 +330,20 @@ export default function FaceRecognitionPage() {
         return;
       }
 
-      // Keep this descriptor so an unknown face can be enrolled ("Add this person").
+      // Keep this descriptor + the actual captured frame so an unknown face can be
+      // enrolled ("Add this person") and every scan is logged with its real photo.
       pendingDescriptorRef.current = Array.from(probe);
+      const frame = await captureFrameBlob();
+      pendingImageRef.current = frame;
       const match = findBestMatch(probe, knownRef.current);
       if (match) {
         setResult({ name: match.name, relationship: match.relationship || "Recognized", initials: toInitials(match.name), confidence: match.confidence, unknown: false });
         announceFace(match.name, match.relationship, false);
-        await apiPost("/face-recognition/recognize", {
-          patientId,
-          result: "recognized",
-          name: match.name,
-          relationship: match.relationship,
-          confidence: match.confidence,
-          knownFaceId: match.knownFaceId,
-        }).catch(() => {});
+        await logRecognition({ result: "recognized", name: match.name, relationship: match.relationship, confidence: match.confidence, knownFaceId: match.knownFaceId, image: frame });
       } else {
         setResult({ name: "Unknown Person", relationship: "Not in your known faces", initials: "?", confidence: 0, unknown: true });
         announceFace("", "", true);
-        await apiPost("/face-recognition/recognize", { patientId, result: "unknown", confidence: 0 }).catch(() => {});
+        await logRecognition({ result: "unknown", confidence: 0, image: frame });
       }
       fetchLogs();
       fetchKnownFaces();
@@ -276,16 +377,32 @@ export default function FaceRecognitionPage() {
       const d = await computeDescriptorFromFile(file);
       if (!d) { toast("Couldn't find a clear face in that photo. Try a well-lit, front-facing one.", "error"); return; }
       pendingDescriptorRef.current = Array.from(d);
+      pendingImageRef.current = file; // keep the real photo to store on the profile
       setAddForm({ name: "", relationship: "" });
       setShowAdd(true);
     } catch { toast("Could not read that photo.", "error"); }
   };
 
-  // "Add this person" on an unknown capture → enroll using the captured descriptor.
-  const enrollFromCapture = () => {
-    if (!pendingDescriptorRef.current) { toast("Please capture a face first.", "info"); return; }
-    setAddForm({ name: "", relationship: "" });
-    setShowAdd(true);
+  // "Add this person" on an unknown capture → enroll using the live camera.
+  // We re-scan with an AVERAGED descriptor (multiple frames) for a much stronger
+  // template, and grab a fresh photo, before showing the name form.
+  const [enrollPrepping, setEnrollPrepping] = useState(false);
+  const enrollFromCapture = async () => {
+    if (modelStatus !== "ready") { toast("The face model is still loading. Please wait a moment.", "info"); return; }
+    try {
+      setEnrollPrepping(true);
+      if (videoRef.current && cameraActive) {
+        const avg = await getAveragedDescriptor(videoRef.current, 5);
+        if (avg) pendingDescriptorRef.current = Array.from(avg);
+        const frame = await captureFrameBlob();
+        if (frame) pendingImageRef.current = frame;
+      }
+      if (!pendingDescriptorRef.current) { toast("Please capture a clear face first.", "info"); return; }
+      setAddForm({ name: "", relationship: "" });
+      setShowAdd(true);
+    } finally {
+      setEnrollPrepping(false);
+    }
   };
 
   const submitAddFace = async (e: React.FormEvent) => {
@@ -294,13 +411,18 @@ export default function FaceRecognitionPage() {
     if (addForm.name.trim().length < 2) { toast("Please enter the person's name.", "info"); return; }
     try {
       setAddSaving(true);
-      await apiPost("/face-recognition/known-faces", {
-        patientId, name: addForm.name.trim(), relationship: addForm.relationship.trim(),
-        descriptor: pendingDescriptorRef.current,
-      });
+      const fd = new FormData();
+      fd.append("patientId", patientId);
+      fd.append("name", addForm.name.trim());
+      fd.append("relationship", addForm.relationship.trim());
+      fd.append("descriptor", JSON.stringify(pendingDescriptorRef.current));
+      if (pendingImageRef.current) fd.append("image", pendingImageRef.current, `face_${Date.now()}.jpg`);
+      await apiForm("/face-recognition/known-faces", fd);
       setShowAdd(false);
       pendingDescriptorRef.current = null;
+      pendingImageRef.current = null;
       setResult(null);
+      toast("Face added successfully.", "success");
       await fetchKnownFaces();
     } catch (err) { toast(err instanceof Error ? err.message : "Could not add this face.", "error"); }
     finally { setAddSaving(false); }
@@ -320,15 +442,16 @@ export default function FaceRecognitionPage() {
       const d = await computeDescriptorFromFile(file);
       if (!d) { setResult({ name: "No face detected", relationship: "Try a clearer photo", initials: "!", confidence: 0, unknown: true }); return; }
       pendingDescriptorRef.current = Array.from(d);
+      pendingImageRef.current = file;
       const match = findBestMatch(d, knownRef.current);
       if (match) {
         setResult({ name: match.name, relationship: match.relationship || "Recognized", initials: toInitials(match.name), confidence: match.confidence, unknown: false });
         announceFace(match.name, match.relationship, false);
-        await apiPost("/face-recognition/recognize", { patientId, result: "recognized", name: match.name, relationship: match.relationship, confidence: match.confidence, knownFaceId: match.knownFaceId }).catch(() => {});
+        await logRecognition({ result: "recognized", name: match.name, relationship: match.relationship, confidence: match.confidence, knownFaceId: match.knownFaceId, image: file });
       } else {
         setResult({ name: "Unknown Person", relationship: "Not in your known faces", initials: "?", confidence: 0, unknown: true });
         announceFace("", "", true);
-        await apiPost("/face-recognition/recognize", { patientId, result: "unknown", confidence: 0 }).catch(() => {});
+        await logRecognition({ result: "unknown", confidence: 0, image: file });
       }
       fetchLogs();
     } catch { setResult(null); }
@@ -964,9 +1087,10 @@ export default function FaceRecognitionPage() {
                       {result.unknown && (
                         <button
                           onClick={enrollFromCapture}
-                          style={{ padding: "10px 20px", borderRadius: 10, fontFamily: "inherit", fontSize: 13, fontWeight: 600, cursor: "pointer", border: "none", background: "#0d9488", color: "#fff" }}
+                          disabled={enrollPrepping}
+                          style={{ padding: "10px 20px", borderRadius: 10, fontFamily: "inherit", fontSize: 13, fontWeight: 600, cursor: enrollPrepping ? "default" : "pointer", border: "none", background: "#0d9488", color: "#fff", opacity: enrollPrepping ? 0.6 : 1 }}
                         >
-                          Add this person
+                          {enrollPrepping ? "Reading face…" : "Add this person"}
                         </button>
                       )}
                       <button
@@ -1053,23 +1177,7 @@ export default function FaceRecognitionPage() {
                     gap: 14,
                   }}
                 >
-                  <div
-                    style={{
-                      width: 48,
-                      height: 48,
-                      borderRadius: 12,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexShrink: 0,
-                      fontWeight: 700,
-                      color: "#fff",
-                      fontSize: 16,
-                      background: rec.gradient,
-                    }}
-                  >
-                    {rec.initials}
-                  </div>
+                  <FaceAvatar imageUrl={rec.imageUrl} initials={rec.initials} gradient={rec.gradient} size={48} radius={12} fontSize={16} />
                   <div style={{ flex: 1 }}>
                     <div
                       style={{
@@ -1161,22 +1269,8 @@ export default function FaceRecognitionPage() {
                     cursor: "pointer",
                   }}
                 >
-                  <div
-                    style={{
-                      width: 64,
-                      height: 64,
-                      borderRadius: 16,
-                      margin: "0 auto 12px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontWeight: 800,
-                      color: "#fff",
-                      fontSize: 22,
-                      background: face.gradient,
-                    }}
-                  >
-                    {face.initials}
+                  <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
+                    <FaceAvatar imageUrl={face.imageUrl} initials={face.initials} gradient={face.gradient} size={64} radius={16} fontSize={22} />
                   </div>
                   <div
                     style={{
@@ -1283,11 +1377,33 @@ export default function FaceRecognitionPage() {
       {/* Known-face detail + delete */}
       {manageFace && (
         <div style={{ position: "fixed", inset: 0, zIndex: 60, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.4)", padding: 16 }} onClick={() => setManageFace(null)}>
-          <div style={{ background: "#fff", borderRadius: 16, width: "100%", maxWidth: 360, padding: 24, textAlign: "center" }} onClick={(e) => e.stopPropagation()}>
-            <div style={{ width: 72, height: 72, borderRadius: 16, margin: "0 auto 12px", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, color: "#fff", fontSize: 24, background: "linear-gradient(135deg,#0d9488,#1a3c34)" }}>{toInitials(manageFace.name)}</div>
+          <div style={{ background: "#fff", borderRadius: 16, width: "100%", maxWidth: 380, maxHeight: "85vh", overflowY: "auto", padding: 24, textAlign: "center" }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
+              <FaceAvatar imageUrl={manageFace.imageUrl} initials={toInitials(manageFace.name)} gradient={manageFace.gradient || "linear-gradient(135deg,#0d9488,#1a3c34)"} size={72} radius={16} fontSize={24} />
+            </div>
             <div style={{ fontSize: 18, fontWeight: 700, color: "#1a3c34" }}>{manageFace.name}</div>
             <div style={{ fontSize: 13, color: "#64748b", marginTop: 2 }}>{manageFace.relation || "—"}</div>
             <div style={{ fontSize: 12, color: "#94a3b8", marginTop: 6 }}>{manageFace.scans} recognitions</div>
+
+            {/* Per-person photo gallery — every scan this person appeared in. */}
+            <div style={{ marginTop: 18, textAlign: "left" }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#1a3c34", marginBottom: 8 }}>Photos of {manageFace.name.split(" ")[0]}</div>
+              {managePhotosLoading ? (
+                <p style={{ fontSize: 13, color: "#94a3b8" }}>Loading photos…</p>
+              ) : managePhotos.length === 0 ? (
+                <p style={{ fontSize: 13, color: "#94a3b8" }}>No photos yet. Scan this person to build their gallery.</p>
+              ) : (
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+                  {managePhotos.map((src, i) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img key={i} src={imgUrl(src)} alt={`${manageFace.name} scan ${i + 1}`}
+                      style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", borderRadius: 10, border: "1px solid #e2e8f0" }}
+                      onError={(e) => { e.currentTarget.style.display = "none"; }} />
+                  ))}
+                </div>
+              )}
+            </div>
+
             <div style={{ display: "flex", gap: 8, marginTop: 18 }}>
               <button onClick={() => setManageFace(null)} style={{ flex: 1, padding: "10px", borderRadius: 10, border: "1px solid #e2e8f0", background: "#fff", color: "#334155", fontWeight: 600, cursor: "pointer" }}>Close</button>
               <button onClick={() => handleDeleteFace(manageFace.id)} style={{ flex: 1, padding: "10px", borderRadius: 10, border: "none", background: "#dc2626", color: "#fff", fontWeight: 600, cursor: "pointer" }}>Remove</button>
@@ -1308,7 +1424,7 @@ export default function FaceRecognitionPage() {
               <p style={{ fontSize: 14, color: "#64748b" }}>No recognitions yet.</p>
             ) : recentRecognitions.map((rec, idx) => (
               <div key={idx} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: "1px solid #f1f5f9" }}>
-                <div style={{ width: 40, height: 40, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, background: rec.gradient }}>{rec.initials}</div>
+                <FaceAvatar imageUrl={rec.imageUrl} initials={rec.initials} gradient={rec.gradient} size={40} radius={10} fontSize={14} />
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "#1a3c34" }}>{rec.name}</div>
                   <div style={{ fontSize: 12, color: "#64748b" }}>{rec.relation} · {rec.time}</div>
@@ -1330,7 +1446,7 @@ export default function FaceRecognitionPage() {
             </div>
             {knownFaces.map((f) => (
               <div key={f.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: "1px solid #f1f5f9" }}>
-                <div style={{ width: 40, height: 40, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, background: f.gradient }}>{f.initials}</div>
+                <FaceAvatar imageUrl={f.imageUrl} initials={f.initials} gradient={f.gradient} size={40} radius={10} fontSize={14} />
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "#1a3c34" }}>{f.name}</div>
                   <div style={{ fontSize: 12, color: "#64748b" }}>{f.relation || "—"} · {f.scans} scans</div>

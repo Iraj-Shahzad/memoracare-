@@ -68,6 +68,7 @@ export const recognizeFace = async (req: Request, res: Response, next: NextFunct
     const log = await RecognitionLog.create({
       patient: patientId,
       imageUrl,
+      knownFace: finalResult === 'recognized' && knownFaceId ? knownFaceId : undefined,
       result: finalResult,
       recognizedPerson: finalResult === 'recognized' ? { name, relationship } : undefined,
       confidence: confidence != null ? Number(confidence) : undefined,
@@ -110,15 +111,19 @@ export const recognizeFace = async (req: Request, res: Response, next: NextFunct
 export const getRecognitionLogs = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { patientId } = req.params;
-    const { page = 1, limit = 20 } = req.query;
+    const { page = 1, limit = 20, knownFace } = req.query;
 
     const allowed = await canAccessPatient(req.user, patientId);
     if (!allowed) {
       return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
     }
 
-    const total = await RecognitionLog.countDocuments({ patient: patientId });
-    const logs = await RecognitionLog.find({ patient: patientId })
+    // Optionally filter to a single person's scans (per-person image gallery).
+    const filter: any = { patient: patientId };
+    if (knownFace) filter.knownFace = knownFace;
+
+    const total = await RecognitionLog.countDocuments(filter);
+    const logs = await RecognitionLog.find(filter)
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(Number(limit));

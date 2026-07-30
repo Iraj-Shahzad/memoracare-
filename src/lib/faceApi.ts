@@ -22,15 +22,42 @@ export async function loadFaceApi() {
 }
 
 // Detect the single most prominent face and return its 128-value descriptor.
+// inputSize 416 (up from 320) noticeably improves detection of smaller / off-centre
+// / less well-lit faces at a small speed cost — worth it for reliability.
 export async function getDescriptor(
   input: HTMLVideoElement | HTMLImageElement
 ): Promise<Float32Array | null> {
   const fa = await loadFaceApi();
   const detection = await fa
-    .detectSingleFace(input, new fa.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.5 }))
+    .detectSingleFace(input, new fa.TinyFaceDetectorOptions({ inputSize: 416, scoreThreshold: 0.5 }))
     .withFaceLandmarks()
     .withFaceDescriptor();
   return detection ? detection.descriptor : null;
+}
+
+// Capture several descriptors from a live video and average them into one
+// template. Averaging cancels per-frame noise (blink, motion, lighting flicker),
+// producing a far more stable enrolment than a single snapshot. Falls back to a
+// single sample if only one succeeds; returns null if no face is ever found.
+export async function getAveragedDescriptor(
+  input: HTMLVideoElement,
+  samples = 5,
+  gapMs = 180
+): Promise<Float32Array | null> {
+  const collected: Float32Array[] = [];
+  for (let i = 0; i < samples; i++) {
+    const d = await getDescriptor(input);
+    if (d) collected.push(d);
+    if (i < samples - 1) await new Promise((r) => setTimeout(r, gapMs));
+  }
+  if (collected.length === 0) return null;
+  if (collected.length === 1) return collected[0];
+  const avg = new Float32Array(128);
+  for (const d of collected) {
+    for (let i = 0; i < 128; i++) avg[i] += d[i];
+  }
+  for (let i = 0; i < 128; i++) avg[i] /= collected.length;
+  return avg;
 }
 
 export function euclideanDistance(
