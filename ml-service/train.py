@@ -42,6 +42,7 @@ np.random.seed(SEED)
 tf.random.set_seed(SEED)
 
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.pipeline import FeatureUnion
 from sklearn.model_selection import train_test_split, StratifiedKFold
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 
@@ -80,14 +81,22 @@ classes = sorted(set(tags))
 # 2. TF-IDF features (unigrams + bigrams) over normalized text
 # ---------------------------------------------------------------------------
 corpus = [normalize(p) for p in patterns]
-vectorizer = TfidfVectorizer(ngram_range=(1, 2), sublinear_tf=True, min_df=1)
+# Two feature views combined:
+#  - WORD unigrams+bigrams: capture phrases ("feel sick" vs "feel sad").
+#  - CHARACTER n-grams (3-5, within word boundaries): capture sub-word patterns,
+#    a big help for Roman-Urdu / Urdu spelling variation and typos.
+# max_features caps keep memory bounded (important for the augmented 10k set).
+vectorizer = FeatureUnion([
+    ("word", TfidfVectorizer(analyzer="word", ngram_range=(1, 2), sublinear_tf=True, min_df=1, max_features=4000)),
+    ("char", TfidfVectorizer(analyzer="char_wb", ngram_range=(3, 5), sublinear_tf=True, min_df=2, max_features=6000)),
+])
 X = vectorizer.fit_transform(corpus).toarray().astype("float32")
 y = np.array([classes.index(t) for t in tags])
 
 input_dim = X.shape[1]
 print(f"Documents (training examples): {len(patterns)}")
 print(f"Intent classes ({len(classes)}): {classes}")
-print(f"TF-IDF features (unigrams + bigrams): {input_dim}")
+print(f"TF-IDF features (word 1-2gram + char 3-5gram): {input_dim}")
 
 # One-hot encode labels
 Y = np.zeros((len(y), len(classes)), dtype=np.float32)
