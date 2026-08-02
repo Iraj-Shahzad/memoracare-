@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-import * as adhan from 'adhan';
 import ChatHistory from '../models/ChatHistory';
 import Patient from '../models/Patient';
 import Medication from '../models/Medication';
@@ -23,10 +22,22 @@ const CITY_COORDS: Record<string, [number, number]> = {
 };
 const DEFAULT_CITY = 'islamabad';
 
+// `adhan` v4 is an ESM-only package, but this server is CommonJS (ts-node), so a
+// normal `require('adhan')` fails. We load it once via a NATIVE dynamic import()
+// — hidden behind Function() so TypeScript doesn't downlevel it back to require.
+const _dynamicImport = new Function('m', 'return import(m)') as (m: string) => Promise<any>;
+let _adhanPromise: Promise<any> | null = null;
+function getAdhan() {
+  if (!_adhanPromise) _adhanPromise = _dynamicImport('adhan');
+  return _adhanPromise;
+}
+
 // Compute today's prayer times for a patient's city. Uses the University of
 // Islamic Sciences, Karachi method + Hanafi Asr (standard for Pakistan), and
 // formats in Pakistan time regardless of the server's own timezone.
-function computePrayerTimes(cityRaw: string) {
+async function computePrayerTimes(cityRaw: string) {
+  const mod = await getAdhan();
+  const adhan = mod && mod.Coordinates ? mod : (mod.default || mod); // handle ESM namespace / default
   const key = (cityRaw || '').trim().toLowerCase();
   const matched = !!CITY_COORDS[key];
   const cityKey = matched ? key : DEFAULT_CITY;
@@ -180,7 +191,7 @@ async function buildReply(intent: any, base: any, patientId: any, lang: 'en' | '
     case 'prayer': {
       const patient: any = await Patient.findById(patientId).select('city');
       try {
-        const p = computePrayerTimes(patient?.city || '');
+        const p = await computePrayerTimes(patient?.city || '');
         if (ur) {
           const note = p.matched ? '' : '\n(شہر درج نہیں تھا، اسلام آباد کے اوقات دکھائے گئے ہیں)';
           return `${p.cityUsed} کے آج کے نماز اوقات:\n• فجر ${p.fajr}\n• ظہر ${p.dhuhr}\n• عصر ${p.asr}\n• مغرب ${p.maghrib}\n• عشاء ${p.isha}${note}`;
