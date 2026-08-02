@@ -119,27 +119,41 @@ def build_model(n_features, n_classes):
     return m
 
 
+# Bigger batches train much faster (especially with a lot of augmented data)
+# with no real accuracy loss on this task.
+BATCH_SIZE = 32
+
 # ---------------------------------------------------------------------------
 # 2b. K-fold cross-validation (robust, defensible accuracy for the thesis)
+# Cross-validation on an AUGMENTED set is both slow AND optimistic (near-duplicate
+# variants of one seed leak across folds), so we run CV only on the seed-sized
+# dataset. For the augmented set we skip CV and point back to the seed run.
 # ---------------------------------------------------------------------------
+CV_MAX = 3000
 n_splits = min(5, int(np.min(np.bincount(y))))
-if n_splits >= 2:
+if n_splits >= 2 and len(X) <= CV_MAX:
     skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=SEED)
     fold_accs = []
     print(f"\nRunning {n_splits}-fold cross-validation...")
     for fold, (tr_idx, te_idx) in enumerate(skf.split(X, y), start=1):
+        print(f"  Fold {fold}/{n_splits} training...", flush=True)
         m = build_model(input_dim, len(classes))
         m.fit(
-            X[tr_idx], Y[tr_idx], epochs=150, batch_size=8, verbose=0,
+            X[tr_idx], Y[tr_idx], epochs=80, batch_size=BATCH_SIZE, verbose=0,
             validation_data=(X[te_idx], Y[te_idx]),
-            callbacks=[EarlyStopping(monitor="val_loss", patience=20, restore_best_weights=True)],
+            callbacks=[EarlyStopping(monitor="val_loss", patience=15, restore_best_weights=True)],
         )
         preds_fold = np.argmax(m.predict(X[te_idx], verbose=0), axis=1)
         a = accuracy_score(y[te_idx], preds_fold)
         fold_accs.append(a)
-        print(f"  Fold {fold}: accuracy = {a * 100:.2f}%")
+        print(f"  Fold {fold}: accuracy = {a * 100:.2f}%", flush=True)
     print(f"\nCross-validated accuracy: {np.mean(fold_accs) * 100:.2f}% "
           f"(+/- {np.std(fold_accs) * 100:.2f}%)\n")
+elif len(X) > CV_MAX:
+    print(f"\nLarge dataset ({len(X)} examples) — skipping 5-fold cross-validation.")
+    print("Augmented CV is slow and optimistic (near-duplicates leak across folds).")
+    print("For the honest, comparable CV number, run seed-only:")
+    print("  delete data/intents.augmented.json, then  python train.py\n")
 
 # Train/test split for honest evaluation
 can_stratify = min(np.bincount(y)) >= 2
@@ -161,7 +175,7 @@ if len(X_test):
 history = model.fit(
     X_train, Y_train,
     epochs=200,
-    batch_size=8,
+    batch_size=BATCH_SIZE,
     verbose=1,
     validation_data=(X_test, Y_test) if len(X_test) else None,
     callbacks=callbacks,
@@ -194,7 +208,7 @@ else:
 final_epochs = len(history.history["loss"])
 print(f"\nTraining final deployment model on all {len(X)} examples for {final_epochs} epochs...")
 model = build_model(input_dim, len(classes))
-model.fit(X, Y, epochs=final_epochs, batch_size=8, verbose=0)
+model.fit(X, Y, epochs=final_epochs, batch_size=BATCH_SIZE, verbose=0)
 
 # ---------------------------------------------------------------------------
 # 6. Save artifacts (model + fitted vectorizer + classes)
