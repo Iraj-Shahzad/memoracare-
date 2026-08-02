@@ -10,10 +10,15 @@
         "Good to see you", "Nice to see you", "Hey good morning", "Hello are you working",
         "Are you listening", "Can you hear me", "Hello can you help me", "Hi friend",
         "Good morning assistant", "Hello good evening", "Hey how are you",
+        "hello again", "hi good morning", "hey good evening", "hi how are you doing",
+        "are you online", "start", "yo", "hiya", "hi assistant good morning",
+        "hello i am back", "good morning my friend", "hey are you free",
         "Assalam o Alaikum", "Assalamualaikum", "Salam", "Adaab", "Kaise ho", "Kya haal hai",
-        "Kya aap theek hain", "Aap kaise hain", "Subah bakhair",
+        "Kya aap theek hain", "Aap kaise hain", "Subah bakhair", "salam assistant",
+        "aoa", "kya aap wahan hain", "kaise mizaj hain",
         "السلام علیکم", "ہیلو", "سلام", "کیا آپ موجود ہیں", "آداب", "صبح بخیر", "کیسے ہو",
-        "کیا حال ہے", "کیا آپ ٹھیک ہیں", "خوش آمدید", "آپ کیسے ہیں", "کیا آپ سن رہے ہیں"
+        "کیا حال ہے", "کیا آپ ٹھیک ہیں", "خوش آمدید", "آپ کیسے ہیں", "کیا آپ سن رہے ہیں",
+        "ہیلو دوست", "کیا آپ آن لائن ہیں", "میں واپس آ گیا ہوں"
       ],
       "responses": [
         "Hello! I'm your MemoryCare assistant. How can I help you today?",
@@ -31,10 +36,13 @@
         "I am done", "That will be all", "I am going now", "Ok bye", "Alright bye",
         "I will talk to you later", "Take care", "Let us stop", "We are finished",
         "No more questions", "I am tired now goodbye", "Ok that is enough",
+        "that's it for now", "i am off", "see you soon", "goodbye for today",
+        "i need to sleep goodbye", "ok done thanks", "nothing more", "close the chat",
         "Khuda hafiz", "Allah hafiz", "Shab bakhair", "Bas itna hi", "Phir milenge",
-        "Main ja raha hoon", "Ab bas", "Chalta hoon", "Theek hai bye",
+        "Main ja raha hoon", "Ab bas", "Chalta hoon", "Theek hai bye", "acha khuda hafiz",
+        "ab main so jaonga", "bas ho gaya",
         "خدا حافظ", "اللہ حافظ", "شب بخیر", "بس اتنا ہی", "پھر ملیں گے", "میں جا رہا ہوں",
-        "اب بس", "ٹھیک ہے خدا حافظ", "اجازت دیں", "میں تھک گیا ہوں خدا حافظ"
+        "اب بس", "ٹھیک ہے خدا حافظ", "اجازت دیں", "میں تھک گیا ہوں خدا حافظ", "اب میں سوتا ہوں"
       ],
       "responses": [
         "Goodbye! Take care of yourself. I'm here whenever you need me.",
@@ -52,10 +60,13 @@
         "Good job", "That is kind of you", "Much appreciated", "Thanks friend",
         "Thank you for helping", "You are very kind", "Thanks that is what I needed",
         "Perfect thank you", "Lovely thank you", "Thank you assistant",
+        "thanks so much", "that helped a lot", "you are the best", "thanks again",
+        "really appreciate it", "thank you for reminding me", "great job thanks",
         "Shukriya", "Bahut shukriya", "Shukria dost", "Aap ne meri madad ki", "Bara meherbani",
-        "Meherbani", "Aap bahut ache hain",
+        "Meherbani", "Aap bahut ache hain", "boht shukria", "allah aap ko khush rakhe",
+        "aap ne bohat madad ki", "shukria yaad dilane ka",
         "شکریہ", "بہت شکریہ", "آپ نے میری مدد کی", "بڑی مہربانی", "مہربانی", "آپ بہت اچھے ہیں",
-        "آپ کا شکریہ", "بہت بہت شکریہ", "آپ نے بہت مدد کی", "زبردست شکریہ"
+        "آپ کا شکریہ", "بہت بہت شکریہ", "آپ نے بہت مدد کی", "زبردست شکریہ", "اللہ آپ کو خوش رکھے"
       ],
       "responses": [
         "You're most welcome! I'm always happy to help.",
@@ -76,11 +87,15 @@
         "I forgot my medicine", "Have I taken my medicine", "What medicine is left",
         "Do I need to take any tablets", "My medicines for today", "What are my tablets today",
         "Which medicines do I need", "Tell me what medicine to take",
+        "what medication am i on", "do i take any pills", "what are today's medicines",
+        "can you list my medicines", "which tablets are mine", "what meds do i have",
+        "show my pills", "what should i take now", "any medicine for me today",
         "Meri dawa kya hai", "Mujhe konsi dawa leni hai", "Meri dawai batao", "Konsi goli leni hai",
         "Meri medicine kya hai", "Kya dawa leni hai", "Meri dawaiyan dikhao", "Aaj konsi dawa hai",
+        "mujhe konsi goliyan leni hain", "meri dawaiyon ki list", "kya meri koi dawa hai",
         "میری دوا کیا ہے", "مجھے کونسی دوا لینی ہے", "میری دوائی بتاؤ", "کونسی گولی لینی ہے",
         "میری میڈیسن کیا ہے", "کیا دوا لینی ہے", "میری دوائیں دکھاؤ", "آج کونسی دوا لینی ہے",
-        "میری دوائیوں کی فہرست", "میں نے دوا لی یا نہیں"
+        "میری دوائیوں کی فہرست", "میں نے دوا لی یا نہیں", "کیا میری کوئی دوا ہے", "مجھے کونسی گولیاں لینی ہیں"
       ],
       "responses": [
         "Let me check your medications for you.",
@@ -99,11 +114,14 @@
         "When is my evening medicine", "What time should I take my pill", "When do I take my night medicine",
         "How soon is my next dose", "When is my medication scheduled", "At what time are my medicines",
         "When do I take my tablet today", "Tell me my medicine timings",
+        "what time are my pills", "is it time to take medicine", "when is the next dose",
+        "how long until my next medicine", "what are my dose times", "when do i take my afternoon medicine",
         "Dawa kab leni hai", "Meri dawa ka time kya hai", "Agli dawa kab hai", "Kis waqt dawa leni hai",
         "Dawai ka waqt", "Goli kab leni hai", "Subah wali dawa kab hai", "Raat wali dawa kab hai",
+        "kya ab dawa ka waqt hai", "agli goli kab leni hai", "meri dawa ke auqat batao",
         "دوا کب لینی ہے", "میری دوا کا وقت کیا ہے", "اگلی دوا کب ہے", "کس وقت دوا لینی ہے",
         "دوائی کا وقت", "گولی کب لینی ہے", "صبح والی دوا کب ہے", "رات والی دوا کب ہے",
-        "میری دوا کا اگلا وقت", "کیا دوا کا وقت ہو گیا ہے"
+        "میری دوا کا اگلا وقت", "کیا دوا کا وقت ہو گیا ہے", "اگلی گولی کب لینی ہے", "میری دوا کے اوقات بتاؤ"
       ],
       "responses": [
         "Let me check the times for your medicines.",
@@ -122,11 +140,14 @@
         "What is my daily plan", "What am I supposed to do today", "Show my daily activities",
         "What is my agenda today", "Any tasks for me today", "What are my routines for today",
         "Tell me what I have to do", "What is my morning routine", "What is my evening routine",
+        "what's next in my routine", "do i have anything scheduled", "what are today's tasks",
+        "show my to do list", "what activity is next", "remind me of my routine",
         "Mera aaj ka routine kya hai", "Meri activities kya hain", "Aaj mujhe kya karna hai",
         "Mera schedule dikhao", "Aaj ka plan kya hai", "Meri routine batao", "Aaj kya karna hai",
+        "agla kaam kya hai", "kya aaj koi kaam hai", "meri aaj ki activities batao",
         "میرا آج کا معمول کیا ہے", "میری سرگرمیاں کیا ہیں", "آج مجھے کیا کرنا ہے",
         "میرا شیڈول دکھاؤ", "آج کا منصوبہ کیا ہے", "میری روٹین بتاؤ", "آج کیا کرنا ہے",
-        "میرے آج کے کام کیا ہیں", "میرا صبح کا معمول", "میرا شام کا معمول"
+        "میرے آج کے کام کیا ہیں", "میرا صبح کا معمول", "میرا شام کا معمول", "اگلا کام کیا ہے", "کیا آج کوئی کام ہے"
       ],
       "responses": [
         "Let me check your routine for today.",
@@ -144,11 +165,14 @@
         "Who takes care of me", "Who is my emergency contact", "Who should I call in my family",
         "Who are my family members", "Tell me my family names", "Who is my grandchild",
         "Who is my brother", "Who is my sister", "Remind me about my family",
+        "tell me my children's names", "who loves me", "who are my parents", "who is my spouse",
+        "list my family members", "who lives with me",
         "Mera khandan kaun hai", "Mere bache kaun hain", "Meri beti kaun hai", "Mera beta kaun hai",
         "Meri family batao", "Mujhe kaun milne aata hai", "Mere ghar walay kaun hain",
+        "mere bachon ke naam batao", "mera shohar kaun hai", "meri biwi kaun hai",
         "میرا خاندان کون ہے", "میرے بچے کون ہیں", "میری بیٹی کون ہے", "میرا بیٹا کون ہے",
         "میری فیملی بتاؤ", "مجھے کون ملنے آتا ہے", "میرے گھر والے کون ہیں",
-        "میرے خاندان کے افراد کون ہیں", "میری بیوی کون ہے", "میرا شوہر کون ہے"
+        "میرے خاندان کے افراد کون ہیں", "میری بیوی کون ہے", "میرا شوہر کون ہے", "میرے بچوں کے نام بتاؤ", "میرے ساتھ کون رہتا ہے"
       ],
       "responses": [
         "Let me tell you about your family.",
@@ -165,11 +189,14 @@
         "What is my name please", "Am I the right person", "Tell me who I am",
         "What is my identity", "Whose account is this", "Remind me who I am",
         "I cannot remember my name", "What is my name today",
+        "please tell me my name", "what name do i have", "who is this account for",
+        "i can't recall my name", "remind me my full name",
         "Mera naam kya hai", "Main kaun hoon", "Mujhe mera naam batao", "Kya aap mera naam jante hain",
         "Mujhe kya kehte hain", "Main kaun hoon dobara", "Mera pura naam kya hai",
+        "mujhe apna naam yaad nahi", "mera naam bata do", "main kis ka account hoon",
         "میرا نام کیا ہے", "میں کون ہوں", "مجھے میرا نام بتاؤ", "کیا آپ میرا نام جانتے ہیں",
         "مجھے کیا کہتے ہیں", "میں کون ہوں دوبارہ", "میرا پورا نام کیا ہے",
-        "مجھے اپنا نام یاد نہیں", "میں کون سا شخص ہوں", "میرا نام بتائیں"
+        "مجھے اپنا نام یاد نہیں", "میں کون سا شخص ہوں", "میرا نام بتائیں", "میرا نام بتا دو", "میں کس کا اکاؤنٹ ہوں"
       ],
       "responses": [
         "Let me remind you of your name.",
@@ -187,11 +214,14 @@
         "What is the time right now", "Is it day or night", "What is today's date",
         "Which month are we in", "What is the exact time", "Please tell me the date",
         "What is the time and day", "Remind me what day it is",
+        "what is the clock time", "tell me today's day", "is it weekend", "what date is it today",
+        "current date please", "what day of the week is it",
         "Aaj kya tareekh hai", "Kya waqt hua hai", "Aaj konsa din hai", "Tareekh batao",
         "Abhi kitne baje hain", "Konsa mahina hai", "Aaj kya din hai", "Waqt kya hua hai",
+        "aaj hafte ka konsa din hai", "abhi ka waqt batao", "konsa saal hai",
         "آج کیا تاریخ ہے", "کیا وقت ہوا ہے", "آج کونسا دن ہے", "تاریخ بتاؤ",
         "ابھی کتنے بجے ہیں", "کونسا مہینہ ہے", "آج کیا دن ہے", "وقت کیا ہوا ہے",
-        "کیا یہ صبح ہے یا شام", "آج کی تاریخ کیا ہے"
+        "کیا یہ صبح ہے یا شام", "آج کی تاریخ کیا ہے", "کونسا سال ہے", "ابھی کا وقت بتاؤ"
       ],
       "responses": [
         "Let me tell you the current date and time.",
@@ -208,11 +238,14 @@
         "Which house is this", "Where am I right now", "I do not know where I am",
         "Help me I am lost", "Where have I come", "What area is this", "Where is my location",
         "Tell me my address", "Which town is this", "Where am I living",
+        "what is my current location", "am i safe here", "where is this house", "which area do i live in",
+        "i feel lost where am i", "what town am i in",
         "Main kahan hoon", "Yeh jagah kya hai", "Main kahan rehta hoon", "Mera pata kya hai",
         "Mera ghar kahan hai", "Main kis sheher mein hoon", "Main kahan aa gaya hoon",
+        "mujhe nahi pata main kahan hoon", "yeh konsa ilaqa hai", "mera address batao",
         "میں کہاں ہوں", "یہ جگہ کیا ہے", "میں کہاں رہتا ہوں", "میرا پتہ کیا ہے",
         "میرا گھر کہاں ہے", "میں کس شہر میں ہوں", "میں کہاں آ گیا ہوں",
-        "مجھے نہیں معلوم میں کہاں ہوں", "میں راستہ بھول گیا ہوں", "میرا پتہ بتائیں"
+        "مجھے نہیں معلوم میں کہاں ہوں", "میں راستہ بھول گیا ہوں", "میرا پتہ بتائیں", "یہ کونسا علاقہ ہے", "میں کس شہر میں رہتا ہوں"
       ],
       "responses": [
         "Let me help you with where you are.",
@@ -229,11 +262,14 @@
         "I am crying", "Nobody loves me", "I feel alone", "I am afraid", "I feel nervous",
         "I feel empty", "I am so sad today", "I feel like crying", "My heart feels heavy",
         "I feel restless", "I am feeling uneasy", "I feel troubled",
+        "i feel worried and scared", "i am very lonely today", "i feel like nobody cares",
+        "i am frightened", "i feel helpless",
         "Main udaas hoon", "Main akela hoon", "Mujhe dar lag raha hai", "Main pareshan hoon",
         "Main theek nahi hoon", "Dil ghabra raha hai", "Main rona chahta hoon", "Main dukhi hoon",
+        "mujhe tanhai mehsoos ho rahi hai", "main bohat udaas hoon", "koi mujhe pasand nahi karta",
         "میں اداس ہوں", "میں اکیلا ہوں", "مجھے ڈر لگ رہا ہے", "میں پریشان ہوں",
         "میں ٹھیک نہیں ہوں", "دل گھبرا رہا ہے", "میں رونا چاہتا ہوں", "میں دکھی ہوں",
-        "مجھے تنہائی محسوس ہو رہی ہے", "میرا دل بھاری ہے"
+        "مجھے تنہائی محسوس ہو رہی ہے", "میرا دل بھاری ہے", "مجھے خوف آ رہا ہے", "میں بہت اداس ہوں"
       ],
       "responses": [
         "I'm sorry you're feeling this way. You are safe, and people who love you are near. Would you like me to tell your caregiver?",
@@ -250,11 +286,14 @@
         "Please help quickly", "I am hurt", "Call for help", "I feel dizzy and weak",
         "I think I am having an emergency", "Get help", "I am not safe", "Send help",
         "I fell down", "Help me please it is urgent", "Something bad is happening",
+        "i need urgent help", "please call my family now", "i am having chest pain",
+        "i feel like i will faint", "call an ambulance", "i am bleeding",
         "Meri madad karo", "Yeh emergency hai", "Mujhe madad chahiye", "Kisi ko bulao",
         "Main gir gaya hoon", "Mujhe doctor chahiye", "Seene mein dard hai", "Jaldi madad karo",
+        "mujhe sans nahi aa raha", "kisi ko foran bulao", "mujhe chakkar aa raha hai",
         "میری مدد کرو", "یہ ایمرجنسی ہے", "مجھے مدد چاہیے", "کسی کو بلاؤ",
         "میں گر گیا ہوں", "مجھے ڈاکٹر چاہیے", "سینے میں درد ہے", "جلدی مدد کرو",
-        "مجھے سانس نہیں آ رہا", "میں محفوظ نہیں ہوں"
+        "مجھے سانس نہیں آ رہا", "میں محفوظ نہیں ہوں", "مجھے چکر آ رہا ہے", "کسی کو فوراً بلاؤ"
       ],
       "responses": [
         "This sounds like an emergency. Please press the red SOS button right away so your caregiver is alerted immediately.",
@@ -272,11 +311,14 @@
         "Any doctor appointment", "What is scheduled with the doctor", "Do I have a meeting today",
         "When is my clinic visit", "Is my appointment today", "Show my appointments",
         "Do I have to go anywhere today", "When is my hospital visit",
+        "when is my next checkup", "do i have a clinic visit", "any medical appointment coming up",
+        "when am i seeing the doctor next", "is there a doctor visit this week",
         "Meri appointment kab hai", "Kya aaj appointment hai", "Doctor se kab milna hai",
         "Meri agli appointment kab hai", "Kya aaj checkup hai", "Aaj kahin jana hai kya",
+        "kya is hafte doctor se milna hai", "agli mulaqat kab hai",
         "میری اپائنٹمنٹ کب ہے", "کیا آج اپائنٹمنٹ ہے", "ڈاکٹر سے کب ملنا ہے",
         "میری اگلی اپائنٹمنٹ کب ہے", "کیا آج چیک اپ ہے", "آج کہیں جانا ہے کیا",
-        "میری اپائنٹمنٹس دکھاؤ", "کیا آج ہسپتال جانا ہے"
+        "میری اپائنٹمنٹس دکھاؤ", "کیا آج ہسپتال جانا ہے", "اگلی ملاقات کب ہے", "کیا اس ہفتے ڈاکٹر سے ملنا ہے"
       ],
       "responses": [
         "For your appointment details, please check with your caregiver, who keeps your schedule.",
@@ -293,11 +335,14 @@
         "What do you know", "How can I use you", "What can you tell me", "What are you for",
         "Show me what you can do", "I need some help", "What kind of help do you give",
         "Give me options", "What should I ask you", "How can you assist me",
+        "what things can you help with", "what are you able to do", "how do i talk to you",
+        "what can i say to you", "give me some examples",
         "Aap kya kar sakte hain", "Aap meri madad kaise kar sakte hain", "Main kya pooch sakta hoon",
         "Mujhe madad chahiye", "Aap kaise kaam karte hain", "Aap kya batate hain",
+        "aap kis cheez mein madad karte hain", "main aap se kya pooch sakta hoon", "mujhe rehnumai chahiye",
         "آپ کیا کر سکتے ہیں", "آپ میری مدد کیسے کر سکتے ہیں", "میں کیا پوچھ سکتا ہوں",
         "مجھے مدد چاہیے", "آپ کیسے کام کرتے ہیں", "آپ کیا بتاتے ہیں", "میری رہنمائی کریں",
-        "آپ کس کام کے لیے ہیں", "مجھے کچھ مدد چاہیے"
+        "آپ کس کام کے لیے ہیں", "مجھے کچھ مدد چاہیے", "میں آپ سے کیا پوچھ سکتا ہوں", "آپ کن چیزوں میں مدد کرتے ہیں"
       ],
       "responses": [
         "I'm your MemoryCare assistant. I can help with your medicines, your routine, your family, and the date and time. Just ask!",
@@ -314,10 +359,13 @@
         "When do I have dinner", "Did I have breakfast", "When is my next meal",
         "Is it lunch time", "Is it dinner time", "What time do I eat food", "When is food ready",
         "Time for food", "When do we eat", "Have I had my food", "When is my meal today",
+        "is it time for breakfast", "when is tea time", "should i eat now", "when is my next meal time",
         "Khana kab khana hai", "Nashta kab hai", "Dopeher ka khana kab hai", "Raat ka khana kab hai",
         "Kya main ne khana khaya", "Khane ka waqt kya hai", "Khana kab hai",
+        "kya ab khana khaon", "chai ka waqt kab hai", "kya nashte ka waqt hai",
         "کھانا کب کھانا ہے", "ناشتہ کب ہے", "دوپہر کا کھانا کب ہے", "رات کا کھانا کب ہے",
-        "کیا میں نے کھانا کھایا", "کھانے کا وقت کیا ہے", "کھانا کب ہے", "کیا کھانے کا وقت ہو گیا"
+        "کیا میں نے کھانا کھایا", "کھانے کا وقت کیا ہے", "کھانا کب ہے", "کیا کھانے کا وقت ہو گیا",
+        "کیا اب کھانا کھاؤں", "چائے کا وقت کب ہے", "کیا ناشتے کا وقت ہے"
       ],
       "responses": [
         "Eating at the right times is good for you. Please ask your caregiver about today's meals.",
@@ -335,11 +383,14 @@
         "Open my photo album", "I want to remember old times", "Show my old pictures",
         "Can we look at photos", "Show me my picture album", "Display my memories",
         "Let me see photographs", "Show me who I love",
+        "open the memory gallery", "i want to look at my memories", "show me pictures of my kids",
+        "let me see photos of my grandchildren", "can i view my album",
         "Mujhe apni tasveerain dikhao", "Meri yaadein dikhao", "Gallery kholo", "Purani tasveerain dikhao",
         "Mujhe photos dekhne hain", "Family ki tasveerain dikhao", "Meri yaadon ki gallery kholo",
+        "mujhe purani yaadein dikhao", "bachon ki tasveerain dikhao", "album kholo",
         "مجھے اپنی تصویریں دکھاؤ", "میری یادیں دکھاؤ", "گیلری کھولو", "پرانی تصویریں دکھاؤ",
         "مجھے فوٹو دیکھنے ہیں", "فیملی کی تصویریں دکھاؤ", "میری یادوں کی گیلری کھولو",
-        "مجھے اپنا فوٹو البم دکھاؤ", "خوشی کی یادیں دکھاؤ"
+        "مجھے اپنا فوٹو البم دکھاؤ", "خوشی کی یادیں دکھاؤ", "بچوں کی تصویریں دکھاؤ", "البم کھولو"
       ],
       "responses": [
         "Let's open your memory gallery so you can see your pictures.",
@@ -356,11 +407,14 @@
         "Which doctor is mine", "Remind me of my doctor", "Who is my specialist",
         "Tell me my doctor name", "Who is my medical doctor", "Which doctor treats me",
         "What is the name of my doctor", "Who checks my health", "Do you know my doctor",
+        "who is my family doctor", "what's my doctor called", "who is looking after me medically",
+        "tell me who my physician is", "which doctor should i contact",
         "Mera doctor kaun hai", "Mere doctor ka naam kya hai", "Mujhe kaun doctor dekhta hai",
         "Mera physician kaun hai", "Doctor ka naam batao", "Mera ilaj kaun karta hai",
+        "meri sehat kaun dekhta hai", "mera specialist kaun hai", "kis doctor se rabta karoon",
         "میرا ڈاکٹر کون ہے", "میرے ڈاکٹر کا نام کیا ہے", "مجھے کون ڈاکٹر دیکھتا ہے",
         "میرا معالج کون ہے", "ڈاکٹر کا نام بتاؤ", "میرا علاج کون کرتا ہے",
-        "میرا ڈاکٹر کون سا ہے", "میری صحت کون دیکھتا ہے"
+        "میرا ڈاکٹر کون سا ہے", "میری صحت کون دیکھتا ہے", "میرا اسپیشلسٹ کون ہے", "کس ڈاکٹر سے رابطہ کروں"
       ],
       "responses": [
         "Let me check who your doctor is.",
@@ -376,11 +430,14 @@
         "What time is fajr", "What time is zuhr", "What time is asr", "What time is maghrib",
         "What time is isha", "Prayer time please", "When is the azaan", "Has the azaan happened",
         "Should I pray now", "When is dua time", "Is it maghrib time yet",
+        "when is the next namaz", "is it fajr time", "when do i pray next", "has maghrib started",
+        "what are today's prayer times",
         "Namaz ka waqt kya hai", "Kya namaz ka waqt hua", "Azaan kab hai", "Namaz kab hai",
         "Fajr ka waqt kya hai", "Maghrib kab hai", "Kya ab namaz parhoon",
+        "agli namaz kab hai", "kya azaan ho gayi", "isha ka waqt kya hai",
         "نماز کا وقت کیا ہے", "کیا نماز کا وقت ہوا", "اذان کب ہے", "نماز کب ہے",
         "فجر کا وقت کیا ہے", "مغرب کب ہے", "کیا اب نماز پڑھوں", "کیا اذان ہو گئی",
-        "دعا کا وقت کب ہے", "کیا نماز کا وقت ہو گیا"
+        "دعا کا وقت کب ہے", "کیا نماز کا وقت ہو گیا", "اگلی نماز کب ہے", "عشاء کا وقت کیا ہے"
       ],
       "responses": [
         "It may be time for prayer. Your caregiver can tell you today's prayer times.",
@@ -396,10 +453,14 @@
         "Is it warm outside", "What is the temperature", "Do I need a jacket", "Is it cloudy",
         "Should I wear warm clothes", "Is the weather nice", "How is it outside", "Is it windy",
         "What is the weather like", "Is it going to be cold", "Do I need an umbrella",
+        "is it going to be hot today", "what's the temperature outside", "should i take a sweater",
+        "is it a nice day outside", "will it be sunny",
         "Mausam kaisa hai", "Kya aaj garmi hai", "Kya bahar thand hai", "Kya barish ho rahi hai",
         "Kya dhoop hai", "Kya mujhe jacket pehanni chahiye", "Bahar mausam kaisa hai",
+        "kya aaj barish hogi", "kya sweater pehnu", "bahar kitni garmi hai",
         "موسم کیسا ہے", "کیا آج گرمی ہے", "کیا باہر ٹھنڈ ہے", "کیا بارش ہو رہی ہے",
-        "کیا دھوپ ہے", "کیا مجھے جیکٹ پہننی چاہیے", "باہر موسم کیسا ہے", "کیا آج سردی ہو گی"
+        "کیا دھوپ ہے", "کیا مجھے جیکٹ پہننی چاہیے", "باہر موسم کیسا ہے", "کیا آج سردی ہو گی",
+        "کیا آج بارش ہوگی", "کیا سویٹر پہنوں", "باہر کتنی گرمی ہے"
       ],
       "responses": [
         "I can't see the live weather, but please dress comfortably for the day. Your caregiver can tell you more.",
@@ -415,10 +476,14 @@
         "I need water", "Time to drink water", "Can I get something to drink", "I want to drink",
         "Have I had water today", "Remind me to drink water", "I feel dehydrated",
         "I would like a glass of water", "Is it time for water", "I am feeling dry",
+        "please give me water", "i want a glass of water", "i am very thirsty", "can i drink something",
+        "should i have some water now",
         "Mujhe pyaas lagi hai", "Mujhe pani chahiye", "Kya main pani pi loon", "Pani do",
         "Mujhe pyaas lag rahi hai", "Kya mujhe pani peena chahiye", "Munh sookh raha hai",
+        "mujhe ek glass pani do", "kya ab pani piyoon", "boht pyaas lagi hai",
         "مجھے پیاس لگی ہے", "مجھے پانی چاہیے", "کیا میں پانی پی لوں", "پانی دو",
-        "مجھے پیاس لگ رہی ہے", "کیا مجھے پانی پینا چاہیے", "منہ سوکھ رہا ہے", "پانی پینے کا وقت"
+        "مجھے پیاس لگ رہی ہے", "کیا مجھے پانی پینا چاہیے", "منہ سوکھ رہا ہے", "پانی پینے کا وقت",
+        "مجھے ایک گلاس پانی دو", "کیا اب پانی پیوں", "بہت پیاس لگی ہے"
       ],
       "responses": [
         "Staying hydrated is important. Please have a glass of water.",
@@ -434,10 +499,14 @@
         "I feel like walking", "Is it good to walk now", "Help me exercise", "I want to stretch",
         "Can we do some movement", "Should I do my exercises", "I want to be active",
         "Remind me to exercise", "Is it exercise time", "I would like to walk a bit",
+        "can we go for a walk", "i want to move around", "is it time for my exercise",
+        "help me do some stretching", "i feel like being active",
         "Kya mujhe exercise karni chahiye", "Main chalna chahta hoon", "Kya main sair ko jaoon",
         "Exercise ka waqt", "Mujhe warzish karni hai", "Thodi chehal qadmi karni hai",
+        "kya ab sair karoon", "mujhe thoda chalna hai", "chalein sair ko",
         "کیا مجھے ورزش کرنی چاہیے", "میں چلنا چاہتا ہوں", "کیا میں سیر کو جاؤں",
-        "ورزش کا وقت", "مجھے ورزش کرنی ہے", "تھوڑی چہل قدمی کرنی ہے", "میں تھوڑا چلنا چاہتا ہوں"
+        "ورزش کا وقت", "مجھے ورزش کرنی ہے", "تھوڑی چہل قدمی کرنی ہے", "میں تھوڑا چلنا چاہتا ہوں",
+        "کیا اب سیر کروں", "چلیں سیر کو", "مجھے تھوڑا چلنا ہے"
       ],
       "responses": [
         "A little walk is good for you. Please take a walk with your caregiver nearby.",
@@ -453,10 +522,14 @@
         "I need to lie down", "I feel very tired", "Should I sleep now", "I am sleepy",
         "Let me rest", "I want to close my eyes", "I feel drowsy", "Can I rest for a while",
         "I am worn out", "Help me rest",
+        "i want to take a nap", "can i lie down for a bit", "i am so tired now", "should i go to bed",
+        "i need some rest please",
         "Main thak gaya hoon", "Mujhe neend aa rahi hai", "Mujhe aaram karna hai", "Main sona chahta hoon",
         "Mujhe lait na hai", "Main bohat thaka hua hoon", "Kya main abhi so jaoon",
+        "mujhe thodi der aaram karna hai", "kya ab so jaoon", "neend aa rahi hai",
         "میں تھک گیا ہوں", "مجھے نیند آ رہی ہے", "مجھے آرام کرنا ہے", "میں سونا چاہتا ہوں",
-        "مجھے لیٹنا ہے", "میں بہت تھکا ہوا ہوں", "کیا میں ابھی سو جاؤں", "مجھے آرام چاہیے"
+        "مجھے لیٹنا ہے", "میں بہت تھکا ہوا ہوں", "کیا میں ابھی سو جاؤں", "مجھے آرام چاہیے",
+        "کیا اب سو جاؤں", "مجھے تھوڑی دیر آرام کرنا ہے", "نیند آ رہی ہے"
       ],
       "responses": [
         "Rest is important. If you're tired, please lie down for a while.",
@@ -472,10 +545,14 @@
         "Sing me something", "I want some fun", "Play my favorite song", "Tell me something nice",
         "I want to listen to a story", "Play something for me", "I have nothing to do",
         "Can we listen to music", "I feel bored", "Give me something to do", "Read me a story",
+        "put on some music", "i want to hear a story", "play a nice song for me", "i am feeling bored",
+        "can you tell me a nice story",
         "Main bore ho raha hoon", "Music chalao", "Mujhe gana sunna hai", "Koi kahani sunao",
         "Koi gana lagao", "Mujhe kuch entertainment chahiye", "Meri pasand ka gana chalao",
+        "koi achi kahani sunao", "gana laga do", "mera dil bahlao",
         "میں بور ہو رہا ہوں", "میوزک چلاؤ", "مجھے گانا سننا ہے", "کوئی کہانی سناؤ",
-        "کوئی گانا لگاؤ", "مجھے کچھ تفریح چاہیے", "میری پسند کا گانا چلاؤ", "میرے پاس کرنے کو کچھ نہیں"
+        "کوئی گانا لگاؤ", "مجھے کچھ تفریح چاہیے", "میری پسند کا گانا چلاؤ", "میرے پاس کرنے کو کچھ نہیں",
+        "کوئی اچھی کہانی سناؤ", "گانا لگا دو", "میرا دل بہلاؤ"
       ],
       "responses": [
         "Let's enjoy something nice. Your caregiver can play your favorite music or a story.",
@@ -491,10 +568,14 @@
         "What is going on today", "Tell me today's headlines", "What is new today",
         "Any current news", "What is happening around", "Show me the news", "What is the latest",
         "Tell me what is happening", "Is there any important news",
+        "what's the latest news", "any big news today", "tell me the headlines", "what is on the news",
+        "read out today's news",
         "Khabrein kya hain", "Aaj ki khabar kya hai", "Mujhe khabrein sunao", "Duniya mein kya ho raha hai",
         "Taza khabrein batao", "Aaj kya ho raha hai", "Aaj ki headlines batao",
+        "koi nayi khabar hai", "aaj ki taza khabrein", "khabrein suna do",
         "خبریں کیا ہیں", "آج کی خبر کیا ہے", "مجھے خبریں سناؤ", "دنیا میں کیا ہو رہا ہے",
-        "تازہ خبریں بتاؤ", "آج کیا ہو رہا ہے", "آج کی سرخیاں بتاؤ", "کوئی اہم خبر ہے"
+        "تازہ خبریں بتاؤ", "آج کیا ہو رہا ہے", "آج کی سرخیاں بتاؤ", "کوئی اہم خبر ہے",
+        "کوئی نئی خبر ہے", "آج کی تازہ خبریں", "خبریں سنا دو"
       ],
       "responses": [
         "I can't show the latest news, but your caregiver can read you today's headlines.",
@@ -510,10 +591,14 @@
         "I need to pee", "I have to use the bathroom", "I need the toilet now",
         "Help me to the bathroom", "Which way is the toilet", "I want to go to washroom",
         "I need to use the restroom", "Where do I go to the toilet", "Show me the bathroom",
+        "please take me to the toilet", "i need to use the loo", "where is the restroom",
+        "i have to go badly", "help me find the bathroom",
         "Mujhe bathroom jana hai", "Toilet kahan hai", "Mujhe washroom jana hai",
         "Mujhe peshab karna hai", "Bathroom kis taraf hai", "Mujhe ghusalkhana jana hai",
+        "toilet kis taraf hai", "mujhe foran bathroom jana hai", "washroom kahan hai",
         "مجھے باتھ روم جانا ہے", "ٹوائلٹ کہاں ہے", "مجھے واش روم جانا ہے",
-        "مجھے پیشاب کرنا ہے", "باتھ روم کس طرف ہے", "مجھے غسل خانہ جانا ہے", "ٹوائلٹ کس طرف ہے"
+        "مجھے پیشاب کرنا ہے", "باتھ روم کس طرف ہے", "مجھے غسل خانہ جانا ہے", "ٹوائلٹ کس طرف ہے",
+        "مجھے فوراً باتھ روم جانا ہے", "واش روم کہاں ہے", "مجھے جانا ہے جلدی"
       ],
       "responses": [
         "Okay. Your caregiver can help you get to the bathroom safely.",
@@ -529,10 +614,14 @@
         "Today is a good day", "I am in a good mood", "I feel peaceful", "I am content",
         "I feel healthy today", "I am feeling positive", "I feel lovely", "I am okay today",
         "Everything is good", "I feel strong today", "I am feeling happy",
+        "i feel really good today", "i am so happy", "today feels wonderful", "i feel great and calm",
+        "i am doing very well",
         "Main khush hoon", "Main aaj acha mehsoos kar raha hoon", "Main theek hoon", "Aaj acha din hai",
         "Main bohat acha hoon", "Mera mood acha hai", "Main behtar mehsoos kar raha hoon",
+        "aaj main boht khush hoon", "sab acha hai", "main sehatmand mehsoos kar raha hoon",
         "میں خوش ہوں", "میں آج اچھا محسوس کر رہا ہوں", "میں ٹھیک ہوں", "آج اچھا دن ہے",
-        "میں بہت اچھا ہوں", "میرا موڈ اچھا ہے", "میں بہتر محسوس کر رہا ہوں", "میں آج خوش ہوں"
+        "میں بہت اچھا ہوں", "میرا موڈ اچھا ہے", "میں بہتر محسوس کر رہا ہوں", "میں آج خوش ہوں",
+        "آج میں بہت خوش ہوں", "سب اچھا ہے", "میں صحت مند محسوس کر رہا ہوں"
       ],
       "responses": [
         "That's wonderful to hear! I'm so glad you're feeling good today.",
