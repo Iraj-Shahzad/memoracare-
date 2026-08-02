@@ -1,11 +1,11 @@
 """
 MemoryCare — Intent Classifier API (Flask)
 ==========================================
-Loads the trained Keras model and exposes it over HTTP so the Node/Express
-backend can classify a patient's message into an intent.
+Loads the trained Keras model + the fitted TF-IDF vectorizer and exposes them
+over HTTP so the Node/Express backend can classify a patient's message.
 
 Endpoints:
-  GET  /health           -> {status, model_loaded}
+  GET  /health           -> {status, model_loaded, classes}
   POST /predict          -> body {"message": "..."}  returns {intent, confidence, response}
 
 Run:  python app.py   (starts on port 5001)
@@ -17,11 +17,11 @@ import pickle
 import random
 
 import numpy as np
-import nltk
-from nltk.stem import WordNetLemmatizer
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from tensorflow.keras.models import load_model
+
+from nlp_utils import normalize
 
 # ---------------------------------------------------------------------------
 # Setup
@@ -30,22 +30,14 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = os.path.join(BASE_DIR, "data", "intents.json")
 MODEL_DIR = os.path.join(BASE_DIR, "model")
 
-# Confidence below this is treated as "not understood".
-ERROR_THRESHOLD = 0.60
-
-for pkg in ["punkt", "punkt_tab", "wordnet", "omw-1.4"]:
-    try:
-        nltk.download(pkg, quiet=True)
-    except Exception:
-        pass
-
-lemmatizer = WordNetLemmatizer()
+# Confidence below this is treated as "not understood". Override with ML_THRESHOLD.
+ERROR_THRESHOLD = float(os.environ.get("ML_THRESHOLD", 0.5))
 
 # Load artifacts produced by train.py
 with open(DATA_PATH, "r", encoding="utf-8") as f:
     intents = json.load(f)
-with open(os.path.join(MODEL_DIR, "words.pkl"), "rb") as f:
-    words = pickle.load(f)
+with open(os.path.join(MODEL_DIR, "vectorizer.pkl"), "rb") as f:
+    vectorizer = pickle.load(f)
 with open(os.path.join(MODEL_DIR, "classes.pkl"), "rb") as f:
     classes = pickle.load(f)
 
@@ -58,20 +50,10 @@ CORS(app)
 # ---------------------------------------------------------------------------
 # Inference helpers
 # ---------------------------------------------------------------------------
-def clean_up_sentence(sentence):
-    tokens = nltk.word_tokenize(sentence.lower())
-    return [lemmatizer.lemmatize(t) for t in tokens]
-
-
-def bag_of_words(sentence):
-    lemmas = clean_up_sentence(sentence)
-    bag = [1 if w in lemmas else 0 for w in words]
-    return np.array([bag])
-
-
 def predict_intent(sentence):
-    bow = bag_of_words(sentence)
-    probs = model.predict(bow, verbose=0)[0]
+    # Same normalization + TF-IDF vectorizer used at training time.
+    features = vectorizer.transform([normalize(sentence)]).toarray().astype("float32")
+    probs = model.predict(features, verbose=0)[0]
     top_idx = int(np.argmax(probs))
     confidence = float(probs[top_idx])
     if confidence < ERROR_THRESHOLD:
@@ -91,8 +73,7 @@ def response_for(tag):
 # ---------------------------------------------------------------------------
 @app.route("/health", methods=["GET"])
 def health():
-    return jsonify({"status": "ok", "model_loaded": model is not None,
-                    "classes": classes})
+    return jsonify({"status": "ok", "model_loaded": model is not None, "classes": classes})
 
 
 @app.route("/predict", methods=["POST"])
