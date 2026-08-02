@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import * as adhan from 'adhan';
 import ChatHistory from '../models/ChatHistory';
 import Patient from '../models/Patient';
 import Medication from '../models/Medication';
@@ -11,6 +12,36 @@ const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:5001';
 const DAY_NAMES = [
   'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
 ];
+
+// Approx coordinates for the cities in the Pakistan city dropdown, so we can
+// compute real namaz times offline with the `adhan` library.
+const CITY_COORDS: Record<string, [number, number]> = {
+  islamabad: [33.6844, 73.0479], karachi: [24.8607, 67.0011], lahore: [31.5204, 74.3587],
+  rawalpindi: [33.5651, 73.0169], faisalabad: [31.4504, 73.1350], peshawar: [34.0151, 71.5249],
+  quetta: [30.1798, 66.9750], multan: [30.1575, 71.5249], sialkot: [32.4945, 74.5229],
+  gujranwala: [32.1877, 74.1945], hyderabad: [25.3960, 68.3578], abbottabad: [34.1688, 73.2215],
+};
+const DEFAULT_CITY = 'islamabad';
+
+// Compute today's prayer times for a patient's city. Uses the University of
+// Islamic Sciences, Karachi method + Hanafi Asr (standard for Pakistan), and
+// formats in Pakistan time regardless of the server's own timezone.
+function computePrayerTimes(cityRaw: string) {
+  const key = (cityRaw || '').trim().toLowerCase();
+  const matched = !!CITY_COORDS[key];
+  const cityKey = matched ? key : DEFAULT_CITY;
+  const [lat, lng] = CITY_COORDS[cityKey];
+  const params = adhan.CalculationMethod.Karachi();
+  params.madhab = adhan.Madhab.Hanafi;
+  const times = new adhan.PrayerTimes(new adhan.Coordinates(lat, lng), new Date(), params);
+  const fmt = (d: Date) => d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'Asia/Karachi' });
+  return {
+    cityUsed: cityKey.charAt(0).toUpperCase() + cityKey.slice(1),
+    matched,
+    fajr: fmt(times.fajr), dhuhr: fmt(times.dhuhr), asr: fmt(times.asr),
+    maghrib: fmt(times.maghrib), isha: fmt(times.isha),
+  };
+}
 
 // Ask the trained model to classify the message. Returns
 // { intent, confidence, response } or null if the service is unreachable.
@@ -144,6 +175,22 @@ async function buildReply(intent: any, base: any, patientId: any, lang: 'en' | '
       const doc = patient?.doctor;
       if (!doc) return ur ? STATIC_UR.fallback : base;
       return ur ? `آپ کے ڈاکٹر ${doc} ہیں۔` : `Your doctor is ${doc}.`;
+    }
+
+    case 'prayer': {
+      const patient: any = await Patient.findById(patientId).select('city');
+      try {
+        const p = computePrayerTimes(patient?.city || '');
+        if (ur) {
+          const note = p.matched ? '' : '\n(شہر درج نہیں تھا، اسلام آباد کے اوقات دکھائے گئے ہیں)';
+          return `${p.cityUsed} کے آج کے نماز اوقات:\n• فجر ${p.fajr}\n• ظہر ${p.dhuhr}\n• عصر ${p.asr}\n• مغرب ${p.maghrib}\n• عشاء ${p.isha}${note}`;
+        }
+        const note = p.matched ? '' : '\n(No city on file, showing Islamabad times.)';
+        return `Today's prayer times for ${p.cityUsed}:\n• Fajr ${p.fajr}\n• Dhuhr ${p.dhuhr}\n• Asr ${p.asr}\n• Maghrib ${p.maghrib}\n• Isha ${p.isha}${note}`;
+      } catch {
+        // If calculation fails for any reason, fall back to gentle guidance.
+        return ur ? STATIC_UR.prayer : base;
+      }
     }
 
     default:
