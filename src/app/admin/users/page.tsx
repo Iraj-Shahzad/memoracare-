@@ -396,9 +396,10 @@ export default function UsersPage() {
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]" placeholder="name@example.com" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Temporary Password <span className="text-red-500">*</span></label>
-                <input type="text" value={addForm.password} onChange={(e) => setAddForm({ ...addForm, password: e.target.value })}
+                <label className="block text-sm font-medium text-slate-700 mb-1">Password <span className="text-red-500">*</span></label>
+                <input type="password" value={addForm.password} onChange={(e) => setAddForm({ ...addForm, password: e.target.value })}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]" placeholder="min 6 characters" />
+                <p className="text-xs text-slate-500 mt-1">Set an initial password and share it with the user; they can change it later in Settings.</p>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
