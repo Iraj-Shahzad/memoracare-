@@ -1,5 +1,20 @@
 "use client";
 
+/**
+ * CAREGIVER ROUTINES — per-patient daily activity timeline plus today's completion
+ * stats and a real 7-day weekly-compliance summary.
+ *
+ * Key concepts: after loading GET /caregiver/my-patients it fetches two endpoints in parallel
+ * (Promise.all) for the selected patient — /routines/patient/:id/today and
+ * /routines/patient/:id/weekly-compliance (the weekly call is wrapped in .catch so a failure
+ * degrades gracefully to empty). Today's completion %/completed/missed counts are derived from
+ * the routine list. Add Routine POSTs to /routines with activityName, startTime, optional
+ * endTime, repeat days, and priority; validation enforces valid 24h times, end-after-start, and
+ * at least one repeat day. Only the start time fires a reminder — end time is display-only.
+ * ProtectedRoute caregiver-only.
+ * Viva line: "Routines load today's timeline and real logged weekly compliance in parallel, and the reminder fires on the validated start time on each selected weekday".
+ */
+
 import Topbar from "@/components/shared/Topbar";
 import CaregiverSidebar from "@/components/shared/CaregiverSidebar";
 import ProtectedRoute from "@/components/ProtectedRoute";

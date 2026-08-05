@@ -1,3 +1,16 @@
+/**
+ * ALERT CONTROLLER — patient alerts (SOS, missed-dose, etc.) and how caregivers are notified.
+ *
+ * Key concepts: getAllAlerts filters by role — a caregiver only ever sees alerts for their
+ * assignedPatients (empty list if none), admin sees all; every per-patient/per-alert action
+ * is gated by the canAccessPatient IDOR guard. createAlert routes the alert to the patient's
+ * assignedCaregivers (NOT the patient): it emits a Socket.IO 'alert' event into each
+ * caregiver's own room via req.io.to(caregiverId) so an SOS reaches the caregiver's screen,
+ * and also emails each caregiver best-effort (fire-and-forget, .catch(() => {}) so a broken
+ * SMTP never fails the request). resolveAlert stamps resolvedBy/resolvedAt.
+ * Viva line: "An alert is a caregiver-facing notification — it's delivered in real time over
+ * a per-caregiver socket room and by email, and never surfaces on the patient's own device."
+ */
 import { Request, Response, NextFunction } from 'express';
 import Alert from '../models/Alert';
 import Patient from '../models/Patient';

@@ -1,5 +1,19 @@
 "use client";
 
+/**
+ * ADMIN DASHBOARD — system overview landing page for the admin role.
+ *
+ * Key concepts: wrapped in ProtectedRoute allowedRoles={["admin"]}. On mount a single
+ * Promise.all fires four REAL calls in parallel — GET /admin/stats (KPI cards: users,
+ * patients, caregivers, active alerts), GET /admin/system-health (server/db status,
+ * process uptime, heap memory), GET /admin/activity-log (recent activity feed), and
+ * GET /users?limit=5 (Recent Users table); each has its own .catch(()=>({})) so one
+ * failing endpoint never blanks the whole page. Helpers: timeAgo() and formatUptime()
+ * humanise timestamps/seconds; gradientFor()/initials() derive a STABLE (non-random)
+ * avatar per user from a char-code sum. All numbers are live, none hardcoded.
+ * Viva line: "The dashboard aggregates four live admin endpoints in one parallel fetch, and each call fails independently so the page still renders if one is down".
+ */
+
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Topbar from "@/components/shared/Topbar";

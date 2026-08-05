@@ -1,3 +1,14 @@
+/**
+ * CONTACT CONTROLLER — the public "Contact Us" form plus admin triage of submissions.
+ *
+ * Key concepts: submitContact is a PUBLIC route (no auth middleware) that persists a Contact
+ * document and returns only a minimal, non-sensitive echo (id, name, subject); the remaining
+ * endpoints are admin-only (enforced by route middleware, not here) — getAllContacts supports
+ * status filtering + pagination, updateContact stamps resolvedBy = req.user.id when marked
+ * resolved, and deleteContact hard-removes a submission.
+ * Viva line: "The contact form is the one open write endpoint — it stores the message and only
+ * echoes back non-sensitive fields; everything after that is admin-gated."
+ */
 import { Request, Response, NextFunction } from 'express';
 import Contact from '../models/Contact';
 

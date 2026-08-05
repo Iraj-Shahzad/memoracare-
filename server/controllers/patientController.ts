@@ -1,3 +1,17 @@
+/**
+ * PATIENT CONTROLLER — patient CRUD, dashboard aggregation, and self-service data export.
+ *
+ * Key concepts: canAccessPatient guards every per-patient route, and getAllPatients scopes
+ * caregivers to only their assignedPatients; updatePatient whitelists profile fields but
+ * name/email/phone actually live on the linked User doc, so it syncs those back with an
+ * email-collision guard (rejects if another account already owns that email); exportPatientData
+ * streams a generated PDF (pdfkit) of the patient's own records straight to the response;
+ * getDashboard fans out queries with Promise.all, computes next med/routine time (12-hour AM/PM
+ * formatting), a 7-day weekly medication-adherence score, and a consecutive-day streak that skips
+ * an in-progress today so it doesn't reset, and reads each routine's real today status from logs.
+ * Viva line: "The dashboard is aggregated live from medication and routine logs — the streak and
+ * weekly score are computed from real data, not stored counters."
+ */
 import { Request, Response, NextFunction } from 'express';
 import PDFDocument from 'pdfkit';
 import Patient from '../models/Patient';

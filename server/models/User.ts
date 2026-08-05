@@ -1,3 +1,13 @@
+/**
+ * USER MODEL — the single auth/identity record for every account (patient, caregiver, admin).
+ *
+ * Key concepts: bcrypt pre-save hash (only re-hashes when password modified);
+ * password stored with select:false so it never leaks in normal queries; matchPassword()
+ * compares a login attempt via bcrypt.compare; getResetPasswordToken() returns a RAW token
+ * but stores only its SHA-256 hash + a 30-minute expiry (a leaked DB can't reset accounts);
+ * role enum drives all RBAC; unique lowercase email with regex validation.
+ * Viva line: "The User model centralises identity and never persists a plaintext password or reset token."
+ */
 import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';

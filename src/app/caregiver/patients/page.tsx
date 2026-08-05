@@ -1,5 +1,19 @@
 "use client";
 
+/**
+ * CAREGIVER PATIENTS — grid of the caregiver's assigned patients with search, an
+ * "Add Patient" modal, and a per-patient "View Details" overview modal.
+ *
+ * Key concepts: loads GET /caregiver/my-patients (only patients assigned to this caregiver);
+ * client-side name search filters the grid. Add Patient POSTs to /caregiver/patients —
+ * this CREATES a patient login account and assigns it to the caregiver. The form runs local
+ * validation (name >= 3 chars, email regex, password >= 6, phone normalised to 7-14 digits
+ * via buildPhone, no future DOB) before submitting. Doctor/caregiver dropdown is populated
+ * from GET /caregiver/team (real enrolled users, no free text). View Details lazy-loads
+ * GET /caregiver/patients/:id/overview (meds/routines/alerts counts). ProtectedRoute caregiver-only.
+ * Viva line: "Adding a patient provisions their login and assigns them to me in one call, and every reference field is a dropdown of real records so no invalid data gets in".
+ */
+
 import Topbar from "@/components/shared/Topbar";
 import CaregiverSidebar from "@/components/shared/CaregiverSidebar";
 import ProtectedRoute from "@/components/ProtectedRoute";

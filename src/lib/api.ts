@@ -1,3 +1,14 @@
+/**
+ * API CLIENT — typed fetch wrapper for every call to the MemoraCare backend.
+ *
+ * Key concepts: single `api()` fetch wrapper over a configurable API_BASE; bearer
+ * token pulled from localStorage and attached as `Authorization: Bearer <token>`;
+ * JSON bodies are stringified with Content-Type application/json, while FormData
+ * skips Content-Type so the browser can set the multipart boundary itself; non-2xx
+ * responses throw an Error carrying the server message and HTTP status; apiDownload
+ * fetches an authenticated blob and triggers a browser download via a temporary <a>.
+ * Viva line: "One place owns auth headers and error handling, so every request stays consistent and secure."
+ */
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 interface ApiOptions {
@@ -8,6 +19,7 @@ interface ApiOptions {
 }
 
 export async function api(endpoint: string, options: ApiOptions = {}) {
+  // SSR guard: localStorage only exists in the browser, so token is null on the server.
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
   const headers: Record<string, string> = {
@@ -30,6 +42,7 @@ export async function api(endpoint: string, options: ApiOptions = {}) {
 
   const data = await res.json();
 
+  // Reject on any non-2xx: surface the backend's own message and attach the status code.
   if (!res.ok) {
     const error = new Error(data.message || data.error || 'Something went wrong');
     (error as unknown as Record<string, unknown>).status = res.status;

@@ -1,3 +1,16 @@
+/**
+ * AUTH CONTROLLER — all authentication + account lifecycle endpoints for MemoraCare.
+ *
+ * Key concepts: JWT signing (generateToken signs { id } with JWT_SECRET, 7d expiry);
+ * bcrypt password check via user.matchPassword and hashing done by the model's pre-save
+ * hook (we assign the plain password and .save() re-hashes it); role-escalation guard on
+ * register (public signup is forced to patient/caregiver, never admin); Google id_token
+ * verified against Google's tokeninfo endpoint with an aud (audience) check to stop token
+ * reuse; forgot/reset flow stores only the SHA-256 hash of a 30-minute token and returns
+ * an identical generic reply on every path to prevent account enumeration.
+ * Viva line: "We never trust the client for role or identity — signup can't self-grant admin,
+ * Google tokens are re-verified server-side, and reset tokens are stored hashed with a short expiry."
+ */
 import { Request, Response, NextFunction } from 'express';
 import User from '../models/User';
 import Patient from '../models/Patient';

@@ -1,3 +1,14 @@
+/**
+ * PATIENT SETTINGS — per-device patient UI/accessibility preferences.
+ *
+ * Key concepts: a PatientSettings shape with DEFAULT_SETTINGS; persisted in localStorage
+ * under the "patientSettings" key (device-local, not synced to the server); loadSettings
+ * merges saved values over the defaults so new fields never break old saves; applySettings
+ * pushes preferences to the live document — font size scales the root em (15/16/19px),
+ * a .high-contrast class is toggled, and text-to-speech + voice alerts drive the shared
+ * voice-reminder flag via setVoiceReminders. All calls are SSR-guarded.
+ * Viva line: "Accessibility preferences live on the patient's own device and are applied straight to the document root."
+ */
 import { setVoiceReminders } from "@/lib/speech";
 
 // Patient device/UI preferences. Stored locally (they apply on THIS device) and
@@ -32,6 +43,7 @@ export function loadSettings(): PatientSettings {
   if (typeof window === "undefined") return DEFAULT_SETTINGS;
   try {
     const raw = localStorage.getItem(KEY);
+    // Spread defaults first, then saved values — so any newly-added setting keeps its default.
     return raw ? { ...DEFAULT_SETTINGS, ...JSON.parse(raw) } : DEFAULT_SETTINGS;
   } catch {
     return DEFAULT_SETTINGS;

@@ -1,5 +1,19 @@
 "use client";
 
+/**
+ * CAREGIVER ALERTS — list of patient alerts (missed meds, missed routines, SOS)
+ * with severity filtering and a "Mark as Resolved" action.
+ *
+ * Key concepts: loads GET /alerts (server returns alerts for this caregiver's patients),
+ * normalising varied shapes (severity/type, patientName vs populated patient object).
+ * Severity filter (all/critical/warning/info) filters the list client-side; the "Unresolved"
+ * counter is derived from alerts where resolved === false. Resolve does an optimistic update —
+ * PUT /alerts/:id/resolve then flips that alert's resolved flag in local state so the UI
+ * updates immediately. Note: this build refetches once on mount (no live socket subscription).
+ * ProtectedRoute caregiver-only.
+ * Viva line: "Alerts are scoped server-side to my patients, filtered by severity on the client, and resolving one optimistically updates the row without a full reload".
+ */
+
 import Topbar from "@/components/shared/Topbar";
 import CaregiverSidebar from "@/components/shared/CaregiverSidebar";
 import ProtectedRoute from "@/components/ProtectedRoute";

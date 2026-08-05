@@ -1,3 +1,12 @@
+/**
+ * TIME — consistent 24-hour to 12-hour AM/PM time formatting across the app.
+ *
+ * Key concepts: formatTime12 replaces every "HH:MM" token it finds via regex, so it works on
+ * single times, comma lists and ranges alike; it is idempotent — strings already containing
+ * AM/PM are returned untouched, so re-formatting is safe; null/empty/"—" map to an em dash,
+ * and out-of-range hours (>23) are left as-is rather than mangled.
+ * Viva line: "One idempotent formatter guarantees times display the same way everywhere, no matter how they were stored."
+ */
 // Consistent time formatting across the whole app.
 // Converts stored 24-hour "HH:MM" strings into a friendly 12-hour clock with
 // AM/PM. Works on single times ("05:30"), comma lists ("08:00, 14:00") and

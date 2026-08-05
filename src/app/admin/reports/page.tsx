@@ -1,5 +1,20 @@
 "use client";
 
+/**
+ * ADMIN REPORTS — list, generate, view, download and delete system reports.
+ *
+ * Key concepts: ProtectedRoute allowedRoles={["admin"]}. fetchReports() maps GET /reports
+ * into a display shape. Generate = POST /reports/generate { type: "system" } then re-fetch.
+ * IMPORTANT distinction between the two look-alike buttons: View fetches the PDF as an
+ * authenticated blob (manual fetch with the Bearer token from localStorage, then
+ * URL.createObjectURL + window.open, revoked after 60s) because a plain <a> link can't
+ * send the auth header; Download uses apiDownload() to save the same authenticated PDF;
+ * Delete = DELETE /reports/:id behind a confirm() dialog. Tabs filter by KEYWORD match
+ * (TAB_KEYWORDS) since UI labels don't map 1:1 to backend type strings. Quick-stat tiles
+ * (total/pending/today) are derived from the fetched list, not separate calls.
+ * Viva line: "View and Download both stream an authenticated PDF blob with the JWT attached — Download saves the file and does NOT delete it; delete is a separate guarded DELETE".
+ */
+
 import { useState, useEffect } from "react";
 import AdminSidebar from "@/components/shared/AdminSidebar";
 import Topbar from "@/components/shared/Topbar";

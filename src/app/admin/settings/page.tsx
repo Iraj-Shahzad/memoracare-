@@ -2,11 +2,16 @@
 
 /**
  * ADMIN SETTINGS — trimmed to REAL, working items only.
- * The previous version had many unenforced toggles (2FA, login limits, email/SMS
- * gateways, auto-backup schedule) and a fake "last backup" timestamp — none were
- * wired to anything, so they've been removed. What remains is genuinely real:
- *  - System Information (live: app, your admin email, DB status, record counts)
- *  - Backup Now: downloads a real JSON export of the database (GET /admin/backup)
+ *
+ * Key concepts: ProtectedRoute allowedRoles={["admin"]}. Loads GET /admin/system-health
+ * and GET /admin/stats (each with a .catch fallback) to populate a read-only System
+ * Information panel — app name, the signed-in admin's email/role (from AuthContext), live
+ * DB connection status, and record counts. The one WRITE action, "Backup Now", calls
+ * apiDownload("/admin/backup") to save a real JSON export of the database (users without
+ * passwords, patients, caregivers, medications, routines, memories, alerts, reports).
+ * Unenforced toggles (2FA, login limits, email/SMS gateways, scheduled auto-backup) and a
+ * fake "last backup" timestamp were removed rather than shown as non-working controls.
+ * Viva line: "Every item on this settings page does something real — the system info is live and Backup Now downloads an actual JSON dump of the database".
  */
 
 import { useState, useEffect } from "react";

@@ -1,3 +1,16 @@
+/**
+ * MEMORY CONTROLLER — the patient's memory-gallery items (photo + who/where/when metadata).
+ *
+ * Key concepts: image uploads use multer diskStorage into server/uploads/memories with a
+ * timestamped filename, an 8MB size limit and a fileFilter that checks BOTH mimetype and
+ * extension against jpeg/jpg/png/webp; the stored imageUrl is a public /uploads path.
+ * parsePeople() normalises the `people` field arriving as a JSON-array string, a
+ * comma-separated string, or a real array. Every route is gated by the canAccessPatient
+ * IDOR guard — a patient, their assigned caregiver, or an admin — and delete re-checks
+ * access using the memory's own patient id before removing it.
+ * Viva line: "Memory uploads are validated on size and true image type, and every read,
+ * create and delete is access-controlled through canAccessPatient."
+ */
 import { Request, Response, NextFunction } from 'express';
 import Memory from '../models/Memory';
 import { canAccessPatient } from '../utils/access';

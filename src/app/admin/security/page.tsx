@@ -2,11 +2,15 @@
 
 /**
  * ADMIN SECURITY — live account-security overview.
- * Trimmed to REAL data only: account counts, role breakdown, active vs
- * deactivated, admin count, and the most recently registered accounts — all
- * computed from the real /users list. Detailed login-attempt logging and IP
- * blocking are NOT part of this build, so we state that honestly instead of
- * showing placeholder metrics.
+ *
+ * Key concepts: ProtectedRoute allowedRoles={["admin"]}. Fetches the single REAL source
+ * GET /users once, then derives EVERYTHING client-side from that list: total accounts,
+ * active vs deactivated (isActive !== false), admin count, role breakdown (patients/
+ * caregivers/admins), and the 8 most recently registered accounts (sorted by createdAt).
+ * The footer note is honest scoping: detailed login-attempt logging and IP blocking are
+ * NOT in this build, so they're stated plainly rather than faked; it also correctly
+ * describes the real security posture (bcrypt password hashes, JWT auth, role-based access).
+ * Viva line: "The security metrics are all computed live from the real user list, and I explicitly state what this build does not track rather than showing placeholder numbers".
  */
 
 import { useState, useEffect } from "react";

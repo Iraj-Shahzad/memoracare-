@@ -1,3 +1,14 @@
+/**
+ * REMINDER SCHEDULER SERVICE — node-cron background jobs for reminders and missed detection.
+ *
+ * Key concepts: Job A (cron '* * * * *', every minute) fires real-time "due now" reminders by
+ * comparing each active Medication time / Routine startTime against the current minute, emits a
+ * 'reminder' to the patient's socket room, and logs a delivered Reminder. Job B (cron '*/10 * * * *',
+ * every 10 min) sweeps for misses: once a scheduled time is past by GRACE_MINUTES (30) with no
+ * existing log that day, it writes a 'missed' log and raises an Alert, emitted to the patient's
+ * assigned caregiver rooms (not the patient). parseTimeToMinutes handles both 24h and AM/PM strings.
+ * Viva line: "Two cron jobs turn stored schedules into real-time reminders and, after a grace period, missed-dose caregiver alerts."
+ */
 import cron from 'node-cron';
 
 import Medication from '../models/Medication';

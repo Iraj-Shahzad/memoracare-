@@ -1,5 +1,18 @@
 "use client";
 
+/**
+ * CAREGIVER NOTES — write, categorise, edit, and delete care observations per patient.
+ *
+ * Key concepts: loads GET /caregiver/my-patients (auto-selects first) and GET /caregiver/notes
+ * (all notes for this caregiver), then filters to the selected patient client-side by
+ * patient id or name. Notes are tagged with a category (observation/medication/behavior/health/
+ * incident/general) shown as a coloured badge. Add POSTs /caregiver/notes; inline edit PUTs
+ * /caregiver/notes/:id (content + category); delete confirms then DELETE /caregiver/notes/:id.
+ * Add/edit call loadNotes(silent=true) to refresh in place; delete removes the row locally.
+ * ProtectedRoute caregiver-only.
+ * Viva line: "Notes are categorised per patient with full inline CRUD, and the observation list refreshes silently after each save".
+ */
+
 import Topbar from "@/components/shared/Topbar";
 import CaregiverSidebar from "@/components/shared/CaregiverSidebar";
 import ProtectedRoute from "@/components/ProtectedRoute";

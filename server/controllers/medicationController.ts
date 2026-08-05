@@ -1,3 +1,17 @@
+/**
+ * MEDICATION CONTROLLER — medication CRUD plus adherence logging and compliance stats.
+ *
+ * Key concepts: every route is protected by the canAccessPatient IDOR guard (resolved from
+ * the medication's own patient on update/delete/log, so you can't act via a foreign id);
+ * scheduled dose times are stored as strings on the Medication (the `times` array).
+ * getMedicationsByPatient enriches each med with REAL data from MedicationLog — today's
+ * status and a 7-day compliance % (taken/total) — rather than hardcoded values. update uses
+ * an allowedFields whitelist so clients can't set arbitrary fields (mass-assignment guard).
+ * logMedicationStatus is idempotent-per-day: it updates today's log if one exists else
+ * creates it, so repeated taps don't pile up duplicates, and emits a Socket.IO update.
+ * Viva line: "Compliance figures come straight from the medication logs, and daily logging
+ * is idempotent so a patient tapping 'taken' twice can't inflate their own adherence."
+ */
 import { Request, Response, NextFunction } from 'express';
 import Medication from '../models/Medication';
 import MedicationLog from '../models/MedicationLog';
@@ -86,6 +100,7 @@ export const updateMedication = async (req: Request, res: Response, next: NextFu
       return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
     }
 
+    // Whitelist: only these fields can be updated, blocking mass-assignment of anything else.
     const allowedFields = ['name', 'dosage', 'frequency', 'times', 'instructions', 'startDate', 'endDate', 'isActive'];
     const updateData: any = {};
     allowedFields.forEach((field) => {

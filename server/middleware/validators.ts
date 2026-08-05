@@ -1,3 +1,12 @@
+/**
+ * VALIDATORS MIDDLEWARE — request-body validation rules via express-validator.
+ *
+ * Key concepts: each exported array (register/login/medication/routine) is a set of body()
+ * rules chained before a controller; handleValidationErrors() reads validationResult and
+ * returns 400 with the collected errors if any rule failed, otherwise calls next(). Sanitising
+ * input at the edge keeps controllers clean and blocks malformed/malicious payloads early.
+ * Viva line: "Validation happens as declarative middleware before any controller logic runs."
+ */
 import { body, validationResult } from 'express-validator';
 import { Request, Response, NextFunction } from 'express';
 

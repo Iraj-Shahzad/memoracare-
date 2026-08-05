@@ -1,3 +1,11 @@
+/**
+ * REPORT MODEL — a generated document/export summarising patient data.
+ *
+ * Key concepts: `type` enum (medication, routine, recognition, summaries, compliance, ...);
+ * `status` (processing/ready/failed) reflects async generation; `format` pdf/excel; `data` is
+ * Mixed (flexible JSON) and `filePath` points at the produced file.
+ * Viva line: "A Report captures a generated export, its type, status, and the file it produced."
+ */
 import mongoose, { Schema } from 'mongoose';
 
 const reportSchema = new mongoose.Schema({

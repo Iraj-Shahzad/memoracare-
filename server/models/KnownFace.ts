@@ -1,3 +1,11 @@
+/**
+ * KNOWN FACE MODEL — an enrolled person the patient should recognise.
+ *
+ * Key concepts: `descriptor` is a 128-number face-api.js embedding, validated to be exactly
+ * length 128; recognition compares a live descriptor against these; recognitionCount/lastSeen
+ * track usage for per-person history.
+ * Viva line: "A KnownFace stores a 128-dimension face embedding that recognition matches against."
+ */
 import mongoose, { Schema } from 'mongoose';
 
 // A face enrolled for a patient (family member, caregiver, doctor, ...).

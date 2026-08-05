@@ -1,3 +1,11 @@
+/**
+ * REMINDER MODEL — a record of a "time to do X" prompt sent to a patient.
+ *
+ * Key concepts: `type` (medication/routine/custom) with a polymorphic `referenceId` pointing
+ * at a Medication or Routine; the scheduler creates one (isDelivered:true) each time it emits a
+ * real-time reminder, so it doubles as a delivery log.
+ * Viva line: "A Reminder logs each real-time prompt the scheduler pushed to the patient."
+ */
 import mongoose, { Schema } from 'mongoose';
 
 const reminderSchema = new mongoose.Schema({

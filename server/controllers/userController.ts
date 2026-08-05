@@ -1,3 +1,16 @@
+/**
+ * USER CONTROLLER — admin user management plus self-service profile reads/updates.
+ *
+ * Key concepts: getAllUsers is admin-facing with optional role filter, case-insensitive
+ * $regex search over name/email, and skip/limit pagination; getUser and updateUser enforce
+ * an ownership check (admin OR the user themselves) to prevent IDOR, and only an admin may
+ * flip isActive (activate/deactivate). createUser is admin-only and, unlike public
+ * /auth/register, may create ANY role — it creates the User (password hashed by the model's
+ * pre-save hook) AND the matching role profile (Patient/Caregiver) so the account works
+ * end-to-end. deleteUser cascades by removing the linked role profile before the User.
+ * Viva line: "Admins manage all users while normal users can only read/update their own
+ * record, and creating a user also provisions its role profile in one step."
+ */
 import { Request, Response, NextFunction } from 'express';
 import User from '../models/User';
 import Patient from '../models/Patient';
@@ -12,6 +25,7 @@ export const getAllUsers = async (req: Request, res: Response, next: NextFunctio
 
     if (role) query.role = role;
     if (search) {
+      // Case-insensitive partial match across name OR email.
       query.$or = [
         { name: { $regex: search, $options: 'i' } },
         { email: { $regex: search, $options: 'i' } },
@@ -104,7 +118,8 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     // Password is hashed by the User model's pre-save hook.
     const user = await User.create({ name, email: emailLc, password, phone, role: safeRole });
 
-    // Create the matching role profile so the account works end-to-end.
+    // Create the matching role profile so the account works end-to-end
+    // (a patient needs a Patient doc, a caregiver a Caregiver doc; admin needs neither).
     if (safeRole === 'patient') await Patient.create({ user: user._id });
     else if (safeRole === 'caregiver') await Caregiver.create({ user: user._id });
 

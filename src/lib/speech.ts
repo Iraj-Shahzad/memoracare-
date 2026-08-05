@@ -1,3 +1,13 @@
+/**
+ * SPEECH — Web Speech API helpers for text-to-speech and speech-to-text.
+ *
+ * Key concepts: bilingual via a BCP47 map (en -> en-US, ur -> ur-PK); chosen language and a
+ * voice-reminders on/off flag persist in localStorage; speak() cancels any current utterance,
+ * picks a matching installed voice (falling back to Hindi for Urdu if none), sets rate 0.95,
+ * and speaks; listenOnce() wraps SpeechRecognition/webkitSpeechRecognition in a Promise that
+ * resolves with one transcript (rejects on error / no-speech / unsupported). All browser-only.
+ * Viva line: "Speaking and listening use the browser's built-in Web Speech API, with English and Urdu support and graceful fallbacks."
+ */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Web Speech API helpers — text-to-speech (speak) and speech-to-text (listen),
 // language-aware for English (en-US) and Urdu (ur-PK). Browser-only.

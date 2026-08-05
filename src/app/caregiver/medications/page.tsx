@@ -1,5 +1,19 @@
 "use client";
 
+/**
+ * CAREGIVER MEDICATIONS — pick an assigned patient, see their medication schedule
+ * (with taken/missed/upcoming status), add new medications, and remove them.
+ *
+ * Key concepts: first loads GET /caregiver/my-patients and auto-selects the first; changing
+ * the patient re-fetches GET /medications/patient/:id. Status-count stat cards (Total/Taken/
+ * Missed/Upcoming) are derived client-side from the medication list. Add Medication POSTs to
+ * /medications with one or more reminder times; validation enforces a real name, a
+ * "number + unit" dosage regex (e.g. 10mg), and 24h HH:MM times — because a med with no valid
+ * time would never remind the patient. Delete uses a confirm() dialog then DELETE /medications/:id.
+ * ProtectedRoute caregiver-only.
+ * Viva line: "Medications are always scoped to the selected assigned patient, and I validate dosage and reminder times on the client so an unusable schedule can't be saved".
+ */
+
 import Topbar from "@/components/shared/Topbar";
 import CaregiverSidebar from "@/components/shared/CaregiverSidebar";
 import ProtectedRoute from "@/components/ProtectedRoute";

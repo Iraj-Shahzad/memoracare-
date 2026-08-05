@@ -1,3 +1,18 @@
+/**
+ * CHAT CONTROLLER — the patient-facing assistant chatbot endpoints.
+ *
+ * Key concepts: intent-classifier design, NOT a generative LLM — classifyIntent POSTs the
+ * message to a separate Python/Flask ML service (/predict, 8s AbortSignal timeout) that
+ * returns { intent, confidence, response }; buildReply then injects the patient's REAL data
+ * (meds, routines, family/emergency contacts, doctor, location) into the reply, in English or
+ * Urdu; if the ML service is down we degrade to a rule-based keyword fallback so the app still
+ * answers. Prayer times are computed offline with the ESM-only `adhan` library loaded via a
+ * NATIVE dynamic import() hidden behind Function() (this server is CommonJS/ts-node, so a plain
+ * require would fail), using CalculationMethod.Karachi + Madhab.Hanafi in Asia/Karachi time.
+ * Every route is guarded by canAccessPatient (patient / their caregiver / admin only).
+ * Viva line: "The chatbot classifies intent with a trained model and fills answers from the
+ * patient's own database records — it never free-generates medical facts."
+ */
 import { Request, Response, NextFunction } from 'express';
 import ChatHistory from '../models/ChatHistory';
 import Patient from '../models/Patient';

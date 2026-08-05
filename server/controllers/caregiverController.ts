@@ -1,3 +1,16 @@
+/**
+ * CAREGIVER CONTROLLER — everything a caregiver does with their assigned patients.
+ *
+ * Key concepts: caregiver-can-only-see-assigned-patients (the Caregiver.assignedPatients
+ * link is the source of truth); canAccessPatient IDOR guard on getPatientOverview and
+ * createNote so a caregiver can't reach a patient they aren't assigned to; assignPatient
+ * blocks "stealing" a patient already owned by another caregiver (unassigned-or-mine only);
+ * both sides of the caregiver<->patient relationship are kept in sync on assign/unassign;
+ * note CRUD is scoped by { caregiver: req.user.id } so you can only touch your own notes;
+ * dashboard/patients compute medication compliance (% taken over 7 days) from real logs.
+ * Viva line: "A caregiver only ever sees and edits data for patients explicitly assigned
+ * to them — every patient-scoped route is gated by canAccessPatient or the assignment link."
+ */
 import { Request, Response, NextFunction } from 'express';
 import Caregiver from '../models/Caregiver';
 import Patient from '../models/Patient';

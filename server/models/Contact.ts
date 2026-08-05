@@ -1,3 +1,10 @@
+/**
+ * CONTACT MODEL — a public "contact us" submission handled by admins.
+ *
+ * Key concepts: captures name/email/phone/subject/message from the marketing site; `subject`
+ * and `status` (new/in_progress/resolved) are enums; resolvedBy/adminNotes support triage.
+ * Viva line: "Contact stores public enquiries and their admin triage status."
+ */
 import mongoose, { Schema } from 'mongoose';
 
 const contactSchema = new mongoose.Schema(

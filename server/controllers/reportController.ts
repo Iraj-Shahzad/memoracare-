@@ -1,3 +1,17 @@
+/**
+ * REPORT CONTROLLER — generates and downloads care reports (PDF via pdfkit, Excel via exceljs).
+ *
+ * Key concepts: getAllReports scopes results by role — a patient sees only their own reports,
+ * a caregiver only reports for assignedPatients, an admin sees everything; per-patient routes
+ * are gated by the canAccessPatient IDOR guard, and every single-report action (get/download/
+ * delete) runs through the canDownload() helper (admin, or whoever can access that patient).
+ * generateReport supports a system-wide admin report (platform totals, no patient) vs a
+ * patient report whose data is aggregated from MedicationLog/RoutineLog over a date window
+ * (taken/missed compliance %). Downloads stream a real file: sendPdf() pipes pdfkit to the
+ * response, sendExcel() writes an exceljs workbook (Summary + per-type log sheets).
+ * Viva line: "Reports are role-scoped and access-guarded, and downloads produce genuine
+ * PDF/Excel files built server-side from the patient's real medication and routine logs."
+ */
 import { Request, Response, NextFunction } from 'express';
 import PDFDocument from 'pdfkit';
 import ExcelJS from 'exceljs';
@@ -21,7 +35,7 @@ export const getAllReports = async (req: Request, res: Response, next: NextFunct
 
     if (type) query.type = type;
 
-    // Scope reports based on role
+    // Scope reports based on role: patient -> own only, caregiver -> assigned patients, admin -> all.
     if (req.user.role === 'patient') {
       const patient = await Patient.findOne({ user: req.user.id });
       if (patient) query.patient = patient._id;
@@ -247,7 +261,7 @@ export const deleteReport = async (req: Request, res: Response, next: NextFuncti
 // A report is downloadable by admin, or by whoever can access its patient.
 async function canDownload(req: Request, report: any): Promise<boolean> {
   const patientId = report.patient?._id ? report.patient._id.toString() : report.patient?.toString();
-  if (!patientId) return req.user.role === 'admin';
+  if (!patientId) return req.user.role === 'admin'; // system reports have no patient -> admin-only
   return canAccessPatient(req.user, patientId);
 }
 

@@ -1,3 +1,11 @@
+/**
+ * PATIENT MODEL — the clinical profile for a person receiving memory care.
+ *
+ * Key concepts: 1-to-1 link to a User via `user` (ObjectId ref); `assignedCaregivers`
+ * is the array that powers caregiver access checks (see utils/access.ts); `cnic` is
+ * unique+sparse so it's only enforced when present; embedded emergencyContacts subdocs.
+ * Viva line: "The Patient record holds medical context and the caregiver assignment list that authorises access."
+ */
 import mongoose, { Schema } from 'mongoose';
 
 const patientSchema = new mongoose.Schema(
@@ -17,7 +25,7 @@ const patientSchema = new mongoose.Schema(
     cnic: {
       type: String,
       unique: true,
-      sparse: true,
+      sparse: true, // sparse: uniqueness only enforced on docs that actually have a cnic
     },
     address: {
       type: String,
@@ -51,6 +59,8 @@ const patientSchema = new mongoose.Schema(
         phone: String,
       },
     ],
+    // Caregivers granted access to this patient; the source of truth for the
+    // caregiver branch of canAccessPatient (IDOR protection).
     assignedCaregivers: [
       {
         type: mongoose.Schema.Types.ObjectId,

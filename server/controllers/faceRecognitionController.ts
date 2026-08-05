@@ -1,3 +1,16 @@
+/**
+ * FACE RECOGNITION CONTROLLER — enroll known faces, log scans, alert on strangers.
+ *
+ * Key concepts: the actual face MATCHING runs in the BROWSER with face-api.js — this server
+ * never compares faces; it only persists results. Each KnownFace stores a 128-dimensional
+ * descriptor (validated by parseDescriptor: must be an array of exactly 128 numbers, accepted
+ * as a JSON string from multipart or a raw array from JSON); recognizeFace just LOGS the client's
+ * verdict, and on an 'unknown' result raises an Alert and Socket.IO-emits it to the patient's
+ * assignedCaregivers (their rooms), NOT the patient's own room. multer handles optional 5MB
+ * jpeg/png reference-image uploads to /uploads/faces. canAccessPatient guards every route (IDOR).
+ * Viva line: "Recognition is done client-side with face-api.js descriptors; the backend stores
+ * enrolments, keeps an audit log, and pushes real-time stranger alerts to caregivers."
+ */
 import { Request, Response, NextFunction } from 'express';
 import RecognitionLog from '../models/RecognitionLog';
 import KnownFace from '../models/KnownFace';

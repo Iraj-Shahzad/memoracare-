@@ -1,3 +1,14 @@
+/**
+ * FACE RECOGNITION — client-side face detection and matching for the "who is this?" feature.
+ *
+ * Key concepts: @vladmandic/face-api (maintained face-api.js fork) imported lazily so it
+ * never runs during SSR; three nets loaded from /public/models — TinyFaceDetector
+ * (inputSize 416, scoreThreshold 0.5), faceLandmark68Net, faceRecognitionNet; each face
+ * becomes a 128-dim Float32Array descriptor; getAveragedDescriptor takes several frames and
+ * averages them to cancel per-frame noise for a stable enrolment; findBestMatch is a
+ * nearest-neighbour search using euclideanDistance with a 0.6 threshold (lower = more similar).
+ * Viva line: "Faces are compared as 128-number vectors, and a 0.6 distance threshold decides a match — all in the browser, no images leave the device."
+ */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Thin wrapper around @vladmandic/face-api (a maintained face-api.js fork).
 // The library is imported lazily inside the browser so it never runs during SSR.
@@ -96,6 +107,7 @@ export function findBestMatch(
 ): MatchResult | null {
   let best: MatchResult | null = null;
   for (const k of known) {
+    // Skip malformed records — a valid descriptor must be exactly 128 dimensions.
     if (!k.descriptor || k.descriptor.length !== 128) continue;
     const distance = euclideanDistance(probe, k.descriptor);
     if (!best || distance < best.distance) {
@@ -104,6 +116,7 @@ export function findBestMatch(
         name: k.name,
         relationship: k.relationship,
         distance,
+        // Turn distance into a human-friendly 0-100% score (clamped): distance 0 -> 100%.
         confidence: Math.max(0, Math.min(100, Math.round((1 - distance) * 100))),
       };
     }

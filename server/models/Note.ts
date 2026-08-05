@@ -1,3 +1,11 @@
+/**
+ * NOTE MODEL — a caregiver's observation about a patient.
+ *
+ * Key concepts: requires both `patient` and the authoring `caregiver`; `category` enum lets
+ * notes be tagged/filtered (observation, medication, behavior, health, incident, general);
+ * timestamps enabled.
+ * Viva line: "Notes are the caregiver's timestamped, categorised observations on a patient."
+ */
 import mongoose, { Schema } from 'mongoose';
 
 const noteSchema = new mongoose.Schema(

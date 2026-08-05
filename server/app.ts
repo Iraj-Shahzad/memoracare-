@@ -1,3 +1,14 @@
+/**
+ * APP — builds the Express application (middleware stack + route wiring).
+ *
+ * Key concepts: createApp() is a factory so server.ts (with live socket.io) and the test suite
+ * (without) share one setup. CORS uses an allow-list (localhost:3000 + CLIENT_URL) plus any
+ * *.vercel.app origin and no-Origin requests. json/urlencoded/cookie-parser parse input; morgan
+ * logs outside tests; /uploads is served statically. A tiny middleware injects the injected io
+ * (setIo) onto req.io for controllers. Routes mount under /api/*, then /health, a 404 handler,
+ * and finally errorHandler (must be last).
+ * Viva line: "createApp wires the middleware chain and all /api routes, ending in a single error handler."
+ */
 import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import cors from 'cors';
@@ -40,6 +51,7 @@ export function createApp() {
   const allowedOrigins = ['http://localhost:3000', process.env.CLIENT_URL].filter(Boolean) as string[];
   app.use(cors({
     origin: (origin, cb) => {
+      // Allow no-Origin (curl/health), the explicit allow-list, and any Vercel deploy domain.
       if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
         return cb(null, true);
       }
@@ -92,7 +104,7 @@ export function createApp() {
     res.status(404).json({ success: false, message: 'Route not found' });
   });
 
-  // Error handling middleware (must be last)
+  // Error handling middleware (must be last so it catches errors from all routes above).
   app.use(errorHandler);
 
   return app;

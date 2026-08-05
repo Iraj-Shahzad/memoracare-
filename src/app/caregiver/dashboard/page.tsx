@@ -1,5 +1,19 @@
 "use client";
 
+/**
+ * CAREGIVER DASHBOARD — the caregiver's home screen: summary stats plus panels for
+ * patients, recent alerts, a medication-compliance table, and caregiver notes.
+ *
+ * Key concepts: one GET /caregiver/dashboard call returns everything (pre-aggregated
+ * server-side and already scoped to THIS caregiver's assigned patients) into DashboardData —
+ * totals, patient list, alerts, compliance table, notes. Adding a note POSTs to
+ * /caregiver/notes then calls loadDashboard(silent=true) so cards update in place without
+ * the loading spinner remounting them (avoids the reveal-animation flash). "Export report"
+ * builds a CSV client-side (Blob + object URL) from the compliance table — no server call.
+ * Guarded by ProtectedRoute allowedRoles={["caregiver"]}.
+ * Viva line: "The dashboard hydrates from a single pre-aggregated endpoint scoped to my assigned patients, and in-page actions refresh silently so the cards never flash".
+ */
+
 import { useState, useEffect } from "react";
 import Topbar from "@/components/shared/Topbar";
 import CaregiverSidebar from "@/components/shared/CaregiverSidebar";

@@ -1,3 +1,17 @@
+/**
+ * ADMIN CONTROLLER — platform-wide dashboards, health, backup and activity feed.
+ *
+ * Key concepts: getSystemStats runs parallel countDocuments() (Promise.all) plus
+ * newUsersThisMonth (createdAt within last 30 days); getSystemHealth reports process
+ * uptime/memoryUsage and DB status via mongoose.connection.readyState === 1; getBackup
+ * dumps the main collections as downloadable JSON with .select('-password') so hashes
+ * are NEVER exported; getActivityLog merges recent alerts + reports + new users into one
+ * feed sorted by date then paginated in-memory. getLoginAttempts and updateSettings are
+ * honest TODO placeholders (no persistence yet — they return canned/echoed responses).
+ * These routes are admin-only, enforced by authorize('admin') RBAC at the route layer.
+ * Viva line: "The admin endpoints are read-only oversight tools; the backup deliberately
+ * strips password hashes, and login-attempt tracking is a stub I flagged for future work."
+ */
 import { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import User from '../models/User';
@@ -49,6 +63,7 @@ export const getSystemStats = async (req: Request, res: Response, next: NextFunc
 // @route GET /api/admin/health
 export const getSystemHealth = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    // Mongoose readyState: 1 === connected; anything else is treated as down.
     const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
 
     res.status(200).json({
@@ -137,8 +152,9 @@ export const getActivityLog = async (req: Request, res: Response, next: NextFunc
         description: `New user: ${u.name} (${u.role})`,
         date: u.createdAt,
       })),
-    ].sort((a, b) => new Date(b.date) - new Date(a.date));
+    ].sort((a, b) => new Date(b.date) - new Date(a.date)); // newest-first across all sources
 
+    // Pagination is done in memory because the feed is a merge of three collections.
     const paginated = activities.slice((page - 1) * limit, page * limit);
 
     res.status(200).json({ success: true, count: paginated.length, total: activities.length, activities: paginated });
@@ -151,6 +167,7 @@ export const getActivityLog = async (req: Request, res: Response, next: NextFunc
 // @route GET /api/admin/login-attempts
 export const getLoginAttempts = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    // PLACEHOLDER: no persistence yet — returns an empty list until a dedicated model exists.
     // TODO: Implement login attempt tracking with a dedicated model
     res.status(200).json({
       success: true,
@@ -166,6 +183,7 @@ export const getLoginAttempts = async (req: Request, res: Response, next: NextFu
 // @route PUT /api/admin/settings
 export const updateSettings = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    // PLACEHOLDER: does not persist — simply echoes req.body back until a Settings model exists.
     // TODO: Implement settings model for persistence
     res.status(200).json({
       success: true,

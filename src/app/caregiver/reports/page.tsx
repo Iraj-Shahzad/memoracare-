@@ -1,5 +1,19 @@
 "use client";
 
+/**
+ * CAREGIVER REPORTS — generate medication/routine reports for a selected patient and
+ * download them as PDF or Excel.
+ *
+ * Key concepts: loads GET /caregiver/my-patients (also carries compliance % for the Average
+ * Compliance stat) and, per selected patient, GET /reports/patient/:id — reports are scoped to
+ * that one patient. Generate POSTs /reports/generate {patientId, type}; before doing so it
+ * checks for an existing same-type report and confirm()s to avoid piling up duplicate copies.
+ * Download hits /reports/:id/download?format=pdf|excel via apiDownload (streams a file), and a
+ * `downloaded` Set tracks which id+format pairs were already pulled this session so it can warn
+ * on a repeat. Delete confirms then DELETE /reports/:id. ProtectedRoute caregiver-only.
+ * Viva line: "Reports are generated and listed per patient, with guards against duplicate generation and re-downloading the same file".
+ */
+
 import Topbar from "@/components/shared/Topbar";
 import CaregiverSidebar from "@/components/shared/CaregiverSidebar";
 import ProtectedRoute from "@/components/ProtectedRoute";

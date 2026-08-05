@@ -1,5 +1,19 @@
 "use client";
 
+/**
+ * ADMIN USERS — full user-management table (list, create, activate/deactivate, delete).
+ *
+ * Key concepts: ProtectedRoute allowedRoles={["admin"]}. fetchUsers() calls GET /users
+ * and maps the raw backend docs into a display shape (deriving status from isActive,
+ * formatting createdAt/lastLogin). Add-User modal validates name/email/password client-
+ * side then POST /users (createUser) and re-fetches. Row actions hit real endpoints:
+ * activate/deactivate = PUT /users/:id { isActive }, delete = DELETE /users/:id (guarded
+ * by a confirm() dialog). Filtering (role/status/search) and pagination are CLIENT-side
+ * over the fetched list (PAGE_SIZE 10); a useEffect resets to page 1 when filters change
+ * so we never land on an empty page. actionLoading tracks the per-row in-flight button.
+ * Viva line: "This page is real CRUD over the /users API — create, toggle active state, and delete all persist to the backend and the table re-fetches".
+ */
+
 import { useState, useEffect } from "react";
 import AdminSidebar from "@/components/shared/AdminSidebar";
 import Topbar from "@/components/shared/Topbar";

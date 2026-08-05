@@ -1,5 +1,18 @@
 "use client";
 
+/**
+ * ADMIN ALERTS — system-wide alert feed with resolve / dismiss actions.
+ *
+ * Key concepts: ProtectedRoute allowedRoles={["admin"]}. fetchAlerts() calls GET /alerts
+ * and normalises each doc (uppercases severity, derives Active/Resolved from resolved/status,
+ * formats createdAt). Resolve = PUT /alerts/:id/resolve (marks handled, keeps the record);
+ * Dismiss = DELETE /alerts/:id behind a confirm() dialog (removes it). Both re-fetch on
+ * success and use actionLoading to disable the in-flight row. Filter tabs (All / CRITICAL /
+ * WARNING / INFO / Resolved) filter the fetched list CLIENT-side; the Topbar subtitle shows
+ * the live unresolved count (status === "Active").
+ * Viva line: "Resolve and Dismiss are different operations — resolve PUTs to /resolve and keeps the audit record, dismiss DELETEs it after a confirmation".
+ */
+
 import { useState, useEffect } from "react";
 import AdminSidebar from "@/components/shared/AdminSidebar";
 import Topbar from "@/components/shared/Topbar";
@@ -80,6 +93,7 @@ export default function AlertsPage() {
     }
   };
 
+  // "Resolved" tab filters by status; the CRITICAL/WARNING/INFO tabs filter by severity.
   const filteredAlerts =
     activeFilter === "All"
       ? alerts

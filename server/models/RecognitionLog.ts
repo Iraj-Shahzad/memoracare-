@@ -1,3 +1,11 @@
+/**
+ * RECOGNITION LOG MODEL — one record per face-scan the patient performed.
+ *
+ * Key concepts: `result` enum (recognized/unknown); on a match `knownFace` links the enrolled
+ * person and `recognizedPerson` snapshots their name/relationship; `confidence` stores the match
+ * score. An 'unknown' result can trigger a face_unknown alert.
+ * Viva line: "RecognitionLog is the history of every face scan and whether it matched a known person."
+ */
 import mongoose, { Schema } from 'mongoose';
 
 const recognitionLogSchema = new mongoose.Schema({

@@ -2,11 +2,16 @@
 
 /**
  * ADMIN MONITORING — live system health, trimmed to REAL data only.
- * Server status + DB connection + process uptime + memory come from
- * GET /admin/system-health (process.uptime / process.memoryUsage); record
- * counts from GET /admin/stats; recent system events from GET /admin/activity-log
- * (real alerts, reports, user registrations). Previous hardcoded metrics
- * (99.9% uptime, "34% CPU", fake API response times, invented events) removed.
+ *
+ * Key concepts: ProtectedRoute allowedRoles={["admin"]}. A single Promise.all (each with
+ * .catch fallback) pulls three REAL endpoints: GET /admin/system-health for server status,
+ * DB connection, process uptime and memory (backend uses process.uptime()/process.memoryUsage()),
+ * GET /admin/stats for record counts (users/medications/routines/active alerts), and
+ * GET /admin/activity-log for the recent system-events feed (real alerts, reports, user
+ * registrations, capped at 15). fmtUptime()/mb() format raw seconds and bytes for display.
+ * NOTE: previous hardcoded fake metrics (99.9% uptime, "34% CPU", invented API times/events)
+ * were deliberately removed — everything shown is now genuinely live.
+ * Viva line: "Every metric here is real server telemetry from the health endpoint — I removed the fake CPU and uptime figures the template shipped with".
  */
 
 import { useState, useEffect } from "react";

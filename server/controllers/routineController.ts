@@ -1,3 +1,17 @@
+/**
+ * ROUTINE CONTROLLER — daily-activity routine CRUD, completion logging and compliance views.
+ *
+ * Key concepts: every route is protected by the canAccessPatient IDOR guard (resolved from
+ * the routine's own patient on update/delete/log); startTime/endTime are stored as strings
+ * and `days` holds weekday names (e.g. "Monday"). update uses an allowedFields whitelist
+ * (mass-assignment guard). logRoutineCompletion records status (completed/missed) and emits
+ * a Socket.IO routine_update. getWeeklyCompliance builds a 7-day window (incl. today) and
+ * computes a per-day completion % from real RoutineLog rows. getTodayRoutines selects active
+ * routines whose `days` array includes today's weekday name, then joins today's logs to
+ * attach a todayStatus (defaulting to 'upcoming' when no log exists yet).
+ * Viva line: "Today's routines are matched by weekday name and merged with the day's logs,
+ * and the weekly view is computed day-by-day from real completion records, not stored counts."
+ */
 import { Request, Response, NextFunction } from 'express';
 import Routine from '../models/Routine';
 import RoutineLog from '../models/RoutineLog';
@@ -64,6 +78,7 @@ export const updateRoutine = async (req: Request, res: Response, next: NextFunct
       return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
     }
 
+    // Whitelist: only these fields can be updated, blocking mass-assignment of anything else.
     const allowedFields = ['activityName', 'description', 'startTime', 'endTime', 'days', 'priority', 'isActive'];
     const updateData: any = {};
     allowedFields.forEach((field) => {
@@ -210,6 +225,7 @@ export const getTodayRoutines = async (req: Request, res: Response, next: NextFu
     const today = new Date();
     const dayName = today.toLocaleDateString('en-US', { weekday: 'long' });
 
+    // Match routines scheduled for today by weekday name (days is an array of weekday strings).
     const routines = await Routine.find({
       patient: patientId,
       isActive: true,

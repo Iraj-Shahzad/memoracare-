@@ -1,3 +1,11 @@
+/**
+ * ALERT MODEL — a caregiver-facing notification about a patient event.
+ *
+ * Key concepts: `type` enum (medication_missed/routine_missed/sos/face_unknown/system) +
+ * `severity` (critical/warning/info); raised by the scheduler and other flows, delivered to
+ * caregiver socket rooms; isResolved/resolvedBy/resolvedAt support acknowledgement.
+ * Viva line: "Alerts are the persisted record of anything a caregiver needs to act on."
+ */
 import mongoose, { Schema } from 'mongoose';
 
 const alertSchema = new mongoose.Schema({

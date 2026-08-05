@@ -1,3 +1,11 @@
+/**
+ * DB CONFIG — establishes the single Mongoose connection to MongoDB.
+ *
+ * Key concepts: connectDB() awaits mongoose.connect(process.env.MONGODB_URI) and, on failure,
+ * process.exit(1) so the app doesn't run without a database; connection-level listeners
+ * (connected/disconnected/error) log lifecycle events for observability.
+ * Viva line: "The whole app shares one Mongoose connection, and startup aborts if the database is unreachable."
+ */
 import mongoose from 'mongoose';
 
 const connectDB = async () => {

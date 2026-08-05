@@ -1,3 +1,14 @@
+/**
+ * SERVER — the runtime entry point that boots the whole backend.
+ *
+ * Key concepts: loads env (dotenv) first, connects to MongoDB, builds the Express app and wraps
+ * it in a raw http.Server so socket.io can share the port; creates the socket.io Server, hands it
+ * to app via setIo(), and manages rooms — clients emit join_room/leave_room with a patientId to
+ * receive that patient's real-time reminders/alerts. On listen it starts the node-cron reminder
+ * scheduler with the live io. A global unhandledRejection handler logs instead of crashing (keeps
+ * a demo alive).
+ * Viva line: "server.ts is the boot sequence: env, DB, HTTP+socket.io, then the cron scheduler."
+ */
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -31,6 +42,8 @@ io.on('connection', (socket) => {
     console.log('Client disconnected:', socket.id);
   });
 
+  // Clients subscribe to a patient's real-time channel; the room name IS the patientId,
+  // which is how the scheduler targets reminders/alerts to the right people.
   socket.on('join_room', (data: { patientId: string }) => {
     socket.join(data.patientId);
     console.log(`User joined room: ${data.patientId}`);

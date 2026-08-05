@@ -1,3 +1,10 @@
+/**
+ * MEMORY MODEL — a memory-aid entry (photo + context) to help a patient recall.
+ *
+ * Key concepts: links to Patient; stores an imageUrl plus who (`people`), where (`location`),
+ * when (`date`) and a description; `addedBy` records the authoring user; timestamps enabled.
+ * Viva line: "A Memory pairs a photo with who/where/when context to jog the patient's recall."
+ */
 import mongoose, { Schema } from 'mongoose';
 
 // A memory-aid entry for a patient: a photo of a person, place, or event with

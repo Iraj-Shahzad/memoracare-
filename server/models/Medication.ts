@@ -1,3 +1,11 @@
+/**
+ * MEDICATION MODEL — a prescribed drug for a patient with its dosing schedule.
+ *
+ * Key concepts: `times` is an array of "HH:MM" strings the reminder scheduler parses to
+ * fire per-minute reminders and detect missed doses; startDate/endDate + isActive bound
+ * when it applies; `addedBy` records the authoring user for audit.
+ * Viva line: "Each Medication carries the daily dose times the scheduler uses to remind and to flag misses."
+ */
 import mongoose, { Schema } from 'mongoose';
 
 const medicationSchema = new mongoose.Schema(

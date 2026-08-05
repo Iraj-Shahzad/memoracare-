@@ -1,3 +1,11 @@
+/**
+ * ROUTINE LOG MODEL — one completion record per scheduled routine occurrence.
+ *
+ * Key concepts: `status` enum (completed/missed/upcoming/skipped); scheduler auto-creates a
+ * 'missed' log after the grace period with no existing log; `scheduledDate` + `completedAt`
+ * capture planned vs actual.
+ * Viva line: "RoutineLog tracks whether each day's routine was completed or missed."
+ */
 import mongoose, { Schema } from 'mongoose';
 
 const routineLogSchema = new mongoose.Schema({

@@ -1,3 +1,12 @@
+/**
+ * ERROR HANDLER MIDDLEWARE — the single Express error sink (4-arg signature).
+ *
+ * Key concepts: registered last in app.ts so any next(err) lands here; translates common
+ * failures into clean HTTP codes — Mongoose CastError -> 404, duplicate key 11000 -> 400,
+ * ValidationError -> 400 (joined field messages), JWT errors -> 401 — and falls back to 500.
+ * The raw stack is only exposed when NODE_ENV === 'development', so production never leaks internals.
+ * Viva line: "One central handler turns library-specific errors into consistent, safe JSON responses."
+ */
 import { Request, Response, NextFunction } from 'express';
 
 const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
@@ -41,6 +50,7 @@ const errorHandler = (err: any, req: Request, res: Response, next: NextFunction)
   res.status(error.statusCode || 500).json({
     success: false,
     message: error.message || 'Server Error',
+    // Only leak the stack trace in development — never to production clients.
     ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
   });
 };

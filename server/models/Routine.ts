@@ -1,3 +1,11 @@
+/**
+ * ROUTINE MODEL — a recurring daily activity for a patient (e.g. walk, meal).
+ *
+ * Key concepts: `startTime` is an "HH:MM" string the scheduler parses; `days` limits which
+ * weekdays it runs (empty = every day); `priority` maps to alert severity when missed
+ * (high => critical); isActive toggles it on/off.
+ * Viva line: "A Routine defines a scheduled activity whose priority decides how serious a missed alert is."
+ */
 import mongoose, { Schema } from 'mongoose';
 
 const routineSchema = new mongoose.Schema(

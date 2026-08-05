@@ -1,5 +1,18 @@
 "use client";
 
+/**
+ * CAREGIVER PROFILE — the caregiver's own details (name, role, phone, specialization,
+ * about) plus a grid of their assigned patients.
+ *
+ * Key concepts: loads GET /caregiver/profile (falls back to the AuthContext user for
+ * name/email/phone if it fails) and GET /caregiver/my-patients for the assigned-patient count
+ * and cards. Edit modal PUTs /caregiver/profile then calls refreshUser() so the Topbar
+ * greeting stays in sync; email is read-only because it is the login identity. Each patient
+ * card's "View" lazy-loads GET /caregiver/patients/:id/overview (meds/routines/alerts).
+ * ProtectedRoute caregiver-only.
+ * Viva line: "Saving my profile also refreshes the auth context so my name updates everywhere, while email stays locked as the login identity".
+ */
+
 import Topbar from "@/components/shared/Topbar";
 import CaregiverSidebar from "@/components/shared/CaregiverSidebar";
 import ProtectedRoute from "@/components/ProtectedRoute";

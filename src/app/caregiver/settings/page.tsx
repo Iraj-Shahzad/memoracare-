@@ -1,5 +1,17 @@
 "use client";
 
+/**
+ * CAREGIVER SETTINGS — notification preferences (medication alerts, routine alerts,
+ * emergency SOS) as toggle switches.
+ *
+ * Key concepts: on mount loads GET /caregiver/profile and reads profile.settings.notifications
+ * to seed the toggles (defaults if none saved). Save PUTs /caregiver/settings { settings:
+ * { notifications } }, persisting to the User document in MongoDB so choices survive across
+ * devices/logins; a transient "Settings saved" confirmation shows for 3s. These preferences
+ * govern the reminders the caregiver's patients receive. ProtectedRoute caregiver-only.
+ * Viva line: "Notification preferences are persisted to the user record in MongoDB, so they follow the caregiver across any device they log in from".
+ */
+
 import Topbar from "@/components/shared/Topbar";
 import CaregiverSidebar from "@/components/shared/CaregiverSidebar";
 import ProtectedRoute from "@/components/ProtectedRoute";

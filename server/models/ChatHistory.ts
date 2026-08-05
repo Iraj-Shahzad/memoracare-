@@ -1,3 +1,10 @@
+/**
+ * CHAT HISTORY MODEL — a stored turn of the patient's assistant conversation.
+ *
+ * Key concepts: `mode` (text/voice); stores the `query` and `response` pair plus the NLP-classified
+ * `intent` and `confidence`, giving both a transcript and analytics on the assistant.
+ * Viva line: "ChatHistory persists each assistant exchange along with the classified intent."
+ */
 import mongoose, { Schema } from 'mongoose';
 
 const chatHistorySchema = new mongoose.Schema({
