@@ -88,6 +88,27 @@ export const updatePatient = async (req: Request, res: Response, next: NextFunct
       return res.status(404).json({ success: false, message: 'Patient not found' });
     }
 
+    // Name / email / phone live on the linked User account, not on Patient — so
+    // sync those here too (previously they were silently ignored on the profile).
+    const { name, email, phone } = req.body;
+    const userPatch: any = {};
+    if (name !== undefined) userPatch.name = name;
+    if (phone !== undefined) userPatch.phone = phone;
+    if (email !== undefined) userPatch.email = String(email).toLowerCase();
+    if (Object.keys(userPatch).length && (patient as any).user) {
+      const uid = (patient as any).user._id || (patient as any).user;
+      if (userPatch.email) {
+        // Don't let a profile edit collide with another account's email.
+        const clash = await User.findOne({ email: userPatch.email, _id: { $ne: uid } }).select('_id');
+        if (clash) {
+          return res.status(400).json({ success: false, message: 'That email is already in use by another account.' });
+        }
+      }
+      const updatedUser = await User.findByIdAndUpdate(uid, userPatch, { new: true, runValidators: true })
+        .select('name email phone avatar');
+      if (updatedUser) (patient as any).user = updatedUser; // return the fresh values
+    }
+
     res.status(200).json({ success: true, patient });
   } catch (err: any) {
     next(err);
