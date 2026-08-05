@@ -7,6 +7,7 @@ import Alert from '../models/Alert';
 import Medication from '../models/Medication';
 import Routine from '../models/Routine';
 import Report from '../models/Report';
+import Memory from '../models/Memory';
 
 // @desc Get system stats
 // @route GET /api/admin/stats
@@ -60,6 +61,38 @@ export const getSystemHealth = async (req: Request, res: Response, next: NextFun
         timestamp: new Date().toISOString(),
       },
     });
+  } catch (err: any) {
+    next(err);
+  }
+};
+
+// @desc  Download a full data backup (JSON export of the main collections)
+// @route GET /api/admin/backup
+export const getBackup = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const [users, patients, caregivers, medications, routines, memories, alerts, reports] = await Promise.all([
+      User.find().select('-password').lean(),   // never export password hashes
+      Patient.find().lean(),
+      Caregiver.find().lean(),
+      Medication.find().lean(),
+      Routine.find().lean(),
+      Memory.find().lean(),
+      Alert.find().lean(),
+      Report.find().lean(),
+    ]);
+    const backup = {
+      app: 'MemoraCare',
+      exportedAt: new Date().toISOString(),
+      counts: {
+        users: users.length, patients: patients.length, caregivers: caregivers.length,
+        medications: medications.length, routines: routines.length, memories: memories.length,
+        alerts: alerts.length, reports: reports.length,
+      },
+      collections: { users, patients, caregivers, medications, routines, memories, alerts, reports },
+    };
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', `attachment; filename="memoracare-backup-${new Date().toISOString().slice(0, 10)}.json"`);
+    res.status(200).send(JSON.stringify(backup, null, 2));
   } catch (err: any) {
     next(err);
   }

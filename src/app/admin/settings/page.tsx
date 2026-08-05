@@ -1,369 +1,126 @@
 "use client";
 
+/**
+ * ADMIN SETTINGS — trimmed to REAL, working items only.
+ * The previous version had many unenforced toggles (2FA, login limits, email/SMS
+ * gateways, auto-backup schedule) and a fake "last backup" timestamp — none were
+ * wired to anything, so they've been removed. What remains is genuinely real:
+ *  - System Information (live: app, your admin email, DB status, record counts)
+ *  - Backup Now: downloads a real JSON export of the database (GET /admin/backup)
+ */
+
 import { useState, useEffect } from "react";
 import AdminSidebar from "@/components/shared/AdminSidebar";
 import Topbar from "@/components/shared/Topbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
-import { apiPut } from "@/lib/api";
+import { useUI } from "@/components/ui/UIProvider";
+import { apiGet, apiDownload } from "@/lib/api";
 
 export default function SettingsPage() {
   const { user } = useAuth();
-  void user;
+  const { toast } = useUI();
 
-  const [settings, setSettings] = useState({
-    systemName: "MemoryCare",
-    adminEmail: "admin@memorycare.pk",
-    maintenanceMode: false,
-    maxLoginAttempts: 5,
-    sessionTimeout: 30,
-    forcePasswordChange: false,
-    twoFactorAuth: true,
-    emailServiceHost: "smtp.gmail.com",
-    emailServicePort: 587,
-    smsGateway: false,
-    pushNotifications: true,
-    autoBackup: true,
-    backupFrequency: "Daily",
-    lastBackup: "Apr 14, 2024 at 2:00 AM",
-  });
-
-  const [saving, setSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState("");
+  const [health, setHealth] = useState<{ database?: string } | null>(null);
+  const [stats, setStats] = useState<Record<string, number> | null>(null);
   const [loading, setLoading] = useState(true);
+  const [backingUp, setBackingUp] = useState(false);
 
   useEffect(() => {
-    // Settings are managed locally with defaults; mark as loaded
-    setLoading(false);
+    (async () => {
+      try {
+        const [h, s] = await Promise.all([
+          apiGet("/admin/system-health").catch(() => ({})),
+          apiGet("/admin/stats").catch(() => ({})),
+        ]);
+        setHealth(h.health || null);
+        setStats(s.stats || null);
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
-  const handleChange = (key: string, value: string | number | boolean) => {
-    setSettings((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const handleSave = async () => {
-    setSaving(true);
-    setSaveMessage("");
+  const handleBackup = async () => {
+    setBackingUp(true);
     try {
-      await apiPut("/admin/settings", settings);
-      setSaveMessage("Settings saved successfully!");
-      setTimeout(() => setSaveMessage(""), 3000);
+      await apiDownload("/admin/backup", `memoracare-backup-${new Date().toISOString().slice(0, 10)}.json`);
+      toast("Backup downloaded.", "success");
     } catch (err: unknown) {
-      setSaveMessage(err instanceof Error ? err.message : "Failed to save settings");
+      toast(err instanceof Error ? err.message : "Could not create the backup.", "error");
     } finally {
-      setSaving(false);
+      setBackingUp(false);
     }
   };
 
+  const dbOk = health?.database === "connected";
+  const Row = ({ label, value, accent }: { label: string; value: React.ReactNode; accent?: string }) => (
+    <div className="flex items-center justify-between py-3 border-b border-slate-100 last:border-b-0">
+      <span className="text-sm text-slate-600">{label}</span>
+      <span className={`text-sm font-semibold ${accent || "text-slate-900"}`}>{value}</span>
+    </div>
+  );
+
   return (
     <ProtectedRoute allowedRoles={["admin"]}>
-    <div className="flex min-h-screen bg-[#f0fdf4]">
-      <AdminSidebar />
+      <div className="flex min-h-screen bg-[#f0fdf4]">
+        <AdminSidebar />
 
-      <div className="flex-1 ml-0 md:ml-[260px] flex flex-col">
-        <Topbar
-          title="System Settings"
-          subtitle="Configure system-wide settings"
-          showSOS={false}
-        />
+        <div className="flex-1 ml-0 md:ml-[260px] flex flex-col">
+          <Topbar title="System Settings" subtitle="System information and data backup" showSOS={false} />
 
-        <main className="flex-1 overflow-y-auto">
-          <div className="p-8 max-w-4xl mx-auto">
-            {loading ? (
-              <div className="flex items-center justify-center py-12">
-                <div className="w-10 h-10 border-[3px] border-[#0d9488] border-t-transparent rounded-full animate-spin" />
-              </div>
-            ) : (
-            <>
-            {saveMessage && (
-              <div className={`mb-4 p-4 rounded-lg text-sm ${saveMessage.includes("success") ? "bg-green-50 border border-green-200 text-green-700" : "bg-red-50 border border-red-200 text-red-700"}`}>
-                {saveMessage}
-              </div>
-            )}
+          <main className="flex-1 overflow-y-auto">
+            <div className="p-8 max-w-4xl mx-auto">
+              {loading ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="w-10 h-10 border-[3px] border-[#0d9488] border-t-transparent rounded-full animate-spin" />
+                </div>
+              ) : (
+                <>
+                  {/* System Information (live, read-only) */}
+                  <div className="bg-white rounded-lg border border-slate-200 p-6 mb-8">
+                    <h3 className="text-lg font-semibold text-slate-900 mb-4">System Information</h3>
+                    <Row label="Application" value="MemoraCare" />
+                    <Row label="Signed in as" value={user?.email || "—"} />
+                    <Row label="Your role" value={<span className="capitalize">{user?.role || "admin"}</span>} />
+                    <Row label="Database" value={dbOk ? "Connected" : "Disconnected"} accent={dbOk ? "text-green-600" : "text-red-600"} />
+                    <Row label="Total users" value={stats?.totalUsers ?? "—"} />
+                    <Row label="Patients" value={stats?.patients ?? "—"} />
+                    <Row label="Caregivers" value={stats?.caregivers ?? "—"} />
+                    <Row label="Open alerts" value={stats?.activeAlerts ?? "—"} />
+                  </div>
 
-            {/* General Settings */}
-            <div className="bg-white rounded-lg border border-slate-200 p-6 mb-8">
-              <h3 className="text-lg font-semibold text-slate-900 mb-6">
-                General Settings
-              </h3>
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    System Name
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.systemName}
-                    onChange={(e) =>
-                      handleChange("systemName", e.target.value)
-                    }
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Admin Email
-                  </label>
-                  <input
-                    type="email"
-                    value={settings.adminEmail}
-                    onChange={(e) =>
-                      handleChange("adminEmail", e.target.value)
-                    }
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-slate-700">
-                    Maintenance Mode
-                  </label>
-                  <button
-                    onClick={() =>
-                      handleChange(
-                        "maintenanceMode",
-                        !settings.maintenanceMode
-                      )
-                    }
-                    className={`w-12 h-6 rounded-full transition-colors flex items-center ${
-                      settings.maintenanceMode
-                        ? "bg-red-500"
-                        : "bg-slate-300"
-                    }`}
-                  >
-                    <div
-                      className={`w-5 h-5 bg-white rounded-full transition-transform ${
-                        settings.maintenanceMode ? "translate-x-6" : ""
-                      }`}
-                    />
-                  </button>
-                </div>
-              </div>
+                  {/* Backup & Data (real) */}
+                  <div className="bg-white rounded-lg border border-slate-200 p-6 mb-8">
+                    <h3 className="text-lg font-semibold text-slate-900 mb-2">Backup &amp; Data</h3>
+                    <p className="text-sm text-slate-600 mb-4">
+                      Download a full JSON export of the database — users (without passwords), patients,
+                      caregivers, medications, routines, memories, alerts and reports. Keep it somewhere safe.
+                    </p>
+                    <button
+                      onClick={handleBackup}
+                      disabled={backingUp}
+                      className="w-full px-4 py-2.5 bg-[#0d9488] text-white rounded-lg hover:bg-teal-700 transition-colors text-sm font-medium disabled:opacity-50"
+                    >
+                      {backingUp ? "Preparing backup…" : "Backup Now (download)"}
+                    </button>
+                  </div>
+
+                  <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 flex gap-3">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" className="w-5 h-5 flex-shrink-0 mt-0.5">
+                      <circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" />
+                    </svg>
+                    <p className="text-sm text-slate-600">
+                      Advanced options (scheduled auto-backup, email/SMS gateways, 2FA enforcement) are not
+                      enabled in this build, so they've been removed rather than shown as non-working toggles.
+                    </p>
+                  </div>
+                </>
+              )}
             </div>
-
-            {/* Security Settings */}
-            <div className="bg-white rounded-lg border border-slate-200 p-6 mb-8">
-              <h3 className="text-lg font-semibold text-slate-900 mb-6">
-                Security Settings
-              </h3>
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Max Login Attempts
-                  </label>
-                  <input
-                    type="number"
-                    value={settings.maxLoginAttempts}
-                    onChange={(e) =>
-                      handleChange("maxLoginAttempts", parseInt(e.target.value))
-                    }
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Session Timeout (minutes)
-                  </label>
-                  <select
-                    value={settings.sessionTimeout}
-                    onChange={(e) =>
-                      handleChange("sessionTimeout", parseInt(e.target.value))
-                    }
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
-                  >
-                    <option value={15}>15 minutes</option>
-                    <option value={30}>30 minutes</option>
-                    <option value={60}>60 minutes</option>
-                    <option value={120}>120 minutes</option>
-                  </select>
-                </div>
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-slate-700">
-                    Force Password Change
-                  </label>
-                  <button
-                    onClick={() =>
-                      handleChange(
-                        "forcePasswordChange",
-                        !settings.forcePasswordChange
-                      )
-                    }
-                    className={`w-12 h-6 rounded-full transition-colors flex items-center ${
-                      settings.forcePasswordChange
-                        ? "bg-green-500"
-                        : "bg-slate-300"
-                    }`}
-                  >
-                    <div
-                      className={`w-5 h-5 bg-white rounded-full transition-transform ${
-                        settings.forcePasswordChange ? "translate-x-6" : ""
-                      }`}
-                    />
-                  </button>
-                </div>
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-slate-700">
-                    Two-Factor Authentication
-                  </label>
-                  <button
-                    onClick={() =>
-                      handleChange("twoFactorAuth", !settings.twoFactorAuth)
-                    }
-                    className={`w-12 h-6 rounded-full transition-colors flex items-center ${
-                      settings.twoFactorAuth ? "bg-green-500" : "bg-slate-300"
-                    }`}
-                  >
-                    <div
-                      className={`w-5 h-5 bg-white rounded-full transition-transform ${
-                        settings.twoFactorAuth ? "translate-x-6" : ""
-                      }`}
-                    />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Notification Settings */}
-            <div className="bg-white rounded-lg border border-slate-200 p-6 mb-8">
-              <h3 className="text-lg font-semibold text-slate-900 mb-6">
-                Notification Settings
-              </h3>
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Email Service Host
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.emailServiceHost}
-                    onChange={(e) =>
-                      handleChange("emailServiceHost", e.target.value)
-                    }
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Email Service Port
-                  </label>
-                  <input
-                    type="number"
-                    value={settings.emailServicePort}
-                    onChange={(e) =>
-                      handleChange("emailServicePort", parseInt(e.target.value))
-                    }
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-slate-700">
-                    SMS Gateway
-                  </label>
-                  <button
-                    onClick={() =>
-                      handleChange("smsGateway", !settings.smsGateway)
-                    }
-                    className={`w-12 h-6 rounded-full transition-colors flex items-center ${
-                      settings.smsGateway ? "bg-green-500" : "bg-slate-300"
-                    }`}
-                  >
-                    <div
-                      className={`w-5 h-5 bg-white rounded-full transition-transform ${
-                        settings.smsGateway ? "translate-x-6" : ""
-                      }`}
-                    />
-                  </button>
-                </div>
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-slate-700">
-                    Push Notifications
-                  </label>
-                  <button
-                    onClick={() =>
-                      handleChange("pushNotifications", !settings.pushNotifications)
-                    }
-                    className={`w-12 h-6 rounded-full transition-colors flex items-center ${
-                      settings.pushNotifications ? "bg-green-500" : "bg-slate-300"
-                    }`}
-                  >
-                    <div
-                      className={`w-5 h-5 bg-white rounded-full transition-transform ${
-                        settings.pushNotifications ? "translate-x-6" : ""
-                      }`}
-                    />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Backup & Data */}
-            <div className="bg-white rounded-lg border border-slate-200 p-6 mb-8">
-              <h3 className="text-lg font-semibold text-slate-900 mb-6">
-                Backup &amp; Data
-              </h3>
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-slate-700">
-                    Auto Backup
-                  </label>
-                  <button
-                    onClick={() =>
-                      handleChange("autoBackup", !settings.autoBackup)
-                    }
-                    className={`w-12 h-6 rounded-full transition-colors flex items-center ${
-                      settings.autoBackup ? "bg-green-500" : "bg-slate-300"
-                    }`}
-                  >
-                    <div
-                      className={`w-5 h-5 bg-white rounded-full transition-transform ${
-                        settings.autoBackup ? "translate-x-6" : ""
-                      }`}
-                    />
-                  </button>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Backup Frequency
-                  </label>
-                  <select
-                    value={settings.backupFrequency}
-                    onChange={(e) =>
-                      handleChange("backupFrequency", e.target.value)
-                    }
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
-                  >
-                    <option>Daily</option>
-                    <option>Weekly</option>
-                    <option>Monthly</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Last Backup
-                  </label>
-                  <p className="text-sm text-slate-600">
-                    {settings.lastBackup}
-                  </p>
-                </div>
-                <button className="w-full px-4 py-2 border border-[#0d9488] text-[#0d9488] rounded-lg hover:bg-teal-50 transition-colors text-sm font-medium">
-                  Backup Now
-                </button>
-              </div>
-            </div>
-
-            {/* Save Button */}
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="w-full px-6 py-3 bg-[#0d9488] text-white font-medium rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-50"
-            >
-              {saving ? "Saving..." : "Save Changes"}
-            </button>
-            </>
-            )}
-          </div>
-        </main>
+          </main>
+        </div>
       </div>
-    </div>
     </ProtectedRoute>
   );
 }
