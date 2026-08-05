@@ -491,7 +491,7 @@ export default function AuthPage() {
                   Remember me
                 </label>
                 <Link
-                  href="#"
+                  href="/forgot-password"
                   className="text-sm font-semibold hover:underline"
                   style={{ color: "#0d9488" }}
                 >

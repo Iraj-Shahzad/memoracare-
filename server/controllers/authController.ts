@@ -231,3 +231,103 @@ export const changePassword = async (req: Request, res: Response, next: NextFunc
     next(err);
   }
 };
+
+// @desc  Request a password-reset link (emails a one-time link)
+// @route POST /api/auth/forgot-password
+export const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Please provide your email address' });
+    }
+
+    // Generic reply used in EVERY outcome below so we never reveal whether an
+    // email is registered (prevents account enumeration).
+    const genericMsg = 'If an account exists for that email, a password reset link has been sent.';
+
+    const user: any = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      return res.status(200).json({ success: true, message: genericMsg });
+    }
+
+    // Create + store the reset token, then build the link for the frontend.
+    const rawToken = user.getResetPasswordToken();
+    await user.save({ validateBeforeSave: false });
+
+    const clientUrl = (process.env.CLIENT_URL || 'http://localhost:3000').replace(/\/$/, '');
+    const resetUrl = `${clientUrl}/reset-password/${rawToken}`;
+
+    const emailResult = await sendMail({
+      to: user.email,
+      subject: 'Reset your MemoraCare password',
+      html: emailLayout('Password reset requested',
+        `<p>Hi ${user.name},</p>
+         <p>We received a request to reset your MemoraCare password. Click the button below to choose a new password. This link expires in <b>30 minutes</b>.</p>
+         <p style="margin:24px 0">
+           <a href="${resetUrl}" style="background:#0d9488;color:#fff;text-decoration:none;padding:12px 22px;border-radius:10px;font-weight:600;display:inline-block">Reset Password</a>
+         </p>
+         <p style="color:#64748b;font-size:13px">If the button doesn't work, copy this link into your browser:<br>${resetUrl}</p>
+         <p style="color:#64748b;font-size:13px">If you didn't request this, you can safely ignore this email — your password won't change.</p>`),
+    });
+
+    // If SMTP isn't set up, the link can't be delivered. Roll back the token so
+    // a stale one isn't left on the account, and tell the caller honestly.
+    if (emailResult && (emailResult as any).skipped) {
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+      await user.save({ validateBeforeSave: false });
+      return res.status(503).json({
+        success: false,
+        message: 'Email delivery is not configured on the server, so a reset link cannot be sent. Please contact your administrator.',
+      });
+    }
+
+    res.status(200).json({ success: true, message: genericMsg });
+  } catch (err: any) {
+    next(err);
+  }
+};
+
+// @desc  Reset the password using a token from the emailed link
+// @route PUT /api/auth/reset-password/:token
+export const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { password } = req.body;
+    const { token } = req.params;
+
+    if (!password || password.length < 6) {
+      return res.status(400).json({ success: false, message: 'Password must be at least 6 characters' });
+    }
+
+    // Hash the incoming raw token the same way we stored it, then match on both
+    // the hash AND a not-yet-expired deadline.
+    const hashed = crypto.createHash('sha256').update(token).digest('hex');
+    const user: any = await User.findOne({
+      resetPasswordToken: hashed,
+      resetPasswordExpire: { $gt: new Date() },
+    }).select('+resetPasswordToken +resetPasswordExpire');
+
+    if (!user) {
+      return res.status(400).json({ success: false, message: 'This reset link is invalid or has expired. Please request a new one.' });
+    }
+
+    user.password = password; // hashed by the pre-save hook
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save();
+
+    // Confirmation email (best-effort).
+    sendMail({
+      to: user.email,
+      subject: 'Your MemoraCare password was changed',
+      html: emailLayout('Password changed',
+        `<p>Hi ${user.name},</p>
+         <p>Your MemoraCare password was just changed. If this was you, no action is needed.</p>
+         <p style="color:#64748b;font-size:13px">If you did NOT change your password, please contact your administrator immediately.</p>`),
+    }).catch(() => {});
+
+    res.status(200).json({ success: true, message: 'Your password has been reset. You can now sign in with your new password.' });
+  } catch (err: any) {
+    next(err);
+  }
+};

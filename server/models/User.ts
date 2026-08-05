@@ -1,5 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 
 const userSchema = new Schema({
   name: {
@@ -42,6 +43,17 @@ const userSchema = new Schema({
     type: Object,
     default: {},
   },
+  // Password-reset: we store only a HASH of the reset token (never the raw
+  // token), so a leaked DB can't be used to reset accounts. select:false keeps
+  // these out of normal queries. Expire is a short-lived deadline.
+  resetPasswordToken: {
+    type: String,
+    select: false,
+  },
+  resetPasswordExpire: {
+    type: Date,
+    select: false,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -62,6 +74,16 @@ userSchema.pre('save', async function (this: any) {
 // Method to compare password
 userSchema.methods.matchPassword = async function (this: any, enteredPassword: string) {
   return await bcrypt.compare(enteredPassword, this.password);
+};
+
+// Generate a password-reset token. Returns the RAW token (to email to the
+// user); stores only its SHA-256 hash + a 30-minute expiry on the document.
+// Caller must save() the document afterwards.
+userSchema.methods.getResetPasswordToken = function (this: any): string {
+  const rawToken = crypto.randomBytes(32).toString('hex');
+  this.resetPasswordToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+  this.resetPasswordExpire = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
+  return rawToken;
 };
 
 export default mongoose.model('User', userSchema);
