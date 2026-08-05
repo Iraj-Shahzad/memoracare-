@@ -80,6 +80,44 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
 };
 
 // @desc Delete user
+// @desc  Create a user (admin only)
+// @route POST /api/users
+export const createUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { name, email, password, phone, role } = req.body;
+    if (!name || !email || !password) {
+      return res.status(400).json({ success: false, message: 'Name, email and password are required' });
+    }
+    if (String(password).length < 6) {
+      return res.status(400).json({ success: false, message: 'Password must be at least 6 characters' });
+    }
+    // Admins may create any role (unlike public /auth/register which blocks admin).
+    const validRoles = ['patient', 'caregiver', 'admin'];
+    const safeRole = validRoles.includes(role) ? role : 'patient';
+    const emailLc = String(email).toLowerCase();
+
+    const existing = await User.findOne({ email: emailLc });
+    if (existing) {
+      return res.status(400).json({ success: false, message: 'Email already registered' });
+    }
+
+    // Password is hashed by the User model's pre-save hook.
+    const user = await User.create({ name, email: emailLc, password, phone, role: safeRole });
+
+    // Create the matching role profile so the account works end-to-end.
+    if (safeRole === 'patient') await Patient.create({ user: user._id });
+    else if (safeRole === 'caregiver') await Caregiver.create({ user: user._id });
+
+    res.status(201).json({
+      success: true,
+      user: { _id: user._id, name: user.name, email: user.email, role: user.role, phone: user.phone, isActive: user.isActive },
+    });
+  } catch (err: any) {
+    next(err);
+  }
+};
+
+// @desc Delete user (admin)
 // @route DELETE /api/users/:id
 export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
   try {

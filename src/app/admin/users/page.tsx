@@ -6,7 +6,7 @@ import Topbar from "@/components/shared/Topbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
 import { useUI } from "@/components/ui/UIProvider";
-import { apiGet, apiPut, apiDelete } from "@/lib/api";
+import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api";
 
 interface User {
   id: number;
@@ -34,6 +34,42 @@ export default function UsersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+
+  // Pagination (client-side, 10 per page)
+  const PAGE_SIZE = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Add-user modal
+  const [showAdd, setShowAdd] = useState(false);
+  const [addForm, setAddForm] = useState({ name: "", email: "", password: "", phone: "", role: "patient" });
+  const [addSaving, setAddSaving] = useState(false);
+  const [addError, setAddError] = useState("");
+
+  const handleCreateUser = async () => {
+    setAddError("");
+    // Validation
+    if (addForm.name.trim().length < 2) { setAddError("Please enter the person's full name."); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(addForm.email.trim())) { setAddError("Please enter a valid email address."); return; }
+    if (addForm.password.length < 6) { setAddError("Password must be at least 6 characters."); return; }
+    try {
+      setAddSaving(true);
+      await apiPost("/users", {
+        name: addForm.name.trim(),
+        email: addForm.email.trim().toLowerCase(),
+        password: addForm.password,
+        phone: addForm.phone.trim(),
+        role: addForm.role,
+      });
+      setShowAdd(false);
+      setAddForm({ name: "", email: "", password: "", phone: "", role: "patient" });
+      toast("User created successfully.", "success");
+      await fetchUsers();
+    } catch (err: unknown) {
+      setAddError(err instanceof Error ? err.message : "Could not create the user.");
+    } finally {
+      setAddSaving(false);
+    }
+  };
 
   const fetchUsers = async () => {
     try {
@@ -102,6 +138,13 @@ export default function UsersPage() {
       user.email.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesRole && matchesStatus && matchesSearch;
   });
+
+  // Reset to page 1 whenever the filters/search change so we never land on an empty page.
+  useEffect(() => { setCurrentPage(1); }, [filterRole, filterStatus, searchQuery]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / PAGE_SIZE));
+  const pageStart = (currentPage - 1) * PAGE_SIZE;
+  const paginatedUsers = filteredUsers.slice(pageStart, pageStart + PAGE_SIZE);
 
   const getRoleBadgeColor = (role: string) => {
     switch (normalizeRole(role)) {
@@ -179,7 +222,10 @@ export default function UsersPage() {
                 </div>
 
                 <div className="flex items-end">
-                  <button className="px-6 py-2 bg-[#0d9488] text-white font-medium rounded-lg hover:bg-teal-700 transition-colors">
+                  <button
+                    onClick={() => { setAddForm({ name: "", email: "", password: "", phone: "", role: "patient" }); setAddError(""); setShowAdd(true); }}
+                    className="px-6 py-2 bg-[#0d9488] text-white font-medium rounded-lg hover:bg-teal-700 transition-colors"
+                  >
                     Add User
                   </button>
                 </div>
@@ -221,7 +267,7 @@ export default function UsersPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200">
-                    {filteredUsers.map((user) => {
+                    {paginatedUsers.map((user) => {
                       const uid = user._id || String(user.id);
                       const isActive = normalizeStatus(user.status) === "Active";
                       return (
@@ -295,16 +341,26 @@ export default function UsersPage() {
               {/* Pagination */}
               <div className="px-6 py-4 border-t border-slate-200 flex items-center justify-between">
                 <span className="text-sm text-slate-600">
-                  Showing {filteredUsers.length} of {users.length} users
+                  {filteredUsers.length === 0
+                    ? "No users match your filters"
+                    : `Showing ${pageStart + 1}–${Math.min(pageStart + PAGE_SIZE, filteredUsers.length)} of ${filteredUsers.length}`}
                 </span>
                 <div className="flex gap-2">
-                  <button className="px-3 py-1 border border-slate-300 rounded text-sm hover:bg-slate-50">
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1 border border-slate-300 rounded text-sm hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
                     Previous
                   </button>
-                  <button className="px-3 py-1 bg-[#0d9488] text-white rounded text-sm">
-                    1
-                  </button>
-                  <button className="px-3 py-1 border border-slate-300 rounded text-sm hover:bg-slate-50">
+                  <span className="px-3 py-1 bg-[#0d9488] text-white rounded text-sm">
+                    {currentPage} / {totalPages}
+                  </span>
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage >= totalPages}
+                    className="px-3 py-1 border border-slate-300 rounded text-sm hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
                     Next
                   </button>
                 </div>
@@ -314,6 +370,65 @@ export default function UsersPage() {
           </div>
         </main>
       </div>
+
+      {/* Add User modal */}
+      {showAdd && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => !addSaving && setShowAdd(false)}>
+          <div className="bg-white rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-start justify-between mb-4">
+              <h3 className="text-lg font-bold text-[#1a3c34]">Add a new user</h3>
+              <button onClick={() => !addSaving && setShowAdd(false)} className="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
+            </div>
+
+            {addError && (
+              <div className="mb-3 text-[13px] text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{addError}</div>
+            )}
+
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Full Name <span className="text-red-500">*</span></label>
+                <input value={addForm.name} onChange={(e) => setAddForm({ ...addForm, name: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]" placeholder="e.g. Ali Raza" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Email <span className="text-red-500">*</span></label>
+                <input type="email" value={addForm.email} onChange={(e) => setAddForm({ ...addForm, email: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]" placeholder="name@example.com" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Temporary Password <span className="text-red-500">*</span></label>
+                <input type="text" value={addForm.password} onChange={(e) => setAddForm({ ...addForm, password: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]" placeholder="min 6 characters" />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Phone</label>
+                  <input type="tel" value={addForm.phone} onChange={(e) => setAddForm({ ...addForm, phone: e.target.value })}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]" placeholder="+92 300 1234567" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Role</label>
+                  <select value={addForm.role} onChange={(e) => setAddForm({ ...addForm, role: e.target.value })}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]">
+                    <option value="patient">Patient</option>
+                    <option value="caregiver">Caregiver</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 mt-5">
+              <button onClick={() => setShowAdd(false)} disabled={addSaving}
+                className="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-300 text-slate-700 hover:bg-slate-50 disabled:opacity-50">Cancel</button>
+              <button onClick={handleCreateUser} disabled={addSaving}
+                className="px-5 py-2 rounded-lg text-sm font-semibold bg-[#0d9488] text-white hover:bg-teal-700 disabled:opacity-50">
+                {addSaving ? "Creating…" : "Create User"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
     </ProtectedRoute>
   );

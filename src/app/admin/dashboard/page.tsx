@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Topbar from "@/components/shared/Topbar";
 import AdminSidebar from "@/components/shared/AdminSidebar";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -35,6 +36,7 @@ interface ActivityItem {
 export default function AdminDashboard() {
   const { user } = useAuth();
   const [activePanel, setActivePanel] = useState("overview");
+  const router = useRouter();
   void activePanel;
 
   const [stats, setStats] = useState<DashboardStats>({});
@@ -290,7 +292,7 @@ export default function AdminDashboard() {
               <div className="bg-white rounded-2xl border border-[#e2e8f0] overflow-hidden reveal">
                 <div className="p-5 px-6 border-b border-[#e2e8f0] flex items-center justify-between">
                   <h3 className="text-base font-bold text-[#1a3c34]">System Health</h3>
-                  <button className="py-2 px-4 rounded-lg text-[13px] font-semibold border border-[#e2e8f0] bg-white text-[#64748b] cursor-pointer hover:border-[#0d9488] hover:text-[#0d9488] transition-colors">
+                  <button onClick={() => router.push("/admin/monitoring")} className="py-2 px-4 rounded-lg text-[13px] font-semibold border border-[#e2e8f0] bg-white text-[#64748b] cursor-pointer hover:border-[#0d9488] hover:text-[#0d9488] transition-colors">
                     Details
                   </button>
                 </div>
@@ -375,7 +377,7 @@ export default function AdminDashboard() {
               <div className="bg-white rounded-2xl border border-[#e2e8f0] overflow-hidden reveal">
                 <div className="p-5 px-6 border-b border-[#e2e8f0] flex items-center justify-between">
                   <h3 className="text-base font-bold text-[#1a3c34]">Recent Activity</h3>
-                  <button className="py-2 px-4 rounded-lg text-[13px] font-semibold border border-[#e2e8f0] bg-white text-[#64748b] cursor-pointer hover:border-[#0d9488] hover:text-[#0d9488] transition-colors">
+                  <button onClick={() => router.push("/admin/alerts")} className="py-2 px-4 rounded-lg text-[13px] font-semibold border border-[#e2e8f0] bg-white text-[#64748b] cursor-pointer hover:border-[#0d9488] hover:text-[#0d9488] transition-colors">
                     View All
                   </button>
                 </div>
@@ -461,7 +463,7 @@ export default function AdminDashboard() {
               <div className="bg-white rounded-2xl border border-[#e2e8f0] overflow-hidden reveal">
                 <div className="p-5 px-6 border-b border-[#e2e8f0] flex items-center justify-between">
                   <h3 className="text-base font-bold text-[#1a3c34]">Patient Compliance</h3>
-                  <button className="py-2 px-4 rounded-lg text-[13px] font-semibold border border-[#e2e8f0] bg-white text-[#64748b] cursor-pointer hover:border-[#0d9488] hover:text-[#0d9488] transition-colors">
+                  <button onClick={() => router.push("/admin/reports")} className="py-2 px-4 rounded-lg text-[13px] font-semibold border border-[#e2e8f0] bg-white text-[#64748b] cursor-pointer hover:border-[#0d9488] hover:text-[#0d9488] transition-colors">
                     Full Report
                   </button>
                 </div>
