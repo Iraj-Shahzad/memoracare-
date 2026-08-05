@@ -358,7 +358,9 @@ export default function FaceRecognitionPage() {
     setScanning(true);
     setResult(null);
     try {
-      const probe = await getDescriptor(videoRef.current);
+      // Average several frames so a single noisy/blurred frame doesn't throw the
+      // match off — the same stabilization used when enrolling.
+      const probe = await getAveragedDescriptor(videoRef.current, 4);
       if (!probe) {
         setResult({ name: "No face detected", relationship: "Please look at the camera", initials: "!", confidence: 0, unknown: true });
         speak(getLang() === "ur" ? "کوئی چہرہ نظر نہیں آیا۔ براہ کرم کیمرے کی طرف دیکھیں۔" : "No face detected. Please look at the camera.", getLang());
