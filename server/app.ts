@@ -34,7 +34,19 @@ export const setIo = (io: any) => {
 export function createApp() {
   const app = express();
 
-  app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+  // Allow local dev, the deployed frontend (CLIENT_URL), and any Vercel domain
+  // (covers preview + production deploys). Requests with no Origin (health
+  // checks, curl) are allowed too.
+  const allowedOrigins = ['http://localhost:3000', process.env.CLIENT_URL].filter(Boolean) as string[];
+  app.use(cors({
+    origin: (origin, cb) => {
+      if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+        return cb(null, true);
+      }
+      return cb(new Error('Not allowed by CORS'));
+    },
+    credentials: true,
+  }));
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());
