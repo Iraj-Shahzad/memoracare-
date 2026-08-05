@@ -1,6 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 "use client";
 
+/**
+ * PATIENT FACE RECOGNITION — helps the patient identify familiar people. All
+ * matching runs IN THE BROWSER with face-api.js (privacy: the photo isn't sent
+ * away to be identified). Enroll a known face, then Capture/upload to recognize.
+ *
+ * Key concepts: each face becomes a 128-number DESCRIPTOR (embedding); a live
+ * face is matched by nearest EUCLIDEAN DISTANCE against enrolled descriptors,
+ * accepted only under a 0.6 threshold; getUserMedia gives the webcam stream;
+ * captureFrameBlob draws the video onto a canvas -> JPEG so the real photo is
+ * saved (FormData multipart) alongside the descriptor; enrolment averages 5
+ * frames (getAveragedDescriptor) to cancel per-frame noise; each person's scans
+ * build a per-person image gallery (RecognitionLog stores a knownFace ref).
+ * NOTE: needs the model files in /public/models (git-ignored) or nothing loads.
+ * Viva line: "Browser-side face-api: 128-dim embeddings, nearest-neighbour by
+ * euclidean distance, 5-frame averaged enrolment for stability."
+ */
+
 import { useState, useEffect, useRef } from "react";
 import PatientSidebar from "@/components/shared/PatientSidebar";
 import Topbar from "@/components/shared/Topbar";

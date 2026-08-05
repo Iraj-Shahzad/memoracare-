@@ -1,6 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+/**
+ * PATIENT REPORTS — list of generated health reports on the left, a live
+ * preview on the right, and a "Generate New Report" modal.
+ *
+ * Key concepts: generating validates the date range (from < to, not future) and
+ * warns before creating a duplicate; downloads are AUTHENTICATED file downloads
+ * — fetch with the bearer token -> response.blob() -> a temporary object-URL on
+ * a hidden <a download> (a plain link can't send the token); a Set guards
+ * against accidental re-downloads; PDF is built server-side with pdfkit, Excel
+ * with exceljs; read-aloud summarizes the report via Web Speech.
+ * Viva line: "Authenticated downloads go through fetch->blob because a bare link
+ * can't carry the JWT; the files themselves are generated server-side."
+ */
+
 import { useState, useEffect } from "react";
 import PatientSidebar from "@/components/shared/PatientSidebar";
 import Topbar from "@/components/shared/Topbar";

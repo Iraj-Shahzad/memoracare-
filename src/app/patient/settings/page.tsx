@@ -1,6 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+/**
+ * PATIENT SETTINGS — Notifications, Accessibility, Privacy & Security, Data.
+ *
+ * Key concepts: device preferences live in localStorage (loadSettings/
+ * saveSettings) because they're "how this device behaves"; an app-wide applier
+ * makes font-size / high-contrast / text-to-speech take effect everywhere, not
+ * just here; notification toggles are REAL — the Topbar gates reminders/alerts
+ * on them; "Export My Data" downloads a server-generated PDF (apiDownload with
+ * the auth token); "Delete Account" is a type-to-confirm in-site modal calling
+ * DELETE /auth/me. (The fake "Email Notifications" toggle was removed.)
+ * Viva line: "Preferences persist locally and apply app-wide; the toggles
+ * actually gate behaviour, and destructive actions are behind typed confirms."
+ */
+
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import PatientSidebar from "@/components/shared/PatientSidebar";

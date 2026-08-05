@@ -1,6 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+/**
+ * PATIENT ROUTINES — the day's activities grouped into Morning/Afternoon/
+ * Evening/Night, with a circular progress ring, a day filter (All + Mon–Sun),
+ * "Read aloud", and a Weekly Report modal.
+ *
+ * Key concepts: routines are WEEKLY-RECURRING — runsOnDay() (using .some) does a
+ * STRICT match so a routine only shows on days it's actually scheduled for (the
+ * old "empty days = every day" bug is gone); useMemo caches the filtered list so
+ * it isn't recomputed every render; the progress ring is an SVG circle where
+ * strokeDashoffset = circumference * (1 - percent); completion status is only
+ * real for TODAY (other days show as scheduled); Read-aloud uses the Web Speech API.
+ * Viva line: "Weekday-recurring model with a strict day filter, memoized for
+ * performance, and an SVG-stroke progress ring."
+ */
+
 import { useState, useEffect, useMemo } from "react";
 import PatientSidebar from "@/components/shared/PatientSidebar";
 import Topbar from "@/components/shared/Topbar";

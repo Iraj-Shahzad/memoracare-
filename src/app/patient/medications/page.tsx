@@ -1,6 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 "use client";
 
+/**
+ * PATIENT MEDICATIONS — table of all medicines with filter tabs (All/Taken/
+ * Upcoming/Missed), search, a "Next Dose" banner, 4 summary cards, and a
+ * "Mark as Taken" action (+ details modal). Patients can only mark TAKEN;
+ * "missed" is decided by the backend scheduler, so no skip button here.
+ *
+ * Key concepts: Promise.all fetches meds + compliance in parallel; a map step
+ * NORMALIZES the raw backend docs into a clean UI model (todayStatus -> status,
+ * times -> schedule chips, compliance -> high/med/low); marking is idempotent
+ * per day on the backend, then a SILENT refetch keeps the table in sync;
+ * filtered list is derived (no extra state) from filter + search.
+ * Viva line: "I fetch in parallel, normalize backend shape into a UI model, and
+ * keep marking idempotent so compliance stays accurate."
+ */
+
 import { useState, useEffect } from "react";
 import PatientSidebar from "@/components/shared/PatientSidebar";
 import Topbar from "@/components/shared/Topbar";

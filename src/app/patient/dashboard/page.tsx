@@ -1,6 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 "use client";
 
+/**
+ * PATIENT DASHBOARD — the patient's landing screen.
+ * Shows 4 real stat cards (meds taken, routines done, weekly score, streak),
+ * "Upcoming Medications", "Today's Routine" (each routine is tickable), quick
+ * actions, and the assigned-caregiver card (real Call/Message via tel:/sms:).
+ *
+ * Key concepts: one aggregated dashboard API call (all counts computed on the
+ * backend = single source of truth); OPTIMISTIC routine tick (updates a local
+ * Set instantly, then refetches) whose persisted truth is the DB's todayStatus;
+ * `?.`/`??` guards so a half-loaded payload never crashes the page.
+ * Viva line: "Business numbers are computed once on the backend so every screen
+ * shows the same value; the UI just renders them and updates optimistically."
+ */
+
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import PatientSidebar from "@/components/shared/PatientSidebar";

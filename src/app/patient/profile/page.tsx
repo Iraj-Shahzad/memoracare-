@@ -1,6 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 "use client";
 
+/**
+ * PATIENT PROFILE — four editable sections: Personal, Care, Emergency Contacts,
+ * Caregiver. Each has its own edit mode + full form validation.
+ *
+ * Key concepts: per-section validate functions build an `errors` map; inputs
+ * turn red + show inline messages, and save is blocked until the map is empty;
+ * "Diagnosis" is now a grouped "Purpose" dropdown (app is general-purpose, not
+ * dementia-only) and "Allergies" -> "Precautions"; a real bug fixed here — the
+ * emergency contact save now sends the key `relationship` (the Mongoose field),
+ * not `relation`, which Mongoose was silently dropping (empty "( )").
+ * Viva line: "Every section validates into an errors map before saving, and I
+ * fixed a field-name mismatch that was silently losing the relationship."
+ */
+
 import { useState, useEffect } from "react";
 import PatientSidebar from "@/components/shared/PatientSidebar";
 import Topbar from "@/components/shared/Topbar";

@@ -1,6 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @next/next/no-img-element */
 "use client";
 
+/**
+ * PATIENT MEMORY GALLERY — photos of people, places and moments, to jog memory.
+ * Grid of memory cards, an "Add memory" modal, a preview modal, and read-aloud.
+ *
+ * Key concepts: adding a memory uploads an image via FormData (multipart —
+ * JSON can't carry a file); a validation CHAIN blocks incomplete/future-dated
+ * entries before saving; the "people" picker reuses names from Face Recognition
+ * (two modules feeding each other) plus a free-text "Other"; delete asks with an
+ * in-site confirm then optimistically removes from the list; read-aloud uses the
+ * Web Speech API; images load from the backend via API_HOST + imageUrl.
+ * Viva line: "Multipart upload with a full client-side validation chain, and it
+ * integrates the enrolled face names so the two features connect."
+ */
+
 import { useState, useEffect } from "react";
 import PatientSidebar from "@/components/shared/PatientSidebar";
 import Topbar from "@/components/shared/Topbar";

@@ -1,6 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 "use client";
 
+/**
+ * PATIENT ACTIVITY LOG — one timeline of everything: medications taken/missed,
+ * routines completed/missed, and face-recognition events, with type/date/search
+ * filters and pagination.
+ *
+ * Key concepts: Promise.all fetches two sources (activity log + face logs) in
+ * parallel, then a map NORMALIZES them into granular types (medication_taken,
+ * routine_missed, ...) — this is the fix for the old broken filter (backend sent
+ * "medication", the UI filtered for "medication_taken"); useMemo powers a
+ * composed filter (type + date range + search); pagination via slice; entries
+ * are grouped by date with "Today"/"Yesterday" labels (Object.entries).
+ * Viva line: "Two sources merged and normalized into one filterable, paginated,
+ * date-grouped timeline."
+ */
+
 import { useState, useMemo, useEffect } from "react";
 import PatientSidebar from "@/components/shared/PatientSidebar";
 import Topbar from "@/components/shared/Topbar";

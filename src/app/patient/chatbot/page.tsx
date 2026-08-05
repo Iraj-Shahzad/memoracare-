@@ -1,6 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 "use client";
 
+/**
+ * PATIENT CHATBOT — bilingual (English/Urdu) AI assistant with a chat history
+ * sidebar, typed + voice input, and spoken replies.
+ *
+ * Key concepts: OPTIMISTIC messaging (the user's bubble shows instantly, then a
+ * "typing" indicator until the reply arrives); the reply comes from the ML flow
+ * — POST /chat/message -> Node -> Flask /predict classifies the INTENT -> Node's
+ * buildReply answers with the patient's REAL data; voice IN is listenOnce()
+ * (speech-to-text, dropped into the box to review, not auto-sent) and voice OUT
+ * is speak() (text-to-speech), both from the browser Web Speech API; auto-scroll
+ * via a ref + scrollIntoView; graceful error bubble if the service is down.
+ * Viva line: "It's an intent-classifier chatbot, not generative — it recognizes
+ * what you asked, then replies with your real medicines/routines/family."
+ */
+
 import { useState, useRef, useEffect } from "react";
 import PatientSidebar from "@/components/shared/PatientSidebar";
 import ProtectedRoute from "@/components/ProtectedRoute";
