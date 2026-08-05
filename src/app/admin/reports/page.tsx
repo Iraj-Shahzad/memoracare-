@@ -6,7 +6,10 @@ import Topbar from "@/components/shared/Topbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
 import { useUI } from "@/components/ui/UIProvider";
-import { apiGet, apiPost, apiDelete } from "@/lib/api";
+import { apiGet, apiPost, apiDelete, apiDownload } from "@/lib/api";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const safeName = (t: string) => (t || "report").replace(/[^a-z0-9]+/gi, "_");
 
 interface Report {
   id: number;
@@ -57,12 +60,45 @@ export default function ReportsPage() {
   const handleGenerate = async () => {
     setGenerating(true);
     try {
-      await apiPost("/reports/generate", { type: "System Usage" });
+      await apiPost("/reports/generate", { type: "system" });
       await fetchReports();
+      toast("System report generated.", "success");
     } catch (err: unknown) {
       toast(err instanceof Error ? err.message : "Failed to generate report", "error");
     } finally {
       setGenerating(false);
+    }
+  };
+
+  // View: open the report PDF inline in a new tab (needs the auth token, so we
+  // fetch the blob rather than a plain link).
+  const handleView = async (report: Report) => {
+    const rid = report._id || String(report.id);
+    setActionLoading(rid + "view");
+    try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const res = await fetch(`${API_BASE}/reports/${rid}/download?format=pdf`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+      if (!res.ok) throw new Error("Could not open the report");
+      const url = URL.createObjectURL(await res.blob());
+      window.open(url, "_blank");
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+    } catch (err: unknown) {
+      toast(err instanceof Error ? err.message : "Could not open the report", "error");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  // Download: save the report PDF (was mistakenly wired to delete!).
+  const handleDownload = async (report: Report) => {
+    const rid = report._id || String(report.id);
+    setActionLoading(rid);
+    try {
+      await apiDownload(`/reports/${rid}/download?format=pdf`, `${safeName(report.title)}.pdf`);
+    } catch (err: unknown) {
+      toast(err instanceof Error ? err.message : "Could not download the report", "error");
+    } finally {
+      setActionLoading(null);
     }
   };
 
@@ -80,10 +116,21 @@ export default function ReportsPage() {
     }
   };
 
+  // Tab labels don't map 1:1 to backend report types (e.g. type "system" /
+  // "medication" / "routine"), so match by keyword instead of exact string.
+  const TAB_KEYWORDS: Record<string, string[]> = {
+    "Patient Activity": ["patient", "activity", "medication", "routine"],
+    "System Usage": ["system", "usage", "overview"],
+    Compliance: ["compliance"],
+    Security: ["security"],
+  };
   const filteredReports =
     activeTab === "All"
       ? reports
-      : reports.filter((r) => r.type === activeTab);
+      : reports.filter((r) => {
+          const hay = `${r.type} ${r.title}`.toLowerCase();
+          return (TAB_KEYWORDS[activeTab] || [activeTab.toLowerCase()]).some((k) => hay.includes(k));
+        });
 
   const totalReports = reports.length;
   const pendingReports = reports.filter(r => r.status === "Processing").length;
@@ -131,19 +178,19 @@ export default function ReportsPage() {
                 <p className="text-slate-600 text-sm font-medium mb-2">
                   Total Reports
                 </p>
-                <p className="text-3xl font-bold text-[#1a3c34]">{totalReports || 45}</p>
+                <p className="text-3xl font-bold text-[#1a3c34]">{totalReports}</p>
               </div>
               <div className="bg-white rounded-lg p-6 border border-slate-200">
                 <p className="text-slate-600 text-sm font-medium mb-2">
                   Pending
                 </p>
-                <p className="text-3xl font-bold text-[#1a3c34]">{pendingReports || 3}</p>
+                <p className="text-3xl font-bold text-[#1a3c34]">{pendingReports}</p>
               </div>
               <div className="bg-white rounded-lg p-6 border border-slate-200">
                 <p className="text-slate-600 text-sm font-medium mb-2">
                   Generated Today
                 </p>
-                <p className="text-3xl font-bold text-[#1a3c34]">{todayReports || 5}</p>
+                <p className="text-3xl font-bold text-[#1a3c34]">{todayReports}</p>
               </div>
             </div>
 
@@ -218,16 +265,27 @@ export default function ReportsPage() {
                     <p className="text-sm text-slate-500">{report.date}</p>
                   </div>
 
-                  <div className="flex gap-3 ml-4">
-                    <button className="px-4 py-2 border border-[#0d9488] text-[#0d9488] rounded-lg hover:bg-teal-50 transition-colors text-sm font-medium">
-                      View
+                  <div className="flex gap-2 ml-4">
+                    <button
+                      onClick={() => handleView(report)}
+                      disabled={actionLoading === rid + "view"}
+                      className="px-4 py-2 border border-[#0d9488] text-[#0d9488] rounded-lg hover:bg-teal-50 transition-colors text-sm font-medium disabled:opacity-50"
+                    >
+                      {actionLoading === rid + "view" ? "..." : "View"}
                     </button>
                     <button
-                      onClick={() => handleDelete(report)}
+                      onClick={() => handleDownload(report)}
                       disabled={actionLoading === rid}
                       className="px-4 py-2 bg-[#0d9488] text-white rounded-lg hover:bg-teal-700 transition-colors text-sm font-medium disabled:opacity-50"
                     >
                       {actionLoading === rid ? "..." : "Download"}
+                    </button>
+                    <button
+                      onClick={() => handleDelete(report)}
+                      title="Delete report"
+                      className="px-3 py-2 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors text-sm font-medium"
+                    >
+                      Delete
                     </button>
                   </div>
                 </div>

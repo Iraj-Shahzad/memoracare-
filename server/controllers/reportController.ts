@@ -352,7 +352,17 @@ function sendPdf(res: Response, ctx: ReportCtx) {
     });
   }
 
-  if (!report.data?.medication && !report.data?.routine && !medLogs.length && !routineLogs.length) {
+  // System-wide report (admin) — platform totals, not patient logs.
+  if (report.data?.system) {
+    const s = report.data.system;
+    section('System Overview');
+    stat('Total users', s.totalUsers);
+    stat('Patients', s.totalPatients);
+    stat('Caregivers', s.totalCaregivers);
+    stat('Open alerts', s.openAlerts);
+  }
+
+  if (!report.data?.medication && !report.data?.routine && !report.data?.system && !medLogs.length && !routineLogs.length) {
     doc.fillColor(GREY).fontSize(11).font('Helvetica').text('No records found for this period.');
   }
 
