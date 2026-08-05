@@ -2,7 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 import Alert from '../models/Alert';
 import Patient from '../models/Patient';
 import Caregiver from '../models/Caregiver';
+import User from '../models/User';
 import { canAccessPatient } from '../utils/access';
+import { sendMail, emailLayout } from '../utils/mailer';
 
 // @desc Get all alerts (admin/caregiver)
 // @route GET /api/alerts
@@ -86,10 +88,28 @@ export const createAlert = async (req: Request, res: Response, next: NextFunctio
 
     // Real-time: notify the assigned CAREGIVER(s) in their own room — an SOS
     // must reach the caregiver, not pop up on the patient's own screen.
+    const patientName = patientDoc?.user?.name || 'Patient';
     if (req.io) {
-      const patientName = patientDoc?.user?.name || 'Patient';
       caregiverIds.forEach((cgId) => {
         req.io.to(cgId.toString()).emit('alert', { type, severity, message, patientName });
+      });
+    }
+
+    // Also email the assigned caregiver(s) so an SOS / missed-dose reaches them
+    // even when the app is closed (best-effort; no-op if SMTP isn't configured).
+    if (caregiverIds.length) {
+      const caregivers = await User.find({ _id: { $in: caregiverIds } }).select('email name');
+      caregivers.forEach((cg: any) => {
+        if (!cg?.email) return;
+        sendMail({
+          to: cg.email,
+          subject: `MemoraCare alert${severity === 'critical' ? ' (URGENT)' : ''}: ${patientName}`,
+          html: emailLayout('New patient alert',
+            `<p><b>Patient:</b> ${patientName}</p>
+             <p><b>Type:</b> ${type} &nbsp; <b>Severity:</b> ${severity}</p>
+             <p><b>Message:</b> ${message}</p>
+             <p>Please open MemoraCare to review and respond.</p>`),
+        }).catch(() => {});
       });
     }
 

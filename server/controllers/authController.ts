@@ -4,6 +4,7 @@ import Patient from '../models/Patient';
 import Caregiver from '../models/Caregiver';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import { sendMail, emailLayout } from '../utils/mailer';
 
 const generateToken = (id: any) => {
   return jwt.sign({ id }, process.env.JWT_SECRET as string, {
@@ -39,6 +40,15 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
     }
 
     const token = generateToken(user._id);
+
+    // Welcome email (best-effort; no-op if SMTP isn't configured).
+    sendMail({
+      to: user.email,
+      subject: 'Welcome to MemoraCare',
+      html: emailLayout(`Welcome, ${user.name}!`,
+        `<p>Your MemoraCare account has been created as a <b>${safeRole}</b>.</p>
+         <p>You can now sign in and start using the app. If you didn't create this account, please ignore this email.</p>`),
+    }).catch(() => {});
 
     res.status(201).json({
       success: true,
