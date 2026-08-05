@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Logo from "@/components/icons/Logo";
 import { useAuth } from "@/context/AuthContext";
 import { useUI } from "@/components/ui/UIProvider";
+import { apiGet } from "@/lib/api";
 
 interface AdminNavItem {
   label: string;
@@ -18,6 +19,14 @@ export default function AdminSidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
+
+  // Live count of unresolved alerts for the Alerts badge (0 → no badge shown).
+  const [alertCount, setAlertCount] = useState(0);
+  useEffect(() => {
+    apiGet("/admin/stats")
+      .then((res) => setAlertCount(res?.stats?.activeAlerts ?? 0))
+      .catch(() => setAlertCount(0));
+  }, []);
 
   const adminNavItems: AdminNavItem[] = [
     {
@@ -47,7 +56,6 @@ export default function AdminSidebar() {
     {
       label: "Reports",
       href: "/admin/reports",
-      badge: "5",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
           <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
@@ -67,7 +75,7 @@ export default function AdminSidebar() {
     {
       label: "Alerts",
       href: "/admin/alerts",
-      badge: "3",
+      badge: alertCount > 0 ? String(alertCount) : undefined,
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
           <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
