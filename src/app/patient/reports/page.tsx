@@ -218,10 +218,10 @@ export default function ReportsPage() {
         <div className="flex-1 ml-0 md:ml-[260px] flex flex-col">
           <Topbar title="Medical Reports" subtitle="View and generate your health reports" />
 
-          <div className="flex-1 p-6 overflow-hidden">
-            <div className="flex gap-6 h-full">
+          <div className="flex-1 p-6 overflow-y-auto lg:overflow-hidden">
+            <div className="flex flex-col lg:flex-row gap-6 lg:h-full">
               {/* Left — list */}
-              <div className="w-[60%] flex flex-col">
+              <div className="w-full lg:w-[60%] flex flex-col">
                 <button
                   onClick={() => setShowGenerateModal(true)}
                   className="mb-6 inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#0d9488] text-white rounded-lg font-semibold hover:bg-[#0d8975] transition-colors w-full"
@@ -309,7 +309,7 @@ export default function ReportsPage() {
               </div>
 
               {/* Right — preview */}
-              <div className="w-[40%] bg-white rounded-lg border border-gray-200 p-6 flex flex-col overflow-y-auto">
+              <div className="w-full lg:w-[40%] bg-white rounded-lg border border-gray-200 p-6 flex flex-col overflow-y-auto">
                 {!selectedReport ? (
                   <div className="flex-1 flex items-center justify-center text-center text-[#64748b]">
                     <p>Select a report to preview it here.</p>

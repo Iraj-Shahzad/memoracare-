@@ -288,9 +288,9 @@ export default function ChatbotPage() {
 
       <main className="flex-1 ml-0 md:ml-[260px] flex flex-col" style={{ height: "100vh" }}>
         <div className="flex flex-1 overflow-hidden">
-          {/* Chat History Panel */}
+          {/* Chat History Panel — hidden on phones so the chat gets full width */}
           <div
-            className="flex flex-col overflow-hidden"
+            className="hidden md:flex flex-col overflow-hidden"
             style={{
               width: 280,
               background: "#fff",
