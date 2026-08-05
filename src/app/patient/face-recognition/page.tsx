@@ -824,12 +824,12 @@ export default function FaceRecognitionPage() {
                   style={{
                     width: 8,
                     height: 8,
-                    background: "#ef4444",
+                    background: cameraActive ? "#22c55e" : "#ef4444",
                     borderRadius: "50%",
-                    animation: "pulse 1.5s infinite",
+                    animation: cameraActive ? "pulse 1.5s infinite" : "none",
                   }}
                 />
-                <span>Camera Active</span>
+                <span>{cameraActive ? "Camera Active" : "Camera Off"}</span>
               </div>
 
               {/* Camera Info Chips */}
@@ -842,35 +842,6 @@ export default function FaceRecognitionPage() {
                   gap: 8,
                 }}
               >
-                <div
-                  style={{
-                    background: "rgba(0,0,0,0.5)",
-                    backdropFilter: "blur(8px)",
-                    padding: "8px 14px",
-                    borderRadius: 10,
-                    color: "#fff",
-                    fontSize: 12,
-                    fontWeight: 600,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 6,
-                  }}
-                >
-                  <svg
-                    viewBox="0 0 24 24"
-                    style={{
-                      width: 14,
-                      height: 14,
-                      stroke: "#0d9488",
-                      fill: "none",
-                      strokeWidth: 2,
-                    }}
-                  >
-                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
-                    <circle cx="12" cy="7" r="4" />
-                  </svg>
-                  1 Face Detected
-                </div>
                 <div
                   style={{
                     background: "rgba(0,0,0,0.5)",

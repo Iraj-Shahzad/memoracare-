@@ -306,7 +306,7 @@ export default function MedicationsPage() {
             <div className="bg-white rounded-[14px] border border-[#e2e8f0]" style={{ padding: 20 }}>
               <div className="flex items-center justify-between" style={{ marginBottom: 8 }}>
                 <div>
-                  <div className="text-[28px] font-extrabold text-[#1a3c34]">{takenToday}/{medications.reduce((s, m) => s + m.schedules.length, 0)}</div>
+                  <div className="text-[28px] font-extrabold text-[#1a3c34]">{takenToday}/{totalMeds}</div>
                   <div className="text-[13px] text-[#64748b] mt-0.5">Taken Today</div>
                 </div>
                 <div

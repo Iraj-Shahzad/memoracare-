@@ -51,9 +51,21 @@ export default function ChatbotPage() {
       type: "bot",
       content:
         `Assalam o Alaikum, ${userName}! I'm your MemoryCare assistant. I can help you with your medications, routines, family information, and more. How can I help you today?`,
-      timestamp: "1:10 PM",
+      // Stamped on mount (see effect below) to show the real time without an
+      // SSR/client hydration mismatch.
+      timestamp: "",
     },
   ]);
+
+  // Fill in the greeting's timestamp once, on the client, after mount.
+  useEffect(() => {
+    setMessages((prev) => {
+      if (!prev.length || prev[0].timestamp) return prev;
+      const stamped = [...prev];
+      stamped[0] = { ...stamped[0], timestamp: new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) };
+      return stamped;
+    });
+  }, []);
 
   const [inputValue, setInputValue] = useState("");
   const [selectedChat, setSelectedChat] = useState("today");

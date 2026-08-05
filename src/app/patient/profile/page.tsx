@@ -818,7 +818,7 @@ export default function ProfilePage() {
                       Patient
                     </span>
                   </div>
-                  <p className="text-gray-600 mt-2">Patient ID: {patientId ? `MEM-${patientId.slice(-6).toUpperCase()}` : "MEM-2024-001"}</p>
+                  <p className="text-gray-600 mt-2">Patient ID: {patientId ? `MEM-${patientId.slice(-6).toUpperCase()}` : "—"}</p>
                 </div>
               </div>
             </div>

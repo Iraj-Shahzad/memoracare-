@@ -46,9 +46,6 @@ export default function SettingsPage() {
     });
   };
 
-  // Two-factor / session timeout: extra saved prefs (no real enforcement yet).
-  const [twoFactorAuth, setTwoFactorAuth] = useState(false);
-
   // Change Password
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
@@ -202,16 +199,6 @@ export default function SettingsPage() {
                   </div>
                 )}
               </div>
-              <SettingRow label="Two-Factor Authentication" description="Saved preference — not yet enforced">
-                <ToggleSwitch enabled={twoFactorAuth} onChange={setTwoFactorAuth} />
-              </SettingRow>
-              <SettingRow label="Session Timeout" description="Auto logout after inactivity">
-                <select value={settings.sessionTimeout} onChange={(e) => update({ sessionTimeout: e.target.value })} className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]">
-                  <option value="15min">15 minutes</option>
-                  <option value="30min">30 minutes</option>
-                  <option value="1hr">1 hour</option>
-                </select>
-              </SettingRow>
             </div>
           </div>
 
