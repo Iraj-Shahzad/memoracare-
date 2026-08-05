@@ -35,9 +35,7 @@ interface ActivityItem {
 
 export default function AdminDashboard() {
   const { user } = useAuth();
-  const [activePanel, setActivePanel] = useState("overview");
   const router = useRouter();
-  void activePanel;
 
   const [stats, setStats] = useState<DashboardStats>({});
   const [health, setHealth] = useState<HealthService[]>([]);
@@ -180,7 +178,7 @@ export default function AdminDashboard() {
                 <div className="p-5 px-6 border-b border-[#e2e8f0] flex items-center justify-between">
                   <h3 className="text-base font-bold text-[#1a3c34]">Recent Users</h3>
                   <button
-                    onClick={() => setActivePanel("users")}
+                    onClick={() => router.push("/admin/users")}
                     className="py-2 px-4 rounded-lg text-[13px] font-semibold border border-[#e2e8f0] bg-white text-[#64748b] cursor-pointer hover:border-[#0d9488] hover:text-[#0d9488] transition-colors"
                   >
                     View All
