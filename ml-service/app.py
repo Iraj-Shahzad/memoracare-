@@ -119,6 +119,7 @@ def predict():
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("ML_PORT", 5001))
+    # Render (and most hosts) inject the port via $PORT; fall back to ML_PORT, then 5001 locally.
+    port = int(os.environ.get("PORT") or os.environ.get("ML_PORT") or 5001)
     print(f"MemoryCare ML service running on port {port}")
     app.run(host="0.0.0.0", port=port)
