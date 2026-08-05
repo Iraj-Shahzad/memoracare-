@@ -376,7 +376,7 @@ export default function ActivityLog() {
             {/* Filter Bar */}
             <div className="bg-white rounded-[15px] p-6 border border-slate-200 shadow-sm">
               <h3 className="text-sm font-semibold text-[#1a3c34] mb-4">Filter Activities</h3>
-              <div className="grid grid-cols-6 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
                 {/* Date From */}
                 <div>
                   <label className="text-xs font-medium text-slate-600 block mb-2">From Date</label>
