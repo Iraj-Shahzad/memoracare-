@@ -247,50 +247,68 @@ export default function FaceRecognitionPage() {
   };
 
   // Initialise: load the face-api models, start the webcam, load data.
+  // Load data + face-api models. (Camera is started separately, below, so it
+  // only attaches once the <video> element is actually on screen.)
   useEffect(() => {
     if (!patientId) return;
-    let stream: MediaStream | null = null;
     let cancelled = false;
-
     const init = async () => {
       setLoading(true);
       await Promise.all([fetchKnownFaces(), fetchLogs()]);
-      setLoading(false);
-
+      if (!cancelled) setLoading(false);
       try {
         await loadFaceApi();
-        if (cancelled) return;
-        setModelStatus("ready");
+        if (!cancelled) setModelStatus("ready");
       } catch (err) {
         console.error("Model load error:", err);
-        setModelStatus("error");
-        return;
+        if (!cancelled) setModelStatus("error");
       }
+    };
+    init();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [patientId]);
 
+  // Start the webcam only AFTER loading is done (so the <video> is mounted) and
+  // the models are ready. Attaching a stream to a not-yet-rendered <video> was
+  // silently leaving the camera inactive. Camera failures now surface as toasts
+  // (the #1 real cause is opening the app on a LAN IP over http — browsers only
+  // allow the camera on localhost or HTTPS).
+  useEffect(() => {
+    if (loading || modelStatus !== "ready" || cameraActive) return;
+    let cancelled = false;
+    (async () => {
       try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
-        streamRef.current = stream;
-        if (cancelled) {
-          stream.getTracks().forEach((t) => t.stop());
+        if (!navigator.mediaDevices?.getUserMedia) {
+          toast("This browser can't access the camera here. Use Chrome on localhost or an HTTPS URL.", "error");
           return;
         }
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode } });
+        streamRef.current = stream;
+        if (cancelled) { stream.getTracks().forEach((t) => t.stop()); return; }
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
           await videoRef.current.play().catch(() => {});
           setCameraActive(true);
         }
-      } catch (err) {
+      } catch (err: unknown) {
         console.error("Camera error:", err);
+        const name = (err as { name?: string })?.name || "";
+        if (name === "NotAllowedError" || name === "SecurityError") {
+          toast("Camera access is blocked. Allow the camera for this site (address-bar icon) and reload.", "error");
+        } else if (name === "NotFoundError" || name === "DevicesNotFoundError") {
+          toast("No camera was found on this device.", "error");
+        } else {
+          toast("Could not start the camera. If you're not on localhost, the browser blocks it unless the site is HTTPS.", "error");
+        }
       }
-    };
-
-    init();
-    return () => {
-      cancelled = true;
-      if (stream) stream.getTracks().forEach((t) => t.stop());
-    };
+    })();
+    return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [patientId]);
+  }, [loading, modelStatus, cameraActive, facingMode]);
+
+  // Stop the camera when leaving the page.
+  useEffect(() => () => { streamRef.current?.getTracks().forEach((t) => t.stop()); }, []);
 
   // Switch-camera only makes sense on phones (front/back). Hidden on desktop.
   useEffect(() => {
