@@ -298,10 +298,15 @@ export const getChatHistory = async (req: Request, res: Response, next: NextFunc
 // @route DELETE /api/chat/:id
 export const deleteChatEntry = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const entry = await ChatHistory.findByIdAndDelete(req.params.id);
+    const entry: any = await ChatHistory.findById(req.params.id);
     if (!entry) {
       return res.status(404).json({ success: false, message: 'Chat entry not found' });
     }
+    // Only the owning patient (or their caregiver / admin) may delete it.
+    if (!(await canAccessPatient(req.user, entry.patient?.toString()))) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this chat entry' });
+    }
+    await entry.deleteOne();
     res.status(200).json({ success: true, message: 'Chat entry deleted' });
   } catch (err: any) {
     next(err);

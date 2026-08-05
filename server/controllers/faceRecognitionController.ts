@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import RecognitionLog from '../models/RecognitionLog';
 import KnownFace from '../models/KnownFace';
 import Alert from '../models/Alert';
+import Patient from '../models/Patient';
 import { canAccessPatient } from '../utils/access';
 import multer from 'multer';
 import path from 'path';
@@ -91,11 +92,15 @@ export const recognizeFace = async (req: Request, res: Response, next: NextFunct
         message: 'An unrecognized face was detected',
       });
       if (req.io) {
-        req.io.to(patientId.toString()).emit('alert', {
-          type: 'face_unknown',
-          severity: 'warning',
-          patient: patientId,
-          message: 'Unrecognized face detected',
+        // Emit to the patient's assigned caregiver(s), not the patient's own room.
+        const pDoc: any = await Patient.findById(patientId).select('assignedCaregivers');
+        (pDoc?.assignedCaregivers || []).forEach((cgId: any) => {
+          req.io.to(cgId.toString()).emit('alert', {
+            type: 'face_unknown',
+            severity: 'warning',
+            patient: patientId,
+            message: 'Unrecognized face detected',
+          });
         });
       }
     }

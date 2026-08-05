@@ -6,6 +6,16 @@ import MedicationLog from '../models/MedicationLog';
 import RoutineLog from '../models/RoutineLog';
 import Reminder from '../models/Reminder';
 import Alert from '../models/Alert';
+import Patient from '../models/Patient';
+
+// Send an alert to a patient's assigned caregiver(s) — NOT the patient's own
+// screen (caregivers join their user-id room; that's where alerts must land).
+async function emitAlertToCaregivers(io: any, patientId: any, payload: any) {
+  try {
+    const p: any = await Patient.findById(patientId).select('assignedCaregivers');
+    (p?.assignedCaregivers || []).forEach((cgId: any) => io.to(cgId.toString()).emit('alert', payload));
+  } catch { /* best-effort */ }
+}
 
 // Minutes past a scheduled time before we consider a dose/routine "missed".
 const GRACE_MINUTES = 30;
@@ -181,7 +191,7 @@ async function detectMissed(io: any) {
       message: medMsg,
     });
 
-    io.to(med.patient.toString()).emit('alert', {
+    await emitAlertToCaregivers(io, med.patient, {
       type: 'medication_missed',
       severity: 'warning',
       patient: med.patient,
@@ -222,7 +232,7 @@ async function detectMissed(io: any) {
       message: routineMsg,
     });
 
-    io.to(routine.patient.toString()).emit('alert', {
+    await emitAlertToCaregivers(io, routine.patient, {
       type: 'routine_missed',
       severity: routine.priority === 'high' ? 'critical' : 'warning',
       patient: routine.patient,

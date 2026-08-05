@@ -8,6 +8,7 @@ import Medication from '../models/Medication';
 import MedicationLog from '../models/MedicationLog';
 import Routine from '../models/Routine';
 import RoutineLog from '../models/RoutineLog';
+import { canAccessPatient } from '../utils/access';
 
 // Shared helpers so the patients list and the dashboard compute identical
 // fields — a single source of truth means new patients are always consistent.
@@ -237,6 +238,14 @@ export const assignPatient = async (req: Request, res: Response, next: NextFunct
       return res.status(404).json({ success: false, message: 'Caregiver profile not found' });
     }
 
+    // Prevent "stealing" another caregiver's patient: a caregiver may only
+    // assign a patient who is currently unassigned (or already theirs). Admins
+    // aren't restricted here (they don't use this route).
+    const already = (patient.assignedCaregivers || []).map((id) => id.toString());
+    if (already.length && !already.includes(req.user.id.toString())) {
+      return res.status(403).json({ success: false, message: 'This patient is already assigned to another caregiver.' });
+    }
+
     // Add to both sides of the relationship.
     // Compare as strings: assignedPatients holds ObjectIds, patientId is a string,
     // so a raw .includes() would always be false and create duplicates.
@@ -284,6 +293,10 @@ export const unassignPatient = async (req: Request, res: Response, next: NextFun
 export const getPatientOverview = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { patientId } = req.params;
+    // Only the assigned caregiver (or admin) may view a patient's overview.
+    if (!(await canAccessPatient(req.user, patientId))) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
+    }
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
@@ -342,6 +355,10 @@ export const getMyNotes = async (req: Request, res: Response, next: NextFunction
 export const createNote = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { patient, content, category } = req.body;
+    // Only allow notes on a patient this caregiver is assigned to.
+    if (!(await canAccessPatient(req.user, patient))) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
+    }
 
     const note = await Note.create({
       patient,
