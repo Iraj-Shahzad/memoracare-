@@ -58,7 +58,11 @@ _AUG_PATH = os.path.join(BASE_DIR, "data", "intents.augmented.json")
 _SEED_PATH = os.path.join(BASE_DIR, "data", "intents.json")
 DATA_PATH = _AUG_PATH if os.path.exists(_AUG_PATH) else _SEED_PATH
 MODEL_DIR = os.path.join(BASE_DIR, "model")
+# Opt-in high-accuracy mode: multilingual sentence embeddings instead of TF-IDF.
+# Enable with:  set USE_EMBEDDINGS=1  (PowerShell: $env:USE_EMBEDDINGS="1")
+USE_EMBEDDINGS = os.environ.get("USE_EMBEDDINGS") == "1"
 print(f"Training data: {os.path.basename(DATA_PATH)}")
+print(f"Feature mode: {'sentence-embeddings' if USE_EMBEDDINGS else 'tfidf'}")
 os.makedirs(MODEL_DIR, exist_ok=True)
 
 # ---------------------------------------------------------------------------
@@ -78,25 +82,31 @@ for intent in intents["intents"]:
 classes = sorted(set(tags))
 
 # ---------------------------------------------------------------------------
-# 2. TF-IDF features (unigrams + bigrams) over normalized text
+# 2. Features — sentence embeddings (opt-in) OR TF-IDF (default)
 # ---------------------------------------------------------------------------
-corpus = [normalize(p) for p in patterns]
-# Two feature views combined:
-#  - WORD unigrams+bigrams: capture phrases ("feel sick" vs "feel sad").
-#  - CHARACTER n-grams (3-5, within word boundaries): capture sub-word patterns,
-#    a big help for Roman-Urdu / Urdu spelling variation and typos.
-# max_features caps keep memory bounded (important for the augmented 10k set).
-vectorizer = FeatureUnion([
-    ("word", TfidfVectorizer(analyzer="word", ngram_range=(1, 2), sublinear_tf=True, min_df=1, max_features=4000)),
-    ("char", TfidfVectorizer(analyzer="char_wb", ngram_range=(3, 5), sublinear_tf=True, min_df=2, max_features=6000)),
-])
-X = vectorizer.fit_transform(corpus).toarray().astype("float32")
+vectorizer = None
+if USE_EMBEDDINGS:
+    # Meaning-aware vectors: "I feel sick" and "I feel sad" separate cleanly.
+    from embed_utils import embed
+    print("Encoding utterances with the multilingual sentence model (first run downloads it)...")
+    X = embed(patterns)  # raw text — the transformer does its own tokenization
+else:
+    # TF-IDF: WORD unigrams+bigrams ("feel sick" vs "feel sad") + CHARACTER
+    # n-grams (Roman-Urdu / Urdu spelling variation + typos). max_features caps
+    # keep memory bounded for the augmented 10k set.
+    corpus = [normalize(p) for p in patterns]
+    vectorizer = FeatureUnion([
+        ("word", TfidfVectorizer(analyzer="word", ngram_range=(1, 2), sublinear_tf=True, min_df=1, max_features=4000)),
+        ("char", TfidfVectorizer(analyzer="char_wb", ngram_range=(3, 5), sublinear_tf=True, min_df=2, max_features=6000)),
+    ])
+    X = vectorizer.fit_transform(corpus).toarray().astype("float32")
+
 y = np.array([classes.index(t) for t in tags])
 
 input_dim = X.shape[1]
 print(f"Documents (training examples): {len(patterns)}")
 print(f"Intent classes ({len(classes)}): {classes}")
-print(f"TF-IDF features (word 1-2gram + char 3-5gram): {input_dim}")
+print(f"Feature vector size: {input_dim}")
 
 # One-hot encode labels
 Y = np.zeros((len(y), len(classes)), dtype=np.float32)
@@ -220,13 +230,17 @@ model = build_model(input_dim, len(classes))
 model.fit(X, Y, epochs=final_epochs, batch_size=BATCH_SIZE, verbose=0)
 
 # ---------------------------------------------------------------------------
-# 6. Save artifacts (model + fitted vectorizer + classes)
+# 6. Save artifacts (model + classes + feature mode; vectorizer only for TF-IDF)
 # ---------------------------------------------------------------------------
 model.save(os.path.join(MODEL_DIR, "chatbot_model.h5"))
-with open(os.path.join(MODEL_DIR, "vectorizer.pkl"), "wb") as f:
-    pickle.dump(vectorizer, f)
 with open(os.path.join(MODEL_DIR, "classes.pkl"), "wb") as f:
     pickle.dump(classes, f)
+# A mode marker tells app.py how to turn a message into features.
+with open(os.path.join(MODEL_DIR, "mode.txt"), "w", encoding="utf-8") as f:
+    f.write("embeddings" if USE_EMBEDDINGS else "tfidf")
+if not USE_EMBEDDINGS:
+    with open(os.path.join(MODEL_DIR, "vectorizer.pkl"), "wb") as f:
+        pickle.dump(vectorizer, f)
 
-print(f"\nSaved model + vectorizer + classes to: {MODEL_DIR}")
+print(f"\nSaved model + classes ({'embeddings' if USE_EMBEDDINGS else 'tfidf'} mode) to: {MODEL_DIR}")
 print("Done. Now run:  python app.py")

@@ -36,12 +36,25 @@ ERROR_THRESHOLD = float(os.environ.get("ML_THRESHOLD", 0.5))
 # Load artifacts produced by train.py
 with open(DATA_PATH, "r", encoding="utf-8") as f:
     intents = json.load(f)
-with open(os.path.join(MODEL_DIR, "vectorizer.pkl"), "rb") as f:
-    vectorizer = pickle.load(f)
 with open(os.path.join(MODEL_DIR, "classes.pkl"), "rb") as f:
     classes = pickle.load(f)
 
+# Feature mode marker: "embeddings" (sentence transformer) or "tfidf" (default).
+_mode_path = os.path.join(MODEL_DIR, "mode.txt")
+MODE = "tfidf"
+if os.path.exists(_mode_path):
+    with open(_mode_path, "r", encoding="utf-8") as f:
+        MODE = f.read().strip()
+
+vectorizer = None
+if MODE == "embeddings":
+    from embed_utils import embed as _embed  # lazy: loads the sentence model
+else:
+    with open(os.path.join(MODEL_DIR, "vectorizer.pkl"), "rb") as f:
+        vectorizer = pickle.load(f)
+
 model = load_model(os.path.join(MODEL_DIR, "chatbot_model.h5"))
+print(f"Feature mode: {MODE}")
 
 app = Flask(__name__)
 CORS(app)
@@ -51,8 +64,11 @@ CORS(app)
 # Inference helpers
 # ---------------------------------------------------------------------------
 def predict_intent(sentence):
-    # Same normalization + TF-IDF vectorizer used at training time.
-    features = vectorizer.transform([normalize(sentence)]).toarray().astype("float32")
+    # Build features exactly as training did, per mode.
+    if MODE == "embeddings":
+        features = _embed([sentence])
+    else:
+        features = vectorizer.transform([normalize(sentence)]).toarray().astype("float32")
     probs = model.predict(features, verbose=0)[0]
     top_idx = int(np.argmax(probs))
     confidence = float(probs[top_idx])

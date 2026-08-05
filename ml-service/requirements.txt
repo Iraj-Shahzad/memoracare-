@@ -4,3 +4,8 @@ tensorflow==2.16.1
 nltk==3.8.1
 numpy==1.26.4
 scikit-learn==1.4.2
+
+# Optional — only for high-accuracy embeddings mode (USE_EMBEDDINGS=1).
+# Pulls PyTorch and downloads a ~470MB multilingual model on first run.
+# Install separately when you want it:  pip install sentence-transformers
+# sentence-transformers>=2.2.2
