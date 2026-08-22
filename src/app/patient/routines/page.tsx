@@ -335,7 +335,12 @@ export default function RoutinesPage() {
                 {section.routines.map((routine) => {
                   const badge = getStatusBadge(routine.status);
                   const dotClass = getDotStyle(routine.status);
-                  const canLog = (isToday || viewAll) && routine.status !== "done";
+                  // Completion is only real for TODAY, so only allow ticking a
+                  // routine that actually runs today: either we're viewing today
+                  // directly, or we're in "All" and this routine is scheduled today.
+                  const canLog =
+                    routine.status !== "done" &&
+                    ((!viewAll && isToday) || (viewAll && runsOnDay(routine.days, todayShort)));
                   return (
                     <div key={routine.id} className="relative flex items-center justify-between bg-white rounded-[14px] border border-[#e2e8f0] hover:border-[#0d9488] transition-all" style={{ padding: 20, marginBottom: 12, marginLeft: 24 }}>
                       <div className={`absolute rounded-full border-[3px] ${dotClass}`} style={{ width: 14, height: 14, left: -33, top: "50%", transform: "translateY(-50%)", zIndex: 1 }} />
