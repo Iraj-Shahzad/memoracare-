@@ -60,7 +60,7 @@ export const getSystemStats = async (req: Request, res: Response, next: NextFunc
 };
 
 // @desc Get system health
-// @route GET /api/admin/health
+// @route GET /api/admin/system-health
 export const getSystemHealth = async (req: Request, res: Response, next: NextFunction) => {
   try {
     // Mongoose readyState: 1 === connected; anything else is treated as down.
@@ -152,7 +152,7 @@ export const getActivityLog = async (req: Request, res: Response, next: NextFunc
         description: `New user: ${u.name} (${u.role})`,
         date: u.createdAt,
       })),
-    ].sort((a, b) => new Date(b.date) - new Date(a.date)); // newest-first across all sources
+    ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()); // newest-first across all sources
 
     // Pagination is done in memory because the feed is a merge of three collections.
     const paginated = activities.slice((page - 1) * limit, page * limit);

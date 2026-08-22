@@ -18,6 +18,15 @@ export const submitContact = async (req: Request, res: Response, next: NextFunct
   try {
     const { name, email, phone, subject, message } = req.body;
 
+    // This is the one PUBLIC write endpoint, so validate the key fields here
+    // (there is no auth/express-validator layer in front of it).
+    if (!name || !name.trim() || !message || !message.trim()) {
+      return res.status(400).json({ success: false, message: 'Name and message are required' });
+    }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ success: false, message: 'Please provide a valid email address' });
+    }
+
     const contact = await Contact.create({
       name,
       email,

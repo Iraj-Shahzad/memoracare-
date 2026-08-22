@@ -90,6 +90,12 @@ export const generateReport = async (req: Request, res: Response, next: NextFunc
     // System-wide report (admin): not tied to a single patient. This is what the
     // admin "Generate Report" button produces.
     if (type === 'system' || (!patientId && req.user.role === 'admin')) {
+      // SECURITY: system reports expose platform-wide aggregates, so only an
+      // admin may generate one. Without this a patient/caregiver could POST
+      // { type: 'system' } and read global counts inline.
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: 'Not authorized to generate system reports' });
+      }
       const [totalUsers, totalPatients, totalCaregivers, openAlerts] = await Promise.all([
         User.countDocuments({}),
         Patient.countDocuments({}),
@@ -232,6 +238,9 @@ export const downloadReport = async (req: Request, res: Response, next: NextFunc
     }
     return sendPdf(res, ctx);
   } catch (err: any) {
+    // The PDF/Excel stream may already have started — avoid writing JSON onto a
+    // committed response.
+    if (res.headersSent) return next(err);
     next(err);
   }
 };

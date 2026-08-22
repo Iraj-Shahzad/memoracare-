@@ -21,8 +21,11 @@ import Patient from '../models/Patient';
  * @returns {Promise<boolean>}
  */
 async function canAccessPatient(user: any, patientId: string) {
-  if (!user || !patientId) return false;
+  if (!user) return false;
+  // Admin first — an admin may act on records with no patient at all (e.g. a
+  // system-level alert), so this must short-circuit BEFORE the patientId guard.
   if (user.role === 'admin') return true;
+  if (!patientId) return false;
 
   const patient = await Patient.findById(patientId).select('user assignedCaregivers');
   if (!patient) return false;
