@@ -52,7 +52,7 @@ export default function AlertsPage() {
         message: (a.message || a.title || "") as string,
         severity: ((a.severity || a.level || "INFO") as string).toUpperCase() as Alert["severity"],
         timestamp: a.createdAt ? new Date(a.createdAt as string).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : (a.timestamp as string) || "N/A",
-        status: (a.resolved || a.status === "Resolved" ? "Resolved" : "Active") as Alert["status"],
+        status: (a.isResolved || a.resolved || a.status === "Resolved" ? "Resolved" : "Active") as Alert["status"],
       })) : [];
       setAlerts(mapped);
     } catch (err: unknown) {

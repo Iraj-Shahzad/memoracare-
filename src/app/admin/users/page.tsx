@@ -88,7 +88,9 @@ export default function UsersPage() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await apiGet("/users");
+      // Pull a high limit so client-side search/filter/pagination see all users
+      // (the API defaults to 20, which would hide user #21+).
+      const res = await apiGet("/users?limit=1000");
       const usersData = res.data || res.users || res || [];
       const mapped = Array.isArray(usersData) ? usersData.map((u: Record<string, unknown>, idx: number) => ({
         id: idx + 1,

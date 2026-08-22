@@ -41,7 +41,10 @@ export default function SecurityPage() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const res = await apiGet("/users");
+        // High limit so the derived security counts cover ALL users, not just
+        // the API's default first 20 (which would undercount and disagree with
+        // the dashboard's /admin/stats totals).
+        const res = await apiGet("/users?limit=1000");
         const list = res.data || res.users || res || [];
         setUsers(Array.isArray(list) ? list : []);
       } catch (err: unknown) {

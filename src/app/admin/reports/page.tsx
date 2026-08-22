@@ -35,6 +35,16 @@ interface Report {
   status: "Ready" | "Processing";
 }
 
+// Map raw backend report-type enums to the friendly labels the badge styles.
+const TYPE_LABELS: Record<string, Report["type"]> = {
+  system: "System Usage",
+  usage: "System Usage",
+  patient: "Patient Activity",
+  activity: "Patient Activity",
+  compliance: "Compliance",
+  security: "Security",
+};
+
 export default function ReportsPage() {
   const { user } = useAuth();
   void user;
@@ -56,7 +66,8 @@ export default function ReportsPage() {
         id: idx + 1,
         _id: (r._id || r.id || "") as string,
         title: (r.title || r.name || "") as string,
-        type: (r.type || r.category || "System Usage") as Report["type"],
+        // Map raw backend type enums to the friendly labels the badge styles.
+        type: (TYPE_LABELS[String(r.type || r.category || "")] || r.type || "System Usage") as Report["type"],
         date: r.createdAt ? new Date(r.createdAt as string).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : (r.date as string) || "N/A",
         status: (r.status === "Processing" || r.status === "processing" ? "Processing" : "Ready") as Report["status"],
       })) : [];
@@ -245,6 +256,10 @@ export default function ReportsPage() {
               <div className="flex items-center justify-center py-12">
                 <div className="w-10 h-10 border-[3px] border-[#0d9488] border-t-transparent rounded-full animate-spin" />
               </div>
+            ) : filteredReports.length === 0 ? (
+              <div className="bg-white rounded-lg border border-slate-200 py-12 text-center text-sm text-slate-500">
+                No reports found. Use “Generate System Report” above to create one.
+              </div>
             ) : (
             /* Reports List */
             <div className="space-y-4">
@@ -297,8 +312,9 @@ export default function ReportsPage() {
                     </button>
                     <button
                       onClick={() => handleDelete(report)}
+                      disabled={actionLoading === rid || actionLoading === rid + "view"}
                       title="Delete report"
-                      className="px-3 py-2 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors text-sm font-medium"
+                      className="px-3 py-2 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors text-sm font-medium disabled:opacity-50"
                     >
                       Delete
                     </button>
