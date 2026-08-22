@@ -66,7 +66,7 @@ interface Report {
   data?: any;
 }
 
-const FILTER_TABS = ["All", "Medication", "Routine", "Weekly Summary", "Monthly Overview"];
+const FILTER_TABS = ["All", "Medication", "Routine", "Compliance", "Weekly Summary", "Monthly Overview"];
 
 const titleCase = (s: string) =>
   (s || "").replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());

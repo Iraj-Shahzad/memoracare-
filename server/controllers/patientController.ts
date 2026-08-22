@@ -264,6 +264,9 @@ export const exportPatientData = async (req: Request, res: Response, next: NextF
 
     doc.end();
   } catch (err: any) {
+    // If the PDF stream already started, headers are sent — don't try to write
+    // a JSON error onto a committed response; let Express abort the stream.
+    if (res.headersSent) return next(err);
     next(err);
   }
 };

@@ -239,17 +239,17 @@ export default function ProfilePage() {
         medicalHistory,
         // NOTE: the Patient model field is `relationship` — sending `relation`
         // was silently dropped by Mongoose, which is why relationships showed
-        // as empty "( )". We now send the correct key.
+        // as empty "( )". We now send the correct key. We also omit a blank
+        // secondary contact so we don't persist an empty {name:"",...} entry.
         emergencyContacts: [
           { name: primaryContact, relationship: primaryRelation, phone: primaryPhone },
-          { name: secondaryContact, relationship: secondaryRelation, phone: secondaryPhone },
+          ...(secondaryContact.trim()
+            ? [{ name: secondaryContact, relationship: secondaryRelation, phone: secondaryPhone }]
+            : []),
         ],
-        caregiver: {
-          name: caregiverName,
-          relationship: caregiverRelation,
-          phone: caregiverPhone,
-          email: caregiverEmail,
-        },
+        // NOTE: `caregiver` is intentionally NOT sent — the displayed caregiver is
+        // the real assigned caregiver (populated from assignedCaregivers) and is
+        // not a patient-editable field on the Patient model, so it's read-only.
       });
       setErrors({});
       setEditMode(null);
@@ -866,16 +866,12 @@ export default function ProfilePage() {
             {renderEmergencyContacts()}
           </div>
 
-          {/* Caregiver Information Section */}
+          {/* Caregiver Information Section — read-only: this is the caregiver the
+              admin/caregiver assigned to this patient, not a patient-editable field. */}
           <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-[#1a3c34]">Caregiver Information</h2>
-              <button
-                onClick={() => toggleEdit("caregiver")}
-                className="px-4 py-2 text-[#0d9488] font-medium hover:bg-[#f0fdf4] rounded-lg transition"
-              >
-                {editMode === "caregiver" ? "Cancel" : "Edit"}
-              </button>
+              <span className="text-xs text-gray-400">Assigned by your care team</span>
             </div>
             {renderCaregiverInfo()}
           </div>

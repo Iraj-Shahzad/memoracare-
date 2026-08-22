@@ -39,6 +39,8 @@ export default function Topbar({
   const [voiceRem, setVoiceRem] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showSosConfirm, setShowSosConfirm] = useState(false);
+  const [sosNotice, setSosNotice] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [showNotifs, setShowNotifs] = useState(false);
   // Live clock tick so the greeting stays in sync with the viewer's local
   // (device/country) time even if the page is left open across the hour.
@@ -152,27 +154,40 @@ export default function Topbar({
 
   const dismissToast = (id: number) => setToasts((prev) => prev.filter((t) => t.id !== id));
 
-  const handleSOS = async () => {
+  // SOS uses an in-site confirm modal + notice (not native window.confirm/alert),
+  // to match the rest of the app's UX.
+  const handleSOS = () => {
     if (user?.role !== 'patient' || !patientId) {
-      window.alert('SOS is available for patient accounts.');
+      setSosNotice({ type: 'error', text: 'SOS is available for patient accounts.' });
       return;
     }
-    if (!window.confirm('Send an emergency SOS alert to your caregiver?')) return;
+    setShowSosConfirm(true);
+  };
+
+  const confirmSos = async () => {
+    setShowSosConfirm(false);
     try {
       setSosSending(true);
       await apiPost('/alerts', {
         patient: patientId,
         type: 'sos',
         severity: 'critical',
-        message: `SOS: ${user.name || 'Patient'} needs immediate help.`,
+        message: `SOS: ${user?.name || 'Patient'} needs immediate help.`,
       });
-      window.alert('SOS sent — your caregiver has been alerted.');
+      setSosNotice({ type: 'success', text: 'SOS sent — your caregiver has been alerted.' });
     } catch {
-      window.alert('Could not send SOS. Please contact your caregiver directly.');
+      setSosNotice({ type: 'error', text: 'Could not send SOS. Please contact your caregiver directly.' });
     } finally {
       setSosSending(false);
     }
   };
+
+  // Auto-dismiss the SOS notice after a few seconds.
+  useEffect(() => {
+    if (!sosNotice) return;
+    const t = window.setTimeout(() => setSosNotice(null), 5000);
+    return () => window.clearTimeout(t);
+  }, [sosNotice]);
   return (
     <div className="bg-white pl-16 pr-4 md:px-8 py-4 flex items-center justify-between border-b border-slate-200 sticky top-0 z-40">
       <div>
@@ -327,6 +342,30 @@ export default function Topbar({
               </button>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* SOS confirmation (in-site, not a browser popup) */}
+      {showSosConfirm && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4" onClick={() => setShowSosConfirm(false)}>
+          <div className="bg-white rounded-2xl w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-lg font-bold text-[#1a3c34] mb-1">Send emergency SOS?</h3>
+            <p className="text-sm text-slate-600 mb-5">This immediately alerts your caregiver that you need help.</p>
+            <div className="flex justify-end gap-3">
+              <button onClick={() => setShowSosConfirm(false)} className="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-300 text-slate-700 hover:bg-slate-50">Cancel</button>
+              <button onClick={confirmSos} disabled={sosSending} className="px-5 py-2 rounded-lg text-sm font-semibold bg-red-600 text-white hover:bg-red-700 disabled:opacity-60">{sosSending ? 'Sending…' : 'Send SOS'}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SOS result notice (in-site toast) */}
+      {sosNotice && (
+        <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-[70] px-5 py-3 rounded-xl shadow-lg text-sm font-semibold text-white"
+          style={{ background: sosNotice.type === 'success' ? '#16a34a' : '#dc2626' }}
+          role="status"
+        >
+          {sosNotice.text}
         </div>
       )}
 

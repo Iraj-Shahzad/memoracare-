@@ -109,7 +109,8 @@ export default function ActivityLog() {
           total: entries.length,
           medsTaken: entries.filter((a) => a.type === "medication_taken").length,
           routinesCompleted: entries.filter((a) => a.type === "routine_completed").length,
-          faceRecognitions: entries.filter((a) => a.type === "face_recognition").length,
+          // Only successful identifications (exclude "unknown" scans, which render as warnings).
+          faceRecognitions: entries.filter((a) => a.type === "face_recognition" && a.status === "completed").length,
         });
       } catch (err) {
         console.error("Activity log fetch error:", err);
@@ -129,8 +130,6 @@ export default function ActivityLog() {
           medications: ["medication_taken", "medication_missed"],
           routines: ["routine_completed", "routine_missed"],
           face_recognition: ["face_recognition"],
-          chatbot: ["chatbot"],
-          emergency: ["sos"],
         };
         if (!typeMap[selectedType]?.includes(activity.type)) {
           return false;
@@ -420,8 +419,6 @@ export default function ActivityLog() {
                     <option value="medications">Medications</option>
                     <option value="routines">Routines</option>
                     <option value="face_recognition">Face Recognition</option>
-                    <option value="chatbot">Chatbot</option>
-                    <option value="emergency">Emergency</option>
                   </select>
                 </div>
 
