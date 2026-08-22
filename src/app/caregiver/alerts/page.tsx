@@ -50,10 +50,17 @@ export default function AlertsPage() {
         setAlerts(list.map((a: Record<string, unknown>) => ({
           _id: (a._id || a.id || '') as string,
           severity: (a.severity || a.type || 'info') as string,
-          patientName: (a.patientName || (typeof a.patient === 'object' && a.patient !== null ? (a.patient as Record<string, unknown>).name : '') || '') as string,
+          // /alerts populates patient.user.name (one level deeper than a.patient.name).
+          patientName: (a.patientName
+            || (typeof a.patient === 'object' && a.patient !== null
+              ? ((a.patient as Record<string, unknown>).user as Record<string, unknown>)?.name
+                ?? (a.patient as Record<string, unknown>).name
+              : '')
+            || '') as string,
           message: (a.message || '') as string,
           timestamp: (a.timestamp || a.createdAt || '') as string,
-          resolved: (a.resolved || false) as boolean,
+          // Backend field is isResolved (not resolved).
+          resolved: ((a.isResolved ?? a.resolved) || false) as boolean,
         })));
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : "Failed to load alerts";

@@ -97,7 +97,7 @@ export default function MedicationsPage() {
           dosage: (m.dosage || '') as string,
           frequency: (m.frequency || '') as string,
           time: (m.time || (Array.isArray(m.times) ? (m.times as string[]).join(', ') : m.scheduledTime) || '') as string,
-          status: (m.status || 'upcoming') as string,
+          status: (m.todayStatus || m.status || 'upcoming') as string,
           lastUpdated: (m.lastUpdated || m.updatedAt || '') as string,
         })));
       } catch (err: unknown) {

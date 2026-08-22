@@ -494,14 +494,21 @@ export const getDashboard = async (req: Request, res: Response, next: NextFuncti
       content: n.content, date: new Date(n.createdAt).toLocaleDateString(),
     }));
 
+    // Today's logs (weekMedLogs already includes today) so the table's "Today"
+    // column shows a real Taken/Missed/Pending instead of a hardcoded dash.
+    const todayMedLogs = weekMedLogs.filter((l) => new Date(l.scheduledTime) >= today);
+
     const complianceTable = allMeds.map((m: any) => {
       const p = patients.find((pp) => pp._id.toString() === m.patient.toString());
       const name = p?.user?.name || '';
       const comp = compByPatient[m.patient.toString()] ?? 0;
+      const tLog = todayMedLogs.find((l) => (l.medication?.toString?.() || '') === m._id.toString());
+      const today_ = tLog ? (tLog.status === 'taken' ? 'Taken' : tLog.status === 'missed' ? 'Missed' : 'Pending') : 'Pending';
+      // Status labels match the dashboard badge styles (On Track/Fair/Needs Attention).
       return {
         patientName: name, initials: initialsOf(name), color: '#0d9488',
         medication: m.name, schedule: (m.times || []).join(', ') || m.frequency || '',
-        today: '-', weekly: comp, status: comp >= 80 ? 'good' : comp >= 60 ? 'fair' : 'poor',
+        today: today_, weekly: comp, status: comp >= 80 ? 'On Track' : comp >= 60 ? 'Fair' : 'Needs Attention',
       };
     });
 

@@ -328,7 +328,7 @@ export default function CaregiverDashboard() {
                         <td className="py-3 px-3.5 text-sm text-[#1a3c34] border-b border-[#f1f5f9]">{row.medication}</td>
                         <td className="py-3 px-3.5 text-sm text-[#1a3c34] border-b border-[#f1f5f9]">{row.schedule}</td>
                         <td className="py-3 px-3.5 text-sm text-[#1a3c34] border-b border-[#f1f5f9]">
-                          <span className={`inline-flex py-1 px-2.5 rounded-full text-[11px] font-semibold ${row.today === 'Missed' ? 'bg-[#fee2e2] text-[#991b1b]' : 'bg-[#d1fae5] text-[#065f46]'}`}>{row.today}</span>
+                          <span className={`inline-flex py-1 px-2.5 rounded-full text-[11px] font-semibold ${row.today === 'Missed' ? 'bg-[#fee2e2] text-[#991b1b]' : row.today === 'Taken' ? 'bg-[#d1fae5] text-[#065f46]' : 'bg-[#f1f5f9] text-[#64748b]'}`}>{row.today}</span>
                         </td>
                         <td className="py-3 px-3.5 text-sm text-[#1a3c34] border-b border-[#f1f5f9]">
                           <div className="flex items-center gap-2">
