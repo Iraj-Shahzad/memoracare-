@@ -846,7 +846,9 @@ export default function AuthPage() {
                 </div>
               </div>
 
-              {/* Date of Birth */}
+              {/* Date of Birth + Emergency Contact — only relevant for a patient, not a caregiver */}
+              {selectedRole === "patient" && (
+              <>
               <div className="mb-5">
                 <label className="block text-[13px] font-semibold mb-1.5" style={{ color: "#374151" }}>
                   Date of Birth
@@ -969,6 +971,8 @@ export default function AuthPage() {
                   </div>
                 </div>
               </div>
+              </>
+              )}
 
               {/* Terms Checkbox */}
               <label className="flex items-center gap-2 text-sm cursor-pointer mb-5" style={{ color: "#475569" }}>
