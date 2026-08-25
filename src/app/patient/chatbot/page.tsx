@@ -205,6 +205,11 @@ export default function ChatbotPage() {
     const messageText = (text || "").trim();
     if (!messageText || sending) return;
 
+    // Answer (and read aloud) in the language the user actually typed in:
+    // Urdu-script message -> Urdu; otherwise English. This fixes English
+    // questions getting Urdu replies that an English TTS voice can't read.
+    const msgLang: Lang = /[؀-ۿ]/.test(messageText) ? "ur" : "en";
+
     const newUserMessage: ChatMessage = {
       id: `${Date.now()}-u`,
       type: "user",
@@ -220,21 +225,21 @@ export default function ChatbotPage() {
         patientId,
         query: messageText,
         mode: "text",
-        lang,
+        lang: msgLang,
       });
 
       const reply =
         res?.chat?.response ||
-        (lang === "ur"
+        (msgLang === "ur"
           ? "میں سمجھ گیا۔ میں آپ کی اور کیسے مدد کر سکتا ہوں؟"
           : "I understand. Let me help you with that. How else can I assist you today?");
 
       setMessages((prev) => [...prev, { id: `${Date.now()}-b`, type: "bot", content: reply, timestamp: stamp() }]);
-      if (voiceReply) speak(reply, lang);
+      if (voiceReply) speak(reply, msgLang);
     } catch (err) {
       console.error("Chat error:", err);
       const reply =
-        lang === "ur"
+        msgLang === "ur"
           ? "معذرت، اس وقت رابطے میں دشواری ہو رہی ہے۔ براہ کرم تھوڑی دیر بعد دوبارہ کوشش کریں۔"
           : "I'm sorry, I'm having trouble connecting right now. Please try again in a moment.";
       setMessages((prev) => [...prev, { id: `${Date.now()}-e`, type: "bot", content: reply, timestamp: stamp() }]);
