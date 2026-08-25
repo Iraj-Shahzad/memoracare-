@@ -1,0 +1,33 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e0f2f0"/><stop offset="1" stop-color="#c3e9e0"/>
+    </linearGradient>
+  </defs>
+  <circle cx="200" cy="200" r="185" fill="#f2fbf9"/>
+  <!-- heart -->
+  <path d="M200,318 C110,258 55,190 98,138 C128,102 185,108 200,150 C215,108 272,102 302,138 C345,190 290,258 200,318 Z"
+        fill="url(#g)" stroke="#0d9488" stroke-width="6"/>
+  <!-- brain folds inside heart -->
+  <g fill="none" stroke="#0d9488" stroke-width="3.5" stroke-linecap="round" opacity="0.85">
+    <path d="M200,150 C200,190 200,230 200,275"/>
+    <path d="M175,168 C150,180 150,205 175,215 C150,225 155,250 178,255"/>
+    <path d="M225,168 C250,180 250,205 225,215 C250,225 245,250 222,255"/>
+    <path d="M160,150 C140,158 138,175 155,182"/>
+    <path d="M240,150 C260,158 262,175 245,182"/>
+  </g>
+  <!-- memory photo squares -->
+  <g stroke="#0d9488" stroke-width="4" fill="#ffffff">
+    <rect x="60" y="60" width="46" height="46" rx="6" transform="rotate(-12 83 83)"/>
+    <rect x="300" y="70" width="46" height="46" rx="6" transform="rotate(10 323 93)"/>
+    <rect x="315" y="270" width="46" height="46" rx="6" transform="rotate(-8 338 293)"/>
+  </g>
+  <g fill="#0d9488">
+    <circle cx="83" cy="80" r="5"/><circle cx="323" cy="90" r="5"/><circle cx="338" cy="290" r="5"/>
+  </g>
+  <!-- sparkles -->
+  <g fill="#f59e0b">
+    <path d="M70,300 l6,14 14,6 -14,6 -6,14 -6,-14 -14,-6 14,-6 z"/>
+    <path d="M330,180 l4,9 9,4 -9,4 -4,9 -4,-9 -9,-4 9,-4 z"/>
+  </g>
+</svg>
