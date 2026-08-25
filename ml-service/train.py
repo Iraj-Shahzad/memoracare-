@@ -96,8 +96,8 @@ else:
     # keep memory bounded for the augmented 10k set.
     corpus = [normalize(p) for p in patterns]
     vectorizer = FeatureUnion([
-        ("word", TfidfVectorizer(analyzer="word", ngram_range=(1, 2), sublinear_tf=True, min_df=1, max_features=4000)),
-        ("char", TfidfVectorizer(analyzer="char_wb", ngram_range=(3, 5), sublinear_tf=True, min_df=2, max_features=6000)),
+        ("word", TfidfVectorizer(analyzer="word", ngram_range=(1, 2), sublinear_tf=True, min_df=1, max_features=6000)),
+        ("char", TfidfVectorizer(analyzer="char_wb", ngram_range=(3, 5), sublinear_tf=True, min_df=2, max_features=8000)),
     ])
     X = vectorizer.fit_transform(corpus).toarray().astype("float32")
 
@@ -123,12 +123,16 @@ X, Y, y = X[perm], Y[perm], y[perm]
 # Model factory — same architecture for cross-validation and the final model.
 # ---------------------------------------------------------------------------
 def build_model(n_features, n_classes):
+    # Deeper/wider network (256 -> 128 -> 64) = more capacity to separate the
+    # 26 intents; Dropout after each hidden layer keeps overfitting in check.
     m = Sequential()
     m.add(Input(shape=(n_features,)))
+    m.add(Dense(256, activation="relu"))
+    m.add(Dropout(0.5))
     m.add(Dense(128, activation="relu"))
     m.add(Dropout(0.5))
     m.add(Dense(64, activation="relu"))
-    m.add(Dropout(0.5))
+    m.add(Dropout(0.3))
     m.add(Dense(n_classes, activation="softmax"))
     m.compile(
         loss="categorical_crossentropy",
