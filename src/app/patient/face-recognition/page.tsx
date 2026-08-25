@@ -45,6 +45,12 @@ const REL_UR: Record<string, string> = {
 };
 
 // Speak a recognition result aloud in the current language.
+// Title-case a name for speech: "IRAJ" / "iraj" -> "Iraj". Speaking an ALL-CAPS
+// name makes the TTS engine spell it out letter-by-letter (I-R-A-J).
+function spokenName(name: string): string {
+  return (name || "").replace(/\S+/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+}
+
 function announceFace(name: string, relationship: string | undefined, unknown: boolean) {
   const lang = getLang();
   if (unknown) {
@@ -52,11 +58,12 @@ function announceFace(name: string, relationship: string | undefined, unknown: b
     return;
   }
   const rel = (relationship || "").trim();
+  const say = spokenName(name);
   if (lang === "ur") {
     const relUr = REL_UR[rel.toLowerCase()] || rel;
-    speak(`یہ ${name} ہیں${relUr ? `، آپ کے ${relUr}` : ""}۔`, lang);
+    speak(`یہ ${say} ہیں${relUr ? `، آپ کے ${relUr}` : ""}۔`, lang);
   } else {
-    speak(`This is ${name}${rel ? `, your ${rel}` : ""}.`, lang);
+    speak(`This is ${say}${rel ? `, your ${rel}` : ""}.`, lang);
   }
 }
 
@@ -358,9 +365,9 @@ export default function FaceRecognitionPage() {
     setScanning(true);
     setResult(null);
     try {
-      // Average several frames so a single noisy/blurred frame doesn't throw the
-      // match off — the same stabilization used when enrolling.
-      const probe = await getAveragedDescriptor(videoRef.current, 4);
+      // Average a few frames (fast: 3 frames, short gap) so a single noisy frame
+      // doesn't throw the match off, while still feeling near-instant on press.
+      const probe = await getAveragedDescriptor(videoRef.current, 3, 120);
       if (!probe) {
         setResult({ name: "No face detected", relationship: "Please look at the camera", initials: "!", confidence: 0, unknown: true });
         speak(getLang() === "ur" ? "کوئی چہرہ نظر نہیں آیا۔ براہ کرم کیمرے کی طرف دیکھیں۔" : "No face detected. Please look at the camera.", getLang());
