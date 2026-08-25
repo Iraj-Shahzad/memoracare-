@@ -111,6 +111,56 @@ const STATIC_UR: Record<string, string> = {
   fallback: 'معذرت، میں سمجھ نہیں سکا۔ آپ مجھ سے اپنی دوائیں، معمولات، خاندان، یا تاریخ و وقت کے بارے میں پوچھ سکتے ہیں۔',
 };
 
+// English response templates for the conversational (non-data) intents. Used as
+// the base reply when Wit.ai (which returns only an intent, no text) is the
+// classifier — buildReply refines these / injects real data.
+const STATIC_EN: Record<string, string> = {
+  greeting: "Assalam o Alaikum! I'm your MemoryCare assistant. How can I help you today?",
+  goodbye: "Allah Hafiz! Take care of yourself. I'm here whenever you need me.",
+  thanks: "You're welcome! Let me know if you need anything else.",
+  feeling: "I'm sorry you feel this way. You are safe and people who love you are nearby. Shall I notify your caregiver?",
+  emergency: "This looks like an emergency. Please press the red SOS button right away so your caregiver is alerted.",
+  help: "I'm your MemoryCare assistant. I can help with your medications, routines, family, and the date and time. Just ask!",
+  appointment: "For your appointment details, please check with your caregiver.",
+  meal_time: "Eating at regular times is good for you. Please ask your caregiver about today's meals.",
+  weather: "I can't see the current weather, but please dress comfortably for the day. Your caregiver can tell you more.",
+  memories: "Let's open your Memory Gallery so you can look at your photos.",
+  hydration: "Staying hydrated is important. Please have a glass of water.",
+  exercise: "A little walk is good for you. Please take a walk with your caregiver.",
+  sleep_rest: "Rest is important. If you feel tired, please lie down for a while.",
+  entertainment: "Let's listen to something nice. Your caregiver can play your favourite music or a story.",
+  prayer: "It may be time for prayer. Your caregiver can tell you today's prayer times.",
+  news: "I can't show the latest news, but your caregiver can read you today's headlines.",
+  bathroom: "Okay. Your caregiver can help you get to the bathroom safely.",
+  positive_mood: "That's wonderful to hear! I'm so glad you're feeling good today.",
+  fallback: "Sorry, I didn't quite understand. You can ask me about your medications, routines, family, or the date and time.",
+};
+
+// ---- Wit.ai (cloud NLU) — PRIMARY intent classifier when configured ----
+// Reads a Server Access Token from WIT_TOKEN. If unset or the call fails, the
+// caller falls back to the self-hosted Python model, then to rule-based replies.
+const WIT_TOKEN = process.env.WIT_TOKEN;
+const WIT_MIN_CONFIDENCE = Number(process.env.WIT_MIN_CONFIDENCE || 0.55);
+
+async function classifyWithWit(message: any) {
+  if (!WIT_TOKEN) return null; // Wit.ai not configured -> skip
+  try {
+    const url = `https://api.wit.ai/message?v=20240101&q=${encodeURIComponent(String(message))}`;
+    const resp = await fetch(url, {
+      headers: { Authorization: `Bearer ${WIT_TOKEN}` },
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!resp.ok) return null;
+    const data: any = await resp.json();
+    const top = Array.isArray(data.intents) ? data.intents[0] : null;
+    if (!top || Number(top.confidence) < WIT_MIN_CONFIDENCE) return null;
+    return { intent: top.name, confidence: Number(top.confidence) };
+  } catch (err: any) {
+    console.error('[chat] Wit.ai unreachable:', err.message);
+    return null;
+  }
+}
+
 // Turn a classified intent into a personalized reply in the requested language
 // using the patient's real data. `base` is the generic (English) response the
 // model returned; used for English static intents.
@@ -252,18 +302,34 @@ export const sendMessage = async (req: Request, res: Response, next: NextFunctio
     let intent = 'general';
     let confidence = null;
     let responseText;
+    let source = 'rules'; // which classifier produced the intent (for transparency)
 
-    const prediction = await classifyIntent(query);
-    if (prediction && prediction.intent) {
-      intent = prediction.intent;
-      confidence = prediction.confidence ?? null;
-      responseText = await buildReply(intent, prediction.response, patientId, lang);
+    // Classifier cascade:
+    //  1) Wit.ai cloud NLU (primary, when WIT_TOKEN is set)
+    //  2) self-hosted Python model (fallback — works offline)
+    //  3) rule-based keywords (last resort — always works)
+    const wit = await classifyWithWit(query);
+    if (wit) {
+      intent = wit.intent;
+      confidence = wit.confidence;
+      const base = STATIC_EN[intent] || STATIC_EN.fallback;
+      responseText = await buildReply(intent, base, patientId, lang);
+      source = 'wit.ai';
     } else {
-      // ML service offline → rule-based fallback so the app still works.
-      const fallback = generateFallbackResponse(query, lang);
-      responseText = fallback.response;
-      intent = fallback.intent;
-      confidence = fallback.confidence;
+      const prediction = await classifyIntent(query);
+      if (prediction && prediction.intent) {
+        intent = prediction.intent;
+        confidence = prediction.confidence ?? null;
+        responseText = await buildReply(intent, prediction.response, patientId, lang);
+        source = 'python';
+      } else {
+        // Both classifiers offline → rule-based fallback so the app still works.
+        const fallback = generateFallbackResponse(query, lang);
+        responseText = fallback.response;
+        intent = fallback.intent;
+        confidence = fallback.confidence;
+        source = 'rules';
+      }
     }
 
     const chatEntry = await ChatHistory.create({
@@ -279,7 +345,7 @@ export const sendMessage = async (req: Request, res: Response, next: NextFunctio
       req.io.to(patientId.toString()).emit('chat_message', chatEntry);
     }
 
-    res.status(201).json({ success: true, chat: chatEntry });
+    res.status(201).json({ success: true, chat: chatEntry, source });
   } catch (err: any) {
     next(err);
   }
