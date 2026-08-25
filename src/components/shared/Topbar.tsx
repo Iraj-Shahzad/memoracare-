@@ -14,6 +14,31 @@ interface ReminderToast {
   message: string;
 }
 
+// Build a full, personalised reminder sentence (patient name + caregiver name +
+// the medicine/activity + an instruction), in English or Urdu. Falls back
+// gracefully when any name is missing.
+function buildReminderText(
+  data: { kind?: string; name?: string; dosage?: string; patientName?: string; caregiverName?: string; message?: string },
+  kind: "medication" | "routine",
+  lang: string
+): string {
+  const who = (data.patientName || "").trim();
+  const from = (data.caregiverName || "").trim();
+  const item = (data.name || "").trim();
+  const dose = (data.dosage || "").trim();
+
+  if (lang === "ur") {
+    const lead = `${who ? who + "، " : ""}${from ? `آپ کے نگہداشت کنندہ ${from} کی طرف سے یاد دہانی۔ ` : ""}`;
+    return kind === "routine"
+      ? `${lead}اب آپ کی سرگرمی "${item}" کا وقت ہو گیا ہے۔ براہ کرم ابھی کر لیں۔`
+      : `${lead}اب آپ کی دوا "${item}"${dose ? "، " + dose : ""} لینے کا وقت ہو گیا ہے۔ براہ کرم ابھی لے لیں۔`;
+  }
+  const lead = `${who ? "Hello " + who + ". " : ""}${from ? `A reminder from your caregiver ${from}. ` : ""}`;
+  return kind === "routine"
+    ? `${lead}It is time for your "${item}" activity. Please do it now.`
+    : `${lead}It is time to take your medicine "${item}"${dose ? ", " + dose : ""}. Please take it now.`;
+}
+
 interface TopbarProps {
   title: string;
   subtitle?: string;
@@ -101,33 +126,29 @@ export default function Topbar({
     const pushToast = (kind: ReminderToast["kind"], message: string) => {
       const id = ++counter + Date.now();
       setToasts((prev) => [...prev, { id, kind, message }]);
+      // Reminders stay longer (alarm-like); plain alerts a bit shorter.
       setTimeout(() => {
         setToasts((prev) => prev.filter((t) => t.id !== id));
-      }, 8000);
+      }, kind === "alert" ? 9000 : 14000);
       // Best-effort desktop notification (only if the user already granted it).
       if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
         try { new Notification('MemoryCare', { body: message }); } catch { /* ignore */ }
       }
     };
 
-    const onReminder = (data: { kind?: string; name?: string; message?: string }) => {
+    const onReminder = (data: { kind?: string; name?: string; dosage?: string; patientName?: string; caregiverName?: string; message?: string }) => {
       // Respect the patient's notification preferences.
       const s = loadSettings();
       const kind = data.kind === 'routine' ? 'routine' : 'medication';
       if (kind === 'medication' && !s.medReminders) return;
       if (kind === 'routine' && !s.routineReminders) return;
-      pushToast(kind, data.message || 'You have a reminder.');
-      // Speak the reminder aloud in the chosen language (if enabled + voice alerts on).
+      // Build a full, personalised reminder (patient + caregiver + item + instruction).
+      const lang = getLang();
+      const text = buildReminderText(data, kind, lang);
+      pushToast(kind, text);
+      // Speak it aloud like an alarm (repeated) if voice alerts are on.
       if (voiceRemindersOn() && s.voiceAlerts) {
-        const lang = getLang();
-        const name = data.name || '';
-        let text = data.message || '';
-        if (lang === 'ur') {
-          text = data.kind === 'routine'
-            ? `${name} کا وقت ہو گیا ہے۔`
-            : `${name ? name + ' ' : ''}دوا لینے کا وقت ہو گیا ہے۔`;
-        }
-        speak(text, lang);
+        speak(text, lang, { repeat: 2 });
       }
     };
     const onAlert = (data: { message?: string }) => {

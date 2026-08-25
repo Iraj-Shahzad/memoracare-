@@ -28,6 +28,22 @@ async function emitAlertToCaregivers(io: any, patientId: any, payload: any) {
   } catch { /* best-effort */ }
 }
 
+// Look up the patient's own name + their (first) assigned caregiver's name so
+// the reminder can be personalised ("...from your caregiver Sarah..."). Best-effort.
+async function getReminderNames(patientId: any) {
+  try {
+    const p: any = await Patient.findById(patientId)
+      .select('user assignedCaregivers')
+      .populate('user', 'name')
+      .populate({ path: 'assignedCaregivers', select: 'name' });
+    const patientName = p?.user?.name || '';
+    const caregiverName = (p?.assignedCaregivers && p.assignedCaregivers[0]?.name) || '';
+    return { patientName, caregiverName };
+  } catch {
+    return { patientName: '', caregiverName: '' };
+  }
+}
+
 // Minutes past a scheduled time before we consider a dose/routine "missed".
 const GRACE_MINUTES = 30;
 
@@ -98,12 +114,15 @@ async function emitDueReminders(io: any) {
     for (const t of med.times || []) {
       if (parseTimeToMinutes(t) === nowMinutes) {
         const room = med.patient.toString();
+        const { patientName, caregiverName } = await getReminderNames(med.patient);
         io.to(room).emit('reminder', {
           kind: 'medication',
           id: med._id,
           name: med.name,
           dosage: med.dosage,
           time: t,
+          patientName,
+          caregiverName,
           message: `Time to take ${med.name}${med.dosage ? ` (${med.dosage})` : ''}`,
         });
         await Reminder.create({
@@ -127,11 +146,14 @@ async function emitDueReminders(io: any) {
     if (!runsToday) continue;
     if (parseTimeToMinutes(routine.startTime) === nowMinutes) {
       const room = routine.patient.toString();
+      const { patientName, caregiverName } = await getReminderNames(routine.patient);
       io.to(room).emit('reminder', {
         kind: 'routine',
         id: routine._id,
         name: routine.activityName,
         time: routine.startTime,
+        patientName,
+        caregiverName,
         message: `Time for ${routine.activityName}`,
       });
       await Reminder.create({

@@ -59,17 +59,22 @@ export function hasVoiceFor(lang: Lang): boolean {
   return !!pickVoice(lang);
 }
 
-export function speak(text: string, lang: Lang = getLang()) {
+// opts.repeat > 1 speaks the text multiple times back-to-back (queued) — used
+// for reminders so they feel like an alarm (longer, harder to miss).
+export function speak(text: string, lang: Lang = getLang(), opts?: { repeat?: number }) {
   if (typeof window === "undefined" || !("speechSynthesis" in window) || !text) return;
   const synth = window.speechSynthesis;
+  const repeat = Math.max(1, Math.min(opts?.repeat ?? 1, 5)); // safety cap
   try {
     synth.cancel(); // stop anything currently speaking
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = BCP47[lang];
     const v = pickVoice(lang);
-    if (v) u.voice = v;
-    u.rate = 0.95;
-    synth.speak(u);
+    for (let i = 0; i < repeat; i++) {
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = BCP47[lang];
+      if (v) u.voice = v;
+      u.rate = 0.95;
+      synth.speak(u); // speechSynthesis queues these, so they play in order
+    }
   } catch {
     /* ignore */
   }
