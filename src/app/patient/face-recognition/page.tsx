@@ -138,8 +138,9 @@ export default function FaceRecognitionPage() {
   const [showManageAll, setShowManageAll] = useState(false);
   const [manageFace, setManageFace] = useState<{ id: string; name: string; relation: string; scans: number; imageUrl?: string; gradient?: string } | null>(null);
   // All scan photos this person has appeared in (per-person recognition gallery).
-  const [managePhotos, setManagePhotos] = useState<string[]>([]);
+  const [managePhotos, setManagePhotos] = useState<{ id: string | null; url: string }[]>([]);
   const [managePhotosLoading, setManagePhotosLoading] = useState(false);
+  const [previewSrc, setPreviewSrc] = useState<string | null>(null);
   const [showAdd, setShowAdd] = useState(false);
   const [addForm, setAddForm] = useState({ name: "", relationship: "" });
   const [addSaving, setAddSaving] = useState(false);
@@ -331,9 +332,14 @@ export default function FaceRecognitionPage() {
         setManagePhotosLoading(true);
         const res = await apiGet(`/face-recognition/patient/${patientId}/logs?knownFace=${manageFace.id}&limit=50`).catch(() => null);
         const logs = Array.isArray(res?.logs) ? res.logs : [];
-        const photos: string[] = logs.map((l: any) => l.imageUrl).filter(Boolean);
-        // Show the enrolment photo first if we have one.
-        if (manageFace.imageUrl && !photos.includes(manageFace.imageUrl)) photos.unshift(manageFace.imageUrl);
+        // Keep each scan's log id so a single photo can be deleted on its own.
+        const photos: { id: string | null; url: string }[] = logs
+          .filter((l: any) => l.imageUrl)
+          .map((l: any) => ({ id: l._id as string, url: l.imageUrl as string }));
+        // Show the enrolment photo first (id null — it's the profile photo, not a scan).
+        if (manageFace.imageUrl && !photos.some((p) => p.url === manageFace.imageUrl)) {
+          photos.unshift({ id: null, url: manageFace.imageUrl });
+        }
         if (!cancelled) setManagePhotos(photos);
       } finally {
         if (!cancelled) setManagePhotosLoading(false);
@@ -342,6 +348,21 @@ export default function FaceRecognitionPage() {
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [manageFace, patientId]);
+
+  // Delete ONE scan photo (not the whole person).
+  const deleteScan = async (id: string) => {
+    if (!(await confirm({ message: "Delete this scan photo?", danger: true, confirmText: "Delete" }))) return;
+    try {
+      await apiDelete(`/face-recognition/logs/${id}`);
+      setManagePhotos((prev) => prev.filter((p) => p.id !== id));
+      if (manageFace) setManageFace({ ...manageFace, scans: Math.max(0, manageFace.scans - 1) });
+      fetchLogs();
+      fetchKnownFaces();
+      toast("Scan deleted.", "success");
+    } catch {
+      toast("Could not delete the scan.", "error");
+    }
+  };
 
   const switchCamera = async () => {
     const next = facingMode === "user" ? "environment" : "user";
@@ -1409,11 +1430,19 @@ export default function FaceRecognitionPage() {
                 <p style={{ fontSize: 13, color: "#94a3b8" }}>No photos yet. Scan this person to build their gallery.</p>
               ) : (
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
-                  {managePhotos.map((src, i) => (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img key={i} src={imgUrl(src)} alt={`${manageFace.name} scan ${i + 1}`}
-                      style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", borderRadius: 10, border: "1px solid #e2e8f0" }}
-                      onError={(e) => { e.currentTarget.style.display = "none"; }} />
+                  {managePhotos.map((p, i) => (
+                    <div key={p.id || i} style={{ position: "relative" }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={imgUrl(p.url)} alt={`${manageFace.name} scan ${i + 1}`}
+                        onClick={() => setPreviewSrc(imgUrl(p.url))}
+                        title="Click to preview"
+                        style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", borderRadius: 10, border: "1px solid #e2e8f0", cursor: "pointer" }}
+                        onError={(e) => { e.currentTarget.style.display = "none"; }} />
+                      {p.id && (
+                        <button onClick={() => deleteScan(p.id as string)} title="Delete this photo"
+                          style={{ position: "absolute", top: 4, right: 4, width: 22, height: 22, borderRadius: "50%", border: "none", background: "rgba(220,38,38,0.92)", color: "#fff", fontSize: 14, fontWeight: 700, lineHeight: "20px", cursor: "pointer", padding: 0 }}>×</button>
+                      )}
+                    </div>
                   ))}
                 </div>
               )}
@@ -1424,6 +1453,16 @@ export default function FaceRecognitionPage() {
               <button onClick={() => handleDeleteFace(manageFace.id)} style={{ flex: 1, padding: "10px", borderRadius: 10, border: "none", background: "#dc2626", color: "#fff", fontWeight: 600, cursor: "pointer" }}>Remove</button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Single-photo preview (lightbox) */}
+      {previewSrc && (
+        <div onClick={() => setPreviewSrc(null)}
+          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", zIndex: 90, display: "flex", alignItems: "center", justifyContent: "center", padding: 20, cursor: "zoom-out" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={previewSrc} alt="Scan preview" onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: "92%", maxHeight: "90%", borderRadius: 12, boxShadow: "0 10px 40px rgba(0,0,0,0.5)" }} />
         </div>
       )}
 

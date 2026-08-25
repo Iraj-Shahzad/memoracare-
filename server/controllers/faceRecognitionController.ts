@@ -227,3 +227,26 @@ export const deleteKnownFace = async (req: Request, res: Response, next: NextFun
     next(err);
   }
 };
+
+// @desc Delete ONE recognition-log (a single scan image), not the whole person
+// @route DELETE /api/face-recognition/logs/:id
+export const deleteRecognitionLog = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const log: any = await RecognitionLog.findById(req.params.id);
+    if (!log) {
+      return res.status(404).json({ success: false, message: 'Scan not found' });
+    }
+    const allowed = await canAccessPatient(req.user, log.patient.toString());
+    if (!allowed) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
+    }
+    // Keep the known face's recognition count in sync when a scan is removed.
+    if (log.knownFace) {
+      await KnownFace.findByIdAndUpdate(log.knownFace, { $inc: { recognitionCount: -1 } }).catch(() => {});
+    }
+    await log.deleteOne();
+    res.status(200).json({ success: true, message: 'Scan deleted' });
+  } catch (err: any) {
+    next(err);
+  }
+};

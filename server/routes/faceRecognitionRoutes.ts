@@ -6,6 +6,7 @@ import {
   addKnownFace,
   getKnownFaces,
   deleteKnownFace,
+  deleteRecognitionLog,
   upload,
 } from '../controllers/faceRecognitionController';
 import { protect } from '../middleware/auth';
@@ -17,5 +18,6 @@ router.get('/patient/:patientId/logs', getRecognitionLogs);
 router.post('/known-faces', upload, addKnownFace);
 router.get('/patient/:patientId/known-faces', getKnownFaces);
 router.delete('/known-faces/:id', deleteKnownFace);
+router.delete('/logs/:id', deleteRecognitionLog);
 
 export default router;
