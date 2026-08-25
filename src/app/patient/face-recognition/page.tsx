@@ -441,6 +441,16 @@ export default function FaceRecognitionPage() {
     try {
       const d = await computeDescriptorFromFile(file);
       if (!d) { toast("Couldn't find a clear face in that photo. Try a well-lit, front-facing one.", "error"); return; }
+      // If this photo matches someone already enrolled, add it UNDER that person
+      // (a new scan in their gallery) instead of creating a duplicate profile.
+      const match = findBestMatch(d, knownRef.current);
+      if (match) {
+        await logRecognition({ result: "recognized", name: match.name, relationship: match.relationship, confidence: match.confidence, knownFaceId: match.knownFaceId, image: file });
+        toast(`Recognized — photo added under ${match.name}.`, "success");
+        fetchLogs();
+        fetchKnownFaces();
+        return;
+      }
       pendingDescriptorRef.current = Array.from(d);
       pendingImageRef.current = file; // keep the real photo to store on the profile
       setAddForm({ name: "", relationship: "" });

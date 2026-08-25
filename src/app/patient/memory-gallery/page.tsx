@@ -62,6 +62,8 @@ export default function MemoryGalleryPage() {
   const [knownPeople, setKnownPeople] = useState<string[]>([]);
   const [selectedPeople, setSelectedPeople] = useState<string[]>([]);
   const [otherPerson, setOtherPerson] = useState("");
+  // Full enrolled faces (photo + name + relationship) to show as "People you know".
+  const [knownFaces, setKnownFaces] = useState<{ _id: string; name: string; relationship?: string; imageUrl?: string }[]>([]);
 
   const fetchMemories = async () => {
     if (!patientId) return;
@@ -79,8 +81,9 @@ export default function MemoryGalleryPage() {
     if (!patientId) return;
     try {
       const res = await apiGet(`/face-recognition/patient/${patientId}/known-faces`).catch(() => null);
-      const names = Array.isArray(res?.knownFaces) ? res.knownFaces.map((f: any) => f.name).filter(Boolean) : [];
-      setKnownPeople(names);
+      const faces = Array.isArray(res?.knownFaces) ? res.knownFaces : [];
+      setKnownFaces(faces);
+      setKnownPeople(faces.map((f: any) => f.name).filter(Boolean));
     } catch { /* people list stays empty */ }
   };
 
@@ -162,6 +165,33 @@ export default function MemoryGalleryPage() {
           />
 
           <div style={{ padding: "24px 32px", flex: 1 }}>
+            {/* People you know — the enrolled faces from Face Recognition (real data). */}
+            {knownFaces.length > 0 && (
+              <div style={{ marginBottom: 28 }}>
+                <h2 className="text-base font-bold text-[#1a3c34] mb-3">People you know</h2>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 16 }}>
+                  {knownFaces.map((f) => (
+                    <div key={f._id} className="bg-white rounded-2xl overflow-hidden border border-slate-200 text-center">
+                      {f.imageUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={`${API_HOST}${f.imageUrl}`} alt={f.name}
+                          style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover" }}
+                          onError={(e) => { e.currentTarget.style.display = "none"; }} />
+                      ) : (
+                        <div style={{ width: "100%", aspectRatio: "1 / 1", background: "#e0f2f0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, fontWeight: 700, color: "#0d9488" }}>
+                          {(f.name || "?").charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <div style={{ padding: "8px 6px" }}>
+                        <div className="text-sm font-semibold text-[#1a3c34]" style={{ textTransform: "capitalize" }}>{f.name}</div>
+                        <div className="text-xs text-[#64748b]" style={{ textTransform: "capitalize" }}>{f.relationship || "Known face"}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {loading ? (
               <div className="flex items-center justify-center py-24">
                 <div className="w-8 h-8 border-4 border-[#0d9488] border-t-transparent rounded-full animate-spin" />
