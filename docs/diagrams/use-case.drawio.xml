@@ -1,99 +1,101 @@
 <mxfile host="app.diagrams.net">
   <diagram name="Use Case Diagram">
-    <mxGraphModel dx="826" dy="1169" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="826" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1000" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="700" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="sys" value="MemoryCare System" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fontSize=13;" vertex="1" parent="1"><mxGeometry x="150" y="40" width="460" height="1085" as="geometry" /></mxCell>
 
-        <mxCell id="a_pat" value="Patient" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=11;" vertex="1" parent="1"><mxGeometry x="24" y="125" width="48" height="90" as="geometry" /></mxCell>
-        <mxCell id="a_care" value="Caregiver" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=11;" vertex="1" parent="1"><mxGeometry x="24" y="625" width="48" height="90" as="geometry" /></mxCell>
-        <mxCell id="a_sm" value="System Manager" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=11;" vertex="1" parent="1"><mxGeometry x="24" y="925" width="48" height="90" as="geometry" /></mxCell>
-        <mxCell id="a_sys" value="&#171;system&#187;&lt;br&gt;&lt;b&gt;System&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="630" y="548" width="120" height="74" as="geometry" /></mxCell>
+        <mxCell id="sys" value="MemoryCare System" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fontSize=14;" vertex="1" parent="1"><mxGeometry x="190" y="100" width="800" height="540" as="geometry" /></mxCell>
 
-        <!-- Patient use cases -->
-        <mxCell id="uc_face" value="Recognize Face" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="236" y="61" width="128" height="38" as="geometry" /></mxCell>
-        <mxCell id="uc_chat" value="Chat with Assistant" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="236" y="113" width="128" height="38" as="geometry" /></mxCell>
-        <mxCell id="uc_voice" value="Voice Interaction" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="240" y="165" width="120" height="38" as="geometry" /></mxCell>
-        <mxCell id="uc_takemed" value="Take Medication" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="236" y="233" width="128" height="38" as="geometry" /></mxCell>
-        <mxCell id="uc_routine" value="Complete Routine" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="236" y="285" width="128" height="38" as="geometry" /></mxCell>
-        <mxCell id="uc_memory" value="View Memory Gallery" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="236" y="337" width="128" height="38" as="geometry" /></mxCell>
-        <!-- Shared use cases -->
-        <mxCell id="uc_login" value="Login / Register" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="236" y="397" width="128" height="38" as="geometry" /></mxCell>
-        <mxCell id="uc_dashboard" value="View Dashboard" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="236" y="449" width="128" height="38" as="geometry" /></mxCell>
-        <mxCell id="uc_profile" value="Manage Profile" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="236" y="501" width="128" height="38" as="geometry" /></mxCell>
-        <mxCell id="uc_report" value="Generate &amp; Download Report" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="232" y="553" width="136" height="38" as="geometry" /></mxCell>
-        <mxCell id="uc_logout" value="Logout" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="236" y="605" width="128" height="38" as="geometry" /></mxCell>
-        <!-- Caregiver use cases -->
-        <mxCell id="uc_mmeds" value="Manage Medications" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="232" y="669" width="136" height="38" as="geometry" /></mxCell>
-        <mxCell id="uc_mroutines" value="Manage Routines" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="236" y="721" width="128" height="38" as="geometry" /></mxCell>
-        <mxCell id="uc_enroll" value="Enroll Known Faces" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="236" y="773" width="128" height="38" as="geometry" /></mxCell>
-        <mxCell id="uc_alerts" value="View &amp; Resolve Alerts" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="236" y="825" width="128" height="38" as="geometry" /></mxCell>
-        <mxCell id="uc_notes" value="Manage Care Notes" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="232" y="877" width="136" height="38" as="geometry" /></mxCell>
-        <!-- System Manager use cases -->
-        <mxCell id="uc_users" value="Manage Users" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="236" y="941" width="128" height="38" as="geometry" /></mxCell>
-        <mxCell id="uc_contacts" value="View Contact Messages" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="236" y="993" width="128" height="38" as="geometry" /></mxCell>
-        <mxCell id="uc_stats" value="View System Statistics" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="234" y="1045" width="132" height="38" as="geometry" /></mxCell>
+        <!-- Actors -->
+        <mxCell id="a_pat" value="Patient" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=11;" vertex="1" parent="1"><mxGeometry x="70" y="180" width="48" height="90" as="geometry" /></mxCell>
+        <mxCell id="a_care" value="Caregiver" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=11;" vertex="1" parent="1"><mxGeometry x="70" y="470" width="48" height="90" as="geometry" /></mxCell>
+        <mxCell id="a_sm" value="System Manager (Admin)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=11;" vertex="1" parent="1"><mxGeometry x="1012" y="185" width="48" height="90" as="geometry" /></mxCell>
+        <mxCell id="a_sys" value="&#171;system&#187;&lt;br&gt;&lt;b&gt;System&lt;/b&gt;" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=11;" vertex="1" parent="1"><mxGeometry x="1012" y="500" width="48" height="90" as="geometry" /></mxCell>
 
-        <!-- System-side use cases -->
-        <mxCell id="uc_matchface" value="Match Face" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="416" y="61" width="128" height="38" as="geometry" /></mxCell>
-        <mxCell id="uc_classify" value="Classify Intent" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="416" y="113" width="128" height="38" as="geometry" /></mxCell>
-        <mxCell id="uc_facelogin" value="Face-Recognition Login" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="412" y="357" width="136" height="38" as="geometry" /></mxCell>
-        <mxCell id="uc_validate" value="Validate Credentials" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="414" y="405" width="132" height="38" as="geometry" /></mxCell>
-        <mxCell id="uc_sendrem" value="Send Reminder" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="418" y="697" width="124" height="38" as="geometry" /></mxCell>
-        <mxCell id="uc_storedata" value="Store Data" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="422" y="773" width="116" height="38" as="geometry" /></mxCell>
-        <mxCell id="uc_sendnotif" value="Send Notification" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="1"><mxGeometry x="416" y="825" width="128" height="38" as="geometry" /></mxCell>
+        <!-- Column 1 : Patient (a) + Caregiver (a) -->
+        <mxCell id="uc_face" value="Recognize Face" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="270" y="140" width="130" height="38" as="geometry" /></mxCell>
+        <mxCell id="uc_chat" value="Chat with Assistant" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="270" y="210" width="130" height="38" as="geometry" /></mxCell>
+        <mxCell id="uc_takemed" value="Take Medication" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="270" y="280" width="130" height="38" as="geometry" /></mxCell>
+        <mxCell id="uc_routine" value="Complete Routine" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="270" y="350" width="130" height="38" as="geometry" /></mxCell>
+        <mxCell id="uc_mpatients" value="Manage Assigned Patients" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="270" y="440" width="130" height="42" as="geometry" /></mxCell>
+        <mxCell id="uc_mmeds" value="Manage Medications" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="270" y="510" width="130" height="38" as="geometry" /></mxCell>
+        <mxCell id="uc_mroutines" value="Manage Routines" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="270" y="580" width="130" height="38" as="geometry" /></mxCell>
 
-        <!-- Patient associations -->
+        <!-- Column 2 : Patient (b) + Caregiver (b) -->
+        <mxCell id="uc_voice" value="Voice Interaction" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="440" y="140" width="130" height="38" as="geometry" /></mxCell>
+        <mxCell id="uc_memory" value="View Memory Gallery" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="440" y="210" width="130" height="38" as="geometry" /></mxCell>
+        <mxCell id="uc_activity" value="View Activity Log" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="440" y="280" width="130" height="38" as="geometry" /></mxCell>
+        <mxCell id="uc_sos" value="Trigger SOS Alert" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="440" y="350" width="130" height="38" as="geometry" /></mxCell>
+        <mxCell id="uc_enroll" value="Enroll Known Faces" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="440" y="440" width="130" height="42" as="geometry" /></mxCell>
+        <mxCell id="uc_alerts" value="View &amp; Resolve Alerts" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="440" y="510" width="130" height="38" as="geometry" /></mxCell>
+        <mxCell id="uc_notes" value="Manage Care Notes" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="440" y="580" width="130" height="38" as="geometry" /></mxCell>
+
+        <!-- Column 3 : Included use cases + Shared -->
+        <mxCell id="uc_matchface" value="Match Face" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="630" y="140" width="130" height="38" as="geometry" /></mxCell>
+        <mxCell id="uc_classify" value="Classify Intent" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="630" y="210" width="130" height="38" as="geometry" /></mxCell>
+        <mxCell id="uc_login" value="Register / Login" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="630" y="280" width="130" height="38" as="geometry" /></mxCell>
+        <mxCell id="uc_validate" value="Validate Credentials" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="630" y="350" width="130" height="38" as="geometry" /></mxCell>
+        <mxCell id="uc_dashboard" value="View Dashboard" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="630" y="440" width="130" height="38" as="geometry" /></mxCell>
+        <mxCell id="uc_profile" value="Manage Profile" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="630" y="510" width="130" height="38" as="geometry" /></mxCell>
+        <mxCell id="uc_report" value="Generate &amp; Download Report" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="630" y="580" width="130" height="38" as="geometry" /></mxCell>
+
+        <!-- Column 4 : Admin + System -->
+        <mxCell id="uc_users" value="Manage Users" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="835" y="140" width="130" height="38" as="geometry" /></mxCell>
+        <mxCell id="uc_monitor" value="Monitor System" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="835" y="210" width="130" height="38" as="geometry" /></mxCell>
+        <mxCell id="uc_security" value="Manage Security" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="835" y="280" width="130" height="38" as="geometry" /></mxCell>
+        <mxCell id="uc_contacts" value="View Contact Messages" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="835" y="350" width="130" height="38" as="geometry" /></mxCell>
+        <mxCell id="uc_stats" value="View System Statistics" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="835" y="440" width="130" height="38" as="geometry" /></mxCell>
+        <mxCell id="uc_sendrem" value="Send Reminder" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="835" y="510" width="130" height="38" as="geometry" /></mxCell>
+        <mxCell id="uc_sendnotif" value="Send Notification" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="1"><mxGeometry x="835" y="580" width="130" height="38" as="geometry" /></mxCell>
+
+        <!-- ===== Patient associations ===== -->
         <mxCell id="p1" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_face"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="p2" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_chat"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p3" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_voice"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p4" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_takemed"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p5" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_routine"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p3" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_takemed"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p4" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_routine"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p5" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_voice"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="p6" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_memory"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p7" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_login"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p8" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_dashboard"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p9" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_profile"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p10" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_report"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p11" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_logout"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <!-- Caregiver associations -->
-        <mxCell id="c1" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_mmeds"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="c2" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_mroutines"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="c3" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_enroll"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="c4" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_alerts"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="c5" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_notes"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="c6" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_login"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="c7" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_dashboard"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="c8" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_profile"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="c9" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_report"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="c10" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_logout"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <!-- System Manager associations -->
+        <mxCell id="p7" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_activity"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p8" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_sos"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p9" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_login"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p10" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_dashboard"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p11" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_profile"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p12" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_report"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- ===== Caregiver associations ===== -->
+        <mxCell id="c1" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_mpatients"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c2" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_mmeds"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c3" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_mroutines"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c4" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_enroll"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c5" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_alerts"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c6" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_notes"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c7" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_login"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c8" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_dashboard"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c9" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_profile"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c10" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_report"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- ===== Admin associations ===== -->
         <mxCell id="m1" style="endArrow=none;html=1;" edge="1" parent="1" source="a_sm" target="uc_users"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="m2" style="endArrow=none;html=1;" edge="1" parent="1" source="a_sm" target="uc_contacts"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="m3" style="endArrow=none;html=1;" edge="1" parent="1" source="a_sm" target="uc_stats"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="m4" style="endArrow=none;html=1;" edge="1" parent="1" source="a_sm" target="uc_login"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="m5" style="endArrow=none;html=1;" edge="1" parent="1" source="a_sm" target="uc_dashboard"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="m6" style="endArrow=none;html=1;" edge="1" parent="1" source="a_sm" target="uc_logout"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <!-- System associations -->
-        <mxCell id="s1" style="endArrow=none;html=1;" edge="1" parent="1" source="a_sys" target="uc_matchface"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="s2" style="endArrow=none;html=1;" edge="1" parent="1" source="a_sys" target="uc_classify"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="s3" style="endArrow=none;html=1;" edge="1" parent="1" source="a_sys" target="uc_validate"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="s4" style="endArrow=none;html=1;" edge="1" parent="1" source="a_sys" target="uc_sendrem"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="s5" style="endArrow=none;html=1;" edge="1" parent="1" source="a_sys" target="uc_storedata"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="s6" style="endArrow=none;html=1;" edge="1" parent="1" source="a_sys" target="uc_sendnotif"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <!-- include -->
-        <mxCell id="i1" value="&#171;include&#187;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc_face" target="uc_matchface"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="i2" value="&#171;include&#187;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc_chat" target="uc_classify"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="i3" value="&#171;include&#187;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc_login" target="uc_validate"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="i4" value="&#171;include&#187;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc_mmeds" target="uc_storedata"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="i5" value="&#171;include&#187;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc_mroutines" target="uc_storedata"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="i6" value="&#171;include&#187;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc_enroll" target="uc_storedata"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="i7" value="&#171;include&#187;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc_notes" target="uc_storedata"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="i8" value="&#171;include&#187;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc_alerts" target="uc_sendnotif"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="i9" value="&#171;include&#187;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc_sendrem" target="uc_sendnotif"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <!-- extend -->
-        <mxCell id="e1" value="&#171;extend&#187;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc_voice" target="uc_chat"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e2" value="&#171;extend&#187;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc_facelogin" target="uc_login"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="m2" style="endArrow=none;html=1;" edge="1" parent="1" source="a_sm" target="uc_monitor"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="m3" style="endArrow=none;html=1;" edge="1" parent="1" source="a_sm" target="uc_security"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="m4" style="endArrow=none;html=1;" edge="1" parent="1" source="a_sm" target="uc_contacts"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="m5" style="endArrow=none;html=1;" edge="1" parent="1" source="a_sm" target="uc_stats"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="m6" style="endArrow=none;html=1;" edge="1" parent="1" source="a_sm" target="uc_login"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="m7" style="endArrow=none;html=1;" edge="1" parent="1" source="a_sm" target="uc_dashboard"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="m8" style="endArrow=none;html=1;" edge="1" parent="1" source="a_sm" target="uc_report"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- ===== System-actor associations ===== -->
+        <mxCell id="y1" style="endArrow=none;html=1;" edge="1" parent="1" source="a_sys" target="uc_sendrem"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="y2" style="endArrow=none;html=1;" edge="1" parent="1" source="a_sys" target="uc_sendnotif"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- ===== «include» : base --> inclusion ===== -->
+        <mxCell id="i1" value="&#171;include&#187;" style="endArrow=open;dashed=1;html=1;fontSize=10;" edge="1" parent="1" source="uc_face" target="uc_matchface"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="i2" value="&#171;include&#187;" style="endArrow=open;dashed=1;html=1;fontSize=10;" edge="1" parent="1" source="uc_chat" target="uc_classify"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="i3" value="&#171;include&#187;" style="endArrow=open;dashed=1;html=1;fontSize=10;" edge="1" parent="1" source="uc_login" target="uc_validate"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- ===== «extend» : extension --> base ===== -->
+        <mxCell id="e1" value="&#171;extend&#187;" style="endArrow=open;dashed=1;html=1;fontSize=10;" edge="1" parent="1" source="uc_voice" target="uc_chat"><mxGeometry relative="1" as="geometry" /></mxCell>
       </root>
     </mxGraphModel>
   </diagram>
