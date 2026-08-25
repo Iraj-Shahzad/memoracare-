@@ -9,7 +9,7 @@
 
   <!-- ===================== Client tier ===================== -->
   <rect x="30" y="38" width="700" height="150" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
-  <text x="38" y="55" font-size="12" font-weight="bold">Client Tier &#8212; Web Browser (Next.js &#183; React &#183; TypeScript)</text>
+  <text x="38" y="55" font-size="12" font-weight="bold">Client Tier : Web Browser (Next.js &#183; React &#183; TypeScript)</text>
 
   <rect x="45" y="80" width="122" height="90" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
   <text x="106" y="129" font-size="11" text-anchor="middle">Patient UI</text>
@@ -37,7 +37,7 @@
 
   <!-- ===================== Application tier ===================== -->
   <rect x="30" y="275" width="470" height="260" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
-  <text x="38" y="292" font-size="12" font-weight="bold">Application Tier &#8212; Express + Node.js (TypeScript)</text>
+  <text x="38" y="292" font-size="12" font-weight="bold">Application Tier : Express + Node.js (TypeScript)</text>
 
   <rect x="48" y="315" width="200" height="60" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
   <text x="148" y="341" font-size="11" text-anchor="middle">JWT Auth &amp; Role-Based</text>
@@ -56,21 +56,21 @@
 
   <rect x="48" y="461" width="434" height="60" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
   <text x="265" y="485" font-size="11" text-anchor="middle">Rule-based keyword matching</text>
-  <text x="265" y="500" font-size="11" text-anchor="middle">(last resort &#8212; in Node backend)</text>
+  <text x="265" y="500" font-size="11" text-anchor="middle">(last resort : in Node backend)</text>
 
   <!-- ===================== AI Services layer (offline fallback) ===================== -->
   <rect x="540" y="330" width="195" height="130" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
-  <text x="548" y="347" font-size="12" font-weight="bold">AI Services Layer &#8212; Flask</text>
+  <text x="548" y="347" font-size="12" font-weight="bold">AI Services Layer : Flask</text>
   <text x="548" y="362" font-size="12" font-weight="bold">(Python), offline fallback</text>
 
   <rect x="558" y="378" width="160" height="66" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
   <text x="638" y="400" font-size="11" text-anchor="middle">Custom Chatbot Model</text>
-  <text x="638" y="415" font-size="11" text-anchor="middle">(Keras + NLTK) &#8212;</text>
+  <text x="638" y="415" font-size="11" text-anchor="middle">(Keras + NLTK) :</text>
   <text x="638" y="430" font-size="11" text-anchor="middle">offline fallback</text>
 
   <!-- ===================== Data tier ===================== -->
   <rect x="30" y="550" width="470" height="120" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
-  <text x="38" y="567" font-size="12" font-weight="bold">Data Tier &#8212; MongoDB (Mongoose ODM)</text>
+  <text x="38" y="567" font-size="12" font-weight="bold">Data Tier : MongoDB (Mongoose ODM)</text>
 
   <rect x="48" y="588" width="434" height="66" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
   <text x="265" y="608" font-size="11" text-anchor="middle">Collections: Users &#183; Patients &#183; Caregivers &#183; Medications &#183; Routines &#183;</text>
