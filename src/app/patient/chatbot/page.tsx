@@ -205,10 +205,10 @@ export default function ChatbotPage() {
     const messageText = (text || "").trim();
     if (!messageText || sending) return;
 
-    // Answer (and read aloud) in the language the user actually typed in:
-    // Urdu-script message -> Urdu; otherwise English. This fixes English
-    // questions getting Urdu replies that an English TTS voice can't read.
-    const msgLang: Lang = /[؀-ۿ]/.test(messageText) ? "ur" : "en";
+    // The EN / اردو toggle is the user's explicit language choice, so it wins.
+    // But if they type in Urdu SCRIPT while EN is selected, answer in Urdu too
+    // (so a clearly-Urdu question isn't answered in English).
+    const msgLang: Lang = lang === "ur" || /[؀-ۿ]/.test(messageText) ? "ur" : "en";
 
     const newUserMessage: ChatMessage = {
       id: `${Date.now()}-u`,
