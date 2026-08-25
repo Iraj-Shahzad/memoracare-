@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 18 740 672" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#000000"/>
+    </marker>
+  </defs>
+
+  <rect x="10" y="18" width="740" height="672" fill="#ffffff"/>
+
+  <!-- ===================== Client tier ===================== -->
+  <rect x="30" y="38" width="700" height="150" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="38" y="55" font-size="12" font-weight="bold">Client Tier &#8212; Web Browser (Next.js &#183; React &#183; TypeScript)</text>
+
+  <rect x="45" y="80" width="122" height="90" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="106" y="129" font-size="11" text-anchor="middle">Patient UI</text>
+
+  <rect x="178" y="80" width="122" height="90" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="239" y="129" font-size="11" text-anchor="middle">Caregiver UI</text>
+
+  <rect x="311" y="80" width="122" height="90" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="372" y="129" font-size="11" text-anchor="middle">Admin Panel</text>
+
+  <rect x="444" y="80" width="132" height="90" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="510" y="122" font-size="11" text-anchor="middle">face-api.js</text>
+  <text x="510" y="137" font-size="11" text-anchor="middle">(Face Recognition)</text>
+
+  <rect x="587" y="80" width="128" height="90" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="651" y="122" font-size="11" text-anchor="middle">Web Speech</text>
+  <text x="651" y="137" font-size="11" text-anchor="middle">(Voice EN/UR)</text>
+
+  <!-- ===================== Wit.ai Cloud NLU (primary) ===================== -->
+  <path d="M 560 262 C 540 262 540 232 562 230 C 558 205 600 198 612 214 C 620 200 660 200 666 216 C 690 208 715 222 705 240 C 725 244 722 266 700 264 C 690 277 570 277 560 262 Z"
+        fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="633" y="226" font-size="11" font-weight="bold" text-anchor="middle">Wit.ai Cloud NLU</text>
+  <text x="633" y="241" font-size="11" text-anchor="middle">(primary intent</text>
+  <text x="633" y="255" font-size="11" text-anchor="middle">classifier)</text>
+
+  <!-- ===================== Application tier ===================== -->
+  <rect x="30" y="275" width="470" height="260" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="38" y="292" font-size="12" font-weight="bold">Application Tier &#8212; Express + Node.js (TypeScript)</text>
+
+  <rect x="48" y="315" width="200" height="60" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="148" y="341" font-size="11" text-anchor="middle">JWT Auth &amp; Role-Based</text>
+  <text x="148" y="356" font-size="11" text-anchor="middle">Access</text>
+
+  <rect x="262" y="315" width="220" height="60" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="372" y="339" font-size="11" text-anchor="middle">REST Controllers (meds,</text>
+  <text x="372" y="354" font-size="11" text-anchor="middle">routines, chat, face, alerts,</text>
+  <text x="372" y="369" font-size="11" text-anchor="middle">reports)</text>
+
+  <rect x="48" y="388" width="200" height="60" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="148" y="422" font-size="11" text-anchor="middle">Socket.io Server</text>
+
+  <rect x="262" y="388" width="220" height="60" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="372" y="422" font-size="11" text-anchor="middle">Reminder Scheduler (node-cron)</text>
+
+  <rect x="48" y="461" width="434" height="60" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="265" y="485" font-size="11" text-anchor="middle">Rule-based keyword matching</text>
+  <text x="265" y="500" font-size="11" text-anchor="middle">(last resort &#8212; in Node backend)</text>
+
+  <!-- ===================== AI Services layer (offline fallback) ===================== -->
+  <rect x="540" y="330" width="195" height="130" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="548" y="347" font-size="12" font-weight="bold">AI Services Layer &#8212; Flask</text>
+  <text x="548" y="362" font-size="12" font-weight="bold">(Python), offline fallback</text>
+
+  <rect x="558" y="378" width="160" height="66" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="638" y="400" font-size="11" text-anchor="middle">Custom Chatbot Model</text>
+  <text x="638" y="415" font-size="11" text-anchor="middle">(Keras + NLTK) &#8212;</text>
+  <text x="638" y="430" font-size="11" text-anchor="middle">offline fallback</text>
+
+  <!-- ===================== Data tier ===================== -->
+  <rect x="30" y="550" width="470" height="120" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="38" y="567" font-size="12" font-weight="bold">Data Tier &#8212; MongoDB (Mongoose ODM)</text>
+
+  <rect x="48" y="588" width="434" height="66" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <text x="265" y="608" font-size="11" text-anchor="middle">Collections: Users &#183; Patients &#183; Caregivers &#183; Medications &#183; Routines &#183;</text>
+  <text x="265" y="623" font-size="11" text-anchor="middle">Logs &#183; Alerts &#183; KnownFaces &#183; Memories &#183; Reports &#183; ChatHistory &#183;</text>
+  <text x="265" y="638" font-size="11" text-anchor="middle">RecognitionLog &#183; Reminder &#183; Contact</text>
+
+  <!-- ===================== Connectors ===================== -->
+  <!-- Client <-> Application -->
+  <line x1="270" y1="188" x2="270" y2="275" stroke="#000000" stroke-width="1.4" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+  <rect x="181" y="223" width="178" height="16" fill="#ffffff"/>
+  <text x="270" y="235" font-size="10" text-anchor="middle">REST API (HTTPS/JSON) + Socket.io</text>
+
+  <!-- Application <-> Wit.ai (primary cloud NLU) -->
+  <line x1="500" y1="330" x2="600" y2="280" stroke="#000000" stroke-width="1.4" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+  <rect x="502" y="296" width="98" height="16" fill="#ffffff"/>
+  <text x="551" y="308" font-size="10" text-anchor="middle">HTTPS (cloud NLU)</text>
+
+  <!-- Application <-> Flask (offline fallback) -->
+  <line x1="500" y1="395" x2="540" y2="395" stroke="#000000" stroke-width="1.4" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+  <rect x="438" y="371" width="164" height="16" fill="#ffffff"/>
+  <text x="520" y="383" font-size="10" text-anchor="middle">HTTP /predict (offline fallback)</text>
+
+  <!-- Application <-> Data -->
+  <line x1="240" y1="535" x2="240" y2="550" stroke="#000000" stroke-width="1.4" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+  <rect x="199" y="535" width="82" height="16" fill="#ffffff"/>
+  <text x="240" y="547" font-size="10" text-anchor="middle">Mongoose ODM</text>
+</svg>
