@@ -17,6 +17,7 @@ import { Request, Response, NextFunction } from 'express';
 import ChatHistory from '../models/ChatHistory';
 import Patient from '../models/Patient';
 import Medication from '../models/Medication';
+import MedicationLog from '../models/MedicationLog';
 import Routine from '../models/Routine';
 import { canAccessPatient } from '../utils/access';
 
@@ -267,6 +268,37 @@ async function buildReply(intent: any, base: any, patientId: any, lang: 'en' | '
         // If calculation fails for any reason, fall back to gentle guidance.
         return ur ? STATIC_UR.prayer : base;
       }
+    }
+
+    case 'caregiver_query': {
+      // The patient's assigned caregiver(s) live on Patient.assignedCaregivers (User refs).
+      const patient: any = await Patient.findById(patientId)
+        .populate({ path: 'assignedCaregivers', select: 'name phone' });
+      const cg = patient?.assignedCaregivers?.[0];
+      if (!cg) {
+        return ur
+          ? 'ابھی آپ کا کوئی نگہداشت کنندہ مقرر نہیں۔ آپ کے اہلِ خانہ یہ مقرر کر سکتے ہیں۔'
+          : "You don't have a caregiver assigned yet. Your family can set one up for you.";
+      }
+      return ur
+        ? `آپ کے نگہداشت کنندہ ${cg.name} ہیں${cg.phone ? `، فون: ${cg.phone}` : ''}۔`
+        : `Your caregiver is ${cg.name}${cg.phone ? `. Phone: ${cg.phone}` : ''}.`;
+    }
+
+    case 'medication_status': {
+      // How many of today's active medicines have been logged as taken.
+      const dayStart = new Date(); dayStart.setHours(0, 0, 0, 0);
+      const dayEnd = new Date(dayStart); dayEnd.setDate(dayEnd.getDate() + 1);
+      const [meds, taken] = await Promise.all([
+        Medication.countDocuments({ patient: patientId, isActive: true }),
+        MedicationLog.countDocuments({ patient: patientId, status: 'taken', scheduledTime: { $gte: dayStart, $lt: dayEnd } }),
+      ]);
+      if (!meds) {
+        return ur ? 'آپ کی کوئی دوا درج نہیں ہے۔' : "You don't have any medicines on file.";
+      }
+      return ur
+        ? `آج آپ نے ${meds} میں سے ${taken} دوائیں لی ہیں۔${taken < meds ? ' براہ کرم باقی لے لیں۔' : ' بہت خوب!'}`
+        : `Today you have taken ${taken} of ${meds} medicines.${taken < meds ? ' Please take the rest.' : ' Well done!'}`;
     }
 
     default:

@@ -628,6 +628,44 @@
         "I'm happy that you're feeling well. Keep smiling!",
         "That makes me glad! It's lovely to know you're having a good day."
       ]
+    },
+    {
+      "tag": "caregiver_query",
+      "patterns": [
+        "Who is my caregiver", "Who takes care of me", "What is my caregiver's name",
+        "Tell me about my caregiver", "Who looks after me", "Call my caregiver",
+        "Contact my caregiver", "I want to talk to my caregiver", "My caregiver's number",
+        "How do I reach my caregiver", "Who is looking after me today", "Who is my nurse",
+        "mera caregiver kaun hai", "meri dekhbhal kaun karta hai", "caregiver ka naam kya hai",
+        "caregiver ko call karo", "apne caregiver se baat karni hai", "caregiver ka number do",
+        "meri madad kaun karta hai", "mujhe kaun sambhalta hai",
+        "میرا نگہداشت کنندہ کون ہے", "میری دیکھ بھال کون کرتا ہے", "نگہداشت کنندہ کا نام کیا ہے",
+        "نگہداشت کنندہ کو کال کرو", "نگہداشت کنندہ کا نمبر دو"
+      ],
+      "responses": [
+        "Let me get your caregiver's details for you.",
+        "Here is your caregiver's information.",
+        "Your caregiver is here to help you."
+      ]
+    },
+    {
+      "tag": "medication_status",
+      "patterns": [
+        "Did I take my medicine", "Have I taken my pills today", "Did I take my tablets",
+        "Have I taken my medication", "Did I miss any medicine", "Have I had my medicine yet",
+        "How many medicines have I taken today", "Did I already take my pills",
+        "Have I taken everything today", "Did I take my morning medicine",
+        "kya maine aaj dawai li", "kya maine apni goli li", "kya maine dawai le li hai",
+        "maine aaj kitni dawai li", "kya koi dawai reh gayi", "kya main ne medicine li",
+        "kya maine subah ki dawai li", "dawai li ya nahi",
+        "کیا میں نے آج دوا لی", "کیا میں نے اپنی گولی لی", "کیا میں نے دوا لے لی ہے",
+        "میں نے آج کتنی دوا لی", "کیا کوئی دوا رہ گئی"
+      ],
+      "responses": [
+        "Let me check your medication log for today.",
+        "Here is your medication status for today.",
+        "Let me see which medicines you have taken today."
+      ]
     }
   ]
 }
