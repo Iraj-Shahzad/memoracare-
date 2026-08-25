@@ -57,7 +57,7 @@ export const getAllContacts = async (req: Request, res: Response, next: NextFunc
     const contacts = await Contact.find(query)
       .populate('resolvedBy', 'name')
       .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
+      .skip((Number(page) - 1) * Number(limit))
       .limit(Number(limit));
 
     res.status(200).json({ success: true, count: contacts.length, total, contacts });

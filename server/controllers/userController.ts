@@ -34,7 +34,7 @@ export const getAllUsers = async (req: Request, res: Response, next: NextFunctio
 
     const total = await User.countDocuments(query);
     const users = await User.find(query)
-      .skip((page - 1) * limit)
+      .skip((Number(page) - 1) * Number(limit))
       .limit(Number(limit))
       .sort({ createdAt: -1 });
 

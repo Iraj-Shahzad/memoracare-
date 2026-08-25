@@ -46,7 +46,7 @@ export const getAllAlerts = async (req: Request, res: Response, next: NextFuncti
       .populate('caregiver', 'name')
       .populate('resolvedBy', 'name')
       .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
+      .skip((Number(page) - 1) * Number(limit))
       .limit(Number(limit));
 
     res.status(200).json({ success: true, count: alerts.length, total, alerts });

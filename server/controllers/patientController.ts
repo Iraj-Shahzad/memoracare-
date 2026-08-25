@@ -46,7 +46,7 @@ export const getAllPatients = async (req: Request, res: Response, next: NextFunc
     const patients = await Patient.find(query)
       .populate('user', 'name email phone avatar isActive')
       .populate('assignedCaregivers', 'name email')
-      .skip((page - 1) * limit)
+      .skip((Number(page) - 1) * Number(limit))
       .limit(Number(limit))
       .sort({ createdAt: -1 });
 
@@ -409,7 +409,7 @@ export const getActivityLog = async (req: Request, res: Response, next: NextFunc
       })),
     ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-    const paginated = activities.slice((page - 1) * limit, page * limit);
+    const paginated = activities.slice((Number(page) - 1) * Number(limit), Number(page) * Number(limit));
 
     res.status(200).json({ success: true, count: paginated.length, total: activities.length, activities: paginated });
   } catch (err: any) {

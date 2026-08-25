@@ -195,15 +195,15 @@ export const getMedicationLogs = async (req: Request, res: Response, next: NextF
 
     if (from || to) {
       query.scheduledTime = {};
-      if (from) query.scheduledTime.$gte = new Date(from);
-      if (to) query.scheduledTime.$lte = new Date(to);
+      if (from) query.scheduledTime.$gte = new Date(from as string);
+      if (to) query.scheduledTime.$lte = new Date(to as string);
     }
 
     const total = await MedicationLog.countDocuments(query);
     const logs = await MedicationLog.find(query)
       .populate('medication', 'name dosage frequency')
       .sort({ scheduledTime: -1 })
-      .skip((page - 1) * limit)
+      .skip((Number(page) - 1) * Number(limit))
       .limit(Number(limit));
 
     res.status(200).json({ success: true, count: logs.length, total, logs });

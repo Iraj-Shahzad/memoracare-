@@ -161,15 +161,15 @@ export const getRoutineLogs = async (req: Request, res: Response, next: NextFunc
 
     if (from || to) {
       query.scheduledDate = {};
-      if (from) query.scheduledDate.$gte = new Date(from);
-      if (to) query.scheduledDate.$lte = new Date(to);
+      if (from) query.scheduledDate.$gte = new Date(from as string);
+      if (to) query.scheduledDate.$lte = new Date(to as string);
     }
 
     const total = await RoutineLog.countDocuments(query);
     const logs = await RoutineLog.find(query)
       .populate('routine', 'activityName description')
       .sort({ scheduledDate: -1 })
-      .skip((page - 1) * limit)
+      .skip((Number(page) - 1) * Number(limit))
       .limit(Number(limit));
 
     res.status(200).json({ success: true, count: logs.length, total, logs });

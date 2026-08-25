@@ -300,7 +300,7 @@ export const getChatHistory = async (req: Request, res: Response, next: NextFunc
     const total = await ChatHistory.countDocuments({ patient: patientId });
     const history = await ChatHistory.find({ patient: patientId })
       .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
+      .skip((Number(page) - 1) * Number(limit))
       .limit(Number(limit));
 
     res.status(200).json({ success: true, count: history.length, total, history: history.reverse() });

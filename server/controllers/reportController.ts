@@ -51,7 +51,7 @@ export const getAllReports = async (req: Request, res: Response, next: NextFunct
       .populate({ path: 'patient', populate: { path: 'user', select: 'name' } })
       .populate('generatedBy', 'name')
       .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
+      .skip((Number(page) - 1) * Number(limit))
       .limit(Number(limit));
 
     res.status(200).json({ success: true, count: reports.length, total, reports });
@@ -107,8 +107,8 @@ export const generateReport = async (req: Request, res: Response, next: NextFunc
         type: 'system',
         title: 'System Usage Report',
         period: {
-          from: from ? new Date(from) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-          to: to ? new Date(to) : new Date(),
+          from: from ? new Date(from as string) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+          to: to ? new Date(to as string) : new Date(),
         },
         format: format === 'xlsx' ? 'excel' : (format || 'pdf'),
         status: 'ready',
@@ -133,8 +133,8 @@ export const generateReport = async (req: Request, res: Response, next: NextFunc
     }
 
     const period = {
-      from: from ? new Date(from) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-      to: to ? new Date(to) : new Date(),
+      from: from ? new Date(from as string) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+      to: to ? new Date(to as string) : new Date(),
     };
 
     // Gather report data based on type

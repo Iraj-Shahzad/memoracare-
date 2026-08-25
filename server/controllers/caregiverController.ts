@@ -354,7 +354,7 @@ export const getMyNotes = async (req: Request, res: Response, next: NextFunction
     const notes = await Note.find(query)
       .populate({ path: 'patient', populate: { path: 'user', select: 'name' } })
       .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
+      .skip((Number(page) - 1) * Number(limit))
       .limit(Number(limit));
 
     res.status(200).json({ success: true, count: notes.length, total, notes });

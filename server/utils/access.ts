@@ -20,7 +20,9 @@ import Patient from '../models/Patient';
  * @param {String} patientId  the Patient _id
  * @returns {Promise<boolean>}
  */
-async function canAccessPatient(user: any, patientId: string) {
+// patientId accepts a string OR a Mongoose ObjectId (controllers often pass
+// `doc.patient` which is an ObjectId) — typed `any` so callers don't need .toString().
+async function canAccessPatient(user: any, patientId: any) {
   if (!user) return false;
   // Admin first — an admin may act on records with no patient at all (e.g. a
   // system-level alert), so this must short-circuit BEFORE the patientId guard.

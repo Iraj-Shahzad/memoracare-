@@ -143,7 +143,7 @@ export const getRecognitionLogs = async (req: Request, res: Response, next: Next
     const total = await RecognitionLog.countDocuments(filter);
     const logs = await RecognitionLog.find(filter)
       .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
+      .skip((Number(page) - 1) * Number(limit))
       .limit(Number(limit));
 
     res.status(200).json({ success: true, count: logs.length, total, logs });
