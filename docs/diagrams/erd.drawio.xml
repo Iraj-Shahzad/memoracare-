@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net">
   <diagram name="ER Diagram">
-    <mxGraphModel dx="1300" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="740" math="0" shadow="0">
+    <mxGraphModel dx="1300" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="800" math="0" shadow="0">
       <root>
         <mxCell id="0" /><mxCell id="1" parent="0" />
 
@@ -19,7 +19,7 @@
 
         <!-- Bottom cluster -->
         <mxCell id="rem" value="&lt;b&gt;Reminder&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;reminderId {PK}&lt;br&gt;type&lt;br&gt;scheduledTime" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;spacingTop=2;fillColor=#ffffff;align=left;spacingLeft=6;" vertex="1" parent="1"><mxGeometry x="640" y="590" width="160" height="76" as="geometry" /></mxCell>
-        <mxCell id="rep" value="&lt;b&gt;Report&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;reportId {PK}&lt;br&gt;type&lt;br&gt;period" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;spacingTop=2;fillColor=#ffffff;align=left;spacingLeft=6;" vertex="1" parent="1"><mxGeometry x="430" y="610" width="160" height="76" as="geometry" /></mxCell>
+        <mxCell id="rep" value="&lt;b&gt;Report&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;reportId {PK}&lt;br&gt;type&lt;br&gt;period" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;spacingTop=2;fillColor=#ffffff;align=left;spacingLeft=6;" vertex="1" parent="1"><mxGeometry x="230" y="680" width="160" height="76" as="geometry" /></mxCell>
 
         <!-- Left cluster: chat / memory / face -->
         <mxCell id="chat" value="&lt;b&gt;ChatHistory&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;chatId {PK}&lt;br&gt;query&lt;br&gt;response" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;spacingTop=2;fillColor=#ffffff;align=left;spacingLeft=6;" vertex="1" parent="1"><mxGeometry x="380" y="590" width="160" height="76" as="geometry" /></mxCell>
