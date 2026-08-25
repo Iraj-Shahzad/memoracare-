@@ -285,6 +285,14 @@ async function buildReply(intent: any, base: any, patientId: any, lang: 'en' | '
         : `Your caregiver is ${cg.name}${cg.phone ? `. Phone: ${cg.phone}` : ''}.`;
     }
 
+    case 'appointment': {
+      // The app schedules daily routines, not separate appointments — so answer
+      // honestly about today's schedule instead of a vague deferral.
+      return ur
+        ? 'آپ کے آج کے شیڈول میں کوئی اپائنٹمنٹ نہیں ہے۔ اگر کوئی طے ہوگی تو آپ کا نگہداشت کنندہ آپ کو بتا دے گا۔'
+        : "There is no appointment in your schedule for today. If one is set, your caregiver will let you know.";
+    }
+
     case 'medication_status': {
       // How many of today's active medicines have been logged as taken.
       const dayStart = new Date(); dayStart.setHours(0, 0, 0, 0);
