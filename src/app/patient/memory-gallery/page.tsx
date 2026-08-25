@@ -64,7 +64,9 @@ export default function MemoryGalleryPage() {
   const [otherPerson, setOtherPerson] = useState("");
   // Full enrolled faces (photo + name + relationship) to show as "People you know".
   const [knownFaces, setKnownFaces] = useState<{ _id: string; name: string; relationship?: string; imageUrl?: string }[]>([]);
-  const [previewImg, setPreviewImg] = useState<string | null>(null);
+  // Per-person photo lightbox: ALL of that person's images (reference + every scan), browsable with Next/Prev.
+  const [gallery, setGallery] = useState<{ name: string; relationship?: string; images: string[]; index: number } | null>(null);
+  const [galleryLoading, setGalleryLoading] = useState(false);
 
   const fetchMemories = async () => {
     if (!patientId) return;
@@ -87,6 +89,37 @@ export default function MemoryGalleryPage() {
       setKnownPeople(faces.map((f: any) => f.name).filter(Boolean));
     } catch { /* people list stays empty */ }
   };
+
+  // Open a person's full photo set: their enrolment photo + every recognition scan.
+  const openPersonGallery = async (f: { _id: string; name: string; relationship?: string; imageUrl?: string }) => {
+    setGalleryLoading(true);
+    setGallery({ name: f.name, relationship: f.relationship, images: [], index: 0 });
+    const imgs: string[] = [];
+    if (f.imageUrl) imgs.push(`${API_HOST}${f.imageUrl}`);
+    try {
+      const res = await apiGet(`/face-recognition/patient/${patientId}/logs?knownFace=${f._id}&limit=100`).catch(() => null);
+      const logs = Array.isArray(res?.logs) ? res.logs : [];
+      logs.forEach((l: any) => { if (l.imageUrl) imgs.push(`${API_HOST}${l.imageUrl}`); });
+    } catch { /* fall back to just the reference photo */ }
+    const uniq = Array.from(new Set(imgs));
+    setGallery({ name: f.name, relationship: f.relationship, images: uniq, index: 0 });
+    setGalleryLoading(false);
+  };
+
+  const galleryStep = (dir: 1 | -1) =>
+    setGallery((g) => (g && g.images.length ? { ...g, index: (g.index + dir + g.images.length) % g.images.length } : g));
+
+  // Keyboard nav for the person lightbox (← → to browse, Esc to close).
+  useEffect(() => {
+    if (!gallery) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setGallery(null);
+      else if (e.key === "ArrowRight") galleryStep(1);
+      else if (e.key === "ArrowLeft") galleryStep(-1);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [gallery]);
 
   useEffect(() => {
     fetchMemories();
@@ -173,10 +206,10 @@ export default function MemoryGalleryPage() {
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 16 }}>
                   {knownFaces.map((f) => (
                     <div key={f._id}
-                      onClick={() => f.imageUrl && setPreviewImg(`${API_HOST}${f.imageUrl}`)}
+                      onClick={() => openPersonGallery(f)}
                       className="bg-white rounded-2xl overflow-hidden border border-slate-200 text-center hover:shadow-lg transition-shadow"
-                      style={{ cursor: f.imageUrl ? "pointer" : "default" }}
-                      title={f.imageUrl ? "Click to preview" : undefined}>
+                      style={{ cursor: "pointer" }}
+                      title="Click to see all photos">
                       {f.imageUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={`${API_HOST}${f.imageUrl}`} alt={f.name}
@@ -190,6 +223,7 @@ export default function MemoryGalleryPage() {
                       <div style={{ padding: "8px 6px" }}>
                         <div className="text-sm font-semibold text-[#1a3c34]" style={{ textTransform: "capitalize" }}>{f.name}</div>
                         <div className="text-xs text-[#64748b]" style={{ textTransform: "capitalize" }}>{f.relationship || "Known face"}</div>
+                        <div className="text-[11px] font-semibold text-[#0d9488] mt-1">See all photos &rsaquo;</div>
                       </div>
                     </div>
                   ))}
@@ -301,13 +335,45 @@ export default function MemoryGalleryPage() {
           </div>
         </div>
 
-        {/* Memory preview modal */}
-        {/* People-you-know photo preview (lightbox) */}
-        {previewImg && (
-          <div className="fixed inset-0 z-[85] flex items-center justify-center p-5" style={{ background: "rgba(0,0,0,0.85)", cursor: "zoom-out" }} onClick={() => setPreviewImg(null)}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={previewImg} alt="Preview" onClick={(e) => e.stopPropagation()}
-              style={{ maxWidth: "92%", maxHeight: "90%", borderRadius: 12, boxShadow: "0 10px 40px rgba(0,0,0,0.5)" }} />
+        {/* People-you-know photo lightbox — browse ALL of a person's photos with Next/Prev */}
+        {gallery && (
+          <div className="fixed inset-0 z-[85] flex items-center justify-center p-5" style={{ background: "rgba(0,0,0,0.9)" }} onClick={() => setGallery(null)}>
+            <button onClick={() => setGallery(null)} aria-label="Close"
+              className="absolute top-4 right-5 text-white text-3xl leading-none hover:text-slate-300">×</button>
+
+            <div onClick={(e) => e.stopPropagation()} className="flex flex-col items-center" style={{ gap: 14, maxWidth: "96%", maxHeight: "94%" }}>
+              {/* Person name + relationship */}
+              <div className="text-center text-white">
+                <div className="text-lg font-bold" style={{ textTransform: "capitalize" }}>{gallery.name}</div>
+                {gallery.relationship && <div className="text-sm" style={{ color: "#cbd5e1", textTransform: "capitalize" }}>{gallery.relationship}</div>}
+              </div>
+
+              {galleryLoading ? (
+                <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin my-10" />
+              ) : gallery.images.length === 0 ? (
+                <div className="text-white text-sm my-10">No photos saved for this person yet.</div>
+              ) : (
+                <>
+                  <div className="relative flex items-center justify-center">
+                    {gallery.images.length > 1 && (
+                      <button onClick={() => galleryStep(-1)} aria-label="Previous"
+                        className="absolute -left-3 sm:-left-14 z-10 w-11 h-11 rounded-full bg-white/15 hover:bg-white/30 text-white text-2xl flex items-center justify-center backdrop-blur">‹</button>
+                    )}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={gallery.images[gallery.index]} alt={gallery.name}
+                      style={{ maxWidth: "82vw", maxHeight: "72vh", borderRadius: 12, boxShadow: "0 10px 40px rgba(0,0,0,0.5)" }}
+                      onError={(e) => { e.currentTarget.style.opacity = "0.3"; }} />
+                    {gallery.images.length > 1 && (
+                      <button onClick={() => galleryStep(1)} aria-label="Next"
+                        className="absolute -right-3 sm:-right-14 z-10 w-11 h-11 rounded-full bg-white/15 hover:bg-white/30 text-white text-2xl flex items-center justify-center backdrop-blur">›</button>
+                    )}
+                  </div>
+                  <div className="text-white text-[13px]" style={{ color: "#cbd5e1" }}>
+                    {gallery.index + 1} / {gallery.images.length}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         )}
 
