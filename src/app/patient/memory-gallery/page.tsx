@@ -64,6 +64,7 @@ export default function MemoryGalleryPage() {
   const [otherPerson, setOtherPerson] = useState("");
   // Full enrolled faces (photo + name + relationship) to show as "People you know".
   const [knownFaces, setKnownFaces] = useState<{ _id: string; name: string; relationship?: string; imageUrl?: string }[]>([]);
+  const [previewImg, setPreviewImg] = useState<string | null>(null);
 
   const fetchMemories = async () => {
     if (!patientId) return;
@@ -171,7 +172,11 @@ export default function MemoryGalleryPage() {
                 <h2 className="text-base font-bold text-[#1a3c34] mb-3">People you know</h2>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 16 }}>
                   {knownFaces.map((f) => (
-                    <div key={f._id} className="bg-white rounded-2xl overflow-hidden border border-slate-200 text-center">
+                    <div key={f._id}
+                      onClick={() => f.imageUrl && setPreviewImg(`${API_HOST}${f.imageUrl}`)}
+                      className="bg-white rounded-2xl overflow-hidden border border-slate-200 text-center hover:shadow-lg transition-shadow"
+                      style={{ cursor: f.imageUrl ? "pointer" : "default" }}
+                      title={f.imageUrl ? "Click to preview" : undefined}>
                       {f.imageUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={`${API_HOST}${f.imageUrl}`} alt={f.name}
@@ -297,6 +302,15 @@ export default function MemoryGalleryPage() {
         </div>
 
         {/* Memory preview modal */}
+        {/* People-you-know photo preview (lightbox) */}
+        {previewImg && (
+          <div className="fixed inset-0 z-[85] flex items-center justify-center p-5" style={{ background: "rgba(0,0,0,0.85)", cursor: "zoom-out" }} onClick={() => setPreviewImg(null)}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={previewImg} alt="Preview" onClick={(e) => e.stopPropagation()}
+              style={{ maxWidth: "92%", maxHeight: "90%", borderRadius: 12, boxShadow: "0 10px 40px rgba(0,0,0,0.5)" }} />
+          </div>
+        )}
+
         {detailMemory && (
           <div className="fixed inset-0 z-[80] flex items-center justify-center p-4" style={{ background: "rgba(15,23,42,0.5)" }} onClick={() => setDetailMemory(null)}>
             <div className="bg-white rounded-2xl w-full max-w-[560px] max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
