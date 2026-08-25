@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="15 0 545 625" font-family="Helvetica, Arial, sans-serif" font-size="12">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L8,4 L0,8 z" fill="#000000"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="580" height="660" fill="#ffffff"/>
+
+  <g fill="none" stroke="#000000" stroke-width="1.4">
+    <!-- e0 start->a1 -->
+    <line x1="280" y1="35" x2="280" y2="50" marker-end="url(#arrow)"/>
+    <!-- e1 a1->a2 -->
+    <line x1="280" y1="90" x2="280" y2="106" marker-end="url(#arrow)"/>
+    <!-- e2 a2->d1 -->
+    <line x1="280" y1="150" x2="280" y2="158" marker-end="url(#arrow)"/>
+    <!-- eyes d1->a3 -->
+    <polyline points="200,200 130,200 130,270" marker-end="url(#arrow)"/>
+    <!-- eno d1->a4 -->
+    <polyline points="360,200 445,200 445,270" marker-end="url(#arrow)"/>
+    <!-- e3 a3->m -->
+    <polyline points="130,314 130,470 250,470" marker-end="url(#arrow)"/>
+    <!-- e4 a4->a5 -->
+    <line x1="445" y1="310" x2="445" y2="336" marker-end="url(#arrow)"/>
+    <!-- e5 a5->a6 -->
+    <line x1="445" y1="376" x2="445" y2="392" marker-end="url(#arrow)"/>
+    <!-- e6 a6->m -->
+    <polyline points="445,432 445,470 310,470" marker-end="url(#arrow)"/>
+    <!-- e7 m->a7 -->
+    <line x1="280" y1="495" x2="280" y2="520" marker-end="url(#arrow)"/>
+    <!-- e8 a7->fin1 -->
+    <line x1="280" y1="560" x2="280" y2="583" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- guard labels -->
+  <g fill="#000000">
+    <text x="188" y="194" text-anchor="end">[Yes]</text>
+    <text x="372" y="194">[No]</text>
+  </g>
+
+  <!-- start node -->
+  <circle cx="280" cy="24" r="11" fill="#000000" stroke="#000000" stroke-width="1.4"/>
+
+  <!-- action / decision nodes -->
+  <g stroke="#000000" stroke-width="1.4">
+    <rect x="190" y="50" width="180" height="40" rx="12" fill="#ffffff"/>
+    <rect x="165" y="106" width="230" height="44" rx="12" fill="#ffffff"/>
+    <polygon points="280,158 360,200 280,242 200,200" fill="#ffffff"/>
+
+    <rect x="40" y="270" width="180" height="44" rx="12" fill="#ffffff"/>
+    <rect x="360" y="270" width="170" height="40" rx="12" fill="#ffffff"/>
+    <rect x="360" y="336" width="170" height="40" rx="12" fill="#ffffff"/>
+    <rect x="360" y="392" width="170" height="40" rx="12" fill="#ffffff"/>
+
+    <polygon points="280,445 310,470 280,495 250,470" fill="#ffffff"/>
+    <rect x="190" y="520" width="180" height="40" rx="12" fill="#ffffff"/>
+  </g>
+
+  <!-- final node -->
+  <circle cx="280" cy="596" r="13" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <circle cx="280" cy="596" r="7" fill="#000000" stroke="#000000" stroke-width="1.4"/>
+
+  <!-- labels -->
+  <g fill="#000000" text-anchor="middle">
+    <text x="280" y="74">Medication time reached</text>
+    <text x="280" y="124">Send reminder to patient</text>
+    <text x="280" y="138">(voice + on-screen)</text>
+    <text x="280" y="204">Marked as taken?</text>
+
+    <text x="130" y="296">Log as taken</text>
+    <text x="445" y="294">Wait for grace period</text>
+    <text x="445" y="360">Log as missed</text>
+    <text x="445" y="416">Notify caregiver</text>
+
+    <text x="280" y="544">Update medication status</text>
+  </g>
+</svg>
