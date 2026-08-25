@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net">
   <diagram name="Activity - Face Recognition">
-    <mxGraphModel dx="820" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="620" pageHeight="750" math="0" shadow="0">
+    <mxGraphModel dx="820" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="620" pageHeight="840" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -14,10 +14,11 @@
         <mxCell id="d2" value="Match found?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="225" y="393" width="150" height="84" as="geometry" /></mxCell>
         <mxCell id="a5" value="Display name, relationship &amp; confidence" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="20" y="505" width="210" height="48" as="geometry" /></mxCell>
         <mxCell id="a6" value="Show &quot;unknown person&quot;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="380" y="505" width="180" height="44" as="geometry" /></mxCell>
-        <mxCell id="m" value="" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="270" y="578" width="60" height="44" as="geometry" /></mxCell>
-        <mxCell id="a7" value="Log recognition attempt" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="205" y="635" width="190" height="40" as="geometry" /></mxCell>
-        <mxCell id="fin1" value="" style="ellipse;html=1;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="287" y="698" width="26" height="26" as="geometry" /></mxCell>
-        <mxCell id="fin2" value="" style="ellipse;html=1;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="293" y="704" width="14" height="14" as="geometry" /></mxCell>
+        <mxCell id="aalert" value="Raise Alert &amp; notify caregiver (Socket.io)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="370" y="568" width="200" height="48" as="geometry" /></mxCell>
+        <mxCell id="m" value="" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="270" y="655" width="60" height="44" as="geometry" /></mxCell>
+        <mxCell id="a7" value="Log recognition attempt" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="205" y="712" width="190" height="40" as="geometry" /></mxCell>
+        <mxCell id="fin1" value="" style="ellipse;html=1;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="287" y="775" width="26" height="26" as="geometry" /></mxCell>
+        <mxCell id="fin2" value="" style="ellipse;html=1;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="293" y="781" width="14" height="14" as="geometry" /></mxCell>
         <mxCell id="e0" style="endArrow=block;html=1;" edge="1" parent="1" source="start" target="a1"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="e1" style="endArrow=block;html=1;" edge="1" parent="1" source="a1" target="a2"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="e2" style="endArrow=block;html=1;" edge="1" parent="1" source="a2" target="a3"><mxGeometry relative="1" as="geometry" /></mxCell>
@@ -28,8 +29,9 @@
         <mxCell id="e4" style="endArrow=block;html=1;" edge="1" parent="1" source="a4" target="d2"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="ed2yes" value="[Yes]" style="endArrow=block;html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1" source="d2" target="a5"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="130" y="435" /></Array></mxGeometry></mxCell>
         <mxCell id="ed2no" value="[No]" style="endArrow=block;html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1" source="d2" target="a6"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="470" y="435" /></Array></mxGeometry></mxCell>
-        <mxCell id="e5" style="endArrow=block;html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1" source="a5" target="m"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="130" y="600" /></Array></mxGeometry></mxCell>
-        <mxCell id="e6" style="endArrow=block;html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1" source="a6" target="m"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="470" y="600" /></Array></mxGeometry></mxCell>
+        <mxCell id="e5" style="endArrow=block;html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1" source="a5" target="m"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="130" y="677" /></Array></mxGeometry></mxCell>
+        <mxCell id="e6" style="endArrow=block;html=1;" edge="1" parent="1" source="a6" target="aalert"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6b" style="endArrow=block;html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1" source="aalert" target="m"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="470" y="677" /></Array></mxGeometry></mxCell>
         <mxCell id="e7" style="endArrow=block;html=1;" edge="1" parent="1" source="m" target="a7"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="e8" style="endArrow=block;html=1;" edge="1" parent="1" source="a7" target="fin1"><mxGeometry relative="1" as="geometry" /></mxCell>
       </root>

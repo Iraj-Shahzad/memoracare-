@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net">
   <diagram name="Activity - AI Chatbot Interaction">
-    <mxGraphModel dx="820" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="660" pageHeight="950" math="0" shadow="0">
+    <mxGraphModel dx="820" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="700" pageHeight="1180" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -10,18 +10,20 @@
         <mxCell id="d0" value="Voice input?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="245" y="150" width="150" height="80" as="geometry" /></mxCell>
         <mxCell id="astt" value="Convert speech to text" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="430" y="168" width="170" height="44" as="geometry" /></mxCell>
         <mxCell id="m0" value="" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="292" y="248" width="56" height="44" as="geometry" /></mxCell>
-        <mxCell id="a3" value="Send to intent model" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="230" y="310" width="180" height="40" as="geometry" /></mxCell>
-        <mxCell id="a4" value="Classify intent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="230" y="366" width="180" height="40" as="geometry" /></mxCell>
-        <mxCell id="d1" value="Intent recognized?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="240" y="428" width="160" height="84" as="geometry" /></mxCell>
-        <mxCell id="a5" value="Generate response" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="50" y="540" width="180" height="44" as="geometry" /></mxCell>
-        <mxCell id="a6" value="Return fallback response" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="410" y="540" width="190" height="44" as="geometry" /></mxCell>
-        <mxCell id="m1" value="" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="292" y="598" width="56" height="44" as="geometry" /></mxCell>
-        <mxCell id="a7" value="Translate to chosen language (EN / UR)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="205" y="665" width="230" height="44" as="geometry" /></mxCell>
-        <mxCell id="a8" value="Display &amp; speak reply" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="225" y="725" width="190" height="40" as="geometry" /></mxCell>
-        <mxCell id="a9" value="Save to chat history" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="225" y="781" width="190" height="40" as="geometry" /></mxCell>
-        <mxCell id="d2" value="Continue chat?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="245" y="838" width="150" height="74" as="geometry" /></mxCell>
-        <mxCell id="fin1" value="" style="ellipse;html=1;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="307" y="915" width="26" height="26" as="geometry" /></mxCell>
-        <mxCell id="fin2" value="" style="ellipse;html=1;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="313" y="921" width="14" height="14" as="geometry" /></mxCell>
+        <mxCell id="a3" value="Classify intent via Wit.ai (cloud NLU)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="220" y="312" width="200" height="44" as="geometry" /></mxCell>
+        <mxCell id="dWit" value="Wit.ai confident?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="240" y="384" width="160" height="84" as="geometry" /></mxCell>
+        <mxCell id="aWit" value="Use Wit.ai intent (primary)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="30" y="404" width="170" height="44" as="geometry" /></mxCell>
+        <mxCell id="dPy" value="Python model available?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="235" y="500" width="170" height="84" as="geometry" /></mxCell>
+        <mxCell id="aPy" value="Use self-hosted Python/Flask model intent (fallback)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="15" y="516" width="190" height="52" as="geometry" /></mxCell>
+        <mxCell id="aRule" value="Use rule-based keyword matching (last resort)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="210" y="614" width="220" height="50" as="geometry" /></mxCell>
+        <mxCell id="mC" value="" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="292" y="694" width="56" height="44" as="geometry" /></mxCell>
+        <mxCell id="aBuild" value="Build reply by injecting patient data from MongoDB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="205" y="762" width="230" height="52" as="geometry" /></mxCell>
+        <mxCell id="a7" value="Translate to chosen language (EN / UR)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="205" y="836" width="230" height="44" as="geometry" /></mxCell>
+        <mxCell id="a8" value="Send reply: display &amp; speak" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="225" y="900" width="190" height="40" as="geometry" /></mxCell>
+        <mxCell id="a9" value="Save to chat history" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="225" y="956" width="190" height="40" as="geometry" /></mxCell>
+        <mxCell id="d2" value="Continue chat?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="245" y="1012" width="150" height="74" as="geometry" /></mxCell>
+        <mxCell id="fin1" value="" style="ellipse;html=1;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="307" y="1112" width="26" height="26" as="geometry" /></mxCell>
+        <mxCell id="fin2" value="" style="ellipse;html=1;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="313" y="1118" width="14" height="14" as="geometry" /></mxCell>
         <mxCell id="e0" style="endArrow=block;html=1;" edge="1" parent="1" source="start" target="a1"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="e1" style="endArrow=block;html=1;" edge="1" parent="1" source="a1" target="a2"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="e2" style="endArrow=block;html=1;" edge="1" parent="1" source="a2" target="d0"><mxGeometry relative="1" as="geometry" /></mxCell>
@@ -29,17 +31,20 @@
         <mxCell id="estt" style="endArrow=block;html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1" source="astt" target="m0"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="515" y="270" /></Array></mxGeometry></mxCell>
         <mxCell id="eno0" value="[No]" style="endArrow=block;html=1;" edge="1" parent="1" source="d0" target="m0"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="e3" style="endArrow=block;html=1;" edge="1" parent="1" source="m0" target="a3"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e4" style="endArrow=block;html=1;" edge="1" parent="1" source="a3" target="a4"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e5" style="endArrow=block;html=1;" edge="1" parent="1" source="a4" target="d1"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="eyes1" value="[Yes]" style="endArrow=block;html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1" source="d1" target="a5"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="140" y="470" /></Array></mxGeometry></mxCell>
-        <mxCell id="eno1" value="[No]" style="endArrow=block;html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1" source="d1" target="a6"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="505" y="470" /></Array></mxGeometry></mxCell>
-        <mxCell id="e6" style="endArrow=block;html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1" source="a5" target="m1"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="140" y="620" /></Array></mxGeometry></mxCell>
-        <mxCell id="e7" style="endArrow=block;html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1" source="a6" target="m1"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="505" y="620" /></Array></mxGeometry></mxCell>
-        <mxCell id="e8" style="endArrow=block;html=1;" edge="1" parent="1" source="m1" target="a7"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e9" style="endArrow=block;html=1;" edge="1" parent="1" source="a7" target="a8"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e10" style="endArrow=block;html=1;" edge="1" parent="1" source="a8" target="a9"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e11" style="endArrow=block;html=1;" edge="1" parent="1" source="a9" target="d2"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="eloop" value="[Yes]" style="endArrow=block;html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1" source="d2" target="a2"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="625" y="875" /><mxPoint x="625" y="126" /></Array></mxGeometry></mxCell>
+        <mxCell id="ewit0" style="endArrow=block;html=1;" edge="1" parent="1" source="a3" target="dWit"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ewityes" value="[Yes]" style="endArrow=block;html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1" source="dWit" target="aWit"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ewitno" value="[No]" style="endArrow=block;html=1;" edge="1" parent="1" source="dWit" target="dPy"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="epyyes" value="[Yes]" style="endArrow=block;html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1" source="dPy" target="aPy"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="epyno" value="[No]" style="endArrow=block;html=1;" edge="1" parent="1" source="dPy" target="aRule"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ecWit" style="endArrow=block;html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1" source="aWit" target="mC"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="115" y="710" /></Array></mxGeometry></mxCell>
+        <mxCell id="ecPy" style="endArrow=block;html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1" source="aPy" target="mC"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="110" y="722" /></Array></mxGeometry></mxCell>
+        <mxCell id="ecRule" style="endArrow=block;html=1;" edge="1" parent="1" source="aRule" target="mC"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ebuild" style="endArrow=block;html=1;" edge="1" parent="1" source="mC" target="aBuild"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e9" style="endArrow=block;html=1;" edge="1" parent="1" source="aBuild" target="a7"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e10" style="endArrow=block;html=1;" edge="1" parent="1" source="a7" target="a8"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e11" style="endArrow=block;html=1;" edge="1" parent="1" source="a8" target="a9"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e12" style="endArrow=block;html=1;" edge="1" parent="1" source="a9" target="d2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="eloop" value="[Yes]" style="endArrow=block;html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1" source="d2" target="a2"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="660" y="1049" /><mxPoint x="660" y="126" /></Array></mxGeometry></mxCell>
         <mxCell id="eout" value="[No]" style="endArrow=block;html=1;" edge="1" parent="1" source="d2" target="fin1"><mxGeometry relative="1" as="geometry" /></mxCell>
       </root>
     </mxGraphModel>
