@@ -1,5 +1,5 @@
 /**
- * API CLIENT — typed fetch wrapper for every call to the MemoraCare backend.
+ * API CLIENT — typed fetch wrapper for every call to the MemoryCare backend.
  *
  * Key concepts: single `api()` fetch wrapper over a configurable API_BASE; bearer
  * token pulled from localStorage and attached as `Authorization: Bearer <token>`;

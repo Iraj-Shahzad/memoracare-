@@ -79,7 +79,7 @@ export default function SettingsPage() {
     try {
       setExporting(true);
       const safe = (user?.name || "patient").replace(/[^a-z0-9]+/gi, "_");
-      await apiDownload(`/patients/${patientId}/export`, `MemoraCare_MyData_${safe}.pdf`);
+      await apiDownload(`/patients/${patientId}/export`, `MemoryCare_MyData_${safe}.pdf`);
     } catch (err) {
       setExportErr(err instanceof Error ? err.message : "Could not export your data.");
     } finally {

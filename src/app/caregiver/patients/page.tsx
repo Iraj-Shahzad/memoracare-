@@ -54,7 +54,7 @@ interface Overview {
   alerts: Array<{ _id: string; message?: string; severity?: string; createdAt?: string }>;
 }
 
-// MemoraCare is a general reminder/care app — used for dementia care but also
+// MemoryCare is a general reminder/care app — used for dementia care but also
 // for home use, elderly care, post-op recovery, chronic conditions, or anyone
 // who just needs medication/routine reminders. Options are grouped accordingly.
 const DIAGNOSIS_GROUPS: { label: string; options: string[] }[] = [

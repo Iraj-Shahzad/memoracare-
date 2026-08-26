@@ -49,7 +49,7 @@ export default function SettingsPage() {
   const handleBackup = async () => {
     setBackingUp(true);
     try {
-      await apiDownload("/admin/backup", `memoracare-backup-${new Date().toISOString().slice(0, 10)}.json`);
+      await apiDownload("/admin/backup", `memorycare-backup-${new Date().toISOString().slice(0, 10)}.json`);
       toast("Backup downloaded.", "success");
     } catch (err: unknown) {
       toast(err instanceof Error ? err.message : "Could not create the backup.", "error");
@@ -85,7 +85,7 @@ export default function SettingsPage() {
                   {/* System Information (live, read-only) */}
                   <div className="bg-white rounded-lg border border-slate-200 p-6 mb-8">
                     <h3 className="text-lg font-semibold text-slate-900 mb-4">System Information</h3>
-                    <Row label="Application" value="MemoraCare" />
+                    <Row label="Application" value="MemoryCare" />
                     <Row label="Signed in as" value={user?.email || "—"} />
                     <Row label="Your role" value={<span className="capitalize">{user?.role || "admin"}</span>} />
                     <Row label="Database" value={dbOk ? "Connected" : "Disconnected"} accent={dbOk ? "text-green-600" : "text-red-600"} />

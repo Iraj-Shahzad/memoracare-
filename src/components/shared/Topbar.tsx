@@ -395,7 +395,7 @@ export default function Topbar({
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4" onClick={() => setShowLogoutConfirm(false)}>
           <div className="bg-white rounded-2xl w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-bold text-[#1a3c34] mb-1">Log out?</h3>
-            <p className="text-sm text-slate-600 mb-5">You&apos;ll need to sign in again to use MemoraCare.</p>
+            <p className="text-sm text-slate-600 mb-5">You&apos;ll need to sign in again to use MemoryCare.</p>
             <div className="flex justify-end gap-3">
               <button onClick={() => setShowLogoutConfirm(false)} className="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-300 text-slate-700 hover:bg-slate-50">Cancel</button>
               <button onClick={() => { setShowLogoutConfirm(false); logout(); }} className="px-5 py-2 rounded-lg text-sm font-semibold bg-red-600 text-white hover:bg-red-700">Log out</button>
