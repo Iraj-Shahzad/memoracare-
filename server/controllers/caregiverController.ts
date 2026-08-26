@@ -445,7 +445,7 @@ export const getDashboard = async (req: Request, res: Response, next: NextFuncti
     const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1);
     const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
 
-    const [weekMedLogs, todayRoutineLogs, unresolvedAlerts, recentNotes, allMeds] = await Promise.all([
+    const [weekMedLogs, todayRoutineLogs, unresolvedAlerts, recentNotes, allMeds, allRoutines] = await Promise.all([
       MedicationLog.find({ patient: { $in: patientIds }, scheduledTime: { $gte: weekAgo } }),
       RoutineLog.find({ patient: { $in: patientIds }, scheduledDate: { $gte: today, $lt: tomorrow } }),
       Alert.find({ patient: { $in: patientIds }, isResolved: false })
@@ -455,6 +455,7 @@ export const getDashboard = async (req: Request, res: Response, next: NextFuncti
         .populate({ path: 'patient', populate: { path: 'user', select: 'name' } })
         .sort({ createdAt: -1 }).limit(5),
       Medication.find({ patient: { $in: patientIds }, isActive: true }),
+      Routine.find({ patient: { $in: patientIds }, isActive: true }),
     ]);
 
     // Uses the shared initialsOf / ageOf / CARD_COLORS helpers above so the
@@ -517,7 +518,9 @@ export const getDashboard = async (req: Request, res: Response, next: NextFuncti
       totalPatients: patients.length,
       medsCompliance,
       missedAlerts: unresolvedAlerts.length,
-      routinesToday: { completed: routinesCompleted, total: todayRoutineLogs.length },
+      // Total is how many routines are scheduled, not how many have been logged,
+      // otherwise the denominator shrinks as activities get ticked off.
+      routinesToday: { completed: routinesCompleted, total: allRoutines.length },
       patients: patientsOut,
       alerts: alertsOut,
       complianceTable,

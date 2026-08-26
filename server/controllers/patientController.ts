@@ -300,10 +300,13 @@ export const getDashboard = async (req: Request, res: Response, next: NextFuncti
       return res.status(404).json({ success: false, message: 'Patient not found' });
     }
 
+    // The DENOMINATOR is how many are scheduled, never how many have been logged.
+    // Using the log count made the total shrink as the patient ticked things off
+    // (1 of 1, then 2 of 2), instead of counting up towards the real total.
     const medsTaken = todayMedLogs.filter((l) => l.status === 'taken').length;
-    const medsTotal = todayMedLogs.length || medications.length;
+    const medsTotal = medications.length;
     const routinesCompleted = todayRoutineLogs.filter((l) => l.status === 'completed').length;
-    const routinesTotal = todayRoutineLogs.length || routines.length;
+    const routinesTotal = routines.length;
 
     // ---- Next upcoming medication / routine time (real, from schedules) ----
     const now = new Date();
