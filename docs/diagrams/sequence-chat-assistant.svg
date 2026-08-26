@@ -1,0 +1,157 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1730 1000" font-family="Helvetica, Arial, sans-serif" font-size="20">
+  <defs>
+    <marker id="sync" markerWidth="18" markerHeight="16" refX="15" refY="8" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1,1 L15,8 L1,15 z" fill="#000000"/>
+    </marker>
+    <marker id="open" markerWidth="18" markerHeight="16" refX="14" refY="8" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1,1 L14,8 L1,15" fill="none" stroke="#000000" stroke-width="2"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1730" height="1000" fill="#ffffff"/>
+
+  <!-- lifelines (dashed) -->
+  <line x1="55" y1="166" x2="55" y2="990" stroke="#000000" stroke-width="2" stroke-dasharray="8 6"/>
+  <line x1="200" y1="130" x2="200" y2="990" stroke="#000000" stroke-width="2" stroke-dasharray="8 6"/>
+  <line x1="410" y1="130" x2="410" y2="990" stroke="#000000" stroke-width="2" stroke-dasharray="8 6"/>
+  <line x1="630" y1="130" x2="630" y2="990" stroke="#000000" stroke-width="2" stroke-dasharray="8 6"/>
+  <line x1="840" y1="130" x2="840" y2="990" stroke="#000000" stroke-width="2" stroke-dasharray="8 6"/>
+  <line x1="1050" y1="130" x2="1050" y2="990" stroke="#000000" stroke-width="2" stroke-dasharray="8 6"/>
+  <line x1="1240" y1="130" x2="1240" y2="990" stroke="#000000" stroke-width="2" stroke-dasharray="8 6"/>
+  <line x1="1410" y1="130" x2="1410" y2="990" stroke="#000000" stroke-width="2" stroke-dasharray="8 6"/>
+  <line x1="1600" y1="130" x2="1600" y2="990" stroke="#000000" stroke-width="2" stroke-dasharray="8 6"/>
+
+  <!-- lifeline heads -->
+  <circle cx="55" cy="66" r="11" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <line x1="55" y1="77" x2="55" y2="110" stroke="#000000" stroke-width="2"/>
+  <line x1="34" y1="88" x2="76" y2="88" stroke="#000000" stroke-width="2"/>
+  <line x1="55" y1="110" x2="39" y2="140" stroke="#000000" stroke-width="2"/>
+  <line x1="55" y1="110" x2="71" y2="140" stroke="#000000" stroke-width="2"/>
+  <text x="55" y="160" text-anchor="middle" font-size="22" font-weight="bold">Patient</text>
+  <rect x="120" y="84" width="160" height="46" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <text x="200" y="114" text-anchor="middle" font-size="22" font-weight="bold">:ChatbotPage</text>
+  <rect x="312" y="84" width="196" height="46" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <text x="410" y="114" text-anchor="middle" font-size="22" font-weight="bold">:AuthMiddleware</text>
+  <rect x="540" y="84" width="180" height="46" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <text x="630" y="114" text-anchor="middle" font-size="22" font-weight="bold">:ChatController</text>
+  <rect x="758" y="84" width="164" height="46" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <text x="840" y="114" text-anchor="middle" font-size="22" font-weight="bold">:AccessGuard</text>
+  <rect x="959" y="84" width="182" height="46" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <text x="1050" y="114" text-anchor="middle" font-size="22" font-weight="bold">:IntentClassifier</text>
+  <rect x="1165" y="84" width="150" height="46" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <text x="1240" y="114" text-anchor="middle" font-size="22" font-weight="bold">:ChatHistory</text>
+  <rect x="1346" y="84" width="128" height="46" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <text x="1410" y="114" text-anchor="middle" font-size="22" font-weight="bold">:MongoDB</text>
+  <rect x="1500" y="84" width="200" height="46" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <text x="1600" y="114" text-anchor="middle" font-size="22" font-weight="bold">:SocketIOServer</text>
+
+  <!-- UML note (folded corner) + dashed leader -->
+  <path d="M620,6 H1072 L1090,24 V68 H620 Z" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <path d="M1072,6 V24 H1090" fill="none" stroke="#000000" stroke-width="2"/>
+  <text x="632" y="32" font-size="19">{ WIT_MIN_CONFIDENCE defaults to 0.55;</text>
+  <text x="632" y="54" font-size="19">the Flask call times out after 8 seconds }</text>
+  <line x1="1150" y1="68" x2="1150" y2="392" stroke="#000000" stroke-width="2" stroke-dasharray="5 4"/>
+
+  <!-- activation (execution specification) bars -->
+  <rect x="194" y="178" width="12" height="802" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <rect x="404" y="210" width="12" height="740" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <rect x="624" y="300" width="12" height="650" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <rect x="834" y="332" width="12" height="30" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <rect x="1044" y="452" width="12" height="30" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <rect x="1044" y="566" width="12" height="30" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <rect x="1044" y="680" width="12" height="30" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <rect x="1044" y="764" width="12" height="92" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <rect x="1404" y="796" width="12" height="30" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <rect x="1234" y="888" width="12" height="28" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <rect x="1594" y="920" width="12" height="26" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+
+  <!-- alt frame + pentagon operator tab + guards -->
+  <rect x="570" y="392" width="630" height="340" fill="none" stroke="#000000" stroke-width="2"/>
+  <path d="M570,392 H634 L644,410 V420 H570 Z" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <text x="578" y="411" font-size="19" font-weight="bold">alt</text>
+  <line x1="570" y1="512" x2="1200" y2="512" stroke="#000000" stroke-width="2" stroke-dasharray="8 6"/>
+  <line x1="570" y1="626" x2="1200" y2="626" stroke="#000000" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="654" y="411" font-size="19">[Wit.ai confident, above 0.55]</text>
+  <text x="578" y="534" font-size="19">[else Flask model reachable]</text>
+  <text x="578" y="648" font-size="19">[else]</text>
+
+  <!-- m1 : sync -->
+  <rect x="58" y="155" width="186.7" height="22" fill="#ffffff"/>
+  <text x="63" y="172" font-size="20">sendText(message)</text>
+  <line x1="55" y1="178" x2="194" y2="178" stroke="#000000" stroke-width="2" marker-end="url(#sync)"/>
+  <!-- m2 : sync -->
+  <rect x="209" y="187" width="478" height="22" fill="#ffffff"/>
+  <text x="214" y="204" font-size="20">POST /chat/message { patientId, query, mode, lang }</text>
+  <line x1="206" y1="210" x2="404" y2="210" stroke="#000000" stroke-width="2" marker-end="url(#sync)"/>
+  <!-- m3 : self -->
+  <rect x="487" y="245" width="201.2" height="22" fill="#ffffff"/>
+  <text x="492" y="262" font-size="20">protect(req, res, next)</text>
+  <path d="M416,242 H480 V268 H418" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#sync)"/>
+  <!-- m4 : sync -->
+  <rect x="419" y="277" width="277.9" height="22" fill="#ffffff"/>
+  <text x="424" y="294" font-size="20">next(): sendMessage(req, res)</text>
+  <line x1="416" y1="300" x2="624" y2="300" stroke="#000000" stroke-width="2" marker-end="url(#sync)"/>
+  <!-- m5 : sync -->
+  <rect x="639" y="309" width="309" height="22" fill="#ffffff"/>
+  <text x="644" y="326" font-size="20">canAccessPatient(user, patientId)</text>
+  <line x1="636" y1="332" x2="834" y2="332" stroke="#000000" stroke-width="2" marker-end="url(#sync)"/>
+  <!-- m6 : ret -->
+  <rect x="698.5" y="339" width="134.5" height="22" fill="#ffffff"/>
+  <text x="828" y="356" text-anchor="end" font-size="20" font-style="italic">true : Boolean</text>
+  <line x1="834" y1="362" x2="636" y2="362" stroke="#000000" stroke-width="2" stroke-dasharray="" marker-end="url(#open)"/>
+  <!-- m7 : sync -->
+  <rect x="639" y="429" width="238.9" height="22" fill="#ffffff"/>
+  <text x="644" y="446" font-size="20">classifyWithWit(message)</text>
+  <line x1="636" y1="452" x2="1044" y2="452" stroke="#000000" stroke-width="2" marker-end="url(#sync)"/>
+  <!-- m8 : ret -->
+  <rect x="851.8" y="459" width="191.2" height="22" fill="#ffffff"/>
+  <text x="1038" y="476" text-anchor="end" font-size="20" font-style="italic">{ intent, confidence }</text>
+  <line x1="1044" y1="482" x2="636" y2="482" stroke="#000000" stroke-width="2" stroke-dasharray="" marker-end="url(#open)"/>
+  <!-- m9 : sync -->
+  <rect x="639" y="543" width="220.1" height="22" fill="#ffffff"/>
+  <text x="644" y="560" font-size="20">classifyIntent(message)</text>
+  <line x1="636" y1="566" x2="1044" y2="566" stroke="#000000" stroke-width="2" marker-end="url(#sync)"/>
+  <!-- m10 : ret -->
+  <rect x="758.4" y="573" width="284.6" height="22" fill="#ffffff"/>
+  <text x="1038" y="590" text-anchor="end" font-size="20" font-style="italic">{ intent, confidence, response }</text>
+  <line x1="1044" y1="596" x2="636" y2="596" stroke="#000000" stroke-width="2" stroke-dasharray="" marker-end="url(#open)"/>
+  <!-- m11 : sync -->
+  <rect x="639" y="657" width="347.9" height="22" fill="#ffffff"/>
+  <text x="644" y="674" font-size="20">generateFallbackResponse(message)</text>
+  <line x1="636" y1="680" x2="1044" y2="680" stroke="#000000" stroke-width="2" marker-end="url(#sync)"/>
+  <!-- m12 : ret -->
+  <rect x="758.4" y="687" width="284.6" height="22" fill="#ffffff"/>
+  <text x="1038" y="704" text-anchor="end" font-size="20" font-style="italic">{ intent, response, confidence }</text>
+  <line x1="1044" y1="710" x2="636" y2="710" stroke="#000000" stroke-width="2" stroke-dasharray="" marker-end="url(#open)"/>
+  <!-- m13 : sync -->
+  <rect x="639" y="741" width="356.8" height="22" fill="#ffffff"/>
+  <text x="644" y="758" font-size="20">buildReply(intent, base, patientId, lang)</text>
+  <line x1="636" y1="764" x2="1044" y2="764" stroke="#000000" stroke-width="2" marker-end="url(#sync)"/>
+  <!-- m14 : sync -->
+  <rect x="1059" y="773" width="461.4" height="22" fill="#ffffff"/>
+  <text x="1064" y="790" font-size="20">find({ patient: patientId }) : meds, routines, contacts</text>
+  <line x1="1056" y1="796" x2="1404" y2="796" stroke="#000000" stroke-width="2" marker-end="url(#sync)"/>
+  <!-- m15 : ret -->
+  <rect x="1260.7" y="803" width="142.3" height="22" fill="#ffffff"/>
+  <text x="1398" y="820" text-anchor="end" font-size="20" font-style="italic">patient records</text>
+  <line x1="1404" y1="826" x2="1056" y2="826" stroke="#000000" stroke-width="2" stroke-dasharray="" marker-end="url(#open)"/>
+  <!-- m16 : ret -->
+  <rect x="911.8" y="833" width="131.2" height="22" fill="#ffffff"/>
+  <text x="1038" y="850" text-anchor="end" font-size="20" font-style="italic">responseText</text>
+  <line x1="1044" y1="856" x2="636" y2="856" stroke="#000000" stroke-width="2" stroke-dasharray="" marker-end="url(#open)"/>
+  <!-- m17 : sync -->
+  <rect x="639" y="865" width="547" height="22" fill="#ffffff"/>
+  <text x="644" y="882" font-size="20">create({ patient, mode, query, response, intent, confidence })</text>
+  <line x1="636" y1="888" x2="1234" y2="888" stroke="#000000" stroke-width="2" marker-end="url(#sync)"/>
+  <!-- m18 : async -->
+  <rect x="639" y="897" width="329.9" height="22" fill="#ffffff"/>
+  <text x="644" y="914" font-size="20">emit("chat_message", patientRoom)</text>
+  <line x1="636" y1="920" x2="1594" y2="920" stroke="#000000" stroke-width="2" marker-end="url(#open)"/>
+  <!-- m19 : ret -->
+  <rect x="205.4" y="927" width="417.6" height="22" fill="#ffffff"/>
+  <text x="618" y="944" text-anchor="end" font-size="20" font-style="italic">201 { chat, source: "wit.ai" | "python" | "rules" }</text>
+  <line x1="624" y1="950" x2="206" y2="950" stroke="#000000" stroke-width="2" stroke-dasharray="" marker-end="url(#open)"/>
+  <!-- m20 : ret -->
+  <rect x="56" y="957" width="275.7" height="22" fill="#ffffff"/>
+  <text x="61" y="974" font-size="20" font-style="italic">show reply in the chat window</text>
+  <line x1="194" y1="980" x2="55" y2="980" stroke="#000000" stroke-width="2" stroke-dasharray="" marker-end="url(#open)"/>
+</svg>

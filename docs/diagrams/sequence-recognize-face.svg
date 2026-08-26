@@ -1,0 +1,172 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1870 1000" font-family="Helvetica, Arial, sans-serif" font-size="20">
+  <defs>
+    <marker id="sync" markerWidth="18" markerHeight="16" refX="15" refY="8" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1,1 L15,8 L1,15 z" fill="#000000"/>
+    </marker>
+    <marker id="open" markerWidth="18" markerHeight="16" refX="14" refY="8" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1,1 L14,8 L1,15" fill="none" stroke="#000000" stroke-width="2"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1870" height="1000" fill="#ffffff"/>
+
+  <!-- lifelines (dashed) -->
+  <line x1="52" y1="170" x2="52" y2="992" stroke="#000000" stroke-width="2" stroke-dasharray="8 6"/>
+  <line x1="220" y1="132" x2="220" y2="992" stroke="#000000" stroke-width="2" stroke-dasharray="8 6"/>
+  <line x1="398" y1="132" x2="398" y2="992" stroke="#000000" stroke-width="2" stroke-dasharray="8 6"/>
+  <line x1="550" y1="132" x2="550" y2="992" stroke="#000000" stroke-width="2" stroke-dasharray="8 6"/>
+  <line x1="792" y1="132" x2="792" y2="992" stroke="#000000" stroke-width="2" stroke-dasharray="8 6"/>
+  <line x1="1020" y1="132" x2="1020" y2="992" stroke="#000000" stroke-width="2" stroke-dasharray="8 6"/>
+  <line x1="1196" y1="132" x2="1196" y2="992" stroke="#000000" stroke-width="2" stroke-dasharray="8 6"/>
+  <line x1="1364" y1="132" x2="1364" y2="992" stroke="#000000" stroke-width="2" stroke-dasharray="8 6"/>
+  <line x1="1488" y1="132" x2="1488" y2="992" stroke="#000000" stroke-width="2" stroke-dasharray="8 6"/>
+  <line x1="1636" y1="132" x2="1636" y2="992" stroke="#000000" stroke-width="2" stroke-dasharray="8 6"/>
+  <line x1="1790" y1="170" x2="1790" y2="992" stroke="#000000" stroke-width="2" stroke-dasharray="8 6"/>
+
+  <!-- lifeline heads -->
+  <circle cx="52" cy="70" r="11" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <line x1="52" y1="81" x2="52" y2="114" stroke="#000000" stroke-width="2"/>
+  <line x1="31" y1="92" x2="73" y2="92" stroke="#000000" stroke-width="2"/>
+  <line x1="52" y1="114" x2="36" y2="144" stroke="#000000" stroke-width="2"/>
+  <line x1="52" y1="114" x2="68" y2="144" stroke="#000000" stroke-width="2"/>
+  <text x="52" y="164" text-anchor="middle" font-size="20" font-weight="bold">Patient</text>
+  <rect x="104" y="88" width="232" height="44" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <text x="220" y="117" text-anchor="middle" font-size="20" font-weight="bold">:FaceRecognitionPage</text>
+  <rect x="350" y="88" width="96" height="44" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <text x="398" y="117" text-anchor="middle" font-size="20" font-weight="bold">:faceApi</text>
+  <rect x="460" y="88" width="180" height="44" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <text x="550" y="117" text-anchor="middle" font-size="20" font-weight="bold">:AuthMiddleware</text>
+  <rect x="653" y="88" width="278" height="44" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <text x="792" y="117" text-anchor="middle" font-size="20" font-weight="bold">:FaceRecognitionController</text>
+  <rect x="945" y="88" width="150" height="44" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <text x="1020" y="117" text-anchor="middle" font-size="20" font-weight="bold">:AccessGuard</text>
+  <rect x="1109" y="88" width="174" height="44" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <text x="1196" y="117" text-anchor="middle" font-size="20" font-weight="bold">:RecognitionLog</text>
+  <rect x="1297" y="88" width="134" height="44" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <text x="1364" y="117" text-anchor="middle" font-size="20" font-weight="bold">:KnownFace</text>
+  <rect x="1446" y="88" width="84" height="44" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <text x="1488" y="117" text-anchor="middle" font-size="20" font-weight="bold">:Alert</text>
+  <rect x="1545" y="88" width="182" height="44" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <text x="1636" y="117" text-anchor="middle" font-size="20" font-weight="bold">:SocketIOServer</text>
+  <circle cx="1790" cy="70" r="11" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <line x1="1790" y1="81" x2="1790" y2="114" stroke="#000000" stroke-width="2"/>
+  <line x1="1769" y1="92" x2="1811" y2="92" stroke="#000000" stroke-width="2"/>
+  <line x1="1790" y1="114" x2="1774" y2="144" stroke="#000000" stroke-width="2"/>
+  <line x1="1790" y1="114" x2="1806" y2="144" stroke="#000000" stroke-width="2"/>
+  <text x="1790" y="164" text-anchor="middle" font-size="20" font-weight="bold">Caregiver</text>
+
+  <!-- UML note (folded corner) + dashed leader -->
+  <path d="M130,6 H562 L580,24 V68 H130 Z" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <path d="M562,6 V24 H580" fill="none" stroke="#000000" stroke-width="2"/>
+  <text x="142" y="32" font-size="19">{ face matching runs entirely in the browser;</text>
+  <text x="142" y="54" font-size="19">the server only persists the client's verdict }</text>
+  <line x1="398" y1="68" x2="398" y2="88" stroke="#000000" stroke-width="2" stroke-dasharray="5 4"/>
+
+  <!-- activation (execution specification) bars -->
+  <rect x="214" y="180" width="12" height="784" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <rect x="392" y="212" width="12" height="30" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <rect x="392" y="274" width="12" height="30" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <rect x="544" y="336" width="12" height="598" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <rect x="786" y="426" width="12" height="508" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <rect x="1014" y="458" width="12" height="30" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <rect x="1190" y="520" width="12" height="30" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <rect x="1358" y="640" width="12" height="30" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <rect x="1482" y="814" width="12" height="30" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <rect x="1630" y="874" width="12" height="54" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+
+  <!-- alt frame + pentagon operator tab + guards -->
+  <rect x="30" y="580" width="1822" height="404" fill="none" stroke="#000000" stroke-width="2"/>
+  <path d="M30,580 H94 L104,598 V608 H30 Z" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <text x="38" y="599" font-size="19" font-weight="bold">alt</text>
+  <line x1="30" y1="760" x2="1852" y2="760" stroke="#000000" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="114" y="599" font-size="19">[recognized]</text>
+  <text x="38" y="782" font-size="19">[unknown]</text>
+
+  <!-- m1 : sync -->
+  <rect x="55" y="157" width="154.5" height="22" fill="#ffffff"/>
+  <text x="60" y="174" font-size="20">handleCapture()</text>
+  <line x1="52" y1="180" x2="214" y2="180" stroke="#000000" stroke-width="2" marker-end="url(#sync)"/>
+  <!-- m2 : sync -->
+  <rect x="229" y="189" width="342.4" height="22" fill="#ffffff"/>
+  <text x="234" y="206" font-size="20">getAveragedDescriptor(video, 3, 120)</text>
+  <line x1="226" y1="212" x2="392" y2="212" stroke="#000000" stroke-width="2" marker-end="url(#sync)"/>
+  <!-- m3 : ret -->
+  <rect x="152" y="219" width="239" height="22" fill="#ffffff"/>
+  <text x="386" y="236" text-anchor="end" font-size="20" font-style="italic">probe : Float32Array(128)</text>
+  <line x1="392" y1="242" x2="226" y2="242" stroke="#000000" stroke-width="2" stroke-dasharray="" marker-end="url(#open)"/>
+  <!-- m4 : sync -->
+  <rect x="229" y="251" width="363.5" height="22" fill="#ffffff"/>
+  <text x="234" y="268" font-size="20">findBestMatch(probe, knownFaces, 0.6)</text>
+  <line x1="226" y1="274" x2="392" y2="274" stroke="#000000" stroke-width="2" marker-end="url(#sync)"/>
+  <!-- m5 : ret -->
+  <rect x="227" y="281" width="442.4" height="22" fill="#ffffff"/>
+  <text x="232" y="298" font-size="20" font-style="italic">match { knownFaceId, name, confidence } or null</text>
+  <line x1="392" y1="304" x2="226" y2="304" stroke="#000000" stroke-width="2" stroke-dasharray="" marker-end="url(#open)"/>
+  <!-- m6 : sync -->
+  <rect x="229" y="313" width="801.5" height="22" fill="#ffffff"/>
+  <text x="234" y="330" font-size="20">POST /face-recognition/recognize { result, name, relationship, confidence, knownFaceId }</text>
+  <line x1="226" y1="336" x2="544" y2="336" stroke="#000000" stroke-width="2" marker-end="url(#sync)"/>
+  <!-- m7 : self -->
+  <rect x="627" y="371" width="201.2" height="22" fill="#ffffff"/>
+  <text x="632" y="388" font-size="20">protect(req, res, next)</text>
+  <path d="M556,368 H620 V394 H558" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#sync)"/>
+  <!-- m8 : sync -->
+  <rect x="559" y="403" width="284.5" height="22" fill="#ffffff"/>
+  <text x="564" y="420" font-size="20">next(): recognizeFace(req, res)</text>
+  <line x1="556" y1="426" x2="786" y2="426" stroke="#000000" stroke-width="2" marker-end="url(#sync)"/>
+  <!-- m9 : sync -->
+  <rect x="801" y="435" width="309" height="22" fill="#ffffff"/>
+  <text x="806" y="452" font-size="20">canAccessPatient(user, patientId)</text>
+  <line x1="798" y1="458" x2="1014" y2="458" stroke="#000000" stroke-width="2" marker-end="url(#sync)"/>
+  <!-- m10 : ret -->
+  <rect x="878.5" y="465" width="134.5" height="22" fill="#ffffff"/>
+  <text x="1008" y="482" text-anchor="end" font-size="20" font-style="italic">true : Boolean</text>
+  <line x1="1014" y1="488" x2="798" y2="488" stroke="#000000" stroke-width="2" stroke-dasharray="" marker-end="url(#open)"/>
+  <!-- m11 : sync -->
+  <rect x="801" y="497" width="594.7" height="22" fill="#ffffff"/>
+  <text x="806" y="514" font-size="20">create({ patient, result, recognizedPerson, confidence, imageUrl })</text>
+  <line x1="798" y1="520" x2="1190" y2="520" stroke="#000000" stroke-width="2" marker-end="url(#sync)"/>
+  <!-- m12 : ret -->
+  <rect x="1152.3" y="527" width="36.7" height="22" fill="#ffffff"/>
+  <text x="1184" y="544" text-anchor="end" font-size="20" font-style="italic">log</text>
+  <line x1="1190" y1="550" x2="798" y2="550" stroke="#000000" stroke-width="2" stroke-dasharray="" marker-end="url(#open)"/>
+  <!-- m13 : sync -->
+  <rect x="801" y="617" width="638.1" height="22" fill="#ffffff"/>
+  <text x="806" y="634" font-size="20">findByIdAndUpdate(knownFaceId, { $inc: recognitionCount, lastSeen })</text>
+  <line x1="798" y1="640" x2="1358" y2="640" stroke="#000000" stroke-width="2" marker-end="url(#sync)"/>
+  <!-- m14 : ret -->
+  <rect x="1274.7" y="647" width="82.3" height="22" fill="#ffffff"/>
+  <text x="1352" y="664" text-anchor="end" font-size="20" font-style="italic">updated</text>
+  <line x1="1358" y1="670" x2="798" y2="670" stroke="#000000" stroke-width="2" stroke-dasharray="" marker-end="url(#open)"/>
+  <!-- m15 : ret -->
+  <rect x="291.4" y="677" width="493.6" height="22" fill="#ffffff"/>
+  <text x="780" y="694" text-anchor="end" font-size="20" font-style="italic">200 { recognition: log(name, relationship, confidence) }</text>
+  <line x1="786" y1="700" x2="226" y2="700" stroke="#000000" stroke-width="2" stroke-dasharray="" marker-end="url(#open)"/>
+  <!-- m16 : ret -->
+  <rect x="53" y="707" width="333.5" height="22" fill="#ffffff"/>
+  <text x="58" y="724" font-size="20" font-style="italic">show name, relationship, confidence</text>
+  <line x1="214" y1="730" x2="52" y2="730" stroke="#000000" stroke-width="2" stroke-dasharray="" marker-end="url(#open)"/>
+  <!-- m17 : sync -->
+  <rect x="801" y="791" width="470.8" height="22" fill="#ffffff"/>
+  <text x="806" y="808" font-size="20">create({ type: "face_unknown", severity: "warning" })</text>
+  <line x1="798" y1="814" x2="1482" y2="814" stroke="#000000" stroke-width="2" marker-end="url(#sync)"/>
+  <!-- m18 : ret -->
+  <rect x="1432.1" y="821" width="48.9000000000001" height="22" fill="#ffffff"/>
+  <text x="1476" y="838" text-anchor="end" font-size="20" font-style="italic">alert</text>
+  <line x1="1482" y1="844" x2="798" y2="844" stroke="#000000" stroke-width="2" stroke-dasharray="" marker-end="url(#open)"/>
+  <!-- m19 : async -->
+  <rect x="801" y="851" width="270.9" height="22" fill="#ffffff"/>
+  <text x="806" y="868" font-size="20">emit("alert", caregiverRooms)</text>
+  <line x1="798" y1="874" x2="1630" y2="874" stroke="#000000" stroke-width="2" marker-end="url(#open)"/>
+  <!-- m20 : async -->
+  <rect x="1514.7" y="881" width="272.3" height="22" fill="#ffffff"/>
+  <text x="1782" y="898" text-anchor="end" font-size="20">alert(face_unknown, warning)</text>
+  <line x1="1642" y1="904" x2="1790" y2="904" stroke="#000000" stroke-width="2" marker-end="url(#open)"/>
+  <!-- m21 : ret -->
+  <rect x="408.4" y="911" width="376.6" height="22" fill="#ffffff"/>
+  <text x="780" y="928" text-anchor="end" font-size="20" font-style="italic">200 { recognition: log(result: "unknown") }</text>
+  <line x1="786" y1="934" x2="226" y2="934" stroke="#000000" stroke-width="2" stroke-dasharray="" marker-end="url(#open)"/>
+  <!-- m22 : ret -->
+  <rect x="53" y="941" width="228.7" height="22" fill="#ffffff"/>
+  <text x="58" y="958" font-size="20" font-style="italic">show "Unknown Person"</text>
+  <line x1="214" y1="964" x2="52" y2="964" stroke="#000000" stroke-width="2" stroke-dasharray="" marker-end="url(#open)"/>
+</svg>
