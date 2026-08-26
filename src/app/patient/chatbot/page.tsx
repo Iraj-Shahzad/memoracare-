@@ -20,7 +20,7 @@ import { useState, useRef, useEffect } from "react";
 import PatientSidebar from "@/components/shared/PatientSidebar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
-import { apiGet, apiPost } from "@/lib/api";
+import { apiGet, apiPost, apiDelete } from "@/lib/api";
 import { getLang, setLang as persistLang, speak, stopSpeaking, listenOnce, speechRecognitionSupported, primeVoices, type Lang } from "@/lib/speech";
 import { useUI } from "@/components/ui/UIProvider";
 
@@ -141,6 +141,35 @@ export default function ChatbotPage() {
     fetchHistory();
   }, [patientId]);
 
+  // Re-read the saved history and rebuild ONLY the sidebar. Used after sending a
+  // message (so the new exchange appears) and after deleting one. Deliberately
+  // does not touch `messages`, otherwise it would wipe the live conversation.
+  const refreshHistory = async () => {
+    if (!patientId) return;
+    try {
+      const res = await apiGet(`/chat/patient/${patientId}/history`).catch(() => null);
+      const history = res?.history;
+      if (!Array.isArray(history)) return;
+      setHistoryEntries(history);
+      setConversations(
+        history
+          .slice()
+          .reverse()
+          .slice(0, 20)
+          .map((entry: any, idx: number) => ({
+            id: entry._id || `c-${idx}`,
+            title: (entry.query || "Conversation").slice(0, 32),
+            preview: entry.query || "",
+            date: entry.createdAt
+              ? new Date(entry.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+              : "",
+          }))
+      );
+    } catch (err) {
+      console.error("Chat history refresh error:", err);
+    }
+  };
+
   const greetingMessage = (): ChatMessage => ({
     id: "1",
     type: "bot",
@@ -151,12 +180,29 @@ export default function ChatbotPage() {
     timestamp: new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
   });
 
-  // Trash: clear the current conversation view (asks first).
+  // Trash: if a saved conversation is open, DELETE it for good (server + sidebar).
+  // Otherwise there is nothing saved to remove, so just clear the screen.
   const handleClearChat = async () => {
-    if (!(await confirm({ message: "Clear this conversation from the screen? Your saved history stays in the sidebar." }))) return;
+    const savedId = selectedChat && selectedChat !== "new" ? selectedChat : "";
+
+    if (!savedId) {
+      if (!(await confirm({ message: "Clear this conversation from the screen?" }))) return;
+      stopSpeaking();
+      setMessages([greetingMessage()]);
+      setSelectedChat("");
+      return;
+    }
+
+    if (!(await confirm({ message: "Delete this conversation permanently? This cannot be undone.", danger: true, confirmText: "Delete" }))) return;
     stopSpeaking();
-    setMessages([greetingMessage()]);
-    setSelectedChat("");
+    try {
+      await apiDelete(`/chat/${savedId}`);
+      setMessages([greetingMessage()]);
+      setSelectedChat("");
+      await refreshHistory();
+    } catch (err) {
+      console.error("Delete chat error:", err);
+    }
   };
 
   // "+" New chat: start a fresh conversation view.
@@ -236,6 +282,8 @@ export default function ChatbotPage() {
 
       setMessages((prev) => [...prev, { id: `${Date.now()}-b`, type: "bot", content: reply, timestamp: stamp() }]);
       if (voiceReply) speak(reply, msgLang);
+      // The exchange is now saved server-side, so pull it into the sidebar.
+      refreshHistory();
     } catch (err) {
       console.error("Chat error:", err);
       const reply =
