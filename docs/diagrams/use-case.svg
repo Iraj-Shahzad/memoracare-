@@ -9,37 +9,62 @@
   <rect x="190" y="100" width="800" height="540" fill="none" stroke="#000" stroke-width="1.6"/>
   <text x="560" y="122" text-anchor="middle" font-size="15" font-weight="700">MemoryCare System</text>
 
-  <!-- ===== association lines ===== -->
-  <g stroke="#b3b3b3" stroke-width="1">
-    <!-- Patient -->
-    <line x1="118" y1="205" x2="270" y2="159"/><line x1="118" y1="205" x2="270" y2="229"/><line x1="118" y1="205" x2="270" y2="299"/><line x1="118" y1="205" x2="270" y2="369"/>
-    <line x1="118" y1="205" x2="440" y2="159"/><line x1="118" y1="205" x2="440" y2="229"/><line x1="118" y1="205" x2="440" y2="299"/><line x1="118" y1="205" x2="440" y2="369"/>
-    <line x1="118" y1="205" x2="630" y2="299"/><line x1="118" y1="205" x2="630" y2="461"/><line x1="118" y1="205" x2="630" y2="529"/>
-    <!-- Caregiver -->
-    <line x1="118" y1="495" x2="270" y2="461"/><line x1="118" y1="495" x2="270" y2="529"/><line x1="118" y1="495" x2="270" y2="599"/>
-    <line x1="118" y1="205" x2="440" y2="461"/><line x1="118" y1="495" x2="440" y2="529"/><line x1="118" y1="495" x2="440" y2="599"/>
-    <line x1="118" y1="495" x2="630" y2="299"/><line x1="118" y1="495" x2="630" y2="461"/><line x1="118" y1="495" x2="630" y2="529"/>
-    <!-- Admin -->
-    <line x1="1014" y1="210" x2="965" y2="159"/><line x1="1014" y1="210" x2="965" y2="229"/><line x1="1014" y1="210" x2="965" y2="299"/><line x1="1014" y1="210" x2="965" y2="369"/><line x1="1014" y1="210" x2="965" y2="461"/>
-    <line x1="1014" y1="210" x2="760" y2="299"/><line x1="1014" y1="210" x2="760" y2="529"/>
+  <!-- ===== association lines : orthogonal channel routing =====
+       every run travels only in an empty channel, so no line can cross an ellipse it
+       does not terminate on.
+       vertical channels  : x = 215, 245 (left margin) | 415, 428 (col A|B)
+                            585, 612 (col B|C) | 790, 815 (col C|D) | 980, 1000, 1004 (right)
+       horizontal channels: y = 185, 334, 408, 420, 500, 564 (empty gaps between rows) -->
+  <g stroke="#666666" stroke-width="1.1" fill="none">
+    <!-- Patient : trunk 215, then 415 for column B, then 612 for the shared group -->
+    <polyline points="118,207 215,207 215,159 270,159"/>
+    <polyline points="118,207 215,207 215,229 270,229"/>
+    <polyline points="118,207 215,207 215,299 270,299"/>
+    <polyline points="118,207 215,207 215,369 270,369"/>
+    <polyline points="118,207 215,207 215,130 415,130 415,159 440,159"/>
+    <polyline points="118,207 215,207 215,130 415,130 415,229 440,229"/>
+    <polyline points="118,207 215,207 215,130 415,130 415,299 440,299"/>
+    <polyline points="118,207 215,207 215,130 415,130 415,369 440,369"/>
+    <polyline points="118,207 215,207 215,130 415,130 415,461 440,461"/>
+    <polyline points="118,207 215,207 215,130 415,130 415,334 612,334 612,369 630,369"/>
+    <polyline points="118,207 215,207 215,130 415,130 415,334 612,334 612,461 630,461"/>
+    <polyline points="118,207 215,207 215,130 415,130 415,334 612,334 612,529 625,529"/>
+    <!-- Caregiver : trunk 245, then 428 for column B, then 585 for the shared group -->
+    <polyline points="118,497 245,497 245,461 270,461"/>
+    <polyline points="118,497 245,497 245,529 270,529"/>
+    <polyline points="118,497 245,497 245,599 270,599"/>
+    <polyline points="118,497 428,497 428,529 440,529"/>
+    <polyline points="118,497 428,497 428,599 440,599"/>
+    <polyline points="118,497 428,497 428,564 585,564 585,408 695,408 695,388"/>
+    <polyline points="118,497 428,497 428,564 585,564 585,500 695,500 695,480"/>
+    <polyline points="118,497 428,497 428,564 695,564 695,548"/>
+    <!-- Admin : trunk 980, then 790 for the shared group -->
+    <polyline points="1012,212 980,212 980,159 965,159"/>
+    <polyline points="1012,212 980,212 980,229 965,229"/>
+    <polyline points="1012,212 980,212 980,299 965,299"/>
+    <polyline points="1012,212 980,212 980,369 970,369"/>
+    <polyline points="1012,212 980,212 980,461 970,461"/>
+    <polyline points="1012,212 980,212 980,420 790,420 790,369 760,369"/>
+    <polyline points="1012,212 980,212 980,420 790,420 790,529 765,529"/>
     <!-- Time -->
-    <line x1="1014" y1="513" x2="965" y2="529"/><line x1="1014" y1="513" x2="965" y2="599"/>
-    <!-- Wit.ai (routed over the top) -->
-    <path d="M1036,357 L1036,122 L695,122 L695,140" fill="none"/>
+    <polyline points="1012,511 1000,511 1000,529 965,529"/>
+    <polyline points="1012,511 1000,511 1000,599 965,599"/>
+    <!-- Wit.ai (routed up the column C|D gap) -->
+    <polyline points="1012,376 1004,376 1004,334 815,334 815,159 760,159"/>
   </g>
 
   <!-- ===== include / extend ===== -->
   <g stroke="#000" stroke-width="1.2" stroke-dasharray="6 4" fill="none">
-    <line x1="400" y1="163" x2="632" y2="225" marker-end="url(#oa)"/>
-    <line x1="400" y1="225" x2="632" y2="163" marker-end="url(#oa)"/>
-    <line x1="695" y1="318" x2="695" y2="350" marker-end="url(#oa)"/>
-    <line x1="440" y1="162" x2="402" y2="222" marker-end="url(#oa)"/>
+    <line x1="389.12" y1="169.523" x2="640.88" y2="218.477" marker-end="url(#oa)"/>
+    <line x1="389.12" y1="218.477" x2="640.88" y2="169.523" marker-end="url(#oa)"/>
+    <line x1="695" y1="350" x2="695" y2="318" marker-end="url(#oa)"/>
+    <line x1="467.374" y1="174.493" x2="372.626" y2="213.507" marker-end="url(#oa)"/>
   </g>
-  <g font-size="10" font-style="italic" text-anchor="middle">
-    <text x="516" y="182">&#171;include&#187;</text>
-    <text x="516" y="212">&#171;include&#187;</text>
-    <text x="742" y="337">&#171;include&#187;</text>
-    <text x="405" y="188">&#171;extend&#187;</text>
+  <g font-size="10" font-style="italic">
+    <rect x="578" y="211" width="46" height="12" fill="#fff"/><text x="580" y="220" text-anchor="start">&#171;include&#187;</text>
+    <rect x="448" y="196" width="46" height="12" fill="#fff"/><text x="450" y="205" text-anchor="start">&#171;include&#187;</text>
+    <rect x="717" y="328" width="46" height="12" fill="#fff"/><text x="740" y="337" text-anchor="middle">&#171;include&#187;</text>
+    <text x="398" y="190" text-anchor="end">&#171;extend&#187;</text>
   </g>
 
   <!-- ===== ellipses ===== -->
@@ -60,11 +85,11 @@
     <ellipse cx="505" cy="461" rx="65" ry="21" fill="#fff" stroke="#000"/><text x="505" y="465">Enroll Known Faces</text>
     <ellipse cx="505" cy="529" rx="65" ry="19" fill="#fff" stroke="#000"/><text x="505" y="533">View &amp; Resolve Alerts</text>
     <ellipse cx="505" cy="599" rx="65" ry="19" fill="#fff" stroke="#000"/><text x="505" y="603">Manage Care Notes</text>
-    <!-- C3 -->
+    <!-- C3 : included use cases + the shared group (rows 4 to 6) -->
     <ellipse cx="695" cy="159" rx="65" ry="19" fill="#fff" stroke="#000"/><text x="695" y="163">Classify Intent</text>
     <ellipse cx="695" cy="229" rx="65" ry="19" fill="#fff" stroke="#000"/><text x="695" y="233">Match Face</text>
-    <ellipse cx="695" cy="299" rx="65" ry="19" fill="#fff" stroke="#000"/><text x="695" y="303">Register / Login</text>
-    <ellipse cx="695" cy="369" rx="65" ry="19" fill="#fff" stroke="#000"/><text x="695" y="373">Validate Credentials</text>
+    <ellipse cx="695" cy="299" rx="65" ry="19" fill="#fff" stroke="#000"/><text x="695" y="303">Validate Credentials</text>
+    <ellipse cx="695" cy="369" rx="65" ry="19" fill="#fff" stroke="#000"/><text x="695" y="373">Register / Login</text>
     <ellipse cx="695" cy="461" rx="65" ry="19" fill="#fff" stroke="#000"/><text x="695" y="465">Manage Profile</text>
     <ellipse cx="695" cy="529" rx="70" ry="19" fill="#fff" stroke="#000"/><text x="695" y="526">Generate &amp;</text><text x="695" y="538">Download Report</text>
     <!-- C4 -->

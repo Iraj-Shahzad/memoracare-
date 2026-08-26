@@ -81,10 +81,10 @@
     <line x1="1340" y1="1009" x2="140" y2="1009" stroke-dasharray="6 4" marker-end="url(#open)"/>
     <line x1="140" y1="1038" x2="1340" y2="1038" marker-end="url(#filled)"/>
     <line x1="1340" y1="1067" x2="140" y2="1067" stroke-dasharray="6 4" marker-end="url(#open)"/>
+    <line x1="140" y1="1096" x2="1340" y2="1096" marker-end="url(#filled)"/>
+    <line x1="1340" y1="1125" x2="140" y2="1125" stroke-dasharray="6 4" marker-end="url(#open)"/>
 
     <!-- Caregiver messages -->
-    <line x1="480" y1="1096" x2="1340" y2="1096" marker-end="url(#filled)"/>
-    <line x1="1340" y1="1125" x2="480" y2="1125" stroke-dasharray="6 4" marker-end="url(#open)"/>
     <line x1="480" y1="1154" x2="1340" y2="1154" marker-end="url(#filled)"/>
     <line x1="1340" y1="1183" x2="480" y2="1183" stroke-dasharray="6 4" marker-end="url(#open)"/>
     <line x1="480" y1="1212" x2="1340" y2="1212" marker-end="url(#filled)"/>
@@ -125,17 +125,17 @@
     <rect x="539" y="802" width="402" height="24" fill="white"/><text x="740" y="820">captureFace(patientId, image)</text>
     <rect x="452" y="831" width="576" height="24" fill="white"/><text x="740" y="849" font-style="italic">personInfo(name, relationship, confidence)</text>
     <rect x="646" y="903" width="188" height="24" fill="white"/><text x="740" y="921" font-style="italic">unknownPerson</text>
-    <rect x="579" y="954" width="322" height="24" fill="white"/><text x="740" y="972">viewMemories(patientId)</text>
-    <rect x="667" y="983" width="146" height="24" fill="white"/><text x="740" y="1001" font-style="italic">memoryList</text>
-    <rect x="472" y="1012" width="536" height="24" fill="white"/><text x="740" y="1030">generateReport(patientId, type, period)</text>
-    <rect x="667" y="1041" width="146" height="24" fill="white"/><text x="740" y="1059" font-style="italic">reportFile</text>
+    <rect x="439" y="954" width="602" height="24" fill="white"/><text x="740" y="972">enrollKnownFace(patientId, name, descriptor)</text>
+    <rect x="653" y="983" width="174" height="24" fill="white"/><text x="740" y="1001" font-style="italic">confirmation</text>
+    <rect x="579" y="1012" width="322" height="24" fill="white"/><text x="740" y="1030">viewMemories(patientId)</text>
+    <rect x="667" y="1041" width="146" height="24" fill="white"/><text x="740" y="1059" font-style="italic">memoryList</text>
+    <rect x="472" y="1070" width="536" height="24" fill="white"/><text x="740" y="1088">generateReport(patientId, type, period)</text>
+    <rect x="667" y="1099" width="146" height="24" fill="white"/><text x="740" y="1117" font-style="italic">reportFile</text>
   </g>
 
   <!-- Caregiver message labels -->
   <g fill="black" font-size="24" text-anchor="middle">
-    <rect x="682" y="1070" width="456" height="24" fill="white"/><text x="910" y="1088">addMedication(patientId, details)</text>
-    <rect x="823" y="1099" width="174" height="24" fill="white"/><text x="910" y="1117" font-style="italic">confirmation</text>
-    <rect x="609" y="1128" width="602" height="24" fill="white"/><text x="910" y="1146">enrollKnownFace(patientId, name, descriptor)</text>
+    <rect x="682" y="1128" width="456" height="24" fill="white"/><text x="910" y="1146">addMedication(patientId, details)</text>
     <rect x="823" y="1157" width="174" height="24" fill="white"/><text x="910" y="1175" font-style="italic">confirmation</text>
     <rect x="749" y="1186" width="322" height="24" fill="white"/><text x="910" y="1204">viewAlerts(caregiverId)</text>
     <rect x="843" y="1215" width="134" height="24" fill="white"/><text x="910" y="1233" font-style="italic">alertList</text>

@@ -216,51 +216,52 @@
             <mxPoint x="140" y="929" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="c44" value="viewMemories(patientId)" style="html=1;endArrow=block;endFill=1;dashed=0;strokeColor=#000000;strokeWidth=2.5;fontColor=#000000;fontSize=24;align=center;verticalAlign=bottom;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+        <!-- Patient enrols a known face (the enrolment UI is patient side only) -->
+        <mxCell id="c53" value="enrollKnownFace(patientId, name, descriptor)" style="html=1;endArrow=block;endFill=1;dashed=0;strokeColor=#000000;strokeWidth=2.5;fontColor=#000000;fontSize=24;align=center;verticalAlign=bottom;labelBackgroundColor=#ffffff;" edge="1" parent="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="140" y="980" as="sourcePoint" />
             <mxPoint x="1340" y="980" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="c45" value="memoryList" style="html=1;endArrow=open;endFill=0;dashed=1;dashPattern=6 4;strokeColor=#000000;strokeWidth=2.5;fontColor=#000000;fontStyle=2;fontSize=24;align=center;verticalAlign=bottom;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+        <mxCell id="c54" value="confirmation" style="html=1;endArrow=open;endFill=0;dashed=1;dashPattern=6 4;strokeColor=#000000;strokeWidth=2.5;fontColor=#000000;fontStyle=2;fontSize=24;align=center;verticalAlign=bottom;labelBackgroundColor=#ffffff;" edge="1" parent="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="1340" y="1009" as="sourcePoint" />
             <mxPoint x="140" y="1009" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="c46" value="generateReport(patientId, type, period)" style="html=1;endArrow=block;endFill=1;dashed=0;strokeColor=#000000;strokeWidth=2.5;fontColor=#000000;fontSize=24;align=center;verticalAlign=bottom;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+        <mxCell id="c44" value="viewMemories(patientId)" style="html=1;endArrow=block;endFill=1;dashed=0;strokeColor=#000000;strokeWidth=2.5;fontColor=#000000;fontSize=24;align=center;verticalAlign=bottom;labelBackgroundColor=#ffffff;" edge="1" parent="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="140" y="1038" as="sourcePoint" />
             <mxPoint x="1340" y="1038" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="c47" value="reportFile" style="html=1;endArrow=open;endFill=0;dashed=1;dashPattern=6 4;strokeColor=#000000;strokeWidth=2.5;fontColor=#000000;fontStyle=2;fontSize=24;align=center;verticalAlign=bottom;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+        <mxCell id="c45" value="memoryList" style="html=1;endArrow=open;endFill=0;dashed=1;dashPattern=6 4;strokeColor=#000000;strokeWidth=2.5;fontColor=#000000;fontStyle=2;fontSize=24;align=center;verticalAlign=bottom;labelBackgroundColor=#ffffff;" edge="1" parent="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="1340" y="1067" as="sourcePoint" />
             <mxPoint x="140" y="1067" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c46" value="generateReport(patientId, type, period)" style="html=1;endArrow=block;endFill=1;dashed=0;strokeColor=#000000;strokeWidth=2.5;fontColor=#000000;fontSize=24;align=center;verticalAlign=bottom;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="140" y="1096" as="sourcePoint" />
+            <mxPoint x="1340" y="1096" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c47" value="reportFile" style="html=1;endArrow=open;endFill=0;dashed=1;dashPattern=6 4;strokeColor=#000000;strokeWidth=2.5;fontColor=#000000;fontStyle=2;fontSize=24;align=center;verticalAlign=bottom;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1340" y="1125" as="sourcePoint" />
+            <mxPoint x="140" y="1125" as="targetPoint" />
           </mxGeometry>
         </mxCell>
 
         <!-- Caregiver messages -->
         <mxCell id="c51" value="addMedication(patientId, details)" style="html=1;endArrow=block;endFill=1;dashed=0;strokeColor=#000000;strokeWidth=2.5;fontColor=#000000;fontSize=24;align=center;verticalAlign=bottom;labelBackgroundColor=#ffffff;" edge="1" parent="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="480" y="1096" as="sourcePoint" />
-            <mxPoint x="1340" y="1096" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="c52" value="confirmation" style="html=1;endArrow=open;endFill=0;dashed=1;dashPattern=6 4;strokeColor=#000000;strokeWidth=2.5;fontColor=#000000;fontStyle=2;fontSize=24;align=center;verticalAlign=bottom;labelBackgroundColor=#ffffff;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1340" y="1125" as="sourcePoint" />
-            <mxPoint x="480" y="1125" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="c53" value="enrollKnownFace(patientId, name, descriptor)" style="html=1;endArrow=block;endFill=1;dashed=0;strokeColor=#000000;strokeWidth=2.5;fontColor=#000000;fontSize=24;align=center;verticalAlign=bottom;labelBackgroundColor=#ffffff;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
             <mxPoint x="480" y="1154" as="sourcePoint" />
             <mxPoint x="1340" y="1154" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="c54" value="confirmation" style="html=1;endArrow=open;endFill=0;dashed=1;dashPattern=6 4;strokeColor=#000000;strokeWidth=2.5;fontColor=#000000;fontStyle=2;fontSize=24;align=center;verticalAlign=bottom;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+        <mxCell id="c52" value="confirmation" style="html=1;endArrow=open;endFill=0;dashed=1;dashPattern=6 4;strokeColor=#000000;strokeWidth=2.5;fontColor=#000000;fontStyle=2;fontSize=24;align=center;verticalAlign=bottom;labelBackgroundColor=#ffffff;" edge="1" parent="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="1340" y="1183" as="sourcePoint" />
             <mxPoint x="480" y="1183" as="targetPoint" />
