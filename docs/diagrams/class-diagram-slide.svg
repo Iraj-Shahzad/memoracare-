@@ -1,0 +1,287 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="940" viewBox="0 0 2400 940" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="gen" markerWidth="26" markerHeight="22" refX="22" refY="11" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M2,2 L22,11 L2,20 Z" fill="#ffffff" stroke="#000000" stroke-width="2" stroke-dasharray="none" stroke-linejoin="miter"/>
+    </marker>
+    <marker id="dep" markerWidth="22" markerHeight="18" refX="18" refY="9" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M3,1.5 L18,9 L3,16.5" fill="none" stroke="#000000" stroke-width="2" stroke-dasharray="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="comp" markerWidth="34" markerHeight="20" refX="2" refY="10" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M2,10 L16,3 L30,10 L16,17 Z" fill="#000000" stroke="#000000" stroke-width="2" stroke-dasharray="none" stroke-linejoin="miter"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="2400" height="940" fill="#ffffff"/>
+
+  <!-- ===================== CLASS BOXES ===================== -->
+  <g fill="#ffffff" stroke="#000000" stroke-width="2">
+    <rect x="40" y="44" width="400" height="130"/>
+    <rect x="960" y="44" width="580" height="96"/>
+    <rect x="1900" y="44" width="460" height="178"/>
+    <rect x="40" y="272" width="420" height="120"/>
+    <rect x="520" y="272" width="620" height="120"/>
+    <rect x="1200" y="272" width="610" height="120"/>
+    <rect x="1870" y="272" width="480" height="120"/>
+    <rect x="380" y="492" width="260" height="120"/>
+    <rect x="780" y="492" width="440" height="178"/>
+    <rect x="1340" y="492" width="250" height="144"/>
+    <rect x="1750" y="492" width="260" height="144"/>
+    <rect x="40" y="740" width="280" height="144"/>
+    <rect x="560" y="740" width="280" height="144"/>
+    <rect x="940" y="740" width="280" height="144"/>
+    <rect x="1300" y="740" width="280" height="144"/>
+    <rect x="2060" y="740" width="280" height="144"/>
+  </g>
+
+  <!-- ================== COMPARTMENT RULES ================== -->
+  <g stroke="#000000" stroke-width="2">
+    <line x1="40" y1="70" x2="440" y2="70"/>
+    <line x1="40" y1="102" x2="440" y2="102"/>
+    <line x1="40" y1="126" x2="440" y2="126"/>
+    <line x1="960" y1="70" x2="1540" y2="70"/>
+    <line x1="960" y1="102" x2="1540" y2="102"/>
+    <line x1="960" y1="116" x2="1540" y2="116"/>
+    <line x1="1900" y1="70" x2="2360" y2="70"/>
+    <line x1="1900" y1="102" x2="2360" y2="102"/>
+    <line x1="1900" y1="126" x2="2360" y2="126"/>
+    <line x1="40" y1="298" x2="460" y2="298"/>
+    <line x1="40" y1="330" x2="460" y2="330"/>
+    <line x1="40" y1="344" x2="460" y2="344"/>
+    <line x1="520" y1="298" x2="1140" y2="298"/>
+    <line x1="520" y1="330" x2="1140" y2="330"/>
+    <line x1="520" y1="344" x2="1140" y2="344"/>
+    <line x1="1200" y1="298" x2="1810" y2="298"/>
+    <line x1="1200" y1="330" x2="1810" y2="330"/>
+    <line x1="1200" y1="344" x2="1810" y2="344"/>
+    <line x1="1870" y1="298" x2="2350" y2="298"/>
+    <line x1="1870" y1="330" x2="2350" y2="330"/>
+    <line x1="1870" y1="344" x2="2350" y2="344"/>
+    <line x1="380" y1="518" x2="640" y2="518"/>
+    <line x1="380" y1="550" x2="640" y2="550"/>
+    <line x1="380" y1="598" x2="640" y2="598"/>
+    <line x1="780" y1="518" x2="1220" y2="518"/>
+    <line x1="780" y1="550" x2="1220" y2="550"/>
+    <line x1="780" y1="622" x2="1220" y2="622"/>
+    <line x1="1340" y1="518" x2="1590" y2="518"/>
+    <line x1="1340" y1="550" x2="1590" y2="550"/>
+    <line x1="1340" y1="622" x2="1590" y2="622"/>
+    <line x1="1750" y1="518" x2="2010" y2="518"/>
+    <line x1="1750" y1="550" x2="2010" y2="550"/>
+    <line x1="1750" y1="622" x2="2010" y2="622"/>
+    <line x1="40" y1="766" x2="320" y2="766"/>
+    <line x1="40" y1="798" x2="320" y2="798"/>
+    <line x1="40" y1="870" x2="320" y2="870"/>
+    <line x1="560" y1="766" x2="840" y2="766"/>
+    <line x1="560" y1="798" x2="840" y2="798"/>
+    <line x1="560" y1="870" x2="840" y2="870"/>
+    <line x1="940" y1="766" x2="1220" y2="766"/>
+    <line x1="940" y1="798" x2="1220" y2="798"/>
+    <line x1="940" y1="870" x2="1220" y2="870"/>
+    <line x1="1300" y1="766" x2="1580" y2="766"/>
+    <line x1="1300" y1="798" x2="1580" y2="798"/>
+    <line x1="1300" y1="870" x2="1580" y2="870"/>
+    <line x1="2060" y1="766" x2="2340" y2="766"/>
+    <line x1="2060" y1="798" x2="2340" y2="798"/>
+    <line x1="2060" y1="870" x2="2340" y2="870"/>
+  </g>
+
+  <!-- ===================== STEREOTYPES ===================== -->
+  <g font-size="16" font-style="italic" text-anchor="middle" fill="#000000">
+    <text x="240" y="64">&#171;middleware&#187;</text>
+    <text x="1250" y="64">&#171;middleware&#187;</text>
+    <text x="2130" y="64">&#171;service&#187;</text>
+    <text x="250" y="292">&#171;controller&#187;</text>
+    <text x="830" y="292">&#171;controller&#187;</text>
+    <text x="1505" y="292">&#171;controller&#187;</text>
+    <text x="2110" y="292">&#171;controller&#187;</text>
+    <text x="510" y="512">&#171;model&#187;</text>
+    <text x="1000" y="512">&#171;model&#187;</text>
+    <text x="1465" y="512">&#171;model&#187;</text>
+    <text x="1880" y="512">&#171;model&#187;</text>
+    <text x="180" y="760">&#171;model&#187;</text>
+    <text x="700" y="760">&#171;model&#187;</text>
+    <text x="1080" y="760">&#171;model&#187;</text>
+    <text x="1440" y="760">&#171;model&#187;</text>
+    <text x="2200" y="760">&#171;model&#187;</text>
+  </g>
+
+  <!-- ===================== CLASS NAMES ===================== -->
+  <g font-size="22" font-weight="bold" text-anchor="middle" fill="#000000">
+    <text x="240" y="94">AuthMiddleware</text>
+    <text x="1250" y="94">AccessGuard</text>
+    <text x="2130" y="94">ReminderScheduler</text>
+    <text x="250" y="322">AuthController</text>
+    <text x="830" y="322">MedicationController</text>
+    <text x="1505" y="322">FaceRecognitionController</text>
+    <text x="2110" y="322">ChatController</text>
+    <text x="510" y="542">Caregiver</text>
+    <text x="1000" y="542">User</text>
+    <text x="1465" y="542">EmergencyContact</text>
+    <text x="1880" y="542">Patient</text>
+    <text x="180" y="790">Alert</text>
+    <text x="700" y="790">Medication</text>
+    <text x="1080" y="790">MedicationLog</text>
+    <text x="1440" y="790">KnownFace</text>
+    <text x="2200" y="790">ChatHistory</text>
+  </g>
+
+  <!-- ============= ATTRIBUTES AND OPERATIONS =============== -->
+  <g font-size="20" fill="#000000">
+    <!-- AuthMiddleware -->
+    <text x="50" y="121">- jwtSecret : String</text>
+    <text x="50" y="145">+ protect(req : Request) : void</text>
+    <text x="50" y="169">+ authorize(roles : String[]) : Function</text>
+    <!-- AccessGuard -->
+    <text x="970" y="135">+ canAccessPatient(user : User, patientId : String) : Boolean</text>
+    <!-- ReminderScheduler -->
+    <text x="1910" y="121">- GRACE_MINUTES : Number</text>
+    <text x="1910" y="145">+ start(io : SocketServer) : void</text>
+    <text x="1910" y="169">+ parseTimeToMinutes(value : String) : Number</text>
+    <text x="1910" y="193">- emitDueReminders(io : SocketServer) : void</text>
+    <text x="1910" y="217">- detectMissed(io : SocketServer) : void</text>
+    <!-- AuthController -->
+    <text x="50" y="363">+ login(email : String, pwd : String) : String</text>
+    <text x="50" y="387">+ register(email : String, role : String) : User</text>
+    <!-- MedicationController -->
+    <text x="530" y="363">+ getByPatient(patientId : String) : Medication[]</text>
+    <text x="530" y="387">+ logMedicationStatus(id : String, status : String) : MedicationLog</text>
+    <!-- FaceRecognitionController -->
+    <text x="1210" y="363">+ recognizeFace(patientId : String, result : String,</text>
+    <text x="1242" y="387">confidence : Number, knownFaceId : String) : RecognitionLog</text>
+    <!-- ChatController -->
+    <text x="1880" y="363">+ sendMessage(query : String) : ChatHistory</text>
+    <text x="1880" y="387">+ getChatHistory(patientId : String) : ChatHistory[]</text>
+    <!-- Caregiver -->
+    <text x="390" y="569">- specialization : String</text>
+    <text x="390" y="593">- notes : String</text>
+    <!-- User -->
+    <text x="790" y="569">- email : String  { unique }</text>
+    <text x="790" y="593">- password : String</text>
+    <text x="790" y="617">- role : String</text>
+    <text x="790" y="641">+ matchPassword(entered : String) : Boolean</text>
+    <text x="790" y="665">+ getResetPasswordToken() : String</text>
+    <!-- EmergencyContact -->
+    <text x="1350" y="569">- name : String</text>
+    <text x="1350" y="593">- relationship : String</text>
+    <text x="1350" y="617">- phone : String</text>
+    <!-- Patient -->
+    <text x="1760" y="569">- dateOfBirth : Date</text>
+    <text x="1760" y="593">- cnic : String  { unique }</text>
+    <text x="1760" y="617">- diagnosis : String</text>
+    <!-- Alert -->
+    <text x="50" y="817">- type : String</text>
+    <text x="50" y="841">- severity : String</text>
+    <text x="50" y="865">- isResolved : Boolean</text>
+    <!-- Medication -->
+    <text x="570" y="817">- name : String</text>
+    <text x="570" y="841">- dosage : String</text>
+    <text x="570" y="865">- times : String[]</text>
+    <!-- MedicationLog -->
+    <text x="950" y="817">- scheduledTime : Date</text>
+    <text x="950" y="841">- status : String</text>
+    <text x="950" y="865">- takenAt : Date</text>
+    <!-- KnownFace -->
+    <text x="1310" y="817">- name : String</text>
+    <text x="1310" y="841">- relationship : String</text>
+    <text x="1310" y="865">- descriptor : Number[]</text>
+    <!-- ChatHistory -->
+    <text x="2070" y="817">- query : String</text>
+    <text x="2070" y="841">- response : String</text>
+    <text x="2070" y="865">- confidence : Number</text>
+  </g>
+
+  <!-- === GENERALIZATION : solid line, hollow triangle at User === -->
+  <g fill="none" stroke="#000000" stroke-width="2">
+    <path d="M 510 492 L 510 470 L 1880 470 L 1880 492"/>
+    <path d="M 1000 470 L 1000 492" marker-end="url(#gen)"/>
+  </g>
+
+  <!-- === COMPOSITION : filled diamond at the whole (Patient) === -->
+  <g fill="none" stroke="#000000" stroke-width="2">
+    <path d="M 1750 570 L 1590 570" marker-start="url(#comp)"/>
+  </g>
+
+  <!-- === ASSOCIATIONS : multiplicity at both ends === -->
+  <g fill="none" stroke="#000000" stroke-width="2">
+    <path d="M 430 492 L 430 425 L 1950 425 L 1950 492"/>   <!-- Caregiver - cares for - Patient -->
+    <path d="M 1770 636 L 1770 690 L 180 690 L 180 740"/>   <!-- Patient - Alert -->
+    <path d="M 1810 636 L 1810 700 L 760 700 L 760 740"/>   <!-- Patient - Medication -->
+    <path d="M 1850 636 L 1850 710 L 1440 710 L 1440 740"/>   <!-- Patient - KnownFace -->
+    <path d="M 1980 636 L 1980 680 L 2130 680 L 2130 740"/>   <!-- Patient - ChatHistory -->
+    <path d="M 840 810 L 940 810"/>   <!-- Medication - MedicationLog -->
+  </g>
+
+  <!-- === DEPENDENCIES : dashed line, open arrowhead === -->
+  <g fill="none" stroke="#000000" stroke-width="2" stroke-dasharray="10 7" marker-end="url(#dep)">
+    <path d="M 240 272 L 240 174"/>   <!-- AuthController -> AuthMiddleware -->
+    <path d="M 1100 272 L 1100 140"/>   <!-- MedicationController -> AccessGuard -->
+    <path d="M 1450 272 L 1450 140"/>   <!-- FaceRecognitionController -> AccessGuard -->
+    <path d="M 2100 272 L 2100 247 L 1530 247 L 1530 140"/>   <!-- ChatController -> AccessGuard -->
+    <path d="M 240 392 L 240 640 L 780 640"/>   <!-- AuthController -> User -->
+    <path d="M 700 392 L 700 740"/>   <!-- MedicationController -> Medication -->
+    <path d="M 1310 392 L 1310 740"/>   <!-- FaceRecognitionController -> KnownFace -->
+    <path d="M 2200 392 L 2200 740"/>   <!-- ChatController -> ChatHistory -->
+  </g>
+
+  <!-- === MULTIPLICITY LABELS === -->
+  <g font-size="16" font-style="italic" fill="#000000">
+    <text x="438" y="486">0..*</text>
+    <text x="1958" y="486">0..*</text>
+    <text x="1778" y="654">1</text>
+    <text x="1818" y="654">1</text>
+    <text x="1858" y="654">1</text>
+    <text x="1988" y="654">1</text>
+    <text x="188" y="732">0..*</text>
+    <text x="768" y="732">0..*</text>
+    <text x="1448" y="732">0..*</text>
+    <text x="2138" y="732">0..*</text>
+    <text x="846" y="802">1</text>
+    <text x="934" y="802" text-anchor="end">0..*</text>
+    <text x="1714" y="562" text-anchor="end">1</text>
+    <text x="1596" y="562">0..*</text>
+  </g>
+
+  <!-- === ASSOCIATION NAMES === -->
+  <g font-size="16" text-anchor="middle" fill="#000000">
+    <text x="1190" y="417">cares for</text>
+  </g>
+
+  <!-- === UML NOTE on AuthMiddleware (folded corner) === -->
+  <path d="M 490 78 L 752 78 L 770 96 L 770 130 L 490 130 Z" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <path d="M 752 78 L 752 96 L 770 96" fill="none" stroke="#000000" stroke-width="2"/>
+  <text x="502" y="110" font-size="18" fill="#000000">JWT verify, then role check</text>
+  <!-- === CONSTRAINT near KnownFace === -->
+  <text x="1740" y="830" font-size="18" fill="#000000">{ descriptor.length = 128 }</text>
+  <g fill="none" stroke="#000000" stroke-width="2" stroke-dasharray="7 6">
+    <path d="M 490 104 L 440 104"/>   <!-- note -> AuthMiddleware -->
+    <path d="M 1735 824 L 1580 824"/>   <!-- constraint -> KnownFace -->
+  </g>
+
+  <!-- ===================== NOTATION LEGEND ===================== -->
+  <rect x="40" y="894" width="2300" height="42" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  <text x="54" y="921" font-size="16" font-weight="bold" letter-spacing="1" fill="#000000">NOTATION</text>
+  <g fill="none" stroke="#000000" stroke-width="2">
+    <path d="M 184 915 L 244 915" marker-end="url(#gen)"/>
+    <path d="M 420 915 L 490 915"/>
+    <path d="M 770 915 L 830 915" stroke-dasharray="10 7" marker-end="url(#dep)"/>
+    <path d="M 1050 915 L 1120 915" marker-start="url(#comp)"/>
+    <path d="M 1530 901 L 1588 901 L 1600 913 L 1600 929 L 1530 929 Z"/>
+    <path d="M 1588 901 L 1588 913 L 1600 913"/>
+    <path d="M 1600 915 L 1625 915" stroke-dasharray="6 5"/>
+  </g>
+  <g font-size="18" fill="#000000">
+    <text x="256" y="921">Generalisation</text>
+    <text x="502" y="921">Association with multiplicity</text>
+    <text x="842" y="921">Dependency (uses)</text>
+    <text x="1132" y="921">Composition (part-of)</text>
+    <text x="1340" y="921">{ rule }</text>
+    <text x="1404" y="921">Constraint</text>
+    <text x="1637" y="921">Note</text>
+    <text x="1730" y="921">Visibility : + public, - private</text>
+    <text x="2000" y="921">+ name(param : type) : returnType</text>
+  </g>
+  <g font-size="16" font-style="italic" fill="#000000">
+    <text x="422" y="907">1</text>
+    <text x="488" y="907" text-anchor="end">0..*</text>
+  </g>
+</svg>

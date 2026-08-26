@@ -22,8 +22,10 @@
         <!-- m2 return -->
         <mxCell id="m2" value="medicationList" style="html=1;endArrow=open;dashed=1;align=center;verticalAlign=bottom;fontStyle=2;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="560" y="240" as="sourcePoint" /><mxPoint x="110" y="240" as="targetPoint" /></mxGeometry></mxCell>
 
-        <!-- loop frame -->
-        <mxCell id="loop" value="loop  [for each due dose]" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=8;spacingTop=3;fontSize=11;fillColor=none;" vertex="1" parent="1"><mxGeometry x="78" y="272" width="545" height="118" as="geometry" /></mxCell>
+        <!-- loop frame: plain rectangle + pentagon operator tab + guard -->
+        <mxCell id="loop" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="78" y="272" width="545" height="118" as="geometry" /></mxCell>
+        <mxCell id="loop_op" value="loop" style="shape=mxgraph.sysml.package;html=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#000000;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="78" y="272" width="42" height="18" as="geometry" /></mxCell>
+        <mxCell id="loop_guard" value="[for each due dose]" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;" vertex="1" parent="1"><mxGeometry x="124" y="272" width="200" height="18" as="geometry" /></mxCell>
 
         <!-- m3 call -->
         <mxCell id="m3" value="markMedicationTaken(medId)" style="html=1;endArrow=block;fillColor=#000000;align=center;verticalAlign=bottom;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="110" y="325" as="sourcePoint" /><mxPoint x="560" y="325" as="targetPoint" /></mxGeometry></mxCell>

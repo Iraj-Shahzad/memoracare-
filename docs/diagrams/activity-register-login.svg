@@ -1,101 +1,131 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="15 0 655 760" font-family="Helvetica, Arial, sans-serif" font-size="12">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-5 -5 820 966" font-family="Helvetica, Arial, sans-serif" font-size="12">
   <defs>
     <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse">
       <path d="M0,0 L8,4 L0,8 z" fill="#000000"/>
     </marker>
   </defs>
 
-  <rect x="0" y="0" width="700" height="800" fill="#ffffff"/>
+  <rect x="-5" y="-5" width="820" height="966" fill="#ffffff"/>
 
   <g fill="none" stroke="#000000" stroke-width="1.4">
     <!-- e0 start->a1 -->
-    <line x1="340" y1="37" x2="340" y2="52" marker-end="url(#arrow)"/>
+    <line x1="300" y1="37" x2="300" y2="52" marker-end="url(#arrow)"/>
     <!-- e1 a1->a2 -->
-    <line x1="340" y1="92" x2="340" y2="108" marker-end="url(#arrow)"/>
+    <line x1="300" y1="92" x2="300" y2="108" marker-end="url(#arrow)"/>
     <!-- e2 a2->d1 -->
-    <line x1="340" y1="148" x2="340" y2="160" marker-end="url(#arrow)"/>
-    <!-- eyes d1->a3 -->
-    <polyline points="260,200 150,200 150,270" marker-end="url(#arrow)"/>
-    <!-- eno d1->a7 -->
-    <polyline points="420,200 530,200 530,270" marker-end="url(#arrow)"/>
+    <line x1="300" y1="148" x2="300" y2="165" marker-end="url(#arrow)"/>
+
+    <!-- ed1yes d1->m1 -->
+    <polyline points="220,205 150,205 150,268" marker-end="url(#arrow)"/>
+    <!-- em1a3 m1->a3 -->
+    <line x1="150" y1="312" x2="150" y2="340" marker-end="url(#arrow)"/>
     <!-- e3 a3->a4 -->
-    <line x1="150" y1="310" x2="150" y2="336" marker-end="url(#arrow)"/>
+    <line x1="150" y1="404" x2="150" y2="420" marker-end="url(#arrow)"/>
     <!-- e4 a4->d2 -->
-    <line x1="150" y1="376" x2="150" y2="392" marker-end="url(#arrow)"/>
-    <!-- ed2no d2->a3 -->
-    <polyline points="82,430 40,430 40,290 60,290" marker-end="url(#arrow)"/>
+    <line x1="150" y1="460" x2="150" y2="480" marker-end="url(#arrow)"/>
+    <!-- ed2no d2->m1 (loop back into merge) -->
+    <polyline points="75,520 15,520 15,290 120,290" marker-end="url(#arrow)"/>
     <!-- ed2yes d2->a6 -->
-    <line x1="150" y1="468" x2="150" y2="500" marker-end="url(#arrow)"/>
-    <!-- e5 a7->a8 -->
-    <line x1="530" y1="310" x2="530" y2="336" marker-end="url(#arrow)"/>
-    <!-- e6 a8->d3 -->
-    <line x1="530" y1="376" x2="530" y2="392" marker-end="url(#arrow)"/>
-    <!-- ed3no d3->a7 -->
-    <polyline points="598,430 640,430 640,290 620,290" marker-end="url(#arrow)"/>
-    <!-- ed3yes d3->m -->
-    <polyline points="530,468 530,600 375,600" marker-end="url(#arrow)"/>
+    <line x1="150" y1="560" x2="150" y2="580" marker-end="url(#arrow)"/>
     <!-- ea6m a6->m -->
-    <polyline points="150,544 150,600 305,600" marker-end="url(#arrow)"/>
+    <polyline points="150,624 150,790 265,790" marker-end="url(#arrow)"/>
+
+    <!-- ed1no d1->m2 -->
+    <polyline points="380,205 450,205 450,268" marker-end="url(#arrow)"/>
+    <!-- em2a7 m2->a7 -->
+    <line x1="450" y1="312" x2="450" y2="340" marker-end="url(#arrow)"/>
+    <!-- e5 a7->a8 -->
+    <line x1="450" y1="380" x2="450" y2="400" marker-end="url(#arrow)"/>
+    <!-- e6 a8->d3 -->
+    <line x1="450" y1="440" x2="450" y2="450" marker-end="url(#arrow)"/>
+    <!-- ed3no d3->m2 (loop back into merge) -->
+    <polyline points="360,500 320,500 320,290 420,290" marker-end="url(#arrow)"/>
+    <!-- ed3yes d3->m -->
+    <polyline points="450,550 450,740 300,740 300,765" marker-end="url(#arrow)"/>
+
+    <!-- ed3fp d3->pr1 -->
+    <polyline points="540,500 700,500 700,580" marker-end="url(#arrow)"/>
+    <!-- epr12 pr1->pr2 -->
+    <line x1="700" y1="620" x2="700" y2="636" marker-end="url(#arrow)"/>
+    <!-- epr23 pr2->pr3 -->
+    <line x1="700" y1="676" x2="700" y2="692" marker-end="url(#arrow)"/>
+    <!-- epr3m pr3->m -->
+    <polyline points="700,732 700,790 335,790" marker-end="url(#arrow)"/>
+
     <!-- em m->a10 -->
-    <line x1="340" y1="625" x2="340" y2="650" marker-end="url(#arrow)"/>
-    <!-- efin a10->fin1 -->
-    <line x1="340" y1="694" x2="340" y2="717" marker-end="url(#arrow)"/>
+    <line x1="300" y1="815" x2="300" y2="840" marker-end="url(#arrow)"/>
+    <!-- efin a10->fin -->
+    <line x1="300" y1="884" x2="300" y2="915" marker-end="url(#arrow)"/>
   </g>
 
   <!-- guard labels -->
   <g fill="#000000">
-    <text x="200" y="194" text-anchor="end">[Yes]</text>
-    <text x="480" y="194">[No]</text>
-    <text x="34" y="362" text-anchor="end">[No]</text>
-    <text x="158" y="488">[Yes]</text>
-    <text x="646" y="362">[No]</text>
-    <text x="522" y="540" text-anchor="end">[Yes]</text>
+    <text x="212" y="199" text-anchor="end">[Yes]</text>
+    <text x="388" y="199">[No]</text>
+    <text x="25" y="514">[No]</text>
+    <text x="158" y="576">[Yes]</text>
+    <text x="352" y="494" text-anchor="end">[No]</text>
+    <text x="548" y="494">[forgot password]</text>
+    <text x="442" y="570" text-anchor="end">[Yes]</text>
   </g>
 
-  <!-- start node -->
-  <circle cx="340" cy="26" r="11" fill="#000000" stroke="#000000" stroke-width="1.4"/>
+  <!-- initial node -->
+  <circle cx="300" cy="26" r="11" fill="#000000" stroke="#000000" stroke-width="1.4"/>
 
-  <!-- action / decision nodes -->
+  <!-- actions, decisions and merges -->
   <g stroke="#000000" stroke-width="1.4">
-    <rect x="250" y="52" width="180" height="40" rx="12" fill="#ffffff"/>
-    <rect x="230" y="108" width="220" height="40" rx="12" fill="#ffffff"/>
-    <polygon points="340,160 420,200 340,240 260,200" fill="#ffffff"/>
+    <rect x="210" y="52" width="180" height="40" rx="12" fill="#ffffff"/>
+    <rect x="190" y="108" width="220" height="40" rx="12" fill="#ffffff"/>
+    <polygon points="300,165 380,205 300,245 220,205" fill="#ffffff"/>
 
-    <rect x="60" y="270" width="180" height="40" rx="12" fill="#ffffff"/>
-    <rect x="60" y="336" width="180" height="40" rx="12" fill="#ffffff"/>
-    <polygon points="150,392 218,430 150,468 82,430" fill="#ffffff"/>
-    <rect x="55" y="500" width="190" height="44" rx="12" fill="#ffffff"/>
+    <polygon points="150,268 180,290 150,312 120,290" fill="#ffffff"/>
+    <rect x="40" y="340" width="220" height="64" rx="12" fill="#ffffff"/>
+    <rect x="60" y="420" width="180" height="40" rx="12" fill="#ffffff"/>
+    <polygon points="150,480 225,520 150,560 75,520" fill="#ffffff"/>
+    <rect x="50" y="580" width="200" height="44" rx="12" fill="#ffffff"/>
 
-    <rect x="440" y="270" width="180" height="40" rx="12" fill="#ffffff"/>
-    <rect x="440" y="336" width="180" height="40" rx="12" fill="#ffffff"/>
-    <polygon points="530,392 598,430 530,468 462,430" fill="#ffffff"/>
+    <polygon points="450,268 480,290 450,312 420,290" fill="#ffffff"/>
+    <rect x="360" y="340" width="180" height="40" rx="12" fill="#ffffff"/>
+    <rect x="360" y="400" width="180" height="40" rx="12" fill="#ffffff"/>
+    <polygon points="450,450 540,500 450,550 360,500" fill="#ffffff"/>
 
-    <polygon points="340,575 375,600 340,625 305,600" fill="#ffffff"/>
-    <rect x="245" y="650" width="190" height="44" rx="12" fill="#ffffff"/>
+    <rect x="605" y="580" width="190" height="40" rx="12" fill="#ffffff"/>
+    <rect x="605" y="636" width="190" height="40" rx="12" fill="#ffffff"/>
+    <rect x="605" y="692" width="190" height="40" rx="12" fill="#ffffff"/>
+
+    <polygon points="300,765 335,790 300,815 265,790" fill="#ffffff"/>
+    <rect x="200" y="840" width="200" height="44" rx="12" fill="#ffffff"/>
   </g>
 
   <!-- final node -->
-  <circle cx="340" cy="730" r="13" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
-  <circle cx="340" cy="730" r="7" fill="#000000" stroke="#000000" stroke-width="1.4"/>
+  <circle cx="300" cy="928" r="13" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <circle cx="300" cy="928" r="7" fill="#000000" stroke="#000000" stroke-width="1.4"/>
 
   <!-- labels -->
   <g fill="#000000" text-anchor="middle">
-    <text x="340" y="76">Open Memory Assistant</text>
-    <text x="340" y="124">Display Login /</text>
-    <text x="340" y="138">Register options</text>
-    <text x="340" y="204">New user?</text>
+    <text x="300" y="76">Open MemoryCare</text>
+    <text x="300" y="124">Display Login /</text>
+    <text x="300" y="138">Register options</text>
+    <text x="300" y="209">New user?</text>
 
-    <text x="150" y="294">Fill registration form</text>
-    <text x="150" y="360">Validate data</text>
-    <text x="150" y="434">Data valid?</text>
-    <text x="150" y="518">Save to DB &amp;</text>
-    <text x="150" y="532">generate User ID</text>
+    <text x="150" y="362">Fill registration form</text>
+    <text x="150" y="376">(select role: patient</text>
+    <text x="150" y="390">or caregiver)</text>
+    <text x="150" y="444">Validate data</text>
+    <text x="150" y="524">Data valid?</text>
+    <text x="150" y="598">Save to DB and</text>
+    <text x="150" y="612">generate User ID</text>
 
-    <text x="530" y="294">Enter credentials</text>
-    <text x="530" y="360">Verify credentials</text>
-    <text x="530" y="434">Valid?</text>
+    <text x="450" y="364">Enter credentials</text>
+    <text x="450" y="424">Verify credentials</text>
+    <text x="450" y="496">Credentials</text>
+    <text x="450" y="510">valid?</text>
 
-    <text x="340" y="668">Redirect to role-based</text>
-    <text x="340" y="682">dashboard</text>
+    <text x="700" y="604">Request reset link</text>
+    <text x="700" y="660">Email reset token</text>
+    <text x="700" y="716">Set new password</text>
+
+    <text x="300" y="858">Redirect to role-based</text>
+    <text x="300" y="872">dashboard</text>
   </g>
 </svg>

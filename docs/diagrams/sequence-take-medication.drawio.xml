@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net">
   <diagram name="Sequence - Mark Medication as Taken">
-    <mxGraphModel dx="940" dy="560" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="940" pageHeight="560" math="0" shadow="0">
+    <mxGraphModel dx="1720" dy="940" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1720" pageHeight="940" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -8,34 +8,110 @@
         <!-- actor + object heads -->
         <mxCell id="actor" value="Patient" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1"><mxGeometry x="52" y="18" width="36" height="72" as="geometry" /></mxCell>
         <mxCell id="pg" value=":MedicationsPage" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=5;" vertex="1" parent="1"><mxGeometry x="165" y="54" width="130" height="36" as="geometry" /></mxCell>
-        <mxCell id="ct" value=":MedicationController" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=5;" vertex="1" parent="1"><mxGeometry x="368" y="54" width="164" height="36" as="geometry" /></mxCell>
-        <mxCell id="lg" value=":MedicationLog" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=5;" vertex="1" parent="1"><mxGeometry x="595" y="54" width="130" height="36" as="geometry" /></mxCell>
-        <mxCell id="db" value=":MongoDB" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=5;" vertex="1" parent="1"><mxGeometry x="790" y="54" width="120" height="36" as="geometry" /></mxCell>
+        <mxCell id="am" value=":AuthMiddleware" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=5;" vertex="1" parent="1"><mxGeometry x="420" y="54" width="140" height="36" as="geometry" /></mxCell>
+        <mxCell id="ct" value=":MedicationController" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=5;" vertex="1" parent="1"><mxGeometry x="662" y="54" width="176" height="36" as="geometry" /></mxCell>
+        <mxCell id="ag" value=":AccessGuard" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=5;" vertex="1" parent="1"><mxGeometry x="915" y="54" width="130" height="36" as="geometry" /></mxCell>
+        <mxCell id="lg" value=":MedicationLog" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=5;" vertex="1" parent="1"><mxGeometry x="1130" y="54" width="140" height="36" as="geometry" /></mxCell>
+        <mxCell id="db" value=":MongoDB" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=5;" vertex="1" parent="1"><mxGeometry x="1340" y="54" width="120" height="36" as="geometry" /></mxCell>
+        <mxCell id="io" value=":SocketIOServer" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=5;" vertex="1" parent="1"><mxGeometry x="1520" y="54" width="160" height="36" as="geometry" /></mxCell>
 
         <!-- lifelines -->
-        <mxCell id="llp" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="70" y="106" as="sourcePoint" /><mxPoint x="70" y="530" as="targetPoint" /></mxGeometry></mxCell>
-        <mxCell id="llpg" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="230" y="90" as="sourcePoint" /><mxPoint x="230" y="530" as="targetPoint" /></mxGeometry></mxCell>
-        <mxCell id="llct" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="450" y="90" as="sourcePoint" /><mxPoint x="450" y="530" as="targetPoint" /></mxGeometry></mxCell>
-        <mxCell id="lllg" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="660" y="90" as="sourcePoint" /><mxPoint x="660" y="530" as="targetPoint" /></mxGeometry></mxCell>
-        <mxCell id="lldb" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="850" y="90" as="sourcePoint" /><mxPoint x="850" y="530" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="llp" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="70" y="106" as="sourcePoint" /><mxPoint x="70" y="910" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="llpg" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="230" y="90" as="sourcePoint" /><mxPoint x="230" y="910" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="llam" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="490" y="90" as="sourcePoint" /><mxPoint x="490" y="910" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="llct" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="750" y="90" as="sourcePoint" /><mxPoint x="750" y="910" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="llag" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="980" y="90" as="sourcePoint" /><mxPoint x="980" y="910" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="lllg" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1200" y="90" as="sourcePoint" /><mxPoint x="1200" y="910" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="lldb" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1400" y="90" as="sourcePoint" /><mxPoint x="1400" y="910" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="llio" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1600" y="90" as="sourcePoint" /><mxPoint x="1600" y="910" as="targetPoint" /></mxGeometry></mxCell>
 
         <!-- activation bars -->
-        <mxCell id="ap" value="" style="rounded=0;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="225" y="150" width="10" height="318" as="geometry" /></mxCell>
-        <mxCell id="ac" value="" style="rounded=0;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="445" y="185" width="10" height="249" as="geometry" /></mxCell>
-        <mxCell id="al" value="" style="rounded=0;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="655" y="255" width="10" height="107" as="geometry" /></mxCell>
-        <mxCell id="ad" value="" style="rounded=0;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="845" y="292" width="10" height="36" as="geometry" /></mxCell>
+        <mxCell id="apg" value="" style="rounded=0;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="225" y="150" width="10" height="716" as="geometry" /></mxCell>
+        <mxCell id="aam" value="" style="rounded=0;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="485" y="188" width="10" height="632" as="geometry" /></mxCell>
+        <mxCell id="act" value="" style="rounded=0;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="745" y="270" width="10" height="560" as="geometry" /></mxCell>
+        <mxCell id="aag" value="" style="rounded=0;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="975" y="306" width="10" height="32" as="geometry" /></mxCell>
+        <mxCell id="alg1" value="" style="rounded=0;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="1195" y="374" width="10" height="34" as="geometry" /></mxCell>
+        <mxCell id="alg2" value="" style="rounded=0;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="1195" y="480" width="10" height="96" as="geometry" /></mxCell>
+        <mxCell id="alg3" value="" style="rounded=0;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="1195" y="640" width="10" height="96" as="geometry" /></mxCell>
+        <mxCell id="adb1" value="" style="rounded=0;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="1395" y="512" width="10" height="32" as="geometry" /></mxCell>
+        <mxCell id="adb2" value="" style="rounded=0;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="1395" y="672" width="10" height="32" as="geometry" /></mxCell>
+        <mxCell id="aio" value="" style="rounded=0;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="1595" y="794" width="10" height="26" as="geometry" /></mxCell>
 
-        <!-- messages -->
-        <mxCell id="m1" value="markAsTaken(medId)" style="html=1;endArrow=block;fillColor=#000000;align=center;verticalAlign=bottom;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="70" y="150" as="sourcePoint" /><mxPoint x="225" y="150" as="targetPoint" /></mxGeometry></mxCell>
-        <mxCell id="m2" value="POST /medications/{id}/log {status:&quot;taken&quot;}" style="html=1;endArrow=block;fillColor=#000000;align=center;verticalAlign=bottom;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="235" y="185" as="sourcePoint" /><mxPoint x="445" y="185" as="targetPoint" /></mxGeometry></mxCell>
-        <mxCell id="m3" value="verify JWT + canAccessPatient()" style="html=1;endArrow=block;fillColor=#000000;fontSize=10;verticalAlign=bottom;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="455" y="214" as="sourcePoint" /><mxPoint x="457" y="232" as="targetPoint" /><Array as="points"><mxPoint x="503" y="214" /><mxPoint x="503" y="232" /></Array></mxGeometry></mxCell>
-        <mxCell id="m4" value="create(medId, patientId, &quot;taken&quot;)" style="html=1;endArrow=block;fillColor=#000000;align=center;verticalAlign=bottom;fontSize=10;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="455" y="255" as="sourcePoint" /><mxPoint x="655" y="255" as="targetPoint" /></mxGeometry></mxCell>
-        <mxCell id="m5" value="insert(log)" style="html=1;endArrow=block;fillColor=#000000;align=center;verticalAlign=bottom;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="665" y="292" as="sourcePoint" /><mxPoint x="845" y="292" as="targetPoint" /></mxGeometry></mxCell>
-        <mxCell id="r6" value="saved" style="html=1;endArrow=open;dashed=1;align=center;verticalAlign=bottom;fontStyle=2;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="845" y="328" as="sourcePoint" /><mxPoint x="665" y="328" as="targetPoint" /></mxGeometry></mxCell>
-        <mxCell id="r7" value="log" style="html=1;endArrow=open;dashed=1;align=center;verticalAlign=bottom;fontStyle=2;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="655" y="362" as="sourcePoint" /><mxPoint x="455" y="362" as="targetPoint" /></mxGeometry></mxCell>
-        <mxCell id="m8" value="emit &quot;medication_update&quot;" style="html=1;endArrow=block;fillColor=#000000;fontSize=10;verticalAlign=bottom;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="455" y="396" as="sourcePoint" /><mxPoint x="457" y="414" as="targetPoint" /><Array as="points"><mxPoint x="503" y="396" /><mxPoint x="503" y="414" /></Array></mxGeometry></mxCell>
-        <mxCell id="r9" value="201 { success, log }" style="html=1;endArrow=open;dashed=1;align=center;verticalAlign=bottom;fontStyle=2;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="445" y="434" as="sourcePoint" /><mxPoint x="235" y="434" as="targetPoint" /></mxGeometry></mxCell>
-        <mxCell id="r10" value="show status &quot;Taken&quot;" style="html=1;endArrow=open;dashed=1;align=center;verticalAlign=bottom;fontStyle=2;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="225" y="468" as="sourcePoint" /><mxPoint x="80" y="468" as="targetPoint" /></mxGeometry></mxCell>
+        <!-- alt frame (idempotent per day write) -->
+        <mxCell id="altf" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;fillColor=none;width=48;height=24;align=left;spacingLeft=6;verticalAlign=top;fontSize=10;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="690" y="436" width="780" height="324" as="geometry" /></mxCell>
+        <mxCell id="g1" value="[log exists today]" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;" vertex="1" parent="1"><mxGeometry x="760" y="438" width="130" height="24" as="geometry" /></mxCell>
+        <mxCell id="divider" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="690" y="600" as="sourcePoint" /><mxPoint x="1470" y="600" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="g2" value="[else]" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;" vertex="1" parent="1"><mxGeometry x="696" y="602" width="70" height="24" as="geometry" /></mxCell>
+
+        <!-- m1 : synchronous -->
+        <mxCell id="m1" style="html=1;endArrow=block;endFill=1;fillColor=#000000;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="70" y="150" as="sourcePoint" /><mxPoint x="225" y="150" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="m1l" value="markAsTaken(medId)" style="edgeLabel;html=1;align=left;verticalAlign=bottom;fontSize=10;labelBackgroundColor=none;" vertex="1" connectable="0" parent="m1"><mxGeometry x="-1" relative="1" as="geometry"><mxPoint x="8" as="offset" /></mxGeometry></mxCell>
+
+        <!-- m2 : synchronous (HTTP request hits the protected router) -->
+        <mxCell id="m2" style="html=1;endArrow=block;endFill=1;fillColor=#000000;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="235" y="188" as="sourcePoint" /><mxPoint x="485" y="188" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="m2l" value="POST /medications/{id}/log {status:&quot;taken&quot;}" style="edgeLabel;html=1;align=left;verticalAlign=bottom;fontSize=10;labelBackgroundColor=none;" vertex="1" connectable="0" parent="m2"><mxGeometry x="-1" relative="1" as="geometry"><mxPoint x="8" as="offset" /></mxGeometry></mxCell>
+
+        <!-- m3 : protect runs inside the middleware, before the controller is entered -->
+        <mxCell id="m3" style="html=1;endArrow=block;endFill=1;fillColor=#000000;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="495" y="216" as="sourcePoint" /><mxPoint x="497" y="238" as="targetPoint" /><Array as="points"><mxPoint x="545" y="216" /><mxPoint x="545" y="238" /></Array></mxGeometry></mxCell>
+        <mxCell id="m3l" value="protect(req, res, next)" style="edgeLabel;html=1;align=left;verticalAlign=middle;fontSize=10;labelBackgroundColor=none;" vertex="1" connectable="0" parent="m3"><mxGeometry x="0" y="0" relative="1" as="geometry"><mxPoint x="66" y="-16" as="offset" /></mxGeometry></mxCell>
+
+        <!-- m4 : synchronous, starts the controller activation -->
+        <mxCell id="m4" style="html=1;endArrow=block;endFill=1;fillColor=#000000;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="495" y="270" as="sourcePoint" /><mxPoint x="745" y="270" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="m4l" value="next(): logMedicationStatus(req, res)" style="edgeLabel;html=1;align=left;verticalAlign=bottom;fontSize=10;labelBackgroundColor=none;" vertex="1" connectable="0" parent="m4"><mxGeometry x="-1" relative="1" as="geometry"><mxPoint x="8" as="offset" /></mxGeometry></mxCell>
+
+        <!-- m5 : synchronous -->
+        <mxCell id="m5" style="html=1;endArrow=block;endFill=1;fillColor=#000000;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="755" y="306" as="sourcePoint" /><mxPoint x="975" y="306" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="m5l" value="canAccessPatient(user, patientId)" style="edgeLabel;html=1;align=left;verticalAlign=bottom;fontSize=10;labelBackgroundColor=none;" vertex="1" connectable="0" parent="m5"><mxGeometry x="-1" relative="1" as="geometry"><mxPoint x="6" as="offset" /></mxGeometry></mxCell>
+
+        <!-- r6 : return -->
+        <mxCell id="r6" style="html=1;endArrow=open;endFill=0;dashed=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="975" y="338" as="sourcePoint" /><mxPoint x="755" y="338" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="r6l" value="true : Boolean" style="edgeLabel;html=1;align=right;verticalAlign=bottom;fontSize=10;fontStyle=2;labelBackgroundColor=none;" vertex="1" connectable="0" parent="r6"><mxGeometry x="-1" relative="1" as="geometry"><mxPoint x="-6" as="offset" /></mxGeometry></mxCell>
+
+        <!-- m7 : find today's log first (idempotent per day) -->
+        <mxCell id="m7" style="html=1;endArrow=block;endFill=1;fillColor=#000000;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="755" y="374" as="sourcePoint" /><mxPoint x="1195" y="374" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="m7l" value="findTodaysLog(medId, dayStart, dayEnd)" style="edgeLabel;html=1;align=left;verticalAlign=bottom;fontSize=10;labelBackgroundColor=none;" vertex="1" connectable="0" parent="m7"><mxGeometry x="-1" relative="1" as="geometry"><mxPoint x="6" as="offset" /></mxGeometry></mxCell>
+
+        <!-- r8 : return -->
+        <mxCell id="r8" style="html=1;endArrow=open;endFill=0;dashed=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1195" y="408" as="sourcePoint" /><mxPoint x="755" y="408" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="r8l" value="log or null" style="edgeLabel;html=1;align=right;verticalAlign=bottom;fontSize=10;fontStyle=2;labelBackgroundColor=none;" vertex="1" connectable="0" parent="r8"><mxGeometry x="-1" relative="1" as="geometry"><mxPoint x="-6" as="offset" /></mxGeometry></mxCell>
+
+        <!-- operand 1 : [log exists today] -->
+        <mxCell id="m9" style="html=1;endArrow=block;endFill=1;fillColor=#000000;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="755" y="480" as="sourcePoint" /><mxPoint x="1195" y="480" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="m9l" value="save(status, takenAt)" style="edgeLabel;html=1;align=left;verticalAlign=bottom;fontSize=10;labelBackgroundColor=none;" vertex="1" connectable="0" parent="m9"><mxGeometry x="-1" relative="1" as="geometry"><mxPoint x="6" as="offset" /></mxGeometry></mxCell>
+
+        <mxCell id="m10" style="html=1;endArrow=block;endFill=1;fillColor=#000000;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1205" y="512" as="sourcePoint" /><mxPoint x="1395" y="512" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="m10l" value="update(log)" style="edgeLabel;html=1;align=left;verticalAlign=bottom;fontSize=10;labelBackgroundColor=none;" vertex="1" connectable="0" parent="m10"><mxGeometry x="-1" relative="1" as="geometry"><mxPoint x="6" as="offset" /></mxGeometry></mxCell>
+
+        <mxCell id="r11" style="html=1;endArrow=open;endFill=0;dashed=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1395" y="544" as="sourcePoint" /><mxPoint x="1205" y="544" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="r11l" value="saved" style="edgeLabel;html=1;align=right;verticalAlign=bottom;fontSize=10;fontStyle=2;labelBackgroundColor=none;" vertex="1" connectable="0" parent="r11"><mxGeometry x="-1" relative="1" as="geometry"><mxPoint x="-6" as="offset" /></mxGeometry></mxCell>
+
+        <mxCell id="r12" style="html=1;endArrow=open;endFill=0;dashed=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1195" y="576" as="sourcePoint" /><mxPoint x="755" y="576" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="r12l" value="log" style="edgeLabel;html=1;align=right;verticalAlign=bottom;fontSize=10;fontStyle=2;labelBackgroundColor=none;" vertex="1" connectable="0" parent="r12"><mxGeometry x="-1" relative="1" as="geometry"><mxPoint x="-6" as="offset" /></mxGeometry></mxCell>
+
+        <!-- operand 2 : [else] -->
+        <mxCell id="m13" style="html=1;endArrow=block;endFill=1;fillColor=#000000;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="755" y="640" as="sourcePoint" /><mxPoint x="1195" y="640" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="m13l" value="create(medId, patientId, &quot;taken&quot;)" style="edgeLabel;html=1;align=left;verticalAlign=bottom;fontSize=10;labelBackgroundColor=none;" vertex="1" connectable="0" parent="m13"><mxGeometry x="-1" relative="1" as="geometry"><mxPoint x="6" as="offset" /></mxGeometry></mxCell>
+
+        <mxCell id="m14" style="html=1;endArrow=block;endFill=1;fillColor=#000000;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1205" y="672" as="sourcePoint" /><mxPoint x="1395" y="672" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="m14l" value="insert(log)" style="edgeLabel;html=1;align=left;verticalAlign=bottom;fontSize=10;labelBackgroundColor=none;" vertex="1" connectable="0" parent="m14"><mxGeometry x="-1" relative="1" as="geometry"><mxPoint x="6" as="offset" /></mxGeometry></mxCell>
+
+        <mxCell id="r15" style="html=1;endArrow=open;endFill=0;dashed=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1395" y="704" as="sourcePoint" /><mxPoint x="1205" y="704" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="r15l" value="saved" style="edgeLabel;html=1;align=right;verticalAlign=bottom;fontSize=10;fontStyle=2;labelBackgroundColor=none;" vertex="1" connectable="0" parent="r15"><mxGeometry x="-1" relative="1" as="geometry"><mxPoint x="-6" as="offset" /></mxGeometry></mxCell>
+
+        <mxCell id="r16" style="html=1;endArrow=open;endFill=0;dashed=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1195" y="736" as="sourcePoint" /><mxPoint x="755" y="736" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="r16l" value="log" style="edgeLabel;html=1;align=right;verticalAlign=bottom;fontSize=10;fontStyle=2;labelBackgroundColor=none;" vertex="1" connectable="0" parent="r16"><mxGeometry x="-1" relative="1" as="geometry"><mxPoint x="-6" as="offset" /></mxGeometry></mxCell>
+
+        <!-- m17 : ASYNCHRONOUS message to the Socket.IO server (patient's own room) -->
+        <mxCell id="m17" style="html=1;endArrow=open;endFill=0;dashed=0;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="755" y="794" as="sourcePoint" /><mxPoint x="1595" y="794" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="m17l" value="emit(&quot;medication_update&quot;, patientRoom)" style="edgeLabel;html=1;align=left;verticalAlign=bottom;fontSize=10;labelBackgroundColor=none;" vertex="1" connectable="0" parent="m17"><mxGeometry x="-1" relative="1" as="geometry"><mxPoint x="6" as="offset" /></mxGeometry></mxCell>
+
+        <!-- r18 : HTTP response -->
+        <mxCell id="r18" style="html=1;endArrow=open;endFill=0;dashed=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="745" y="830" as="sourcePoint" /><mxPoint x="235" y="830" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="r18l" value="201 { success, log }" style="edgeLabel;html=1;align=right;verticalAlign=bottom;fontSize=10;fontStyle=2;labelBackgroundColor=none;" vertex="1" connectable="0" parent="r18"><mxGeometry x="-1" relative="1" as="geometry"><mxPoint x="-6" as="offset" /></mxGeometry></mxCell>
+
+        <!-- r19 -->
+        <mxCell id="r19" style="html=1;endArrow=open;endFill=0;dashed=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="225" y="866" as="sourcePoint" /><mxPoint x="80" y="866" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="r19l" value="show status &quot;Taken&quot;" style="edgeLabel;html=1;align=right;verticalAlign=bottom;fontSize=10;fontStyle=2;labelBackgroundColor=none;" vertex="1" connectable="0" parent="r19"><mxGeometry x="-1" relative="1" as="geometry"><mxPoint x="-6" as="offset" /></mxGeometry></mxCell>
 
       </root>
     </mxGraphModel>

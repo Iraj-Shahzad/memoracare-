@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net">
   <diagram name="ER Diagram">
-    <mxGraphModel dx="1300" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="800" math="0" shadow="0">
+    <mxGraphModel dx="1300" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="900" math="0" shadow="0">
       <root>
         <mxCell id="0" /><mxCell id="1" parent="0" />
 
@@ -19,14 +19,14 @@
 
         <!-- Bottom cluster -->
         <mxCell id="rem" value="&lt;b&gt;Reminder&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;reminderId {PK}&lt;br&gt;type&lt;br&gt;scheduledTime" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;spacingTop=2;fillColor=#ffffff;align=left;spacingLeft=6;" vertex="1" parent="1"><mxGeometry x="640" y="590" width="160" height="76" as="geometry" /></mxCell>
-        <mxCell id="rep" value="&lt;b&gt;Report&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;reportId {PK}&lt;br&gt;type&lt;br&gt;period" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;spacingTop=2;fillColor=#ffffff;align=left;spacingLeft=6;" vertex="1" parent="1"><mxGeometry x="230" y="680" width="160" height="76" as="geometry" /></mxCell>
+        <mxCell id="rep" value="&lt;b&gt;Report&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;reportId {PK}&lt;br&gt;type&lt;br&gt;period" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;spacingTop=2;fillColor=#ffffff;align=left;spacingLeft=6;" vertex="1" parent="1"><mxGeometry x="540" y="700" width="160" height="76" as="geometry" /></mxCell>
 
         <!-- Left cluster: chat / memory / face -->
-        <mxCell id="chat" value="&lt;b&gt;ChatHistory&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;chatId {PK}&lt;br&gt;query&lt;br&gt;response" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;spacingTop=2;fillColor=#ffffff;align=left;spacingLeft=6;" vertex="1" parent="1"><mxGeometry x="380" y="590" width="160" height="76" as="geometry" /></mxCell>
-        <mxCell id="mem" value="&lt;b&gt;Memory&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;memoryId {PK}&lt;br&gt;title&lt;br&gt;date" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;spacingTop=2;fillColor=#ffffff;align=left;spacingLeft=6;" vertex="1" parent="1"><mxGeometry x="180" y="530" width="160" height="76" as="geometry" /></mxCell>
+        <mxCell id="chat" value="&lt;b&gt;ChatHistory&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;chatId {PK}&lt;br&gt;query&lt;br&gt;response" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;spacingTop=2;fillColor=#ffffff;align=left;spacingLeft=6;" vertex="1" parent="1"><mxGeometry x="430" y="590" width="160" height="76" as="geometry" /></mxCell>
+        <mxCell id="mem" value="&lt;b&gt;Memory&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;memoryId {PK}&lt;br&gt;title&lt;br&gt;date" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;spacingTop=2;fillColor=#ffffff;align=left;spacingLeft=6;" vertex="1" parent="1"><mxGeometry x="180" y="740" width="160" height="76" as="geometry" /></mxCell>
         <mxCell id="face" value="&lt;b&gt;KnownFace&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;faceId {PK}&lt;br&gt;name&lt;br&gt;relationship" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;spacingTop=2;fillColor=#ffffff;align=left;spacingLeft=6;" vertex="1" parent="1"><mxGeometry x="40" y="290" width="160" height="76" as="geometry" /></mxCell>
         <mxCell id="reclog" value="&lt;b&gt;RecognitionLog&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;recId {PK}&lt;br&gt;result&lt;br&gt;confidence" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;spacingTop=2;fillColor=#ffffff;align=left;spacingLeft=6;" vertex="1" parent="1"><mxGeometry x="40" y="440" width="160" height="76" as="geometry" /></mxCell>
-        <mxCell id="note" value="&lt;b&gt;Note&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;noteId {PK}&lt;br&gt;content&lt;br&gt;category" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;spacingTop=2;fillColor=#ffffff;align=left;spacingLeft=6;" vertex="1" parent="1"><mxGeometry x="250" y="380" width="150" height="76" as="geometry" /></mxCell>
+        <mxCell id="note" value="&lt;b&gt;Note&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;noteId {PK}&lt;br&gt;content&lt;br&gt;category" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;spacingTop=2;fillColor=#ffffff;align=left;spacingLeft=6;" vertex="1" parent="1"><mxGeometry x="250" y="510" width="150" height="76" as="geometry" /></mxCell>
 
         <!-- Specialization triangle -->
         <mxCell id="tri" value="" style="triangle;direction=north;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="585" y="238" width="30" height="26" as="geometry" /></mxCell>
@@ -36,69 +36,109 @@
         <mxCell id="tg2" style="endArrow=none;html=1;" edge="1" parent="1" source="tri" target="care"><mxGeometry relative="1" as="geometry" /></mxCell>
 
         <!-- Relationships -->
-        <mxCell id="r1" value="CaresFor" style="endArrow=none;html=1;" edge="1" parent="1" source="care" target="pat"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="r1a" value="0..*" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r1"><mxGeometry x="-0.8" relative="1" as="geometry" /></mxCell>
-        <mxCell id="r1b" value="0..*" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r1"><mxGeometry x="0.8" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r1" value="CaresFor" style="endArrow=none;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="care" target="pat"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r1a" value="0..*" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r1"><mxGeometry x="-0.759" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r1b" value="0..*" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r1"><mxGeometry x="0.759" relative="1" as="geometry" /></mxCell>
 
-        <mxCell id="r10" value="Takes" style="endArrow=none;html=1;" edge="1" parent="1" source="pat" target="med"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="r10a" value="1..1" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r10"><mxGeometry x="-0.8" relative="1" as="geometry" /></mxCell>
-        <mxCell id="r10b" value="0..*" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r10"><mxGeometry x="0.8" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r10" value="Takes" style="endArrow=none;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="pat" target="med"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r10a" value="1..1" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r10"><mxGeometry x="-0.731" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r10b" value="0..*" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r10"><mxGeometry x="0.731" relative="1" as="geometry" /></mxCell>
 
-        <mxCell id="r12" value="Records" style="endArrow=none;html=1;" edge="1" parent="1" source="med" target="medlog"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="r12a" value="1..1" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r12"><mxGeometry x="-0.8" relative="1" as="geometry" /></mxCell>
-        <mxCell id="r12b" value="0..*" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r12"><mxGeometry x="0.8" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r12" value="" style="endArrow=none;html=1;" edge="1" parent="1" source="med" target="medlog"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r12n" value="Records" style="text;html=1;align=center;verticalAlign=middle;labelBackgroundColor=#ffffff;fontSize=10;" vertex="1" parent="1"><mxGeometry x="1021" y="258" width="48" height="14" as="geometry" /></mxCell>
+        <mxCell id="r12a" value="1..1" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r12"><mxGeometry x="-0.511" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r12b" value="0..*" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r12"><mxGeometry x="0.511" relative="1" as="geometry" /></mxCell>
 
-        <mxCell id="r11" value="Follows" style="endArrow=none;html=1;" edge="1" parent="1" source="pat" target="rout"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="r11a" value="1..1" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r11"><mxGeometry x="-0.8" relative="1" as="geometry" /></mxCell>
-        <mxCell id="r11b" value="0..*" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r11"><mxGeometry x="0.8" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r11" value="Follows" style="endArrow=none;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="pat" target="rout"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r11a" value="1..1" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r11"><mxGeometry x="-0.762" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r11b" value="0..*" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r11"><mxGeometry x="0.762" relative="1" as="geometry" /></mxCell>
 
-        <mxCell id="r13" value="Records" style="endArrow=none;html=1;" edge="1" parent="1" source="rout" target="routlog"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="r13a" value="1..1" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r13"><mxGeometry x="-0.8" relative="1" as="geometry" /></mxCell>
-        <mxCell id="r13b" value="0..*" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r13"><mxGeometry x="0.8" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r13" value="" style="endArrow=none;html=1;" edge="1" parent="1" source="rout" target="routlog"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r13n" value="Records" style="text;html=1;align=center;verticalAlign=middle;labelBackgroundColor=#ffffff;fontSize=10;" vertex="1" parent="1"><mxGeometry x="1033" y="418" width="48" height="14" as="geometry" /></mxCell>
+        <mxCell id="r13a" value="1..1" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r13"><mxGeometry x="-0.374" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r13b" value="0..*" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r13"><mxGeometry x="0.374" relative="1" as="geometry" /></mxCell>
 
-        <mxCell id="r9" value="Triggers" style="endArrow=none;html=1;" edge="1" parent="1" source="pat" target="alert"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="r9a" value="1..1" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r9"><mxGeometry x="-0.8" relative="1" as="geometry" /></mxCell>
-        <mxCell id="r9b" value="0..*" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r9"><mxGeometry x="0.8" relative="1" as="geometry" /></mxCell>
+        <!-- Alert.patient is NOT required in server/models/Alert.ts, so the Patient end is 0..1 -->
+        <mxCell id="r9" value="Triggers" style="endArrow=none;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="pat" target="alert"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r9a" value="0..1" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r9"><mxGeometry x="-0.840" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r9b" value="0..*" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r9"><mxGeometry x="0.840" relative="1" as="geometry" /></mxCell>
 
-        <mxCell id="r8" value="Has" style="endArrow=none;html=1;" edge="1" parent="1" source="pat" target="rem"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="r8a" value="1..1" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r8"><mxGeometry x="-0.8" relative="1" as="geometry" /></mxCell>
-        <mxCell id="r8b" value="0..*" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r8"><mxGeometry x="0.8" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r8" value="" style="endArrow=none;html=1;" edge="1" parent="1" source="pat" target="rem"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r8lbl" value="Has" style="edgeLabel;html=1;labelBackgroundColor=#ffffff;fontSize=10;" vertex="1" connectable="0" parent="r8"><mxGeometry x="-0.3" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r8a" value="1..1" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r8"><mxGeometry x="-0.793" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r8b" value="0..*" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r8"><mxGeometry x="0.793" relative="1" as="geometry" /></mxCell>
 
-        <mxCell id="r3" value="SummarizedIn" style="endArrow=none;html=1;" edge="1" parent="1" source="pat" target="rep"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="r3a" value="0..1" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r3"><mxGeometry x="-0.8" relative="1" as="geometry" /></mxCell>
-        <mxCell id="r3b" value="0..*" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r3"><mxGeometry x="0.8" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r3" value="SummarizedIn" style="endArrow=none;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="pat" target="rep"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r3a" value="0..1" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r3"><mxGeometry x="-0.777" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r3b" value="0..*" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r3"><mxGeometry x="0.777" relative="1" as="geometry" /></mxCell>
 
-        <mxCell id="r5" value="Sends" style="endArrow=none;html=1;" edge="1" parent="1" source="pat" target="chat"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="r5a" value="1..1" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r5"><mxGeometry x="-0.8" relative="1" as="geometry" /></mxCell>
-        <mxCell id="r5b" value="0..*" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r5"><mxGeometry x="0.8" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r5" value="" style="endArrow=none;html=1;" edge="1" parent="1" source="pat" target="chat"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r5lbl" value="Sends" style="edgeLabel;html=1;labelBackgroundColor=#ffffff;fontSize=10;" vertex="1" connectable="0" parent="r5"><mxGeometry x="0.3" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r5a" value="1..1" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r5"><mxGeometry x="-0.785" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r5b" value="0..*" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r5"><mxGeometry x="0.785" relative="1" as="geometry" /></mxCell>
 
-        <mxCell id="r4" value="Owns" style="endArrow=none;html=1;" edge="1" parent="1" source="pat" target="mem"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="r4a" value="1..1" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r4"><mxGeometry x="-0.8" relative="1" as="geometry" /></mxCell>
-        <mxCell id="r4b" value="0..*" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r4"><mxGeometry x="0.8" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r4" value="" style="endArrow=none;html=1;" edge="1" parent="1" source="pat" target="mem"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r4lbl" value="Owns" style="edgeLabel;html=1;labelBackgroundColor=#ffffff;fontSize=10;" vertex="1" connectable="0" parent="r4"><mxGeometry x="-0.3" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r4a" value="1..1" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r4"><mxGeometry x="-0.901" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r4b" value="0..*" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r4"><mxGeometry x="0.901" relative="1" as="geometry" /></mxCell>
 
-        <mxCell id="r6" value="Knows" style="endArrow=none;html=1;" edge="1" parent="1" source="pat" target="face"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="r6a" value="1..1" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r6"><mxGeometry x="-0.8" relative="1" as="geometry" /></mxCell>
-        <mxCell id="r6b" value="0..*" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r6"><mxGeometry x="0.8" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r6" value="Knows" style="endArrow=none;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="pat" target="face"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r6a" value="1..1" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r6"><mxGeometry x="-0.863" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r6b" value="0..*" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r6"><mxGeometry x="0.863" relative="1" as="geometry" /></mxCell>
 
-        <mxCell id="r7" value="Has" style="endArrow=none;html=1;" edge="1" parent="1" source="pat" target="reclog"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="r7a" value="1..1" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r7"><mxGeometry x="-0.8" relative="1" as="geometry" /></mxCell>
-        <mxCell id="r7b" value="0..*" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r7"><mxGeometry x="0.8" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r7" value="Has" style="endArrow=none;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="pat" target="reclog"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r7a" value="1..1" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r7"><mxGeometry x="-0.867" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r7b" value="0..*" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r7"><mxGeometry x="0.867" relative="1" as="geometry" /></mxCell>
 
-        <mxCell id="r14" value="Matches" style="endArrow=none;html=1;" edge="1" parent="1" source="reclog" target="face"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="r14a" value="0..*" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r14"><mxGeometry x="-0.8" relative="1" as="geometry" /></mxCell>
-        <mxCell id="r14b" value="0..1" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r14"><mxGeometry x="0.8" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r14" value="" style="endArrow=none;html=1;" edge="1" parent="1" source="reclog" target="face"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r14n" value="Matches" style="text;html=1;align=center;verticalAlign=middle;labelBackgroundColor=#ffffff;fontSize=10;" vertex="1" parent="1"><mxGeometry x="134" y="393" width="48" height="14" as="geometry" /></mxCell>
+        <mxCell id="r14a" value="0..*" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r14"><mxGeometry x="-0.405" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r14b" value="0..1" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r14"><mxGeometry x="0.405" relative="1" as="geometry" /></mxCell>
 
-        <mxCell id="r2" value="About" style="endArrow=none;html=1;" edge="1" parent="1" source="pat" target="note"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="r2a" value="1..1" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r2"><mxGeometry x="-0.8" relative="1" as="geometry" /></mxCell>
-        <mxCell id="r2b" value="0..*" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r2"><mxGeometry x="0.8" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r2" value="About" style="endArrow=none;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="pat" target="note"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r2a" value="1..1" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r2"><mxGeometry x="-0.781" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r2b" value="0..*" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r2"><mxGeometry x="0.781" relative="1" as="geometry" /></mxCell>
 
-        <mxCell id="r15" value="Writes" style="endArrow=none;html=1;" edge="1" parent="1" source="care" target="note"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="r15a" value="1..1" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r15"><mxGeometry x="-0.8" relative="1" as="geometry" /></mxCell>
-        <mxCell id="r15b" value="0..*" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r15"><mxGeometry x="0.8" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r15" value="Writes" style="endArrow=none;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="care" target="note"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r15a" value="1..1" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r15"><mxGeometry x="-0.833" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r15b" value="0..*" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r15"><mxGeometry x="0.833" relative="1" as="geometry" /></mxCell>
 
-        <mxCell id="r16" value="Handles" style="endArrow=none;html=1;" edge="1" parent="1" source="user" target="contact"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="r16a" value="0..1" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r16"><mxGeometry x="-0.8" relative="1" as="geometry" /></mxCell>
-        <mxCell id="r16b" value="0..*" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="r16"><mxGeometry x="0.8" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r16" value="Handles" style="endArrow=none;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="user" target="contact"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r16a" value="0..1" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r16"><mxGeometry x="-0.761" relative="1" as="geometry" /></mxCell>
+        <mxCell id="r16b" value="0..*" style="edgeLabel;html=1;fontSize=9;labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="r16"><mxGeometry x="0.761" relative="1" as="geometry" /></mxCell>
+
+        <!-- Report.generatedBy is required in server/models/Report.ts: User 1..1 GeneratedBy Report 0..* -->
+        <mxCell id="r17" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="user" target="rep">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="520" y="165" as="sourcePoint" />
+            <mxPoint x="540" y="738" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="415" y="165" />
+              <mxPoint x="415" y="738" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r17n" value="GeneratedBy" style="text;html=1;align=center;verticalAlign=middle;labelBackgroundColor=#ffffff;fontSize=10;" vertex="1" parent="1"><mxGeometry x="379" y="290" width="72" height="14" as="geometry" /></mxCell>
+        <mxCell id="r17a" value="1..1" style="text;html=1;align=center;verticalAlign=middle;labelBackgroundColor=#ffffff;fontSize=9;" vertex="1" parent="1"><mxGeometry x="487" y="147" width="20" height="13" as="geometry" /></mxCell>
+        <mxCell id="r17b" value="0..*" style="text;html=1;align=center;verticalAlign=middle;labelBackgroundColor=#ffffff;fontSize=9;" vertex="1" parent="1"><mxGeometry x="497" y="721" width="20" height="13" as="geometry" /></mxCell>
+
+        <!-- Alert.caregiver / Alert.resolvedBy both reference User: Caregiver 0..1 Receives Alert 0..* -->
+        <mxCell id="r18" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=none;html=1;exitX=0.125;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="care" target="alert">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="220" y="249" as="sourcePoint" />
+            <mxPoint x="860" y="550" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="220" y="495" />
+              <mxPoint x="940" y="495" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r18n" value="Receives" style="text;html=1;align=center;verticalAlign=middle;labelBackgroundColor=#ffffff;fontSize=10;" vertex="1" parent="1"><mxGeometry x="673" y="485" width="54" height="14" as="geometry" /></mxCell>
+        <mxCell id="r18a" value="0..1" style="text;html=1;align=center;verticalAlign=middle;labelBackgroundColor=#ffffff;fontSize=9;" vertex="1" parent="1"><mxGeometry x="210" y="263" width="20" height="13" as="geometry" /></mxCell>
+        <mxCell id="r18b" value="0..*" style="text;html=1;align=center;verticalAlign=middle;labelBackgroundColor=#ffffff;fontSize=9;" vertex="1" parent="1"><mxGeometry x="930" y="519" width="20" height="13" as="geometry" /></mxCell>
+
+        <!-- Legend for the specialization constraint -->
+        <mxCell id="legend" value="{Optional, Or}: a User may be a Patient or a Caregiver, but never both." style="text;html=1;align=left;verticalAlign=middle;fontSize=10;" vertex="1" parent="1"><mxGeometry x="40" y="843" width="480" height="18" as="geometry" /></mxCell>
 
       </root>
     </mxGraphModel>

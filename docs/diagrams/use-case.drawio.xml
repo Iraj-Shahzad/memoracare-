@@ -10,7 +10,7 @@
         <!-- Primary actors (left) -->
         <mxCell id="a_pat" value="Patient" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=11;" vertex="1" parent="1"><mxGeometry x="70" y="180" width="48" height="90" as="geometry" /></mxCell>
         <mxCell id="a_care" value="Caregiver" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=11;" vertex="1" parent="1"><mxGeometry x="70" y="470" width="48" height="90" as="geometry" /></mxCell>
-        <mxCell id="a_sm" value="System Manager (Admin)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=11;" vertex="1" parent="1"><mxGeometry x="1012" y="185" width="48" height="90" as="geometry" /></mxCell>
+        <mxCell id="a_sm" value="Admin" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=11;" vertex="1" parent="1"><mxGeometry x="1012" y="185" width="48" height="90" as="geometry" /></mxCell>
 
         <!-- Supporting actors (right / top) -->
         <mxCell id="a_wit" value="&#171;system&#187;&lt;br&gt;&lt;b&gt;Wit.ai NLU&lt;/b&gt;&lt;br&gt;(Supporting)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=10;" vertex="1" parent="1"><mxGeometry x="1012" y="330" width="48" height="90" as="geometry" /></mxCell>
@@ -68,7 +68,7 @@
         <mxCell id="c1" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_mpatients"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="c2" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_mmeds"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="c3" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_mroutines"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="c4" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_enroll"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c4" style="endArrow=none;html=1;" edge="1" parent="1" source="a_pat" target="uc_enroll"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="c5" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_alerts"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="c6" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_notes"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="c7" style="endArrow=none;html=1;" edge="1" parent="1" source="a_care" target="uc_login"><mxGeometry relative="1" as="geometry" /></mxCell>

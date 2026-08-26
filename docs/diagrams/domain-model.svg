@@ -1,83 +1,156 @@
-<svg viewBox="0 0 1120 600" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
-  <rect x="0" y="0" width="1120" height="600" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="20 -4 1410 739" font-family="Helvetica, Arial, sans-serif">
+  <rect x="20" y="-4" width="1410" height="739" fill="#ffffff"/>
   <text x="40" y="30" font-size="19" font-weight="700">MemoryCare - Domain Model</text>
 
-  <!-- ===== association lines (center-to-center; boxes cover inner parts) ===== -->
-  <g stroke="#555" stroke-width="1.2">
-    <line x1="280" y1="273" x2="620" y2="277"/>
-    <line x1="620" y1="277" x2="960" y2="157"/>
-    <line x1="620" y1="277" x2="980" y2="317"/>
-    <line x1="620" y1="277" x2="230" y2="440"/>
-    <line x1="620" y1="277" x2="440" y2="512"/>
-    <line x1="620" y1="277" x2="680" y2="510"/>
-    <line x1="620" y1="277" x2="960" y2="477"/>
+  <!-- ===== association lines (centre-to-centre; boxes are painted over the inner parts) ===== -->
+  <g stroke="#000000" stroke-width="1.4">
+    <line x1="355" y1="272" x2="685" y2="277"/>
+    <line x1="685" y1="277" x2="1025" y2="157"/>
+    <line x1="685" y1="277" x2="1025" y2="347"/>
+    <line x1="685" y1="277" x2="205" y2="627"/>
+    <line x1="685" y1="277" x2="505" y2="667"/>
+    <line x1="685" y1="277" x2="765" y2="660"/>
+    <line x1="685" y1="277" x2="265" y2="437"/>
+    <line x1="355" y1="272" x2="265" y2="437"/>
+    <line x1="1025" y1="157" x2="1325" y2="150"/>
+    <line x1="1025" y1="347" x2="1325" y2="340"/>
   </g>
 
-  <!-- ===== generalization tree (shared hollow triangle) ===== -->
-  <g stroke="#000" stroke-width="1.3" fill="none">
-    <line x1="620" y1="134" x2="620" y2="190"/>
-    <line x1="620" y1="230" x2="620" y2="190"/>
-    <line x1="280" y1="273" x2="620" y2="190"/>
+  <!-- ===== generalisation tree (shared hollow triangle pointing at User) ===== -->
+  <g stroke="#000000" stroke-width="1.4" fill="none">
+    <line x1="685" y1="136" x2="685" y2="186"/>
+    <line x1="355" y1="186" x2="685" y2="186"/>
+    <line x1="355" y1="186" x2="355" y2="245"/>
+    <line x1="685" y1="186" x2="685" y2="230"/>
   </g>
-  <path d="M612,134 L628,134 L620,120 Z" fill="#fff" stroke="#000" stroke-width="1.3"/>
+  <path d="M685,120 L695,136 L675,136 Z" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
 
-  <!-- ===== boxes ===== -->
+  <!-- ===== conceptual classes (no operations) ===== -->
   <g font-size="11">
     <!-- User -->
-    <rect x="540" y="40" width="160" height="94" fill="#fff" stroke="#000"/><text x="620" y="56" text-anchor="middle" font-weight="700">User</text><line x1="540" y1="63" x2="700" y2="63" stroke="#000"/>
-    <text x="548" y="79">name</text><text x="548" y="94">email</text><text x="548" y="109">phone</text><text x="548" y="124">role</text>
+    <rect x="600" y="40" width="170" height="80" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <text x="685" y="56" text-anchor="middle" font-weight="700">User</text>
+    <line x1="600" y1="63" x2="770" y2="63" stroke="#000000" stroke-width="1.4"/>
+    <text x="608" y="79">name</text><text x="608" y="94">email</text><text x="608" y="109">phone</text>
+
     <!-- Patient -->
-    <rect x="540" y="230" width="160" height="94" fill="#fff" stroke="#000"/><text x="620" y="246" text-anchor="middle" font-weight="700">Patient</text><line x1="540" y1="253" x2="700" y2="253" stroke="#000"/>
-    <text x="548" y="269">dateOfBirth</text><text x="548" y="284">gender</text><text x="548" y="299">diagnosis</text><text x="548" y="314">city</text>
+    <rect x="600" y="230" width="170" height="95" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <text x="685" y="246" text-anchor="middle" font-weight="700">Patient</text>
+    <line x1="600" y1="253" x2="770" y2="253" stroke="#000000" stroke-width="1.4"/>
+    <text x="608" y="269">dateOfBirth</text><text x="608" y="284">gender</text><text x="608" y="299">diagnosis</text><text x="608" y="314">city</text>
+
     <!-- Caregiver -->
-    <rect x="200" y="245" width="160" height="56" fill="#fff" stroke="#000"/><text x="280" y="261" text-anchor="middle" font-weight="700">Caregiver</text><line x1="200" y1="268" x2="360" y2="268" stroke="#000"/>
-    <text x="208" y="284">specialization</text>
-    <!-- Medication -->
-    <rect x="880" y="110" width="160" height="94" fill="#fff" stroke="#000"/><text x="960" y="126" text-anchor="middle" font-weight="700">Medication</text><line x1="880" y1="133" x2="1040" y2="133" stroke="#000"/>
-    <text x="888" y="149">name</text><text x="888" y="164">dosage</text><text x="888" y="179">frequency</text><text x="888" y="194">times</text>
-    <!-- Routine -->
-    <rect x="900" y="270" width="160" height="94" fill="#fff" stroke="#000"/><text x="980" y="286" text-anchor="middle" font-weight="700">Routine</text><line x1="900" y1="293" x2="1060" y2="293" stroke="#000"/>
-    <text x="908" y="309">activityName</text><text x="908" y="324">startTime</text><text x="908" y="339">endTime</text><text x="908" y="354">priority</text>
+    <rect x="270" y="245" width="170" height="54" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <text x="355" y="261" text-anchor="middle" font-weight="700">Caregiver</text>
+    <line x1="270" y1="268" x2="440" y2="268" stroke="#000000" stroke-width="1.4"/>
+    <text x="278" y="284">specialization</text>
+
     <!-- Alert -->
-    <rect x="880" y="430" width="160" height="94" fill="#fff" stroke="#000"/><text x="960" y="446" text-anchor="middle" font-weight="700">Alert</text><line x1="880" y1="453" x2="1040" y2="453" stroke="#000"/>
-    <text x="888" y="469">type</text><text x="888" y="484">severity</text><text x="888" y="499">message</text><text x="888" y="514">isResolved</text>
-    <!-- ChatHistory -->
-    <rect x="600" y="470" width="160" height="80" fill="#fff" stroke="#000"/><text x="680" y="486" text-anchor="middle" font-weight="700">ChatHistory</text><line x1="600" y1="493" x2="760" y2="493" stroke="#000"/>
-    <text x="608" y="509">query</text><text x="608" y="524">response</text><text x="608" y="539">intent</text>
-    <!-- Memory -->
-    <rect x="360" y="465" width="160" height="94" fill="#fff" stroke="#000"/><text x="440" y="481" text-anchor="middle" font-weight="700">Memory</text><line x1="360" y1="488" x2="520" y2="488" stroke="#000"/>
-    <text x="368" y="504">title</text><text x="368" y="519">description</text><text x="368" y="534">date</text><text x="368" y="549">location</text>
+    <rect x="180" y="390" width="170" height="95" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <text x="265" y="406" text-anchor="middle" font-weight="700">Alert</text>
+    <line x1="180" y1="413" x2="350" y2="413" stroke="#000000" stroke-width="1.4"/>
+    <text x="188" y="429">type</text><text x="188" y="444">severity</text><text x="188" y="459">message</text><text x="188" y="474">isResolved</text>
+
     <!-- KnownFace -->
-    <rect x="150" y="400" width="160" height="80" fill="#fff" stroke="#000"/><text x="230" y="416" text-anchor="middle" font-weight="700">KnownFace</text><line x1="150" y1="423" x2="310" y2="423" stroke="#000"/>
-    <text x="158" y="439">name</text><text x="158" y="454">relationship</text><text x="158" y="469">photo</text>
+    <rect x="120" y="580" width="170" height="95" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <text x="205" y="596" text-anchor="middle" font-weight="700">KnownFace</text>
+    <line x1="120" y1="603" x2="290" y2="603" stroke="#000000" stroke-width="1.4"/>
+    <text x="128" y="619">name</text><text x="128" y="634">relationship</text><text x="128" y="649">photo</text><text x="128" y="664">faceSignature [128]</text>
+
+    <!-- Memory -->
+    <rect x="420" y="620" width="170" height="95" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <text x="505" y="636" text-anchor="middle" font-weight="700">Memory</text>
+    <line x1="420" y1="643" x2="590" y2="643" stroke="#000000" stroke-width="1.4"/>
+    <text x="428" y="659">title</text><text x="428" y="674">description</text><text x="428" y="689">date</text><text x="428" y="704">location</text>
+
+    <!-- ChatHistory -->
+    <rect x="680" y="620" width="170" height="80" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <text x="765" y="636" text-anchor="middle" font-weight="700">ChatHistory</text>
+    <line x1="680" y1="643" x2="850" y2="643" stroke="#000000" stroke-width="1.4"/>
+    <text x="688" y="659">query</text><text x="688" y="674">response</text><text x="688" y="689">intent</text>
+
+    <!-- Medication -->
+    <rect x="940" y="110" width="170" height="95" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <text x="1025" y="126" text-anchor="middle" font-weight="700">Medication</text>
+    <line x1="940" y1="133" x2="1110" y2="133" stroke="#000000" stroke-width="1.4"/>
+    <text x="948" y="149">name</text><text x="948" y="164">dosage</text><text x="948" y="179">frequency</text><text x="948" y="194">times [0..*]</text>
+
+    <!-- MedicationLog -->
+    <rect x="1240" y="110" width="170" height="80" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <text x="1325" y="126" text-anchor="middle" font-weight="700">MedicationLog</text>
+    <line x1="1240" y1="133" x2="1410" y2="133" stroke="#000000" stroke-width="1.4"/>
+    <text x="1248" y="149">status</text><text x="1248" y="164">scheduledTime</text><text x="1248" y="179">takenAt</text>
+
+    <!-- Routine -->
+    <rect x="940" y="300" width="170" height="95" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <text x="1025" y="316" text-anchor="middle" font-weight="700">Routine</text>
+    <line x1="940" y1="323" x2="1110" y2="323" stroke="#000000" stroke-width="1.4"/>
+    <text x="948" y="339">activityName</text><text x="948" y="354">startTime</text><text x="948" y="369">endTime</text><text x="948" y="384">priority</text>
+
+    <!-- RoutineLog -->
+    <rect x="1240" y="300" width="170" height="80" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <text x="1325" y="316" text-anchor="middle" font-weight="700">RoutineLog</text>
+    <line x1="1240" y1="323" x2="1410" y2="323" stroke="#000000" stroke-width="1.4"/>
+    <text x="1248" y="339">status</text><text x="1248" y="354">scheduledDate</text><text x="1248" y="369">completedAt</text>
   </g>
 
-  <!-- ===== association names (italic) ===== -->
-  <g font-size="10.5" font-style="italic" text-anchor="middle">
-    <text x="450" y="291">cares for</text>
-    <text x="792" y="210">takes</text>
-    <text x="800" y="311">follows</text>
-    <text x="420" y="352">knows</text>
-    <text x="512" y="398">owns</text>
-    <text x="655" y="400">converses via</text>
-    <text x="800" y="372">triggers</text>
+  <!-- ===== association names (italic) + reading-direction markers (solid triangles) ===== -->
+  <g font-size="10.5" font-style="italic">
+    <!-- cares for : Caregiver -> Patient -->
+    <text x="482" y="266">cares for</text>
+    <!-- takes : Patient -> Medication -->
+    <text x="834" y="203">takes</text>
+    <!-- follows : Patient -> Routine -->
+    <text x="828" y="298">follows</text>
+    <!-- knows : Patient -> KnownFace -->
+    <text x="411" y="442">knows</text>
+    <!-- owns : Patient -> Memory -->
+    <text x="610" y="478">owns</text>
+    <!-- converses via : Patient -> ChatHistory -->
+    <text x="740" y="468">converses via</text>
+    <!-- triggers : Patient -> Alert -->
+    <text x="479" y="334">triggers</text>
+    <!-- receives : Caregiver -> Alert -->
+    <text x="332" y="354">receives</text>
+    <!-- records : Medication -> MedicationLog -->
+    <text x="1145" y="147">records</text>
+    <!-- records : Routine -> RoutineLog -->
+    <text x="1145" y="337">records</text>
+  </g>
+  <g fill="#000000">
+    <polygon points="542,262 534,258 534,266"/>
+    <polygon points="876,199 868,195 868,203"/>
+    <polygon points="878,294 870,290 870,298"/>
+    <polygon points="397,442 405,438 405,446"/>
+    <polygon points="600,478 596,470 604,470"/>
+    <polygon points="730,468 726,460 734,460"/>
+    <polygon points="465,330 473,326 473,334"/>
+    <polygon points="322,354 318,346 326,346"/>
+    <polygon points="1192,143 1184,139 1184,147"/>
+    <polygon points="1192,333 1184,329 1184,337"/>
   </g>
 
-  <!-- ===== multiplicities ===== -->
+  <!-- ===== multiplicities at both ends ===== -->
   <g font-size="9" text-anchor="middle">
     <!-- cares for -->
-    <text x="388" y="266">0..*</text><text x="522" y="266">0..*</text>
+    <text x="456" y="266">0..*</text><text x="582" y="266">0..*</text>
     <!-- takes -->
-    <text x="686" y="250">1</text><text x="892" y="178">0..*</text>
+    <text x="778" y="240">1</text><text x="924" y="180">0..*</text>
     <!-- follows -->
-    <text x="700" y="288">1</text><text x="908" y="309">0..*</text>
+    <text x="778" y="288">1</text><text x="924" y="323">0..*</text>
     <!-- knows -->
-    <text x="548" y="318">1</text><text x="318" y="406">0..*</text>
+    <text x="586" y="334">1</text><text x="306" y="572">0..*</text>
     <!-- owns -->
-    <text x="588" y="332">1</text><text x="470" y="462">0..*</text>
+    <text x="648" y="340">1</text><text x="543" y="612">0..*</text>
     <!-- converses via -->
-    <text x="632" y="345">1</text><text x="672" y="462">0..*</text>
+    <text x="706" y="340">1</text><text x="773" y="612">0..*</text>
     <!-- triggers -->
-    <text x="700" y="322">1</text><text x="890" y="438">0..*</text>
+    <text x="588" y="303">1</text><text x="366" y="398">0..*</text>
+    <!-- receives -->
+    <text x="356" y="312">0..*</text><text x="307" y="382">0..*</text>
+    <!-- records (Medication) -->
+    <text x="1120" y="148">1</text><text x="1226" y="145">0..*</text>
+    <!-- records (Routine) -->
+    <text x="1120" y="338">1</text><text x="1226" y="335">0..*</text>
   </g>
 </svg>

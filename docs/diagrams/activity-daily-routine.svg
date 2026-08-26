@@ -1,77 +1,108 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="15 0 545 625" font-family="Helvetica, Arial, sans-serif" font-size="12">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="15 -5 745 932" font-family="Helvetica, Arial, sans-serif" font-size="12">
   <defs>
     <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse">
       <path d="M0,0 L8,4 L0,8 z" fill="#000000"/>
     </marker>
   </defs>
 
-  <rect x="0" y="0" width="600" height="680" fill="#ffffff"/>
+  <rect x="15" y="-5" width="745" height="932" fill="#ffffff"/>
 
   <g fill="none" stroke="#000000" stroke-width="1.4">
-    <!-- e0 start->a1 -->
-    <line x1="280" y1="35" x2="280" y2="50" marker-end="url(#arrow)"/>
+    <!-- e0 start->dSch -->
+    <line x1="300" y1="37" x2="300" y2="60" marker-end="url(#arrow)"/>
+    <!-- eschno dSch->final (routine not scheduled today) -->
+    <polyline points="390,100 740,100 740,894 313,894" marker-end="url(#arrow)"/>
+    <!-- eschyes dSch->a1 -->
+    <line x1="300" y1="140" x2="300" y2="170" marker-end="url(#arrow)"/>
     <!-- e1 a1->a2 -->
-    <line x1="280" y1="90" x2="280" y2="106" marker-end="url(#arrow)"/>
+    <line x1="300" y1="210" x2="300" y2="226" marker-end="url(#arrow)"/>
     <!-- e2 a2->d1 -->
-    <line x1="280" y1="150" x2="280" y2="158" marker-end="url(#arrow)"/>
+    <line x1="300" y1="270" x2="300" y2="285" marker-end="url(#arrow)"/>
+
     <!-- eyes d1->a3 -->
-    <polyline points="200,200 130,200 130,270" marker-end="url(#arrow)"/>
-    <!-- eno d1->a4 -->
-    <polyline points="360,200 445,200 445,270" marker-end="url(#arrow)"/>
-    <!-- e3 a3->m -->
-    <polyline points="130,314 130,470 250,470" marker-end="url(#arrow)"/>
+    <polyline points="215,330 130,330 130,410" marker-end="url(#arrow)"/>
+    <!-- ea3m a3->m -->
+    <polyline points="130,450 130,760 270,760" marker-end="url(#arrow)"/>
+
+    <!-- eno d1->dAL -->
+    <polyline points="385,330 560,330 560,370" marker-end="url(#arrow)"/>
+    <!-- ealyes dAL->m -->
+    <polyline points="470,415 400,415 400,720 300,720 300,738" marker-end="url(#arrow)"/>
+    <!-- ealno dAL->a4 -->
+    <line x1="560" y1="460" x2="560" y2="495" marker-end="url(#arrow)"/>
     <!-- e4 a4->a5 -->
-    <line x1="445" y1="310" x2="445" y2="336" marker-end="url(#arrow)"/>
+    <line x1="560" y1="559" x2="560" y2="585" marker-end="url(#arrow)"/>
     <!-- e5 a5->a6 -->
-    <line x1="445" y1="376" x2="445" y2="392" marker-end="url(#arrow)"/>
+    <line x1="560" y1="625" x2="560" y2="645" marker-end="url(#arrow)"/>
     <!-- e6 a6->m -->
-    <polyline points="445,432 445,470 310,470" marker-end="url(#arrow)"/>
+    <polyline points="560,723 560,760 330,760" marker-end="url(#arrow)"/>
+
     <!-- e7 m->a7 -->
-    <line x1="280" y1="495" x2="280" y2="520" marker-end="url(#arrow)"/>
-    <!-- e8 a7->fin1 -->
-    <line x1="280" y1="560" x2="280" y2="583" marker-end="url(#arrow)"/>
+    <line x1="300" y1="782" x2="300" y2="810" marker-end="url(#arrow)"/>
+    <!-- e8 a7->fin -->
+    <line x1="300" y1="850" x2="300" y2="881" marker-end="url(#arrow)"/>
   </g>
 
   <!-- guard labels -->
   <g fill="#000000">
-    <text x="188" y="194" text-anchor="end">[Yes]</text>
-    <text x="372" y="194">[No]</text>
+    <text x="398" y="94">[No]</text>
+    <text x="308" y="160">[Yes]</text>
+    <text x="207" y="324" text-anchor="end">[Yes]</text>
+    <text x="393" y="324">[No]</text>
+    <text x="462" y="409" text-anchor="end">[Yes]</text>
+    <text x="568" y="483">[No]</text>
   </g>
 
-  <!-- start node -->
-  <circle cx="280" cy="24" r="11" fill="#000000" stroke="#000000" stroke-width="1.4"/>
+  <!-- initial node -->
+  <circle cx="300" cy="26" r="11" fill="#000000" stroke="#000000" stroke-width="1.4"/>
 
-  <!-- action / decision nodes -->
+  <!-- actions, decisions and merges -->
   <g stroke="#000000" stroke-width="1.4">
-    <rect x="190" y="50" width="180" height="40" rx="12" fill="#ffffff"/>
-    <rect x="165" y="106" width="230" height="44" rx="12" fill="#ffffff"/>
-    <polygon points="280,158 360,200 280,242 200,200" fill="#ffffff"/>
+    <polygon points="300,60 390,100 300,140 210,100" fill="#ffffff"/>
+    <rect x="205" y="170" width="190" height="40" rx="12" fill="#ffffff"/>
+    <rect x="185" y="226" width="230" height="44" rx="12" fill="#ffffff"/>
+    <polygon points="300,285 385,330 300,375 215,330" fill="#ffffff"/>
 
-    <rect x="40" y="270" width="180" height="44" rx="12" fill="#ffffff"/>
-    <rect x="360" y="270" width="170" height="40" rx="12" fill="#ffffff"/>
-    <rect x="360" y="336" width="170" height="40" rx="12" fill="#ffffff"/>
-    <rect x="360" y="392" width="170" height="40" rx="12" fill="#ffffff"/>
+    <rect x="35" y="410" width="190" height="40" rx="12" fill="#ffffff"/>
 
-    <polygon points="280,445 310,470 280,495 250,470" fill="#ffffff"/>
-    <rect x="190" y="520" width="180" height="40" rx="12" fill="#ffffff"/>
+    <polygon points="560,370 650,415 560,460 470,415" fill="#ffffff"/>
+    <rect x="445" y="495" width="230" height="64" rx="12" fill="#ffffff"/>
+    <rect x="465" y="585" width="190" height="40" rx="12" fill="#ffffff"/>
+    <rect x="435" y="645" width="250" height="78" rx="12" fill="#ffffff"/>
+
+    <polygon points="300,738 330,760 300,782 270,760" fill="#ffffff"/>
+    <rect x="200" y="810" width="200" height="40" rx="12" fill="#ffffff"/>
   </g>
 
   <!-- final node -->
-  <circle cx="280" cy="596" r="13" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
-  <circle cx="280" cy="596" r="7" fill="#000000" stroke="#000000" stroke-width="1.4"/>
+  <circle cx="300" cy="894" r="13" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <circle cx="300" cy="894" r="7" fill="#000000" stroke="#000000" stroke-width="1.4"/>
 
   <!-- labels -->
   <g fill="#000000" text-anchor="middle">
-    <text x="280" y="74">Routine time reached</text>
-    <text x="280" y="124">Send reminder to patient</text>
-    <text x="280" y="138">(voice + on-screen)</text>
-    <text x="280" y="204">Marked complete?</text>
+    <text x="300" y="96">Scheduled for</text>
+    <text x="300" y="110">today?</text>
+    <text x="300" y="194">Routine time reached</text>
+    <text x="300" y="244">Send reminder to patient</text>
+    <text x="300" y="258">(voice and on-screen)</text>
+    <text x="300" y="334">Marked complete?</text>
 
-    <text x="130" y="296">Log as completed</text>
-    <text x="445" y="294">Wait for grace period</text>
-    <text x="445" y="360">Log as missed</text>
-    <text x="445" y="416">Notify caregiver</text>
+    <text x="130" y="434">Log as completed</text>
 
-    <text x="280" y="544">Update routine status</text>
+    <text x="560" y="411">Already logged</text>
+    <text x="560" y="425">today?</text>
+
+    <text x="560" y="513">Wait 30 minute grace</text>
+    <text x="560" y="527">period (missed sweep</text>
+    <text x="560" y="541">runs every 10 minutes)</text>
+
+    <text x="560" y="609">Create missed log</text>
+
+    <text x="560" y="663">Create Alert (routine_missed;</text>
+    <text x="560" y="677">critical if priority is high,</text>
+    <text x="560" y="691">else warning) and emit to</text>
+    <text x="560" y="705">assigned caregivers</text>
+
+    <text x="300" y="834">Refresh routine status view</text>
   </g>
 </svg>

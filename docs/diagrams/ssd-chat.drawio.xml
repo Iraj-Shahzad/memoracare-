@@ -12,11 +12,14 @@
         <mxCell id="sysbox" value=":System" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=5;" vertex="1" parent="1"><mxGeometry x="505" y="86" width="120" height="40" as="geometry" /></mxCell>
         <mxCell id="ll_sys" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="565" y="126" as="sourcePoint" /><mxPoint x="565" y="405" as="targetPoint" /></mxGeometry></mxCell>
 
-        <mxCell id="loop" value="loop  [while patient is chatting]" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=8;spacingTop=3;fontSize=11;fillColor=none;" vertex="1" parent="1"><mxGeometry x="78" y="192" width="545" height="150" as="geometry" /></mxCell>
+        <!-- loop frame: plain rectangle + pentagon operator tab + guard -->
+        <mxCell id="loop" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="78" y="192" width="545" height="150" as="geometry" /></mxCell>
+        <mxCell id="loop_op" value="loop" style="shape=mxgraph.sysml.package;html=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#000000;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="78" y="192" width="42" height="18" as="geometry" /></mxCell>
+        <mxCell id="loop_guard" value="[while patient is chatting]" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;" vertex="1" parent="1"><mxGeometry x="124" y="192" width="200" height="18" as="geometry" /></mxCell>
 
-        <mxCell id="m1" value="sendMessage(patientId, message, lang)" style="html=1;endArrow=block;fillColor=#000000;align=center;verticalAlign=bottom;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="110" y="255" as="sourcePoint" /><mxPoint x="560" y="255" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="m1" value="sendMessage(patientId, message, mode, lang)" style="html=1;endArrow=block;fillColor=#000000;align=center;verticalAlign=bottom;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="110" y="255" as="sourcePoint" /><mxPoint x="560" y="255" as="targetPoint" /></mxGeometry></mxCell>
         <mxCell id="act1" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="560" y="255" width="9" height="46" as="geometry" /></mxCell>
-        <mxCell id="m2" value="reply" style="html=1;endArrow=open;dashed=1;align=center;verticalAlign=bottom;fontStyle=2;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="560" y="301" as="sourcePoint" /><mxPoint x="110" y="301" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="m2" value="reply(text, intent, source)" style="html=1;endArrow=open;dashed=1;align=center;verticalAlign=bottom;fontStyle=2;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="560" y="301" as="sourcePoint" /><mxPoint x="110" y="301" as="targetPoint" /></mxGeometry></mxCell>
       </root>
     </mxGraphModel>
   </diagram>

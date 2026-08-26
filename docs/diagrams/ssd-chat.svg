@@ -11,7 +11,7 @@
 
   <!-- diagram frame + tab -->
   <rect x="15" y="15" width="670" height="400" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
-  <path d="M15,15 H160 V31 L152,39 H15 Z" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+  <path d="M15,15 H172 V31 L164,39 H15 Z" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
   <text x="23" y="31" font-weight="bold">sd  Chat with Assistant</text>
 
   <!-- actor -->
@@ -35,10 +35,10 @@
   <text x="126" y="205" font-size="11">[while patient is chatting]</text>
 
   <!-- m1 call -->
-  <text x="335" y="250" text-anchor="middle">sendMessage(patientId, message, lang)</text>
+  <text x="335" y="250" text-anchor="middle">sendMessage(patientId, message, mode, lang)</text>
   <line x1="110" y1="255" x2="560" y2="255" stroke="#000000" stroke-width="1.4" marker-end="url(#sync)"/>
   <rect x="560" y="255" width="9" height="46" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
   <!-- m2 return -->
-  <text x="335" y="296" text-anchor="middle" font-style="italic">reply</text>
+  <text x="335" y="296" text-anchor="middle" font-style="italic">reply(text, intent, source)</text>
   <line x1="560" y1="301" x2="110" y2="301" stroke="#000000" stroke-width="1.4" stroke-dasharray="6 4" marker-end="url(#ret)"/>
 </svg>
