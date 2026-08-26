@@ -116,12 +116,12 @@ export const createAlert = async (req: Request, res: Response, next: NextFunctio
         if (!cg?.email) return;
         sendMail({
           to: cg.email,
-          subject: `MemoraCare alert${severity === 'critical' ? ' (URGENT)' : ''}: ${patientName}`,
+          subject: `MemoryCare alert${severity === 'critical' ? ' (URGENT)' : ''}: ${patientName}`,
           html: emailLayout('New patient alert',
             `<p><b>Patient:</b> ${patientName}</p>
              <p><b>Type:</b> ${type} &nbsp; <b>Severity:</b> ${severity}</p>
              <p><b>Message:</b> ${message}</p>
-             <p>Please open MemoraCare to review and respond.</p>`),
+             <p>Please open MemoryCare to review and respond.</p>`),
         }).catch(() => {});
       });
     }

@@ -96,7 +96,7 @@ export const getBackup = async (req: Request, res: Response, next: NextFunction)
       Report.find().lean(),
     ]);
     const backup = {
-      app: 'MemoraCare',
+      app: 'MemoryCare',
       exportedAt: new Date().toISOString(),
       counts: {
         users: users.length, patients: patients.length, caregivers: caregivers.length,

@@ -157,7 +157,7 @@ export const exportPatientData = async (req: Request, res: Response, next: NextF
 
     const doc = new PDFDocument({ margin: 50, size: 'A4' });
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename="MemoraCare_MyData_${safeName}.pdf"`);
+    res.setHeader('Content-Disposition', `attachment; filename="MemoryCare_MyData_${safeName}.pdf"`);
     doc.pipe(res);
 
     const TEAL = '#0d9488';
@@ -166,7 +166,7 @@ export const exportPatientData = async (req: Request, res: Response, next: NextF
     const fmtDate = (d: any) => (d ? new Date(d).toLocaleDateString('en-GB') : '—');
 
     // Header
-    doc.fillColor(TEAL).fontSize(22).font('Helvetica-Bold').text('MemoraCare');
+    doc.fillColor(TEAL).fontSize(22).font('Helvetica-Bold').text('MemoryCare');
     doc.moveDown(0.2);
     doc.fillColor(INK).fontSize(16).font('Helvetica-Bold').text('My Personal Data Export');
     doc.moveDown(0.4);
@@ -260,7 +260,7 @@ export const exportPatientData = async (req: Request, res: Response, next: NextF
 
     doc.moveDown(2);
     doc.fillColor('#94a3b8').fontSize(8).font('Helvetica')
-      .text('Exported from MemoraCare at the account owner\'s request. Contains your personal data — please keep it safe.', { align: 'center' });
+      .text('Exported from MemoryCare at the account owner\'s request. Contains your personal data — please keep it safe.', { align: 'center' });
 
     doc.end();
   } catch (err: any) {

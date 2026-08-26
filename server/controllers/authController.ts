@@ -1,5 +1,5 @@
 /**
- * AUTH CONTROLLER — all authentication + account lifecycle endpoints for MemoraCare.
+ * AUTH CONTROLLER — all authentication + account lifecycle endpoints for MemoryCare.
  *
  * Key concepts: JWT signing (generateToken signs { id } with JWT_SECRET, 7d expiry);
  * bcrypt password check via user.matchPassword and hashing done by the model's pre-save
@@ -57,9 +57,9 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
     // Welcome email (best-effort; no-op if SMTP isn't configured).
     sendMail({
       to: user.email,
-      subject: 'Welcome to MemoraCare',
+      subject: 'Welcome to MemoryCare',
       html: emailLayout(`Welcome, ${user.name}!`,
-        `<p>Your MemoraCare account has been created as a <b>${safeRole}</b>.</p>
+        `<p>Your MemoryCare account has been created as a <b>${safeRole}</b>.</p>
          <p>You can now sign in and start using the app. If you didn't create this account, please ignore this email.</p>`),
     }).catch(() => {});
 
@@ -272,10 +272,10 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
 
     const emailResult = await sendMail({
       to: user.email,
-      subject: 'Reset your MemoraCare password',
+      subject: 'Reset your MemoryCare password',
       html: emailLayout('Password reset requested',
         `<p>Hi ${user.name},</p>
-         <p>We received a request to reset your MemoraCare password. Click the button below to choose a new password. This link expires in <b>30 minutes</b>.</p>
+         <p>We received a request to reset your MemoryCare password. Click the button below to choose a new password. This link expires in <b>30 minutes</b>.</p>
          <p style="margin:24px 0">
            <a href="${resetUrl}" style="background:#0d9488;color:#fff;text-decoration:none;padding:12px 22px;border-radius:10px;font-weight:600;display:inline-block">Reset Password</a>
          </p>
@@ -332,10 +332,10 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
     // Confirmation email (best-effort).
     sendMail({
       to: user.email,
-      subject: 'Your MemoraCare password was changed',
+      subject: 'Your MemoryCare password was changed',
       html: emailLayout('Password changed',
         `<p>Hi ${user.name},</p>
-         <p>Your MemoraCare password was just changed. If this was you, no action is needed.</p>
+         <p>Your MemoryCare password was just changed. If this was you, no action is needed.</p>
          <p style="color:#64748b;font-size:13px">If you did NOT change your password, please contact your administrator immediately.</p>`),
     }).catch(() => {});
 
