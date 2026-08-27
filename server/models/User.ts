@@ -8,7 +8,7 @@
  * role enum drives all RBAC; unique lowercase email with regex validation.
  * Viva line: "The User model centralises identity and never persists a plaintext password or reset token."
  */
-import mongoose, { Schema, InferSchemaType } from 'mongoose';
+import mongoose, { Schema, InferSchemaType, Model } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 
@@ -104,6 +104,10 @@ userSchema.methods.getResetPasswordToken = function (this: any): string {
   return rawToken;
 };
 
-type UserDoc = InferSchemaType<typeof userSchema> & UserMethods;
+// Instance methods go in the THIRD generic of Model, not intersected into the
+// document type — that is the shape Mongoose actually reads them from, so
+// user.matchPassword() resolves on anything findOne/findById returns.
+type UserDoc = InferSchemaType<typeof userSchema>;
+type UserModel = Model<UserDoc, {}, UserMethods>;
 
-export default mongoose.model<UserDoc>('User', userSchema);
+export default mongoose.model<UserDoc, UserModel>('User', userSchema);

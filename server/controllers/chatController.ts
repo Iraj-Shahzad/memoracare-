@@ -72,7 +72,15 @@ async function computePrayerTimes(cityRaw: string) {
 
 // Ask the trained model to classify the message. Returns
 // { intent, confidence, response } or null if the service is unreachable.
-async function classifyIntent(message: any) {
+// What the Python/Flask /predict endpoint returns. fetch().json() is typed as
+// `unknown`, so without this the fields below cannot be read.
+interface MlPrediction {
+  intent?: string;
+  confidence?: number | null;
+  response?: string;
+}
+
+async function classifyIntent(message: any): Promise<MlPrediction | null> {
   try {
     const resp = await fetch(`${ML_SERVICE_URL}/predict`, {
       method: 'POST',
@@ -82,7 +90,7 @@ async function classifyIntent(message: any) {
       signal: AbortSignal.timeout(8000),
     });
     if (!resp.ok) return null;
-    return await resp.json();
+    return (await resp.json()) as MlPrediction;
   } catch (err: any) {
     console.error('[chat] ML service unreachable:', err.message);
     return null;
