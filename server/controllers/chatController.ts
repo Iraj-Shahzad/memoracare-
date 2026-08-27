@@ -323,11 +323,18 @@ export const sendMessage = async (req: Request, res: Response, next: NextFunctio
     // Accept both new and old field names so nothing breaks.
     const patientId = req.body.patientId || req.body.patient;
     const query = req.body.query || req.body.message;
-    const mode = req.body.mode || 'text';
+    // Constrain to the ChatHistory enum so an unexpected value fails here with a
+    // clear message rather than deeper down as a Mongoose validation error.
+    const mode = req.body.mode === 'voice' ? 'voice' : 'text';
     const lang: 'en' | 'ur' = req.body.lang === 'ur' ? 'ur' : 'en';
 
-    if (!query) {
+    if (!query || typeof query !== 'string' || !query.trim()) {
       return res.status(400).json({ success: false, message: 'Please provide a message' });
+    }
+    // Cap the message. It is forwarded to Wit.ai and to the Flask model, so an
+    // unbounded payload would be sent to two external services and then stored.
+    if (query.length > 1000) {
+      return res.status(400).json({ success: false, message: 'Message must be 1000 characters or fewer' });
     }
     if (!patientId) {
       return res.status(400).json({ success: false, message: 'Please provide a patient' });

@@ -87,6 +87,21 @@ export const generateReport = async (req: Request, res: Response, next: NextFunc
   try {
     const { patientId, type, format, from, to } = req.body;
 
+    // Date window sanity. Without this an unparseable string becomes an Invalid
+    // Date that reaches the Mongo query, and a reversed range silently produces
+    // an empty report with no explanation to the user.
+    const fromDate = from ? new Date(from as string) : null;
+    const toDate = to ? new Date(to as string) : null;
+    if (from && Number.isNaN(fromDate!.getTime())) {
+      return res.status(400).json({ success: false, message: 'The "from" date is not a valid date' });
+    }
+    if (to && Number.isNaN(toDate!.getTime())) {
+      return res.status(400).json({ success: false, message: 'The "to" date is not a valid date' });
+    }
+    if (fromDate && toDate && fromDate > toDate) {
+      return res.status(400).json({ success: false, message: 'The "from" date must be before the "to" date' });
+    }
+
     // System-wide report (admin): not tied to a single patient. This is what the
     // admin "Generate Report" button produces.
     if (type === 'system' || (!patientId && req.user.role === 'admin')) {

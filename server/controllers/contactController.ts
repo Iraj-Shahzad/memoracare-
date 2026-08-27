@@ -26,6 +26,20 @@ export const submitContact = async (req: Request, res: Response, next: NextFunct
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return res.status(400).json({ success: false, message: 'Please provide a valid email address' });
     }
+    // Length bounds. Without these the one public write endpoint would accept a
+    // message of any size, so a single request could store megabytes.
+    if (name.trim().length > 100) {
+      return res.status(400).json({ success: false, message: 'Name must be 100 characters or fewer' });
+    }
+    if (email.length > 200) {
+      return res.status(400).json({ success: false, message: 'Email must be 200 characters or fewer' });
+    }
+    if (phone && String(phone).trim().length > 30) {
+      return res.status(400).json({ success: false, message: 'Phone must be 30 characters or fewer' });
+    }
+    if (message.trim().length > 5000) {
+      return res.status(400).json({ success: false, message: 'Message must be 5000 characters or fewer' });
+    }
 
     const contact = await Contact.create({
       name,
