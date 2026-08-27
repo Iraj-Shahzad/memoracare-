@@ -27,17 +27,54 @@ export const loginValidation = [
   body('password', 'Password is required').exists(),
 ];
 
-// Medication validation rules
+// Shared field rules. The React forms already check these, but the API must
+// enforce them too — otherwise a request sent straight to the endpoint (bypassing
+// the UI) could store an unusable dosage or a time the scheduler can never match.
+const TIME_24H = /^([01]\d|2[0-3]):[0-5]\d$/;          // 09:00, 21:30
+const DOSAGE = /^\d+(\.\d+)?\s*[a-zA-Z%µ]+$/;          // 5mg, 2.5 ml, 1000IU
+
+const timesRule = body('times')
+  .optional()
+  .isArray().withMessage('times must be an array')
+  .bail()
+  .custom((arr: any[]) => arr.every((t) => TIME_24H.test(String(t))))
+  .withMessage('Each reminder time must be 24-hour HH:MM, for example 09:00');
+
+// Medication validation rules (create: required fields must be present)
 export const medicationValidation = [
   body('name', 'Medication name is required').trim().notEmpty(),
-  body('dosage', 'Dosage is required').trim().notEmpty(),
+  body('dosage', 'Dosage is required').trim().notEmpty()
+    .bail()
+    .matches(DOSAGE).withMessage('Dosage must be a number followed by a unit, for example 5mg'),
   body('patient', 'Patient ID is required').trim().notEmpty(),
+  timesRule,
 ];
 
-// Routine validation rules
+// Medication update rules (partial update: every field optional, but if a field
+// IS sent it must still be valid).
+export const medicationUpdateValidation = [
+  body('name').optional().trim().notEmpty().withMessage('Medication name cannot be empty'),
+  body('dosage').optional().trim().notEmpty().withMessage('Dosage cannot be empty')
+    .bail()
+    .matches(DOSAGE).withMessage('Dosage must be a number followed by a unit, for example 5mg'),
+  timesRule,
+];
+
+// Routine validation rules (create)
 export const routineValidation = [
   body('activityName', 'Activity name is required').trim().notEmpty(),
   body('patient', 'Patient ID is required').trim().notEmpty(),
+  body('startTime').optional().matches(TIME_24H).withMessage('Start time must be 24-hour HH:MM'),
+  body('endTime').optional().matches(TIME_24H).withMessage('End time must be 24-hour HH:MM'),
+  body('priority').optional().isIn(['low', 'medium', 'high']).withMessage('Priority must be low, medium or high'),
+];
+
+// Routine update rules (partial update)
+export const routineUpdateValidation = [
+  body('activityName').optional().trim().notEmpty().withMessage('Activity name cannot be empty'),
+  body('startTime').optional().matches(TIME_24H).withMessage('Start time must be 24-hour HH:MM'),
+  body('endTime').optional().matches(TIME_24H).withMessage('End time must be 24-hour HH:MM'),
+  body('priority').optional().isIn(['low', 'medium', 'high']).withMessage('Priority must be low, medium or high'),
 ];
 
 // Validation error handler middleware
