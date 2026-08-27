@@ -119,6 +119,19 @@ export default function ProfilePage() {
     e.preventDefault();
     setFormError("");
     if (form.name.trim().length < 3) { setFormError("Name must be at least 3 characters."); return; }
+    if (form.name.trim().length > 100) { setFormError("Name cannot be longer than 100 characters."); return; }
+    // Phone is optional, but if typed it has to look like a real number —
+    // previously "abcdef" was accepted and stored as-is.
+    if (form.phone.trim()) {
+      const raw = form.phone.trim();
+      const digits = raw.replace(/\D/g, "");
+      if (!/^[\d\s()+-]+$/.test(raw) || digits.length < 10 || digits.length > 13) {
+        setFormError("Enter a valid phone number, e.g. +92 300 1234567.");
+        return;
+      }
+    }
+    if (form.specialization.trim().length > 100) { setFormError("Specialization cannot be longer than 100 characters."); return; }
+    if (form.notes.trim().length > 1000) { setFormError("About cannot be longer than 1000 characters."); return; }
     try {
       setSaving(true);
       await apiPut("/caregiver/profile", {
@@ -255,11 +268,11 @@ export default function ProfilePage() {
             <form onSubmit={submitEdit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Full Name *</label>
-                <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} maxLength={100} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Phone</label>
-                <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+92 300 1234567" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} maxLength={20} placeholder="+92 300 1234567" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
@@ -268,11 +281,11 @@ export default function ProfilePage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Specialization</label>
-                <input value={form.specialization} onChange={(e) => setForm({ ...form, specialization: e.target.value })} placeholder="e.g. Geriatric Care" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                <input value={form.specialization} onChange={(e) => setForm({ ...form, specialization: e.target.value })} maxLength={100} placeholder="e.g. Geriatric Care" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">About</label>
-                <textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={3} placeholder="A short note about your experience or focus..." className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488] resize-none" />
+                <textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={3} maxLength={1000} placeholder="A short note about your experience or focus..." className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488] resize-none" />
               </div>
               {formError && <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{formError}</p>}
               <div className="flex justify-end gap-3 pt-2">

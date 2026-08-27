@@ -39,6 +39,21 @@ interface Medication {
   lastUpdated: string;
 }
 
+// A dose schedule with more entries than this is almost certainly a mistake, and
+// the "+ Add another time" button must not let a user build an unbounded array.
+const MAX_TIMES = 6;
+const MAX_NAME_LEN = 100;
+const MAX_DOSAGE_LEN = 30;
+
+// How many reminder times each frequency option expects. "As needed" is free.
+const FREQUENCY_TIME_COUNT: Record<string, number | null> = {
+  "Once daily": 1,
+  "Twice daily": 2,
+  "Three times daily": 3,
+  "Four times daily": 4,
+  "As needed": null,
+};
+
 export default function MedicationsPage() {
   const { user } = useAuth();
   const { toast, confirm } = useUI();
@@ -127,6 +142,9 @@ export default function MedicationsPage() {
 
   const submitMedication = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Guard against a rapid second submit slipping through before the disabled
+    // state has painted — otherwise one click-spam creates duplicate medications.
+    if (saving) return;
     setFormError("");
 
     // ---- Validation ----
@@ -135,15 +153,31 @@ export default function MedicationsPage() {
     const dosage = form.dosage.trim();
     if (!selectedPatientId) { setFormError("Please select a patient first."); return; }
     if (name.length < 2 || !/[a-zA-Z]/.test(name)) { setFormError("Enter a valid medication name (letters, at least 2 characters)."); return; }
+    if (name.length > MAX_NAME_LEN) { setFormError(`Medication name must be ${MAX_NAME_LEN} characters or fewer.`); return; }
+    if (dosage.length > MAX_DOSAGE_LEN) { setFormError(`Dosage must be ${MAX_DOSAGE_LEN} characters or fewer.`); return; }
     // Dosage must be a numeric amount followed by a unit, e.g. 10mg, 5 ml, 400 IU.
     if (!/^\d+(\.\d+)?\s*[a-zA-Z%µ]+$/.test(dosage)) {
       setFormError("Dosage must be a number followed by a unit — e.g. 10mg, 5 ml, 400 IU.");
       return;
     }
     if (times.length === 0) { setFormError("Add at least one reminder time — otherwise the patient won't be reminded."); return; }
+    if (times.length > MAX_TIMES) { setFormError(`A medication can have at most ${MAX_TIMES} reminder times a day.`); return; }
     // Every time must be valid 24h HH:MM (the time picker enforces this, but double-check).
     const timeOk = times.every((t) => /^([01]\d|2[0-3]):[0-5]\d$/.test(t));
     if (!timeOk) { setFormError("Times must be in 24-hour HH:MM format (e.g. 09:00, 21:30)."); return; }
+    // The same time twice would fire two identical reminders for one dose.
+    if (new Set(times).size !== times.length) { setFormError("The same reminder time is listed twice — remove the duplicate."); return; }
+    // Frequency and the number of times must agree, or the schedule contradicts itself.
+    const expected = FREQUENCY_TIME_COUNT[form.frequency];
+    if (expected != null && times.length !== expected) {
+      setFormError(`"${form.frequency}" needs exactly ${expected} reminder time${expected > 1 ? "s" : ""} — you have ${times.length}.`);
+      return;
+    }
+    // Same drug already on this patient's schedule? Adding it twice risks a double dose.
+    if (medications.some((m) => m.name.trim().toLowerCase() === name.toLowerCase())) {
+      setFormError(`"${name}" is already on this patient's schedule. Remove the existing entry first, or use a different name.`);
+      return;
+    }
 
     try {
       setSaving(true);
@@ -250,13 +284,14 @@ export default function MedicationsPage() {
                   onChange={handlePatientChange}
                   className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent"
                 >
+                  {patients.length === 0 && <option value="">No patients yet</option>}
                   {patients.map(p => (
                     <option key={p._id} value={p._id}>{p.name}</option>
                   ))}
                 </select>
               </div>
               <div className="pt-7">
-                <button onClick={() => { if (selectedPatientId) setShowAddModal(true); }} className="px-6 py-2.5 bg-[#0d9488] text-white rounded-lg text-sm font-semibold hover:bg-[#0a7a70] transition-colors flex items-center gap-2">
+                <button onClick={() => { if (selectedPatientId) { setFormError(""); setShowAddModal(true); } }} disabled={!selectedPatientId} className="px-6 py-2.5 bg-[#0d9488] text-white rounded-lg text-sm font-semibold hover:bg-[#0a7a70] transition-colors flex items-center gap-2 disabled:opacity-50">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
                     <line x1="12" y1="5" x2="12" y2="19" />
                     <line x1="5" y1="12" x2="19" y2="12" />
@@ -377,11 +412,11 @@ export default function MedicationsPage() {
                 <form onSubmit={submitMedication} className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Medication name *</label>
-                    <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required placeholder="e.g. Donepezil (Aricept)" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                    <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required maxLength={MAX_NAME_LEN} placeholder="e.g. Donepezil (Aricept)" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Dosage *</label>
-                    <input value={form.dosage} onChange={(e) => setForm({ ...form, dosage: e.target.value })} required placeholder="e.g. 10mg" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                    <input value={form.dosage} onChange={(e) => setForm({ ...form, dosage: e.target.value })} required maxLength={MAX_DOSAGE_LEN} placeholder="e.g. 10mg" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Frequency</label>
@@ -403,7 +438,11 @@ export default function MedicationsPage() {
                         )}
                       </div>
                     ))}
-                    <button type="button" onClick={() => setForm({ ...form, times: [...form.times, ""] })} className="text-[#0d9488] text-sm font-semibold">+ Add another time</button>
+                    {form.times.length < MAX_TIMES ? (
+                      <button type="button" onClick={() => setForm({ ...form, times: [...form.times, ""] })} className="text-[#0d9488] text-sm font-semibold">+ Add another time</button>
+                    ) : (
+                      <p className="text-xs text-slate-400">Maximum {MAX_TIMES} reminder times.</p>
+                    )}
                   </div>
                   {formError && <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{formError}</p>}
                   <div className="flex justify-end gap-3 pt-2">

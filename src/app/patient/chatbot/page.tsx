@@ -31,6 +31,10 @@ interface ChatMessage {
   timestamp: string;
 }
 
+// Longest message we will send to the assistant (it goes on to Wit.ai and the
+// Python service, so an unbounded message would be sent to both).
+const MAX_MESSAGE = 1000;
+
 interface Conversation {
   id: string;
   title: string;
@@ -250,6 +254,11 @@ export default function ChatbotPage() {
   const sendText = async (text: string) => {
     const messageText = (text || "").trim();
     if (!messageText || sending) return;
+    // The message is forwarded to the NLU services, so keep it to a sensible size.
+    if (messageText.length > MAX_MESSAGE) {
+      toast(`Please keep your message under ${MAX_MESSAGE} characters.`, "info");
+      return;
+    }
 
     // The EN / اردو toggle is the user's explicit language choice, so it wins.
     // But if they type in Urdu SCRIPT while EN is selected, answer in Urdu too
@@ -765,6 +774,7 @@ export default function ChatbotPage() {
                   }}
                   placeholder="Type a message or ask me anything..."
                   rows={1}
+                  maxLength={MAX_MESSAGE}
                   style={{
                     flex: 1,
                     border: "none",

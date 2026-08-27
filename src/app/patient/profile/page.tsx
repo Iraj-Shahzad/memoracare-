@@ -61,8 +61,22 @@ const PURPOSE_GROUPS: { label: string; options: string[] }[] = [
 
 // --- small validation helpers (used by every edit form on this page) ---
 const digitsOnly = (s: string) => (s || "").replace(/\D/g, "");
-const isValidEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((s || "").trim());
-const isValidPhone = (s: string) => digitsOnly(s).length >= 10 && digitsOnly(s).length <= 13;
+const isValidEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((s || "").trim()) && (s || "").trim().length <= 254;
+// Must LOOK like a phone number too — stripping the letters out of "abc0300xyz"
+// used to leave 10 digits and quietly pass.
+const isValidPhone = (s: string) =>
+  /^[\d\s()+-]+$/.test((s || "").trim()) && digitsOnly(s).length >= 10 && digitsOnly(s).length <= 13;
+// Rejects a future DOB and an absurd one (before 1900 / implies an age over 120).
+const dobProblem = (s: string): string | null => {
+  const d = new Date(s);
+  if (isNaN(d.getTime())) return "Please enter a valid date of birth.";
+  if (d > new Date()) return "Date of birth cannot be in the future.";
+  const min = new Date();
+  min.setFullYear(min.getFullYear() - 120);
+  if (d < min) return "Please enter a realistic date of birth (age must be under 120).";
+  return null;
+};
+const TODAY_ISO = new Date().toISOString().split("T")[0];
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -164,14 +178,20 @@ export default function ProfilePage() {
     const e: Record<string, string> = {};
     if (!fullName.trim() || fullName.trim().length < 2)
       e.fullName = "Please enter your full name (at least 2 letters).";
+    else if (fullName.trim().length > 100) e.fullName = "Full name cannot be longer than 100 characters.";
     if (!dateOfBirth) e.dateOfBirth = "Please select your date of birth.";
-    else if (new Date(dateOfBirth) > new Date()) e.dateOfBirth = "Date of birth cannot be in the future.";
+    else {
+      const dobErr = dobProblem(dateOfBirth);
+      if (dobErr) e.dateOfBirth = dobErr;
+    }
     if (!gender) e.gender = "Please select a gender.";
     if (!phone.trim()) e.phone = "Please enter a phone number.";
     else if (!isValidPhone(phone)) e.phone = "Enter a valid phone number (at least 10 digits).";
     if (!email.trim()) e.email = "Please enter an email address.";
     else if (!isValidEmail(email)) e.email = "Enter a valid email like name@example.com.";
-    if (cnic.trim() && digitsOnly(cnic).length !== 13)
+    if (address.trim().length > 250) e.address = "Address cannot be longer than 250 characters.";
+    // CNIC is optional, but when given it must be the real 13-digit format.
+    if (cnic.trim() && !/^\d{5}-?\d{7}-?\d$/.test(cnic.trim()))
       e.cnic = "CNIC must be 13 digits (e.g. 35201-1234567-1).";
     return e;
   };
@@ -179,6 +199,9 @@ export default function ProfilePage() {
   const validateCare = () => {
     const e: Record<string, string> = {};
     if (!diagnosis.trim()) e.diagnosis = "Please choose a purpose for using the app.";
+    if (doctor.trim().length > 100) e.doctor = "Doctor / supervisor name cannot be longer than 100 characters.";
+    if (allergies.trim().length > 300) e.allergies = "Precautions cannot be longer than 300 characters.";
+    if (medicalHistory.trim().length > 2000) e.medicalHistory = "Background / notes cannot be longer than 2000 characters.";
     return e;
   };
 
@@ -186,16 +209,23 @@ export default function ProfilePage() {
     const e: Record<string, string> = {};
     // Primary contact is required in full.
     if (!primaryContact.trim()) e.primaryContact = "Enter the primary contact's name.";
+    else if (primaryContact.trim().length > 100) e.primaryContact = "Name cannot be longer than 100 characters.";
     if (!primaryRelation.trim()) e.primaryRelation = "Enter the relationship (e.g. Son, Wife, Friend).";
+    else if (primaryRelation.trim().length > 50) e.primaryRelation = "Relationship cannot be longer than 50 characters.";
     if (!primaryPhone.trim()) e.primaryPhone = "Enter the primary contact's phone number.";
     else if (!isValidPhone(primaryPhone)) e.primaryPhone = "Enter a valid phone number.";
     // Secondary contact is optional, but if started it must be completed.
     const anySecondary = secondaryContact.trim() || secondaryRelation.trim() || secondaryPhone.trim();
     if (anySecondary) {
       if (!secondaryContact.trim()) e.secondaryContact = "Enter the secondary contact's name.";
+      else if (secondaryContact.trim().length > 100) e.secondaryContact = "Name cannot be longer than 100 characters.";
       if (!secondaryRelation.trim()) e.secondaryRelation = "Enter the relationship.";
+      else if (secondaryRelation.trim().length > 50) e.secondaryRelation = "Relationship cannot be longer than 50 characters.";
       if (!secondaryPhone.trim()) e.secondaryPhone = "Enter the secondary contact's phone number.";
       else if (!isValidPhone(secondaryPhone)) e.secondaryPhone = "Enter a valid phone number.";
+      // A secondary contact that duplicates the primary is a data-entry mistake.
+      if (secondaryPhone.trim() && secondaryPhone.trim() === primaryPhone.trim())
+        e.secondaryPhone = "Secondary contact must be a different number to the primary.";
     }
     return e;
   };
@@ -225,26 +255,37 @@ export default function ProfilePage() {
     try {
       setSaving(true);
       await apiPut(`/patients/${patientId}`, {
-        name: fullName,
+        name: fullName.trim(),
         dateOfBirth,
-        gender,
-        phone,
-        email,
-        address,
-        cnic,
+        // gender is an enum on the Patient model. This payload is sent for every
+        // section, so a patient who has never set a gender used to send "" while
+        // saving Care Info and got back a raw Mongoose enum ValidationError.
+        ...(gender ? { gender } : {}),
+        phone: phone.trim(),
+        email: email.trim().toLowerCase(),
+        address: address.trim(),
+        // IMPORTANT: cnic is a unique+sparse index. Sending "" stores an empty
+        // string, and the SECOND patient to save a blank CNIC then collides with
+        // a raw "Duplicate field value entered". Omit the key when it's blank so
+        // the field stays absent and the sparse index ignores the document.
+        ...(cnic.trim() ? { cnic: cnic.trim() } : {}),
         diagnosis,
-        doctor,
+        doctor: doctor.trim(),
         bloodGroup,
-        allergies,
-        medicalHistory,
+        allergies: allergies.trim(),
+        medicalHistory: medicalHistory.trim(),
         // NOTE: the Patient model field is `relationship` — sending `relation`
         // was silently dropped by Mongoose, which is why relationships showed
-        // as empty "( )". We now send the correct key. We also omit a blank
-        // secondary contact so we don't persist an empty {name:"",...} entry.
+        // as empty "( )". We now send the correct key. A blank contact is
+        // omitted on BOTH slots: this payload is sent for every section, so
+        // saving e.g. Personal Info used to persist an empty {name:"",...}
+        // entry for a patient who had never filled in a contact.
         emergencyContacts: [
-          { name: primaryContact, relationship: primaryRelation, phone: primaryPhone },
+          ...(primaryContact.trim()
+            ? [{ name: primaryContact.trim(), relationship: primaryRelation.trim(), phone: primaryPhone.trim() }]
+            : []),
           ...(secondaryContact.trim()
-            ? [{ name: secondaryContact, relationship: secondaryRelation, phone: secondaryPhone }]
+            ? [{ name: secondaryContact.trim(), relationship: secondaryRelation.trim(), phone: secondaryPhone.trim() }]
             : []),
         ],
         // NOTE: `caregiver` is intentionally NOT sent — the displayed caregiver is
@@ -256,7 +297,13 @@ export default function ProfilePage() {
       toast("Profile saved.", "success");
     } catch (err) {
       console.error("Profile save error:", err);
-      toast("Failed to save profile. Please try again.", "error");
+      // Surface the server's own reason (duplicate email, duplicate CNIC, ...)
+      // instead of swallowing it behind a generic message.
+      const raw = err instanceof Error ? err.message : "";
+      const friendly = /duplicate/i.test(raw)
+        ? "That CNIC is already registered to another patient."
+        : raw || "Failed to save profile. Please try again.";
+      toast(friendly, "error");
     } finally {
       setSaving(false);
     }
@@ -291,6 +338,7 @@ export default function ProfilePage() {
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
+              maxLength={100}
               className={inputCls("fullName")}
             />
             {errText("fullName")}
@@ -302,6 +350,8 @@ export default function ProfilePage() {
                 type="date"
                 value={dateOfBirth}
                 onChange={(e) => setDateOfBirth(e.target.value)}
+                min="1900-01-01"
+                max={TODAY_ISO}
                 className={inputCls("dateOfBirth")}
               />
               {errText("dateOfBirth")}
@@ -327,6 +377,7 @@ export default function ProfilePage() {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="+92 300 1234567"
+              maxLength={20}
               className={inputCls("phone")}
             />
             {errText("phone")}
@@ -337,6 +388,7 @@ export default function ProfilePage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              maxLength={254}
               className={inputCls("email")}
             />
             {errText("email")}
@@ -346,9 +398,11 @@ export default function ProfilePage() {
             <textarea
               value={address}
               onChange={(e) => setAddress(e.target.value)}
+              maxLength={250}
               className={inputCls("address")}
               rows={2}
             />
+            {errText("address")}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">CNIC</label>
@@ -357,6 +411,7 @@ export default function ProfilePage() {
               value={cnic}
               onChange={(e) => setCnic(e.target.value)}
               placeholder="35201-1234567-1"
+              maxLength={15}
               className={inputCls("cnic")}
             />
             {errText("cnic")}
@@ -459,8 +514,10 @@ export default function ProfilePage() {
               value={doctor}
               onChange={(e) => setDoctor(e.target.value)}
               placeholder="Optional — attending doctor or supervisor"
+              maxLength={100}
               className={inputCls("doctor")}
             />
+            {errText("doctor")}
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div>
@@ -488,8 +545,10 @@ export default function ProfilePage() {
                 value={allergies}
                 onChange={(e) => setAllergies(e.target.value)}
                 placeholder="e.g. Penicillin, avoid stairs, low salt"
+                maxLength={300}
                 className={inputCls("allergies")}
               />
+              {errText("allergies")}
             </div>
           </div>
           <div>
@@ -497,9 +556,11 @@ export default function ProfilePage() {
             <textarea
               value={medicalHistory}
               onChange={(e) => setMedicalHistory(e.target.value)}
+              maxLength={2000}
               className={inputCls("medicalHistory")}
               rows={3}
             />
+            {errText("medicalHistory")}
           </div>
           <div className="flex gap-3 pt-4">
             <button
@@ -561,6 +622,7 @@ export default function ProfilePage() {
                   type="text"
                   value={primaryContact}
                   onChange={(e) => setPrimaryContact(e.target.value)}
+                  maxLength={100}
                   className={inputCls("primaryContact")}
                 />
                 {errText("primaryContact")}
@@ -573,6 +635,7 @@ export default function ProfilePage() {
                     value={primaryRelation}
                     onChange={(e) => setPrimaryRelation(e.target.value)}
                     placeholder="e.g. Son, Wife, Friend"
+                    maxLength={50}
                     className={inputCls("primaryRelation")}
                   />
                   {errText("primaryRelation")}
@@ -584,6 +647,7 @@ export default function ProfilePage() {
                     value={primaryPhone}
                     onChange={(e) => setPrimaryPhone(e.target.value)}
                     placeholder="+92 300 1234567"
+                    maxLength={20}
                     className={inputCls("primaryPhone")}
                   />
                   {errText("primaryPhone")}
@@ -601,6 +665,7 @@ export default function ProfilePage() {
                   type="text"
                   value={secondaryContact}
                   onChange={(e) => setSecondaryContact(e.target.value)}
+                  maxLength={100}
                   className={inputCls("secondaryContact")}
                 />
                 {errText("secondaryContact")}
@@ -613,6 +678,7 @@ export default function ProfilePage() {
                     value={secondaryRelation}
                     onChange={(e) => setSecondaryRelation(e.target.value)}
                     placeholder="e.g. Daughter, Neighbour"
+                    maxLength={50}
                     className={inputCls("secondaryRelation")}
                   />
                   {errText("secondaryRelation")}
@@ -624,6 +690,7 @@ export default function ProfilePage() {
                     value={secondaryPhone}
                     onChange={(e) => setSecondaryPhone(e.target.value)}
                     placeholder="+92 321 1234567"
+                    maxLength={20}
                     className={inputCls("secondaryPhone")}
                   />
                   {errText("secondaryPhone")}

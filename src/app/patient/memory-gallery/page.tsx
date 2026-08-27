@@ -36,6 +36,14 @@ interface Memory {
   description?: string;
 }
 
+// Upload + field limits, kept in step with what the server accepts (8MB, image types).
+const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
+const ALLOWED_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+const MAX_TITLE = 100;
+const MAX_LOCATION = 100;
+const MAX_DESC = 1000;
+const MAX_PERSON = 60;
+
 const CARD_GRADIENTS = [
   "linear-gradient(135deg, #0d9488, #1a3c34)",
   "linear-gradient(135deg, #3b82f6, #1e40af)",
@@ -143,12 +151,20 @@ export default function MemoryGalleryPage() {
     // ---- Validation ----
     const people = [...selectedPeople, ...otherPerson.split(",").map((p) => p.trim()).filter(Boolean)];
     if (form.title.trim().length < 3) { setError("Please give this memory a clear title (at least 3 characters)."); return; }
+    if (form.title.trim().length > MAX_TITLE) { setError(`The title must be ${MAX_TITLE} characters or fewer.`); return; }
     if (!file) { setError("Please choose a photo for this memory."); return; }
+    // Match the server's upload rules so a bad photo is caught before the upload starts.
+    if (!ALLOWED_TYPES.includes(file.type)) { setError("Please choose a JPG, PNG, or WebP photo."); return; }
+    if (file.size > MAX_IMAGE_BYTES) { setError(`That photo is ${(file.size / (1024 * 1024)).toFixed(1)}MB. Please choose one under 8MB.`); return; }
     if (!form.location.trim()) { setError("Please enter the place."); return; }
+    if (form.location.trim().length > MAX_LOCATION) { setError(`The place must be ${MAX_LOCATION} characters or fewer.`); return; }
     if (!form.date) { setError("Please pick the date of this memory."); return; }
     if (new Date(form.date) > new Date()) { setError("The date can't be in the future."); return; }
+    if (new Date(form.date) < new Date("1900-01-01")) { setError("Please pick a date after 1900."); return; }
     if (form.description.trim().length < 3) { setError("Please add a short description."); return; }
+    if (form.description.trim().length > MAX_DESC) { setError(`The description must be ${MAX_DESC} characters or fewer.`); return; }
     if (people.length === 0) { setError("Add at least one person (pick from the list or type a name)."); return; }
+    if (people.some((p) => p.length > MAX_PERSON)) { setError(`Each name must be ${MAX_PERSON} characters or fewer.`); return; }
 
     setSaving(true);
     setError("");
@@ -445,6 +461,7 @@ export default function MemoryGalleryPage() {
                   <input
                     value={form.title}
                     onChange={(e) => setForm({ ...form, title: e.target.value })}
+                    maxLength={MAX_TITLE}
                     placeholder="e.g. Eid with the family"
                     className="border border-slate-300 rounded-[10px] px-3.5 py-2.5 text-sm outline-none focus:border-[#0d9488]"
                   />
@@ -455,7 +472,20 @@ export default function MemoryGalleryPage() {
                   <input
                     type="file"
                     accept="image/png,image/jpeg,image/webp"
-                    onChange={(e) => setFile(e.target.files?.[0] || null)}
+                    onChange={(e) => {
+                      const picked = e.target.files?.[0] || null;
+                      // Tell the patient straight away, instead of failing after the upload.
+                      if (picked && !ALLOWED_TYPES.includes(picked.type)) {
+                        setError("Please choose a JPG, PNG, or WebP photo.");
+                        setFile(null); e.target.value = ""; return;
+                      }
+                      if (picked && picked.size > MAX_IMAGE_BYTES) {
+                        setError(`That photo is ${(picked.size / (1024 * 1024)).toFixed(1)}MB. Please choose one under 8MB.`);
+                        setFile(null); e.target.value = ""; return;
+                      }
+                      setError("");
+                      setFile(picked);
+                    }}
                     className="text-sm text-[#64748b] file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#d6f0ea] file:text-[#0b6f66] hover:file:bg-[#c3e9e0]"
                   />
                   {file && <span className="text-[12px] text-[#0b6f66]">Selected: {file.name}</span>}
@@ -480,6 +510,7 @@ export default function MemoryGalleryPage() {
                   <input
                     value={otherPerson}
                     onChange={(e) => setOtherPerson(e.target.value)}
+                    maxLength={300}
                     placeholder={knownPeople.length ? "Other (type a name, or comma-separate)" : "Type names, comma-separated"}
                     className="border border-slate-300 rounded-[10px] px-3.5 py-2.5 text-sm outline-none focus:border-[#0d9488]"
                   />
@@ -491,6 +522,7 @@ export default function MemoryGalleryPage() {
                     <input
                       value={form.location}
                       onChange={(e) => setForm({ ...form, location: e.target.value })}
+                      maxLength={MAX_LOCATION}
                       placeholder="e.g. Islamabad"
                       className="border border-slate-300 rounded-[10px] px-3.5 py-2.5 text-sm outline-none focus:border-[#0d9488]"
                     />
@@ -500,6 +532,8 @@ export default function MemoryGalleryPage() {
                     <input
                       type="date"
                       value={form.date}
+                      min="1900-01-01"
+                      max={new Date().toISOString().split("T")[0]}
                       onChange={(e) => setForm({ ...form, date: e.target.value })}
                       className="border border-slate-300 rounded-[10px] px-3.5 py-2.5 text-sm outline-none focus:border-[#0d9488]"
                     />
@@ -511,6 +545,7 @@ export default function MemoryGalleryPage() {
                   <textarea
                     value={form.description}
                     onChange={(e) => setForm({ ...form, description: e.target.value })}
+                    maxLength={MAX_DESC}
                     placeholder="A short note about this memory…"
                     rows={3}
                     className="border border-slate-300 rounded-[10px] px-3.5 py-2.5 text-sm outline-none focus:border-[#0d9488] resize-none"

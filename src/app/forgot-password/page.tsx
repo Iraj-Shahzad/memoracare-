@@ -16,14 +16,14 @@ export default function ForgotPasswordPage() {
     setError("");
 
     // Basic client-side validation before hitting the server.
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) || email.trim().length > 254) {
       setError("Please enter a valid email address (e.g. name@example.com).");
       return;
     }
 
     setSubmitting(true);
     try {
-      await apiPost("/auth/forgot-password", { email: email.trim() });
+      await apiPost("/auth/forgot-password", { email: email.trim().toLowerCase() });
       // The server returns a generic message either way; we always show the
       // same confirmation so we don't reveal whether the email is registered.
       setSent(true);
@@ -71,6 +71,7 @@ export default function ForgotPasswordPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
+                  maxLength={254}
                   className="w-full outline-none transition-all mb-5"
                   style={{ padding: "12px 16px", border: "1.5px solid #d1d5db", borderRadius: 12, fontSize: 15, color: "#1a3c34", background: "#f9fafb" }}
                   onFocus={(e) => { e.target.style.borderColor = "#0d9488"; e.target.style.background = "#fff"; e.target.style.boxShadow = "0 0 0 3px rgba(13,148,136,0.1)"; }}

@@ -66,6 +66,9 @@ interface DashboardData {
   }>;
 }
 
+// An unbounded note body would let one paste push megabytes into the database.
+const MAX_NOTE_LEN = 1000;
+
 export default function CaregiverDashboard() {
   const { user } = useAuth();
   const { toast } = useUI();
@@ -101,12 +104,18 @@ export default function CaregiverDashboard() {
 
   const submitNote = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Guard against a rapid second submit landing before the disabled state has
+    // painted — otherwise click-spam saves the same note several times.
+    if (savingNote) return;
     setNoteError("");
+    const content = noteContent.trim();
     if (!notePatientId) { setNoteError("Please select a patient."); return; }
-    if (!noteContent.trim()) { setNoteError("Please write a note."); return; }
+    if (!content) { setNoteError("Please write a note."); return; }
+    if (content.length < 3) { setNoteError("A note needs at least 3 characters."); return; }
+    if (content.length > MAX_NOTE_LEN) { setNoteError(`A note must be ${MAX_NOTE_LEN} characters or fewer.`); return; }
     try {
       setSavingNote(true);
-      await apiPost("/caregiver/notes", { patient: notePatientId, content: noteContent.trim() });
+      await apiPost("/caregiver/notes", { patient: notePatientId, content });
       setShowNoteModal(false);
       setNoteContent("");
       setNotePatientId("");
@@ -409,7 +418,8 @@ export default function CaregiverDashboard() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Note *</label>
-                    <textarea value={noteContent} onChange={(e) => setNoteContent(e.target.value)} rows={4} placeholder="Write your observation about the patient..." className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                    <textarea value={noteContent} onChange={(e) => setNoteContent(e.target.value)} rows={4} required maxLength={MAX_NOTE_LEN} placeholder="Write your observation about the patient..." className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                    <p className="text-[11px] text-slate-400 mt-1">{noteContent.length}/{MAX_NOTE_LEN}</p>
                   </div>
                   {noteError && <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{noteError}</p>}
                   <div className="flex justify-end gap-3 pt-2">

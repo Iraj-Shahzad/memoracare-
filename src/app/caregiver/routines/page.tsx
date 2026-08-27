@@ -43,6 +43,7 @@ interface WeeklyDay {
 }
 
 const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+const MAX_ACTIVITY_LEN = 100;
 
 export default function RoutinesPage() {
   const { user } = useAuth();
@@ -128,18 +129,30 @@ export default function RoutinesPage() {
 
   const submitRoutine = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Guard against a rapid second submit landing before the disabled state has
+    // painted — otherwise click-spam creates duplicate routines.
+    if (saving) return;
     setFormError("");
+    const activityName = form.activityName.trim();
     if (!selectedPatientId) { setFormError("Select a patient first."); return; }
-    if (!form.activityName.trim()) { setFormError("Activity name is required."); return; }
+    if (!activityName) { setFormError("Activity name is required."); return; }
+    if (activityName.length > MAX_ACTIVITY_LEN) { setFormError(`Activity name must be ${MAX_ACTIVITY_LEN} characters or fewer.`); return; }
     if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(form.startTime)) { setFormError("Pick a valid start time — this is when the reminder fires."); return; }
     if (form.endTime && !/^([01]\d|2[0-3]):[0-5]\d$/.test(form.endTime)) { setFormError("End time must be valid, or leave it blank."); return; }
     if (form.endTime && form.endTime <= form.startTime) { setFormError("End time must be after the start time."); return; }
     if (form.days.length === 0) { setFormError("Select at least one day for the reminder to repeat."); return; }
+    // Guard against re-adding a routine that already sits at the same time today.
+    // (The loaded list is today's timeline, so this only catches same-day clashes.)
+    const todayName = new Date().toLocaleDateString("en-US", { weekday: "long" });
+    if (form.days.includes(todayName) && routines.some((r) => r.name.trim().toLowerCase() === activityName.toLowerCase() && r.time.startsWith(form.startTime))) {
+      setFormError(`"${activityName}" is already scheduled at ${form.startTime} today.`);
+      return;
+    }
     try {
       setSaving(true);
       await apiPost("/routines", {
         patient: selectedPatientId,
-        activityName: form.activityName.trim(),
+        activityName,
         startTime: form.startTime,
         endTime: form.endTime || undefined,
         days: form.days,
@@ -322,7 +335,7 @@ export default function RoutinesPage() {
             <form onSubmit={submitRoutine} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Activity Name *</label>
-                <input value={form.activityName} onChange={(e) => setForm({ ...form, activityName: e.target.value })} placeholder="e.g. Morning Walk" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                <input value={form.activityName} onChange={(e) => setForm({ ...form, activityName: e.target.value })} required maxLength={MAX_ACTIVITY_LEN} placeholder="e.g. Morning Walk" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>

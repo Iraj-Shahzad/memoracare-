@@ -47,6 +47,9 @@ const CATEGORIES = [
 ];
 const catMeta = (v: string) => CATEGORIES.find((c) => c.value === v) || CATEGORIES[0];
 
+// Longest note we accept, so one observation cannot be an unbounded blob of text.
+const MAX_NOTE = 2000;
+
 export default function NotesPage() {
   const { user } = useAuth();
   const { toast, confirm } = useUI();
@@ -120,6 +123,8 @@ export default function NotesPage() {
 
   const handleAddNote = async () => {
     if (!newNote.trim() || !selectedPatientId) return;
+    if (newNote.trim().length > MAX_NOTE) { toast(`A note must be ${MAX_NOTE} characters or fewer.`, "error"); return; }
+    if (!CATEGORIES.some((c) => c.value === newCategory)) { toast("Please pick a valid category.", "error"); return; }
     try {
       setSaving(true);
       await apiPost("/caregiver/notes", { patient: selectedPatientId, content: newNote.trim(), category: newCategory });
@@ -144,6 +149,7 @@ export default function NotesPage() {
   };
   const saveEdit = async (noteId: string) => {
     if (!editContent.trim()) { toast("Note cannot be empty.", "error"); return; }
+    if (editContent.trim().length > MAX_NOTE) { toast(`A note must be ${MAX_NOTE} characters or fewer.`, "error"); return; }
     try {
       setSavingEdit(true);
       await apiPut(`/caregiver/notes/${noteId}`, { content: editContent.trim(), category: editCategory });
@@ -231,10 +237,12 @@ export default function NotesPage() {
               <textarea
                 value={newNote}
                 onChange={(e) => setNewNote(e.target.value)}
+                maxLength={MAX_NOTE}
                 placeholder="Write your observations and notes about the patient..."
                 className="w-full px-4 py-3 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent resize-none"
                 rows={4}
               />
+              <p className="text-xs text-slate-400 mt-1 text-right">{newNote.length} / {MAX_NOTE}</p>
               <div className="mt-4 flex justify-end">
                 <button
                   onClick={handleAddNote}
@@ -283,6 +291,7 @@ export default function NotesPage() {
                           <textarea
                             value={editContent}
                             onChange={(e) => setEditContent(e.target.value)}
+                            maxLength={MAX_NOTE}
                             rows={4}
                             className="w-full px-4 py-3 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488] resize-none"
                           />

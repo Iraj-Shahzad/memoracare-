@@ -28,6 +28,12 @@ import { loadFaceApi, getDescriptor, getAveragedDescriptor, findBestMatch, type 
 import { speak, getLang } from "@/lib/speech";
 import { useUI } from "@/components/ui/UIProvider";
 
+// Upload + field limits, kept in step with what the server accepts (5MB, jpeg/png).
+const MAX_FACE_BYTES = 5 * 1024 * 1024;
+const ALLOWED_FACE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
+const MAX_NAME = 60;
+const MAX_RELATION = 40;
+
 // Backend origin (without the trailing /api) so we can load uploaded face images.
 const API_HOST = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api").replace(/\/api\/?$/, "");
 // Turn a stored "/uploads/faces/x.jpg" into a full URL the browser can load.
@@ -419,6 +425,20 @@ export default function FaceRecognitionPage() {
     }
   };
 
+  // Check a picked photo against the server's upload rules before doing any work
+  // with it. Returns true when the photo is usable.
+  const photoIsUsable = (file: File): boolean => {
+    if (!ALLOWED_FACE_TYPES.includes(file.type)) {
+      toast("Please choose a JPG or PNG photo.", "error");
+      return false;
+    }
+    if (file.size > MAX_FACE_BYTES) {
+      toast(`That photo is ${(file.size / (1024 * 1024)).toFixed(1)}MB. Please choose one under 5MB.`, "error");
+      return false;
+    }
+    return true;
+  };
+
   const computeDescriptorFromFile = async (file: File): Promise<Float32Array | null> => {
     const img = document.createElement("img");
     img.src = URL.createObjectURL(file);
@@ -438,6 +458,7 @@ export default function FaceRecognitionPage() {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
+    if (!photoIsUsable(file)) return;
     try {
       const d = await computeDescriptorFromFile(file);
       if (!d) { toast("Couldn't find a clear face in that photo. Try a well-lit, front-facing one.", "error"); return; }
@@ -483,7 +504,13 @@ export default function FaceRecognitionPage() {
   const submitAddFace = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!pendingDescriptorRef.current) { toast("No face captured. Please try again.", "error"); return; }
+    // The server stores a 128-number embedding, so refuse anything else here too.
+    if (pendingDescriptorRef.current.length !== 128 || pendingDescriptorRef.current.some((n) => !Number.isFinite(n))) {
+      toast("That face reading is not complete. Please capture the face again.", "error"); return;
+    }
     if (addForm.name.trim().length < 2) { toast("Please enter the person's name.", "info"); return; }
+    if (addForm.name.trim().length > MAX_NAME) { toast(`The name must be ${MAX_NAME} characters or fewer.`, "info"); return; }
+    if (addForm.relationship.trim().length > MAX_RELATION) { toast(`The relationship must be ${MAX_RELATION} characters or fewer.`, "info"); return; }
     try {
       setAddSaving(true);
       const fd = new FormData();
@@ -512,6 +539,7 @@ export default function FaceRecognitionPage() {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
+    if (!photoIsUsable(file)) return;
     setScanning(true); setResult(null);
     try {
       const d = await computeDescriptorFromFile(file);
@@ -1408,9 +1436,9 @@ export default function FaceRecognitionPage() {
             <h3 style={{ fontSize: 18, fontWeight: 700, color: "#1a3c34", marginBottom: 16 }}>Add to Known Faces</h3>
             <form onSubmit={submitAddFace}>
               <label style={{ fontSize: 13, fontWeight: 600, color: "#334155" }}>Name *</label>
-              <input value={addForm.name} onChange={(e) => setAddForm({ ...addForm, name: e.target.value })} placeholder="Full name" style={{ width: "100%", padding: "10px 12px", border: "1px solid #e2e8f0", borderRadius: 10, marginTop: 4, marginBottom: 12, fontFamily: "inherit", fontSize: 14 }} />
+              <input value={addForm.name} onChange={(e) => setAddForm({ ...addForm, name: e.target.value })} maxLength={MAX_NAME} placeholder="Full name" style={{ width: "100%", padding: "10px 12px", border: "1px solid #e2e8f0", borderRadius: 10, marginTop: 4, marginBottom: 12, fontFamily: "inherit", fontSize: 14 }} />
               <label style={{ fontSize: 13, fontWeight: 600, color: "#334155" }}>Relationship</label>
-              <input value={addForm.relationship} onChange={(e) => setAddForm({ ...addForm, relationship: e.target.value })} placeholder="e.g. Daughter, Doctor" style={{ width: "100%", padding: "10px 12px", border: "1px solid #e2e8f0", borderRadius: 10, marginTop: 4, marginBottom: 16, fontFamily: "inherit", fontSize: 14 }} />
+              <input value={addForm.relationship} onChange={(e) => setAddForm({ ...addForm, relationship: e.target.value })} maxLength={MAX_RELATION} placeholder="e.g. Daughter, Doctor" style={{ width: "100%", padding: "10px 12px", border: "1px solid #e2e8f0", borderRadius: 10, marginTop: 4, marginBottom: 16, fontFamily: "inherit", fontSize: 14 }} />
               <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
                 <button type="button" onClick={() => setShowAdd(false)} style={{ padding: "10px 18px", borderRadius: 10, border: "1px solid #e2e8f0", background: "#fff", color: "#334155", fontWeight: 600, cursor: "pointer" }}>Cancel</button>
                 <button type="submit" disabled={addSaving} style={{ padding: "10px 18px", borderRadius: 10, border: "none", background: "#0d9488", color: "#fff", fontWeight: 600, cursor: "pointer", opacity: addSaving ? 0.6 : 1 }}>{addSaving ? "Saving…" : "Save"}</button>

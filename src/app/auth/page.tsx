@@ -104,10 +104,21 @@ export default function AuthPage() {
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError("");
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginEmail.trim())) {
+      setLoginError("Please enter a valid email address (e.g. name@example.com).");
+      return;
+    }
+    if (!loginPassword) {
+      setLoginError("Please enter your password.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      const loggedInUser = await login(loginEmail, loginPassword);
+      // Trim so a copy-pasted email with a stray space still signs in.
+      const loggedInUser = await login(loginEmail.trim().toLowerCase(), loginPassword);
       redirectByRole(loggedInUser.role);
     } catch (err: unknown) {
       const error = err as Error;
@@ -127,7 +138,11 @@ export default function AuthPage() {
       setRegisterError("Please enter your full name (at least 3 characters).");
       return;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerEmail.trim())) {
+    if (registerFullName.trim().length > 100) {
+      setRegisterError("Full name cannot be longer than 100 characters.");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerEmail.trim()) || registerEmail.trim().length > 254) {
       setRegisterError("Please enter a valid email address (e.g. name@example.com).");
       return;
     }
@@ -142,16 +157,41 @@ export default function AuthPage() {
       setRegisterError("Password must be at least 6 characters.");
       return;
     }
+    // bcrypt only uses the first 72 bytes, so anything longer is misleading.
+    if (registerPassword.length > 72) {
+      setRegisterError("Password cannot be longer than 72 characters.");
+      return;
+    }
     if (registerPassword !== registerConfirmPassword) {
       setRegisterError("Passwords do not match.");
       return;
     }
     if (registerDob) {
       const dobDate = new Date(registerDob);
+      // Reject a future DOB and an absurd one (before 1900 / older than 120).
+      const minDob = new Date();
+      minDob.setFullYear(minDob.getFullYear() - 120);
       if (isNaN(dobDate.getTime()) || dobDate > new Date()) {
         setRegisterError("Please enter a valid date of birth (not in the future).");
         return;
       }
+      if (dobDate < minDob) {
+        setRegisterError("Please enter a realistic date of birth (age must be under 120).");
+        return;
+      }
+    }
+    // Emergency contact is optional, but if a phone is typed it must be valid.
+    if (emergencyContactPhone.trim()) {
+      let ecDigits = emergencyContactPhone.replace(/\D/g, "");
+      if (ecDigits.startsWith("0")) ecDigits = ecDigits.slice(1);
+      if (!/^3\d{9}$/.test(ecDigits)) {
+        setRegisterError("Emergency contact number must be 10 digits starting with 3, e.g. 3129876543.");
+        return;
+      }
+    }
+    if (emergencyContactName.trim() && emergencyContactName.trim().length > 100) {
+      setRegisterError("Emergency contact name cannot be longer than 100 characters.");
+      return;
     }
     if (!agreeTerms) {
       setRegisterError("Please agree to the Terms & Privacy Policy.");
@@ -162,8 +202,10 @@ export default function AuthPage() {
 
     try {
       const registeredUser = await register({
-        name: registerFullName,
-        email: registerEmail,
+        // Trim/lowercase before sending: a stray leading space made the server's
+        // isEmail() rule fail with a confusing "validation failed" message.
+        name: registerFullName.trim(),
+        email: registerEmail.trim().toLowerCase(),
         password: registerPassword,
         role: selectedRole,
         phone: `+92${phoneDigits}`,
@@ -409,6 +451,7 @@ export default function AuthPage() {
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
                   placeholder="you@example.com"
+                  maxLength={254}
                   className="w-full outline-none transition-all"
                   style={{
                     padding: "12px 16px",
@@ -443,6 +486,7 @@ export default function AuthPage() {
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
                     placeholder="Enter your password"
+                    maxLength={72}
                     className="w-full outline-none transition-all"
                     style={{
                       padding: "12px 16px",
@@ -659,6 +703,7 @@ export default function AuthPage() {
                     value={registerFullName}
                     onChange={(e) => setRegisterFullName(e.target.value)}
                     placeholder="Ahmed Khan"
+                    maxLength={100}
                     className="w-full outline-none transition-all"
                     style={{
                       padding: "12px 16px",
@@ -690,6 +735,7 @@ export default function AuthPage() {
                     value={registerEmail}
                     onChange={(e) => setRegisterEmail(e.target.value)}
                     placeholder="you@example.com"
+                    maxLength={254}
                     className="w-full outline-none transition-all"
                     style={{
                       padding: "12px 16px",
@@ -754,6 +800,7 @@ export default function AuthPage() {
                     value={registerPhone}
                     onChange={(e) => setRegisterPhone(e.target.value)}
                     placeholder="300 1234567"
+                    maxLength={15}
                     className="flex-1 outline-none"
                     style={{
                       padding: "12px 14px",
@@ -779,6 +826,7 @@ export default function AuthPage() {
                       value={registerPassword}
                       onChange={(e) => setRegisterPassword(e.target.value)}
                       placeholder="Min 6 characters"
+                      maxLength={72}
                       className="w-full outline-none transition-all"
                       style={{
                         padding: "12px 16px",
@@ -822,6 +870,7 @@ export default function AuthPage() {
                     value={registerConfirmPassword}
                     onChange={(e) => setRegisterConfirmPassword(e.target.value)}
                     placeholder="Re-enter password"
+                    maxLength={72}
                     className="w-full outline-none transition-all"
                     style={{
                       padding: "12px 16px",
@@ -857,6 +906,8 @@ export default function AuthPage() {
                   type="date"
                   value={registerDob}
                   onChange={(e) => setRegisterDob(e.target.value)}
+                  min="1900-01-01"
+                  max={new Date().toISOString().split("T")[0]}
                   className="w-full outline-none transition-all"
                   style={{
                     padding: "12px 16px",
@@ -899,6 +950,7 @@ export default function AuthPage() {
                     value={emergencyContactName}
                     onChange={(e) => setEmergencyContactName(e.target.value)}
                     placeholder="Family member name"
+                    maxLength={100}
                     className="w-full outline-none transition-all"
                     style={{
                       padding: "12px 16px",
@@ -959,6 +1011,7 @@ export default function AuthPage() {
                       value={emergencyContactPhone}
                       onChange={(e) => setEmergencyContactPhone(e.target.value)}
                       placeholder="312 9876543"
+                      maxLength={15}
                       className="flex-1 outline-none"
                       style={{
                         padding: "12px 14px",
@@ -989,10 +1042,12 @@ export default function AuthPage() {
                 </Link>
               </label>
 
-              {/* Submit Button */}
+              {/* Submit Button — stays disabled after success too, so the 1s
+                  redirect window can't be double-submitted into an
+                  "Email already registered" error. */}
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !!registerSuccess}
                 className="w-full border-none cursor-pointer font-bold transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                 style={{
                   padding: "14px",
@@ -1014,7 +1069,7 @@ export default function AuthPage() {
                   (e.target as HTMLElement).style.transform = "translateY(0)";
                 }}
               >
-                {isSubmitting ? "Creating Account..." : "Create Account →"}
+                {isSubmitting ? "Creating Account..." : registerSuccess ? "Redirecting..." : "Create Account →"}
               </button>
 
               {/* Divider */}

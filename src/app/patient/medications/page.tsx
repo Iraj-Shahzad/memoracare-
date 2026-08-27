@@ -72,6 +72,10 @@ export default function MedicationsPage() {
 
   const [medications, setMedications] = useState<Medication[]>([]);
   const [detailMed, setDetailMed] = useState<Medication | null>(null);
+  // Id of the medication currently being logged, so rapid taps can't fire the
+  // same POST several times over (the backend is idempotent per day, but the
+  // duplicate requests still race each other and the refetch).
+  const [markingId, setMarkingId] = useState<string | null>(null);
 
   const loadData = async (silent = false) => {
     if (!patientId) return;
@@ -130,8 +134,10 @@ export default function MedicationsPage() {
   // Marking is idempotent per day on the backend; we refetch to reflect the
   // real updated status + compliance (consistent for any medication).
   const handleMarkTaken = async (medId: string) => {
-    try { await apiPost(`/medications/${medId}/log`, { status: "taken" }); await loadData(true); }
+    if (markingId) return;
+    try { setMarkingId(medId); await apiPost(`/medications/${medId}/log`, { status: "taken" }); await loadData(true); }
     catch (err) { toast(err instanceof Error ? err.message : "Could not mark as taken", "error"); }
+    finally { setMarkingId(null); }
   };
 
   const filteredMeds = medications.filter((med) => {
@@ -266,7 +272,8 @@ export default function MedicationsPage() {
             <div className="flex gap-[10px]">
               <button
                 onClick={() => handleMarkTaken(nextMed.id)}
-                className="rounded-[10px] text-[14px] font-semibold border-none cursor-pointer"
+                disabled={markingId !== null}
+                className="rounded-[10px] text-[14px] font-semibold border-none cursor-pointer disabled:opacity-60"
                 style={{ padding: "10px 24px", background: "#fff", color: "#1a3c34" }}
               >
                 Mark as Taken
@@ -575,7 +582,7 @@ export default function MedicationsPage() {
                           {/* Mark as Taken */}
                           <button
                             onClick={() => handleMarkTaken(med.id)}
-                            disabled={med.status === "taken"}
+                            disabled={med.status === "taken" || markingId !== null}
                             className="flex items-center justify-center rounded-[8px] border border-[#e2e8f0] bg-white cursor-pointer hover:border-[#16a34a] hover:bg-[#f0fdf4] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                             style={{ width: 34, height: 34 }}
                             title="Mark as Taken"
@@ -653,7 +660,7 @@ export default function MedicationsPage() {
               )}
             </div>
             <div className="flex gap-2.5 mt-5">
-              <button onClick={() => { handleMarkTaken(detailMed.id); setDetailMed(null); }} disabled={detailMed.status === "taken"} className="flex-1 px-4 py-2.5 rounded-[10px] text-[13px] font-semibold bg-[#0d9488] text-white hover:bg-[#0f766e] disabled:opacity-50">Mark as Taken</button>
+              <button onClick={() => { handleMarkTaken(detailMed.id); setDetailMed(null); }} disabled={detailMed.status === "taken" || markingId !== null} className="flex-1 px-4 py-2.5 rounded-[10px] text-[13px] font-semibold bg-[#0d9488] text-white hover:bg-[#0f766e] disabled:opacity-50">Mark as Taken</button>
               <button onClick={() => setDetailMed(null)} className="flex-1 px-4 py-2.5 rounded-[10px] text-[13px] font-semibold bg-white text-[#1a3c34] border-[1.5px] border-[#e2e8f0] hover:border-[#0d9488]">Close</button>
             </div>
           </div>

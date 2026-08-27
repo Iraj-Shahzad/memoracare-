@@ -68,6 +68,10 @@ interface Report {
 
 const FILTER_TABS = ["All", "Medication", "Routine", "Compliance", "Weekly Summary", "Monthly Overview"];
 
+// Longest period a report may cover (2 years).
+const MAX_RANGE_DAYS = 730;
+const TODAY = () => new Date().toISOString().split("T")[0];
+
 const titleCase = (s: string) =>
   (s || "").replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
@@ -141,6 +145,11 @@ export default function ReportsPage() {
     if (!toDate) { setGenError("Please choose a To date."); return; }
     if (new Date(fromDate) > new Date(toDate)) { setGenError("The From date must be before the To date."); return; }
     if (new Date(toDate) > new Date()) { setGenError("The To date can't be in the future."); return; }
+    if (new Date(fromDate) < new Date("2000-01-01")) { setGenError("Please choose a From date after the year 2000."); return; }
+    // A report covering many years is almost always a mistake, and it makes the
+    // server read every log the patient has.
+    const spanDays = (new Date(toDate).getTime() - new Date(fromDate).getTime()) / 86400000;
+    if (spanDays > MAX_RANGE_DAYS) { setGenError("Please choose a period of 2 years or less."); return; }
 
     const type = reportType.toLowerCase().replace(/\s+/g, "_");
     // Warn before creating a duplicate of the same type.
@@ -443,13 +452,13 @@ export default function ReportsPage() {
 
                 <div>
                   <label className="block text-sm font-semibold text-[#1a3c34] mb-2">From Date</label>
-                  <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)}
+                  <input type="date" value={fromDate} min="2000-01-01" max={toDate || TODAY()} onChange={(e) => setFromDate(e.target.value)}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg text-[#1a3c34] focus:outline-none focus:border-[#0d9488]" />
                 </div>
 
                 <div>
                   <label className="block text-sm font-semibold text-[#1a3c34] mb-2">To Date</label>
-                  <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)}
+                  <input type="date" value={toDate} min={fromDate || "2000-01-01"} max={TODAY()} onChange={(e) => setToDate(e.target.value)}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg text-[#1a3c34] focus:outline-none focus:border-[#0d9488]" />
                 </div>
 

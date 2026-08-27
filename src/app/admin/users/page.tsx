@@ -63,8 +63,21 @@ export default function UsersPage() {
     setAddError("");
     // Validation
     if (addForm.name.trim().length < 2) { setAddError("Please enter the person's full name."); return; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(addForm.email.trim())) { setAddError("Please enter a valid email address."); return; }
+    if (addForm.name.trim().length > 100) { setAddError("Full name cannot be longer than 100 characters."); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(addForm.email.trim()) || addForm.email.trim().length > 254) { setAddError("Please enter a valid email address."); return; }
     if (addForm.password.length < 6) { setAddError("Password must be at least 6 characters."); return; }
+    // bcrypt only hashes the first 72 bytes, so a longer password is misleading.
+    if (addForm.password.length > 72) { setAddError("Password cannot be longer than 72 characters."); return; }
+    // Phone is optional here, but if typed it must look like a real number.
+    if (addForm.phone.trim()) {
+      const raw = addForm.phone.trim();
+      const digits = raw.replace(/\D/g, "");
+      if (!/^[\d\s()+-]+$/.test(raw) || digits.length < 10 || digits.length > 13) {
+        setAddError("Enter a valid phone number, e.g. +92 300 1234567.");
+        return;
+      }
+    }
+    if (!["patient", "caregiver", "admin"].includes(addForm.role)) { setAddError("Please choose a valid role."); return; }
     try {
       setAddSaving(true);
       await apiPost("/users", {
@@ -403,24 +416,24 @@ export default function UsersPage() {
             <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Full Name <span className="text-red-500">*</span></label>
-                <input value={addForm.name} onChange={(e) => setAddForm({ ...addForm, name: e.target.value })}
+                <input value={addForm.name} onChange={(e) => setAddForm({ ...addForm, name: e.target.value })} maxLength={100}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]" placeholder="e.g. Ali Raza" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Email <span className="text-red-500">*</span></label>
-                <input type="email" value={addForm.email} onChange={(e) => setAddForm({ ...addForm, email: e.target.value })}
+                <input type="email" value={addForm.email} onChange={(e) => setAddForm({ ...addForm, email: e.target.value })} maxLength={254}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]" placeholder="name@example.com" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Password <span className="text-red-500">*</span></label>
-                <input type="password" value={addForm.password} onChange={(e) => setAddForm({ ...addForm, password: e.target.value })}
+                <input type="password" value={addForm.password} onChange={(e) => setAddForm({ ...addForm, password: e.target.value })} maxLength={72}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]" placeholder="min 6 characters" />
                 <p className="text-xs text-slate-500 mt-1">Set an initial password and share it with the user; they can change it later in Settings.</p>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Phone</label>
-                  <input type="tel" value={addForm.phone} onChange={(e) => setAddForm({ ...addForm, phone: e.target.value })}
+                  <input type="tel" value={addForm.phone} onChange={(e) => setAddForm({ ...addForm, phone: e.target.value })} maxLength={20}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]" placeholder="+92 300 1234567" />
                 </div>
                 <div>

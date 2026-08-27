@@ -148,6 +148,9 @@ export default function PatientsPage() {
   // No fixed length is enforced beyond a sane 7–14 digit range (numbering
   // plans differ by country). Returns null if the number isn't plausible.
   const buildPhone = (code: string, raw: string): string | null => {
+    // Reject anything that isn't digits/spaces/()+- outright, otherwise
+    // "300abc1234" would silently pass by having its letters stripped.
+    if (!/^[\d\s()+-]+$/.test(raw.trim())) return null;
     let d = raw.replace(/\D/g, "");
     if (d.startsWith("0")) d = d.slice(1); // drop a national trunk 0 if typed
     if (d.length < 7 || d.length > 14) return null;
@@ -159,12 +162,24 @@ export default function PatientsPage() {
     setFormError("");
     const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (form.name.trim().length < 3) { setFormError("Enter the patient's full name (min 3 characters)."); return; }
-    if (!emailRe.test(form.email.trim())) { setFormError("Enter a valid email address."); return; }
+    if (form.name.trim().length > 100) { setFormError("Full name cannot be longer than 100 characters."); return; }
+    if (!emailRe.test(form.email.trim()) || form.email.trim().length > 254) { setFormError("Enter a valid email address."); return; }
     if (form.password.length < 6) { setFormError("Password must be at least 6 characters."); return; }
+    // bcrypt only hashes the first 72 bytes, so a longer password is misleading.
+    if (form.password.length > 72) { setFormError("Password cannot be longer than 72 characters."); return; }
     const normalizedPhone = buildPhone(form.countryCode, form.phone);
     if (!normalizedPhone) { setFormError("Enter a valid phone number (7–14 digits)."); return; }
     if (cityIsOther && !form.city.trim()) { setFormError("Please enter the city name."); return; }
-    if (form.dateOfBirth && new Date(form.dateOfBirth) > new Date()) { setFormError("Date of birth cannot be in the future."); return; }
+    if (form.city.trim().length > 60) { setFormError("City name cannot be longer than 60 characters."); return; }
+    if (form.dateOfBirth) {
+      const dob = new Date(form.dateOfBirth);
+      // A future DOB, or an absurd one (before 1900 / older than 120), is invalid.
+      const minDob = new Date();
+      minDob.setFullYear(minDob.getFullYear() - 120);
+      if (isNaN(dob.getTime())) { setFormError("Enter a valid date of birth."); return; }
+      if (dob > new Date()) { setFormError("Date of birth cannot be in the future."); return; }
+      if (dob < minDob) { setFormError("Enter a realistic date of birth (age must be under 120)."); return; }
+    }
     try {
       setSaving(true);
       await apiPost("/caregiver/patients", {
@@ -332,7 +347,7 @@ export default function PatientsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Full Name *</label>
-                  <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Ahmed Ali" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                  <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} maxLength={100} placeholder="e.g. Ahmed Ali" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Phone *</label>
@@ -343,6 +358,7 @@ export default function PatientsPage() {
                       onChange={(e) => setForm({ ...form, phone: e.target.value })}
                       placeholder="300 1234567"
                       inputMode="numeric"
+                      maxLength={15}
                       className="flex-1 min-w-0 px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
                     />
                   </div>
@@ -350,11 +366,11 @@ export default function PatientsPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Email *</label>
-                <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="patient@example.com" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} maxLength={254} placeholder="patient@example.com" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Password *</label>
-                <input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder="min 6 characters" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                <input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} maxLength={72} placeholder="min 6 characters" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
                 <p className="text-xs text-slate-500 mt-1">Share this with the patient; they can change it later in Settings.</p>
               </div>
               <div>
@@ -394,6 +410,7 @@ export default function PatientsPage() {
                     <input
                       value={form.city}
                       onChange={(e) => setForm({ ...form, city: e.target.value })}
+                      maxLength={60}
                       placeholder="Enter city name"
                       className="mt-2 w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
                     />
@@ -403,7 +420,7 @@ export default function PatientsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Date of Birth</label>
-                  <input type="date" value={form.dateOfBirth} onChange={(e) => setForm({ ...form, dateOfBirth: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                  <input type="date" value={form.dateOfBirth} onChange={(e) => setForm({ ...form, dateOfBirth: e.target.value })} min="1900-01-01" max={new Date().toISOString().split("T")[0]} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Gender</label>

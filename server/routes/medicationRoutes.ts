@@ -10,7 +10,7 @@ import {
   getComplianceStats,
 } from '../controllers/medicationController';
 import { protect, authorize } from '../middleware/auth';
-import { medicationValidation, medicationUpdateValidation, handleValidationErrors } from '../middleware/validators';
+import { medicationValidation, medicationUpdateValidation, medicationLogValidation, handleValidationErrors } from '../middleware/validators';
 
 router.use(protect); // All routes protected
 
@@ -20,6 +20,6 @@ router.get('/patient/:patientId/compliance', getComplianceStats);
 router.post('/', authorize('caregiver', 'admin'), medicationValidation, handleValidationErrors, createMedication);
 router.put('/:id', authorize('caregiver', 'admin'), medicationUpdateValidation, handleValidationErrors, updateMedication);
 router.delete('/:id', authorize('caregiver', 'admin'), deleteMedication);
-router.post('/:id/log', logMedicationStatus);
+router.post('/:id/log', medicationLogValidation, handleValidationErrors, logMedicationStatus);
 
 export default router;

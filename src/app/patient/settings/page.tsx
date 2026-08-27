@@ -58,6 +58,9 @@ export default function SettingsPage() {
     setPwdMsg(null);
     if (!currentPassword || !newPassword) { setPwdMsg({ type: "error", text: "Please fill in all fields." }); return; }
     if (newPassword.length < 6) { setPwdMsg({ type: "error", text: "New password must be at least 6 characters." }); return; }
+    // bcrypt only uses the first 72 bytes, so anything longer is not really checked.
+    if (newPassword.length > 72) { setPwdMsg({ type: "error", text: "New password must be 72 characters or fewer." }); return; }
+    if (newPassword === currentPassword) { setPwdMsg({ type: "error", text: "The new password must be different from the current one." }); return; }
     if (newPassword !== confirmPassword) { setPwdMsg({ type: "error", text: "New passwords do not match." }); return; }
     try {
       setPwdSaving(true);
@@ -191,9 +194,9 @@ export default function SettingsPage() {
                 </button>
                 {showPasswordForm && (
                   <div className="mt-4 max-w-md space-y-3">
-                    <input type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} placeholder="Current password" className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
-                    <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="New password (min 6 characters)" className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
-                    <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm new password" className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                    <input type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} maxLength={72} placeholder="Current password" className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                    <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} maxLength={72} placeholder="New password (min 6 characters)" className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
+                    <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} maxLength={72} placeholder="Confirm new password" className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]" />
                     {pwdMsg && <p className={`text-sm ${pwdMsg.type === "error" ? "text-red-600" : "text-green-600"}`}>{pwdMsg.text}</p>}
                     <button onClick={handleChangePassword} disabled={pwdSaving} className="px-4 py-2 bg-[#0d9488] text-white rounded-lg font-medium hover:bg-[#0a7f73] transition disabled:opacity-60">{pwdSaving ? "Saving..." : "Update Password"}</button>
                   </div>

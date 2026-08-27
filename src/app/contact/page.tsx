@@ -21,12 +21,43 @@ export default function ContactPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Field limits. Kept in one place so the inputs and the submit check agree.
+  const LIMITS = { name: 80, email: 120, phone: 20, message: 2000 };
+  const SUBJECTS = ['general', 'support', 'account', 'feedback', 'partnership'];
+
+  // Validate before sending. This is a PUBLIC form, so it checks length and
+  // shape here as well (the API must still enforce the same rules).
+  const validate = () => {
+    const name = formData.name.trim();
+    const email = formData.email.trim();
+    const phone = formData.phone.trim();
+    const message = formData.message.trim();
+
+    if (name.length < 2) return 'Please enter your full name (at least 2 characters).';
+    if (name.length > LIMITS.name) return `Name must be ${LIMITS.name} characters or fewer.`;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return 'Please enter a valid email address.';
+    if (email.length > LIMITS.email) return `Email must be ${LIMITS.email} characters or fewer.`;
+    if (phone && !/^[0-9+\-\s()]{7,20}$/.test(phone)) return 'Please enter a valid phone number, or leave it empty.';
+    if (!SUBJECTS.includes(formData.subject)) return 'Please select a subject.';
+    if (message.length < 10) return 'Please write a longer message (at least 10 characters).';
+    if (message.length > LIMITS.message) return `Message must be ${LIMITS.message} characters or fewer.`;
+    return '';
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    const problem = validate();
+    if (problem) { setError(problem); return; }
     setSubmitting(true);
     try {
-      await apiPost('/contact', formData);
+      await apiPost('/contact', {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        subject: formData.subject,
+        message: formData.message.trim(),
+      });
       setSubmitted(true);
     } catch (err) {
       setError((err as Error).message || 'Could not send your message. Please try again.');
@@ -177,6 +208,7 @@ export default function ContactPage() {
                         value={formData.name}
                         onChange={handleChange}
                         required
+                        maxLength={LIMITS.name}
                         placeholder="e.g. Ahmed Khan"
                         className="w-full px-4 py-3 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-[14px] text-[#1a3c34] placeholder:text-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition"
                       />
@@ -189,6 +221,7 @@ export default function ContactPage() {
                         value={formData.email}
                         onChange={handleChange}
                         required
+                        maxLength={LIMITS.email}
                         placeholder="e.g. ahmed@example.com"
                         className="w-full px-4 py-3 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-[14px] text-[#1a3c34] placeholder:text-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition"
                       />
@@ -203,6 +236,7 @@ export default function ContactPage() {
                         name="phone"
                         value={formData.phone}
                         onChange={handleChange}
+                        maxLength={LIMITS.phone}
                         placeholder="e.g. +92 300 1234567"
                         className="w-full px-4 py-3 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-[14px] text-[#1a3c34] placeholder:text-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition"
                       />
@@ -234,9 +268,11 @@ export default function ContactPage() {
                       onChange={handleChange}
                       required
                       rows={5}
+                      maxLength={LIMITS.message}
                       placeholder="Tell us how we can help you..."
                       className="w-full px-4 py-3 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-[14px] text-[#1a3c34] placeholder:text-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-transparent transition resize-none"
                     />
+                    <p className="text-[12px] text-[#94a3b8] mt-1 text-right">{formData.message.length} / {LIMITS.message}</p>
                   </div>
 
                   {error && (

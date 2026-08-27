@@ -42,7 +42,9 @@ export const getMedicationsByPatient = async (req: Request, res: Response, next:
     const medIds = medications.map((m) => m._id);
     const [todayLogs, weekLogs] = await Promise.all([
       MedicationLog.find({ medication: { $in: medIds }, scheduledTime: { $gte: today, $lt: tomorrow } }),
-      MedicationLog.find({ medication: { $in: medIds }, scheduledTime: { $gte: weekAgo } }),
+      // Upper-bounded on purpose: without $lt, a log dated in the future would be
+      // counted in the 7-day compliance figure, which is not a real week's record.
+      MedicationLog.find({ medication: { $in: medIds }, scheduledTime: { $gte: weekAgo, $lt: tomorrow } }),
     ]);
 
     const out = medications.map((m: any) => {

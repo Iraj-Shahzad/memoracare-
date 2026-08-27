@@ -22,8 +22,19 @@ export default function ResetPasswordPage() {
     e.preventDefault();
     setError("");
 
+    // Guard the token before we even ask the server — a hand-typed /reset-password
+    // URL with no token would otherwise PUT to /auth/reset-password/undefined.
+    if (!token) {
+      setError("This reset link is invalid. Please request a new one.");
+      return;
+    }
     if (password.length < 6) {
       setError("Password must be at least 6 characters.");
+      return;
+    }
+    // bcrypt only hashes the first 72 bytes, so anything longer is misleading.
+    if (password.length > 72) {
+      setError("Password cannot be longer than 72 characters.");
       return;
     }
     if (password !== confirm) {
@@ -81,6 +92,7 @@ export default function ResetPasswordPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Min 6 characters"
+                    maxLength={72}
                     className="w-full outline-none transition-all"
                     style={{ padding: "12px 16px", paddingRight: 48, border: "1.5px solid #d1d5db", borderRadius: 12, fontSize: 15, color: "#1a3c34", background: "#f9fafb" }}
                     onFocus={(e) => { e.target.style.borderColor = "#0d9488"; e.target.style.background = "#fff"; e.target.style.boxShadow = "0 0 0 3px rgba(13,148,136,0.1)"; }}
@@ -103,6 +115,7 @@ export default function ResetPasswordPage() {
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
                   placeholder="Re-enter password"
+                  maxLength={72}
                   className="w-full outline-none transition-all mb-5"
                   style={{ padding: "12px 16px", border: "1.5px solid #d1d5db", borderRadius: 12, fontSize: 15, color: "#1a3c34", background: "#f9fafb" }}
                   onFocus={(e) => { e.target.style.borderColor = "#0d9488"; e.target.style.background = "#fff"; e.target.style.boxShadow = "0 0 0 3px rgba(13,148,136,0.1)"; }}

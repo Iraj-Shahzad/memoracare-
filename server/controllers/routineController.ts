@@ -124,19 +124,36 @@ export const logRoutineCompletion = async (req: Request, res: Response, next: Ne
       return res.status(403).json({ success: false, message: 'Not authorized for this patient' });
     }
 
-    const logData: any = {
+    // IDEMPOTENT PER DAY. Marking the same routine complete twice (a double-tap,
+    // or a slow network making the patient press again) must not write two rows:
+    // getWeeklyCompliance divides by the number of logs for the day, so duplicate
+    // rows would inflate the completion percentage above what really happened.
+    const when = scheduledDate ? new Date(scheduledDate) : new Date();
+    const dayStart = new Date(when); dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(when); dayEnd.setHours(23, 59, 59, 999);
+
+    let log = await RoutineLog.findOne({
       routine: routine._id,
       patient: routine.patient,
-      scheduledDate: scheduledDate || new Date(),
-      status,
-      notes,
-    };
+      scheduledDate: { $gte: dayStart, $lte: dayEnd },
+    });
 
-    if (status === 'completed') {
-      logData.completedAt = new Date();
+    if (log) {
+      log.status = status;
+      if (notes !== undefined) log.notes = notes;
+      if (status === 'completed') log.completedAt = new Date();
+      await log.save();
+    } else {
+      const logData: any = {
+        routine: routine._id,
+        patient: routine.patient,
+        scheduledDate: when,
+        status,
+        notes,
+      };
+      if (status === 'completed') logData.completedAt = new Date();
+      log = await RoutineLog.create(logData);
     }
-
-    const log = await RoutineLog.create(logData);
 
     if (req.io) {
       req.io.to(routine.patient.toString()).emit('routine_update', { routineId: routine._id, status });

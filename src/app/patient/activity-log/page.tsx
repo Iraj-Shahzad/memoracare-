@@ -121,8 +121,12 @@ export default function ActivityLog() {
     fetchActivityLog();
   }, [patientId]);
 
+  // A backwards range would silently show nothing, so say so instead.
+  const rangeInvalid = Boolean(dateFrom && dateTo && dateFrom > dateTo);
+
   // Filter activities
   const filteredActivities = useMemo(() => {
+    if (dateFrom && dateTo && dateFrom > dateTo) return [];
     return activityData.filter((activity) => {
       // Type filter
       if (selectedType !== "all") {
@@ -382,6 +386,7 @@ export default function ActivityLog() {
                   <input
                     type="date"
                     value={dateFrom}
+                    max={dateTo || undefined}
                     onChange={(e) => {
                       setDateFrom(e.target.value);
                       setCurrentPage(1);
@@ -396,6 +401,7 @@ export default function ActivityLog() {
                   <input
                     type="date"
                     value={dateTo}
+                    min={dateFrom || undefined}
                     onChange={(e) => {
                       setDateTo(e.target.value);
                       setCurrentPage(1);
@@ -428,6 +434,7 @@ export default function ActivityLog() {
                   <input
                     type="text"
                     placeholder="Search activities..."
+                    maxLength={100}
                     value={searchQuery}
                     onChange={(e) => {
                       setSearchQuery(e.target.value);
@@ -456,6 +463,9 @@ export default function ActivityLog() {
 
               {/* Results count */}
               <div className="mt-4 pt-4 border-t border-slate-200">
+                {rangeInvalid && (
+                  <p className="text-xs text-red-600 mb-2">The From date must be on or before the To date.</p>
+                )}
                 <p className="text-xs text-slate-600">
                   Showing <span className="font-semibold">{paginatedActivities.length}</span> of{" "}
                   <span className="font-semibold">{filteredActivities.length}</span> activities
