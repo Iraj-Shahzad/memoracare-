@@ -17,17 +17,23 @@ import {
   getDashboard,
 } from '../controllers/caregiverController';
 import { protect, authorize } from '../middleware/auth';
-import { noteValidation, noteUpdateValidation, handleValidationErrors } from '../middleware/validators';
+import {
+  noteValidation,
+  noteUpdateValidation,
+  createPatientValidation,
+  caregiverProfileValidation,
+  handleValidationErrors,
+} from '../middleware/validators';
 
 router.use(protect); // All routes protected
 router.use(authorize('caregiver')); // All routes caregiver only
 
 router.get('/my-patients', getMyPatients);
 router.get('/profile', getMyProfile);
-router.put('/profile', updateMyProfile);
+router.put('/profile', caregiverProfileValidation, handleValidationErrors, updateMyProfile);
 router.put('/settings', updateMySettings);
 router.get('/team', getTeam);
-router.post('/patients', createPatient);
+router.post('/patients', createPatientValidation, handleValidationErrors, createPatient);
 router.post('/patients/:patientId/assign', assignPatient);
 router.delete('/patients/:patientId/unassign', unassignPatient);
 router.get('/patients/:patientId/overview', getPatientOverview);

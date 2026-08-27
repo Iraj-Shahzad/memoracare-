@@ -7,9 +7,10 @@ import {
   deleteContact,
 } from '../controllers/contactController';
 import { protect, authorize } from '../middleware/auth';
+import { contactValidation, handleValidationErrors } from '../middleware/validators';
 
 // Public route (no auth needed)
-router.post('/', submitContact);
+router.post('/', contactValidation, handleValidationErrors, submitContact);
 
 // Admin-only routes
 router.get('/', protect, authorize('admin'), getAllContacts);

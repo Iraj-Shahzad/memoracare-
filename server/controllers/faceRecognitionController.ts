@@ -59,7 +59,12 @@ function parseDescriptor(raw: any) {
     }
   }
   if (!Array.isArray(arr) || arr.length !== 128) return null;
-  return arr.map(Number);
+  const nums = arr.map(Number);
+  // The length check alone is not enough. Number(null) is 0 and Number("abc")
+  // is NaN, and NaN is still typeof "number", so both would be cast straight
+  // into the model and stored as a descriptor that quietly breaks matching.
+  if (nums.some((n) => !Number.isFinite(n))) return null;
+  return nums;
 }
 
 // @desc Log a recognition result (matching is done in the browser)

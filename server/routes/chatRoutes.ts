@@ -6,10 +6,11 @@ import {
   deleteChatEntry,
 } from '../controllers/chatController';
 import { protect } from '../middleware/auth';
+import { chatValidation, handleValidationErrors } from '../middleware/validators';
 
 router.use(protect); // All routes protected
 
-router.post('/message', sendMessage);
+router.post('/message', chatValidation, handleValidationErrors, sendMessage);
 router.get('/patient/:patientId/history', getChatHistory);
 router.delete('/:id', deleteChatEntry);
 

@@ -24,8 +24,15 @@ const patientSchema = new mongoose.Schema(
     },
     cnic: {
       type: String,
+      trim: true,
       unique: true,
       sparse: true, // sparse: uniqueness only enforced on docs that actually have a cnic
+      // A blank CNIC must be stored as undefined, never as "". `sparse` skips
+      // MISSING fields only, so two empty strings count as a duplicate: the
+      // first patient to save a blank CNIC takes "", and every patient after
+      // that hits E11000 and can never save their profile.
+      set: (v: string) => (v && String(v).trim() ? String(v).trim() : undefined),
+      match: [/^\d{5}-?\d{7}-?\d$/, 'CNIC must be 13 digits, for example 35201-1234567-1'],
     },
     address: {
       type: String,
@@ -43,6 +50,10 @@ const patientSchema = new mongoose.Schema(
     },
     bloodGroup: {
       type: String,
+      enum: {
+        values: ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-', ''],
+        message: 'Blood group must be one of A+, A-, B+, B-, O+, O-, AB+, AB-',
+      },
     },
     allergies: [
       {

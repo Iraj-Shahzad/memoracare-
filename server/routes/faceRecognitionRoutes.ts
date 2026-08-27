@@ -10,12 +10,14 @@ import {
   upload,
 } from '../controllers/faceRecognitionController';
 import { protect } from '../middleware/auth';
+import { knownFaceValidation, handleValidationErrors } from '../middleware/validators';
 
 router.use(protect); // All routes protected
 
 router.post('/recognize', upload, recognizeFace);
 router.get('/patient/:patientId/logs', getRecognitionLogs);
-router.post('/known-faces', upload, addKnownFace);
+// `upload` first, so multer has populated req.body from the multipart form.
+router.post('/known-faces', upload, knownFaceValidation, handleValidationErrors, addKnownFace);
 router.get('/patient/:patientId/known-faces', getKnownFaces);
 router.delete('/known-faces/:id', deleteKnownFace);
 router.delete('/logs/:id', deleteRecognitionLog);

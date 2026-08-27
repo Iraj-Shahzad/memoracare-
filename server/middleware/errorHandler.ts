@@ -16,15 +16,44 @@ const errorHandler = (err: any, req: Request, res: Response, next: NextFunction)
   // Log to console for dev
   console.error(err);
 
-  // Mongoose bad ObjectId
+  // Mongoose bad ObjectId. Only a failed _id cast means "no such record" — a bad
+  // value in any other field is a bad request, and answering that with 404
+  // "Resource not found" sends the caller looking for the wrong problem.
   if (err.name === 'CastError') {
-    const message = `Resource not found`;
-    error = { message, statusCode: 404 };
+    if (err.path === '_id' || err.kind === 'ObjectId') {
+      error = { message: 'Resource not found', statusCode: 404 };
+    } else {
+      error = { message: `Invalid value for ${err.path || 'a field'}`, statusCode: 400 };
+    }
   }
 
-  // Mongoose duplicate key
+  // Multer upload failures (file too large, wrong type). Without this they fall
+  // through to the 500 branch, so a photo over the limit looked like a crash
+  // instead of telling the user to pick a smaller image.
+  if (err.name === 'MulterError') {
+    const message = err.code === 'LIMIT_FILE_SIZE'
+      ? 'That image is too large. Please choose a smaller one.'
+      : `Upload error: ${err.message}`;
+    error = { message, statusCode: 400 };
+  }
+
+  if (typeof err.message === 'string' && err.message.startsWith('Only image files')) {
+    error = { message: err.message, statusCode: 400 };
+  }
+
+  // Body larger than the express.json limit.
+  if (err.type === 'entity.too.large') {
+    error = { message: 'That request is too large.', statusCode: 413 };
+  }
+
+  // Mongoose duplicate key. Name the field: "Duplicate field value entered"
+  // tells the user nothing about which value to change.
   if (err.code === 11000) {
-    const message = `Duplicate field value entered`;
+    const field = Object.keys(err.keyValue || err.keyPattern || {})[0];
+    const message =
+      field === 'cnic' ? 'That CNIC is already registered to another patient.'
+      : field === 'email' ? 'That email is already registered.'
+      : 'That value is already in use.';
     error = { message, statusCode: 400 };
   }
 
