@@ -58,8 +58,10 @@ const DAY_NAMES = [
 ];
 
 // Parse "09:00" (24h) or "9:00 AM" (12h) into minutes since midnight.
-// Returns null if it can't be understood.
-function parseTimeToMinutes(value: string) {
+// Returns null if it can't be understood. The parameter is deliberately wide:
+// startTime is optional on the model, so callers legitimately pass null or
+// undefined and the guard on the first line already handles both.
+function parseTimeToMinutes(value: string | null | undefined) {
   if (!value || typeof value !== 'string') return null;
   const str = value.trim();
   const match = str.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);

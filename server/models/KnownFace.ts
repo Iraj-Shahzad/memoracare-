@@ -34,7 +34,11 @@ const knownFaceSchema = new mongoose.Schema(
       type: [Number],
       required: [true, 'A face descriptor is required'],
       validate: {
-        validator: (arr) => Array.isArray(arr) && arr.length === 128,
+        // Every entry must be a real number, not just the right count: Number(null)
+        // is 0 and NaN is still typeof "number", so a length-only check would let
+        // a junk descriptor through and quietly break face matching.
+        validator: (arr: any) =>
+          Array.isArray(arr) && arr.length === 128 && arr.every((n) => Number.isFinite(n)),
         message: 'Descriptor must be an array of 128 numbers',
       },
     },

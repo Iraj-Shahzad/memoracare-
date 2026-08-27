@@ -175,6 +175,12 @@ export const googleAuth = async (req: Request, res: Response, next: NextFunction
 export const getMe = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = await User.findById(req.user.id);
+    // The token can outlive the account (deleted user, dropped database). Without
+    // this guard the next line throws and the client gets a 500 instead of being
+    // told to sign in again.
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'Your session is no longer valid. Please sign in again.' });
+    }
     let profile = null;
 
     if (user.role === 'patient') {

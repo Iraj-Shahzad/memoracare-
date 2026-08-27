@@ -8,9 +8,17 @@
  * role enum drives all RBAC; unique lowercase email with regex validation.
  * Viva line: "The User model centralises identity and never persists a plaintext password or reset token."
  */
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema, InferSchemaType } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
+
+// The two helpers below are attached with userSchema.methods, which TypeScript
+// cannot see. Declaring them here is what lets callers write user.matchPassword()
+// without a cast, while the field types stay inferred from the schema itself.
+interface UserMethods {
+  matchPassword(enteredPassword: string): Promise<boolean>;
+  getResetPasswordToken(): string;
+}
 
 const userSchema = new Schema({
   name: {
@@ -96,4 +104,6 @@ userSchema.methods.getResetPasswordToken = function (this: any): string {
   return rawToken;
 };
 
-export default mongoose.model('User', userSchema);
+type UserDoc = InferSchemaType<typeof userSchema> & UserMethods;
+
+export default mongoose.model<UserDoc>('User', userSchema);

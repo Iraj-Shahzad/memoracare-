@@ -398,14 +398,16 @@ export const getActivityLog = async (req: Request, res: Response, next: NextFunc
     const activities = [
       ...medLogs.map((l) => ({
         type: 'medication',
-        description: `${l.medication?.name || 'Medication'} - ${l.status}`,
+        // Cast: .populate('medication', 'name') really does return the document,
+        // but Mongoose's types still describe the field as an ObjectId.
+        description: `${(l.medication as any)?.name || 'Medication'} - ${l.status}`,
         status: l.status,
         date: l.createdAt,
         details: l,
       })),
       ...routineLogs.map((l) => ({
         type: 'routine',
-        description: `${l.routine?.activityName || 'Routine'} - ${l.status}`,
+        description: `${(l.routine as any)?.activityName || 'Routine'} - ${l.status}`,
         status: l.status,
         date: l.createdAt,
         details: l,

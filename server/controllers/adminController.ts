@@ -144,7 +144,8 @@ export const getActivityLog = async (req: Request, res: Response, next: NextFunc
       ...recentReports.map((r) => ({
         type: 'report',
         description: `Report generated: ${r.title}`,
-        user: r.generatedBy?.name,
+        // Cast: generatedBy is populated, but Mongoose types it as an ObjectId.
+        user: (r.generatedBy as any)?.name,
         date: r.createdAt,
       })),
       ...recentUsers.map((u) => ({
