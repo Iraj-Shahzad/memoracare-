@@ -31,6 +31,13 @@ interface RegisterData {
   password: string;
   role: string;
   phone?: string;
+  // Sent so the server can re-check the match; the frontend check alone is not
+  // a guarantee because the API can be called directly.
+  confirmPassword?: string;
+  // Patient-only. These were collected by the sign-up form but never included
+  // here, so the values the user typed never reached the database.
+  dateOfBirth?: string;
+  emergencyContact?: { name: string; phone: string };
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);

@@ -37,6 +37,22 @@ export default function AuthPage() {
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [registerError, setRegisterError] = useState("");
   const [registerSuccess, setRegisterSuccess] = useState("");
+  // Per-field messages shown under the field itself. `registerError` is kept for
+  // errors that belong to the whole form (network failures, server rejections).
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  // Clear one field's error as soon as the user edits it again.
+  const clearFieldError = (field: string) =>
+    setFieldErrors((prev) => (prev[field] ? { ...prev, [field]: "" } : prev));
+
+  // Rendered under an input. A plain function, not a component, so React does
+  // not remount the inputs on every keystroke.
+  const fieldError = (field: string) =>
+    fieldErrors[field] ? (
+      <p className="mt-1.5 text-[12px] font-medium" style={{ color: "#dc2626" }}>
+        {fieldErrors[field]}
+      </p>
+    ) : null;
 
   // Redirect if already logged in
   useEffect(() => {
@@ -128,93 +144,193 @@ export default function AuthPage() {
     }
   };
 
+  // Strip a Pakistani mobile down to its 10 significant digits (a leading 0 or a
+  // +92 country code typed by the user is removed). Returns "" if unusable.
+  const normalisePkMobile = (raw: string): string => {
+    let d = raw.replace(/\D/g, "");
+    if (d.startsWith("92")) d = d.slice(2);
+    if (d.startsWith("0")) d = d.slice(1);
+    return /^3\d{9}$/.test(d) ? d : "";
+  };
+
+  // Obvious junk: "aaaa", "asdfgh", "Ahmed ffff". Real names never contain a
+  // character three times in a row, nor a keyboard run.
+  const looksLikeSpam = (value: string): boolean => {
+    const v = value.toLowerCase();
+    if (/(.)\1{2,}/.test(v)) return true;
+    if (/(asdf|sdfg|qwer|wert|zxcv|xcvb|hjkl|1234)/.test(v)) return true;
+    // A name made of fewer than two distinct letters is not a name.
+    return new Set(v.replace(/[^a-z؀-ۿ]/g, "")).size < 2;
+  };
+
+  // Collects EVERY problem in one pass so the user sees all of them at once,
+  // rather than fixing one field only to be shown the next error.
+  const validateRegister = (): Record<string, string> => {
+    const errors: Record<string, string> = {};
+
+    // ---- Full name ----
+    const name = registerFullName.trim();
+    if (!name) {
+      errors.name = "Please enter your full name.";
+    } else if (name.length < 3) {
+      errors.name = "Your name must be at least 3 characters.";
+    } else if (name.length > 100) {
+      errors.name = "Your name cannot be longer than 100 characters.";
+    } else if (/\d/.test(name)) {
+      errors.name = "A name cannot contain numbers.";
+    } else if (!/^[\p{L}][\p{L}\s.'-]*$/u.test(name)) {
+      // Letters (any script, so Urdu names work), spaces, and the punctuation
+      // that genuinely appears in names: Al-Rehman, D'Souza, Muhammad Jr.
+      errors.name = "Your name can only contain letters, spaces, hyphens and apostrophes.";
+    } else if (looksLikeSpam(name)) {
+      errors.name = "Please enter your real full name.";
+    }
+
+    // ---- Email ----
+    const email = registerEmail.trim().toLowerCase();
+    if (!email) {
+      errors.email = "Please enter your email address.";
+    } else if (email.length > 254) {
+      errors.email = "That email address is too long.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(email)) {
+      // Requires a real top-level domain, so "test", "test@", "@gmail.com" and
+      // "test@gmail" are all rejected.
+      errors.email = "Please enter a valid email address, for example name@example.com.";
+    }
+
+    // ---- Phone ----
+    if (!registerPhone.trim()) {
+      errors.phone = "Please enter your mobile number.";
+    } else if (!normalisePkMobile(registerPhone)) {
+      errors.phone = "Enter a valid mobile number: 10 digits starting with 3, for example 3001234567.";
+    }
+
+    // ---- Password ----
+    if (!registerPassword) {
+      errors.password = "Please choose a password.";
+    } else if (registerPassword.length < 8) {
+      errors.password = "Password must be at least 8 characters.";
+    } else if (registerPassword.length > 72) {
+      // bcrypt only hashes the first 72 bytes, so a longer password is not
+      // actually checked past that point.
+      errors.password = "Password cannot be longer than 72 characters.";
+    } else if (!/[a-zA-Z]/.test(registerPassword) || !/\d/.test(registerPassword)) {
+      errors.password = "Password must include at least one letter and one number.";
+    } else if (email && registerPassword.toLowerCase().includes(email.split("@")[0])) {
+      errors.password = "Your password should not contain your email address.";
+    }
+
+    // ---- Confirm password ----
+    if (!registerConfirmPassword) {
+      errors.confirmPassword = "Please re-enter your password.";
+    } else if (registerPassword !== registerConfirmPassword) {
+      errors.confirmPassword = "Passwords do not match.";
+    }
+
+    // ---- Date of birth (patient only: the field is not shown to caregivers) ----
+    if (selectedRole === "patient") {
+      if (!registerDob) {
+        errors.dob = "Please enter your date of birth.";
+      } else {
+        const dob = new Date(registerDob);
+        const oldest = new Date();
+        oldest.setFullYear(oldest.getFullYear() - 120);
+        const youngest = new Date();
+        youngest.setFullYear(youngest.getFullYear() - 13);
+        if (isNaN(dob.getTime())) {
+          errors.dob = "Please enter a valid date.";
+        } else if (dob > new Date()) {
+          errors.dob = "Date of birth cannot be in the future.";
+        } else if (dob < oldest) {
+          errors.dob = "Please enter a realistic date of birth (age must be under 120).";
+        } else if (dob > youngest) {
+          errors.dob = "You must be at least 13 years old to create an account.";
+        }
+      }
+    }
+
+    // ---- Emergency contact (optional, but must be complete if started) ----
+    if (selectedRole === "patient") {
+      const ecName = emergencyContactName.trim();
+      const ecPhone = emergencyContactPhone.trim();
+      if (ecName && ecName.length > 100) {
+        errors.emergencyName = "Contact name cannot be longer than 100 characters.";
+      } else if (ecName && !/^[\p{L}][\p{L}\s.'-]*$/u.test(ecName)) {
+        errors.emergencyName = "Contact name can only contain letters and spaces.";
+      }
+      if (ecPhone && !normalisePkMobile(ecPhone)) {
+        errors.emergencyPhone = "Enter a valid number: 10 digits starting with 3, for example 3129876543.";
+      }
+      // Half a contact is not usable in an emergency.
+      if (ecPhone && !ecName) {
+        errors.emergencyName = "Please also enter the contact's name.";
+      }
+      if (ecName && !ecPhone) {
+        errors.emergencyPhone = "Please also enter the contact's number.";
+      }
+    }
+
+    if (!agreeTerms) {
+      errors.terms = "Please agree to the Terms & Privacy Policy.";
+    }
+
+    return errors;
+  };
+
   const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Re-entry guard: a second submit while the first is in flight would create
+    // a duplicate request (the button is disabled too, but Enter can beat it).
+    if (isSubmitting || registerSuccess) return;
+
     setRegisterError("");
     setRegisterSuccess("");
 
-    // ---- Field validation ----
-    if (!registerFullName.trim() || registerFullName.trim().length < 3) {
-      setRegisterError("Please enter your full name (at least 3 characters).");
-      return;
-    }
-    if (registerFullName.trim().length > 100) {
-      setRegisterError("Full name cannot be longer than 100 characters.");
-      return;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerEmail.trim()) || registerEmail.trim().length > 254) {
-      setRegisterError("Please enter a valid email address (e.g. name@example.com).");
-      return;
-    }
-    // Pakistani mobile: 10 digits starting with 3 (a leading 0 is stripped).
-    let phoneDigits = registerPhone.replace(/\D/g, "");
-    if (phoneDigits.startsWith("0")) phoneDigits = phoneDigits.slice(1);
-    if (!/^3\d{9}$/.test(phoneDigits)) {
-      setRegisterError("Enter a valid mobile number: 10 digits starting with 3, e.g. 3001234567.");
-      return;
-    }
-    if (registerPassword.length < 6) {
-      setRegisterError("Password must be at least 6 characters.");
-      return;
-    }
-    // bcrypt only uses the first 72 bytes, so anything longer is misleading.
-    if (registerPassword.length > 72) {
-      setRegisterError("Password cannot be longer than 72 characters.");
-      return;
-    }
-    if (registerPassword !== registerConfirmPassword) {
-      setRegisterError("Passwords do not match.");
-      return;
-    }
-    if (registerDob) {
-      const dobDate = new Date(registerDob);
-      // Reject a future DOB and an absurd one (before 1900 / older than 120).
-      const minDob = new Date();
-      minDob.setFullYear(minDob.getFullYear() - 120);
-      if (isNaN(dobDate.getTime()) || dobDate > new Date()) {
-        setRegisterError("Please enter a valid date of birth (not in the future).");
-        return;
-      }
-      if (dobDate < minDob) {
-        setRegisterError("Please enter a realistic date of birth (age must be under 120).");
-        return;
-      }
-    }
-    // Emergency contact is optional, but if a phone is typed it must be valid.
-    if (emergencyContactPhone.trim()) {
-      let ecDigits = emergencyContactPhone.replace(/\D/g, "");
-      if (ecDigits.startsWith("0")) ecDigits = ecDigits.slice(1);
-      if (!/^3\d{9}$/.test(ecDigits)) {
-        setRegisterError("Emergency contact number must be 10 digits starting with 3, e.g. 3129876543.");
-        return;
-      }
-    }
-    if (emergencyContactName.trim() && emergencyContactName.trim().length > 100) {
-      setRegisterError("Emergency contact name cannot be longer than 100 characters.");
-      return;
-    }
-    if (!agreeTerms) {
-      setRegisterError("Please agree to the Terms & Privacy Policy.");
-      return;
-    }
+    const errors = validateRegister();
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) return;
 
+    const phoneDigits = normalisePkMobile(registerPhone);
     setIsSubmitting(true);
 
     try {
       const registeredUser = await register({
         // Trim/lowercase before sending: a stray leading space made the server's
         // isEmail() rule fail with a confusing "validation failed" message.
-        name: registerFullName.trim(),
+        name: registerFullName.trim().replace(/\s+/g, " "),
         email: registerEmail.trim().toLowerCase(),
         password: registerPassword,
+        confirmPassword: registerConfirmPassword,
         role: selectedRole,
         phone: `+92${phoneDigits}`,
+        // Patient-only fields. Previously collected, validated, and then never
+        // sent, so the date of birth the user typed was silently thrown away.
+        ...(selectedRole === "patient" && registerDob ? { dateOfBirth: registerDob } : {}),
+        ...(selectedRole === "patient" && emergencyContactName.trim() && emergencyContactPhone.trim()
+          ? {
+              emergencyContact: {
+                name: emergencyContactName.trim(),
+                phone: `+92${normalisePkMobile(emergencyContactPhone)}`,
+              },
+            }
+          : {}),
       });
       setRegisterSuccess("Account created successfully! Redirecting...");
       setTimeout(() => redirectByRole(registeredUser.role), 1000);
     } catch (err: unknown) {
       const error = err as Error;
-      setRegisterError(error.message || "Registration failed. Please try again.");
+      const message = error?.message || "";
+
+      // A failed fetch (server down, no internet) surfaces as a TypeError with
+      // no useful text, so tell the user what to actually do about it.
+      if (error instanceof TypeError || /failed to fetch|networkerror|load failed/i.test(message)) {
+        setRegisterError("Could not reach the server. Please check your connection and try again.");
+      } else if (/already registered|already exists|duplicate/i.test(message)) {
+        // Put a duplicate-email error on the email field where it belongs.
+        setFieldErrors((prev) => ({ ...prev, email: "This email is already registered. Try signing in instead." }));
+      } else {
+        setRegisterError(message || "Registration failed. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -701,7 +817,7 @@ export default function AuthPage() {
                   <input
                     type="text"
                     value={registerFullName}
-                    onChange={(e) => setRegisterFullName(e.target.value)}
+                    onChange={(e) => { setRegisterFullName(e.target.value); clearFieldError("name"); }}
                     placeholder="Ahmed Khan"
                     maxLength={100}
                     className="w-full outline-none transition-all"
@@ -725,6 +841,7 @@ export default function AuthPage() {
                     }}
                     required
                   />
+                  {fieldError("name")}
                 </div>
                 <div className="flex-1">
                   <label className="block text-[13px] font-semibold mb-1.5" style={{ color: "#374151" }}>
@@ -733,7 +850,7 @@ export default function AuthPage() {
                   <input
                     type="email"
                     value={registerEmail}
-                    onChange={(e) => setRegisterEmail(e.target.value)}
+                    onChange={(e) => { setRegisterEmail(e.target.value); clearFieldError("email"); }}
                     placeholder="you@example.com"
                     maxLength={254}
                     className="w-full outline-none transition-all"
@@ -757,6 +874,7 @@ export default function AuthPage() {
                     }}
                     required
                   />
+                  {fieldError("email")}
                 </div>
               </div>
 
@@ -798,7 +916,7 @@ export default function AuthPage() {
                   <input
                     type="tel"
                     value={registerPhone}
-                    onChange={(e) => setRegisterPhone(e.target.value)}
+                    onChange={(e) => { setRegisterPhone(e.target.value); clearFieldError("phone"); }}
                     placeholder="300 1234567"
                     maxLength={15}
                     className="flex-1 outline-none"
@@ -812,6 +930,7 @@ export default function AuthPage() {
                     required
                   />
                 </div>
+                {fieldError("phone")}
               </div>
 
               {/* Password + Confirm Password Row */}
@@ -824,7 +943,7 @@ export default function AuthPage() {
                     <input
                       type={showRegisterPassword ? "text" : "password"}
                       value={registerPassword}
-                      onChange={(e) => setRegisterPassword(e.target.value)}
+                      onChange={(e) => { setRegisterPassword(e.target.value); clearFieldError("password"); clearFieldError("confirmPassword"); }}
                       placeholder="Min 6 characters"
                       maxLength={72}
                       className="w-full outline-none transition-all"
@@ -860,6 +979,7 @@ export default function AuthPage() {
                       {showRegisterPassword ? "Hide" : "Show"}
                     </button>
                   </div>
+                  {fieldError("password")}
                 </div>
                 <div className="flex-1">
                   <label className="block text-[13px] font-semibold mb-1.5" style={{ color: "#374151" }}>
@@ -868,7 +988,7 @@ export default function AuthPage() {
                   <input
                     type="password"
                     value={registerConfirmPassword}
-                    onChange={(e) => setRegisterConfirmPassword(e.target.value)}
+                    onChange={(e) => { setRegisterConfirmPassword(e.target.value); clearFieldError("confirmPassword"); }}
                     placeholder="Re-enter password"
                     maxLength={72}
                     className="w-full outline-none transition-all"
@@ -892,6 +1012,7 @@ export default function AuthPage() {
                     }}
                     required
                   />
+                  {fieldError("confirmPassword")}
                 </div>
               </div>
 
@@ -905,7 +1026,7 @@ export default function AuthPage() {
                 <input
                   type="date"
                   value={registerDob}
-                  onChange={(e) => setRegisterDob(e.target.value)}
+                  onChange={(e) => { setRegisterDob(e.target.value); clearFieldError("dob"); }}
                   min="1900-01-01"
                   max={new Date().toISOString().split("T")[0]}
                   className="w-full outline-none transition-all"
@@ -927,7 +1048,9 @@ export default function AuthPage() {
                     e.target.style.background = "#f9fafb";
                     e.target.style.boxShadow = "none";
                   }}
+                  required
                 />
+                {fieldError("dob")}
               </div>
 
               {/* Emergency Contact Section Divider */}
@@ -948,7 +1071,7 @@ export default function AuthPage() {
                   <input
                     type="text"
                     value={emergencyContactName}
-                    onChange={(e) => setEmergencyContactName(e.target.value)}
+                    onChange={(e) => { setEmergencyContactName(e.target.value); clearFieldError("emergencyName"); clearFieldError("emergencyPhone"); }}
                     placeholder="Family member name"
                     maxLength={100}
                     className="w-full outline-none transition-all"
@@ -971,6 +1094,7 @@ export default function AuthPage() {
                       e.target.style.boxShadow = "none";
                     }}
                   />
+                  {fieldError("emergencyName")}
                 </div>
                 <div className="flex-1">
                   <label className="block text-[13px] font-semibold mb-1.5" style={{ color: "#374151" }}>
@@ -1009,7 +1133,7 @@ export default function AuthPage() {
                     <input
                       type="tel"
                       value={emergencyContactPhone}
-                      onChange={(e) => setEmergencyContactPhone(e.target.value)}
+                      onChange={(e) => { setEmergencyContactPhone(e.target.value); clearFieldError("emergencyName"); clearFieldError("emergencyPhone"); }}
                       placeholder="312 9876543"
                       maxLength={15}
                       className="flex-1 outline-none"
@@ -1022,6 +1146,7 @@ export default function AuthPage() {
                       }}
                     />
                   </div>
+                  {fieldError("emergencyPhone")}
                 </div>
               </div>
               </>
@@ -1032,7 +1157,7 @@ export default function AuthPage() {
                 <input
                   type="checkbox"
                   checked={agreeTerms}
-                  onChange={(e) => setAgreeTerms(e.target.checked)}
+                  onChange={(e) => { setAgreeTerms(e.target.checked); clearFieldError("terms"); }}
                   className="w-[18px] h-[18px] cursor-pointer"
                   style={{ accentColor: "#0d9488" }}
                 />
@@ -1041,6 +1166,11 @@ export default function AuthPage() {
                   Terms &amp; Privacy Policy
                 </Link>
               </label>
+              {fieldErrors.terms && (
+                <p className="text-[12px] font-medium -mt-3 mb-4" style={{ color: "#dc2626" }}>
+                  {fieldErrors.terms}
+                </p>
+              )}
 
               {/* Submit Button — stays disabled after success too, so the 1s
                   redirect window can't be double-submitted into an

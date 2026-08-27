@@ -29,12 +29,17 @@ const generateToken = (id: any) => {
 // @route POST /api/auth/register
 export const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { name, email, password, phone, role } = req.body;
+    const { name, password, phone, role, dateOfBirth, emergencyContact } = req.body;
+
+    // Normalise here rather than relying on the model's lowercase setter, so the
+    // duplicate check below cannot be sidestepped by registering "Ali@X.com"
+    // when "ali@x.com" already exists.
+    const email = String(req.body.email || '').trim().toLowerCase();
 
     // Check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ success: false, message: 'Email already registered' });
+      return res.status(409).json({ success: false, message: 'This email is already registered. Try signing in instead.' });
     }
 
     // SECURITY: public self-registration may only create a patient or caregiver.
@@ -42,14 +47,33 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
     // otherwise anyone could register with role "admin".
     const safeRole = role === 'caregiver' ? 'caregiver' : 'patient';
 
-    // Create user
+    // Create user. The model's pre-save hook bcrypt-hashes the password, so the
+    // plaintext never reaches the database.
     const user = await User.create({ name, email, password, phone, role: safeRole });
 
-    // Create role-specific profile
-    if (safeRole === 'patient') {
-      await Patient.create({ user: user._id });
-    } else if (safeRole === 'caregiver') {
-      await Caregiver.create({ user: user._id });
+    // Create role-specific profile. If this fails we must remove the User we
+    // just created, otherwise the account is left with no profile AND its email
+    // is taken, so the person can never register or sign in properly again.
+    try {
+      if (safeRole === 'patient') {
+        // The sign-up form collects these, so persist them instead of discarding
+        // them and asking the patient for the same details again later.
+        const profile: any = { user: user._id };
+        if (dateOfBirth) profile.dateOfBirth = new Date(dateOfBirth);
+        if (emergencyContact?.name && emergencyContact?.phone) {
+          profile.emergencyContacts = [{
+            name: emergencyContact.name,
+            phone: emergencyContact.phone,
+            relationship: emergencyContact.relationship || 'Emergency Contact',
+          }];
+        }
+        await Patient.create(profile);
+      } else if (safeRole === 'caregiver') {
+        await Caregiver.create({ user: user._id });
+      }
+    } catch (profileErr) {
+      await User.findByIdAndDelete(user._id).catch(() => {});
+      throw profileErr;
     }
 
     const token = generateToken(user._id);

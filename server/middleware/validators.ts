@@ -37,17 +37,86 @@ const cnicRule = body('cnic')
   .optional()
   .matches(CNIC).withMessage('CNIC must be 13 digits, for example 35201-1234567-1');
 
+// Letters from any script (so Urdu names work), plus the punctuation that
+// genuinely occurs in names: Al-Rehman, D'Souza, Muhammad Jr. No digits.
+const NAME_CHARS = /^[\p{L}][\p{L}\s.'-]*$/u;
+
+// Requires a real top-level domain, so "test", "test@", "@gmail.com" and
+// "test@gmail" are all rejected. isEmail() alone accepts some of these.
+const EMAIL_STRICT = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+
+// Obvious junk input: a character three times in a row, or a keyboard run.
+const isSpammyName = (value: string) => {
+  const v = value.toLowerCase();
+  if (/(.)\1{2,}/.test(v)) return true;
+  if (/(asdf|sdfg|qwer|wert|zxcv|xcvb|hjkl|1234)/.test(v)) return true;
+  return new Set(v.replace(/[^\p{L}]/gu, '')).size < 2;
+};
+
 // Register validation rules
 // (phone and role are optional here; the controller safely defaults role to
 //  "patient"/"caregiver" so public sign-up can never create an admin.)
 export const registerValidation = [
-  body('name', 'Name is required').trim().notEmpty()
-    .bail().isLength({ max: 100 }).withMessage('Name cannot exceed 100 characters'),
-  body('email', 'Please include a valid email').trim().isEmail()
-    .bail().isLength({ max: 254 }).withMessage('Email is too long'),
+  body('name', 'Please enter your full name').trim().notEmpty()
+    .bail()
+    .isLength({ min: 3, max: 100 }).withMessage('Name must be between 3 and 100 characters')
+    .bail()
+    .not().matches(/\d/).withMessage('A name cannot contain numbers')
+    .bail()
+    .matches(NAME_CHARS).withMessage('Name can only contain letters, spaces, hyphens and apostrophes')
+    .bail()
+    .custom((v) => !isSpammyName(v)).withMessage('Please enter a real full name')
+    // Collapse runs of whitespace so "Ali    Khan" is stored as "Ali Khan".
+    .customSanitizer((v: string) => v.replace(/\s+/g, ' ')),
+
+  body('email', 'Please enter your email address').trim().notEmpty()
+    .bail()
+    .isLength({ max: 254 }).withMessage('That email address is too long')
+    .bail()
+    .matches(EMAIL_STRICT).withMessage('Please enter a valid email address, for example name@example.com')
+    // Stored and compared lowercase so Test@x.com and test@x.com are one account.
+    .customSanitizer((v: string) => v.toLowerCase()),
+
   // bcrypt only hashes the first 72 bytes, so a longer password is misleading.
-  body('password', 'Password must be between 6 and 72 characters').isLength({ min: 6, max: 72 }),
+  body('password', 'Please choose a password').notEmpty()
+    .bail()
+    .isLength({ min: 8, max: 72 }).withMessage('Password must be between 8 and 72 characters')
+    .bail()
+    .matches(/[a-zA-Z]/).withMessage('Password must include at least one letter')
+    .bail()
+    .matches(/\d/).withMessage('Password must include at least one number'),
+
+  // Only checked when the client sends it; the form always does.
+  body('confirmPassword').optional()
+    .custom((v, { req }) => v === req.body.password)
+    .withMessage('Passwords do not match'),
+
   body('phone').optional({ checkFalsy: true }).trim().matches(PHONE).withMessage('Enter a valid phone number'),
+
+  // Patients supply a date of birth at sign-up; caregivers are not asked for one.
+  body('dateOfBirth')
+    .if(body('role').equals('patient'))
+    .notEmpty().withMessage('Please enter your date of birth')
+    .bail()
+    .isISO8601().withMessage('Please enter a valid date')
+    .bail()
+    .custom((v) => {
+      const d = new Date(v);
+      const oldest = new Date(); oldest.setFullYear(oldest.getFullYear() - 120);
+      const youngest = new Date(); youngest.setFullYear(youngest.getFullYear() - 13);
+      if (d > new Date()) throw new Error('Date of birth cannot be in the future');
+      if (d < oldest) throw new Error('Date of birth is not realistic (age must be under 120)');
+      if (d > youngest) throw new Error('You must be at least 13 years old to create an account');
+      return true;
+    }),
+
+  body('emergencyContact.name').optional({ checkFalsy: true }).trim()
+    .isLength({ max: 100 }).withMessage('Contact name must be 100 characters or fewer')
+    .bail()
+    .matches(NAME_CHARS).withMessage('Contact name can only contain letters and spaces'),
+  body('emergencyContact.phone').optional({ checkFalsy: true }).trim()
+    .matches(PHONE).withMessage('Enter a valid emergency contact number'),
+
   body('role', 'Role must be one of: patient, caregiver, admin').optional().isIn(['patient', 'caregiver', 'admin']),
 ];
 
